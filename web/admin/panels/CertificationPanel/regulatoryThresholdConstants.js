@@ -24,7 +24,7 @@ export const REGULATORY_THRESHOLD_TYPES = {
   ENOUGH_BREAK: {
     backendType: "enoughBreak",
     label: "Temps de pause respecté",
-    labelNonCompliant: "Temps de pause respecté",
+    labelNonCompliant: "Temps de pause non respecté",
     category: "daily",
     explanation:
       "Pause minimale de 45 minutes après 6 heures de travail consécutif.",
@@ -34,7 +34,7 @@ export const REGULATORY_THRESHOLD_TYPES = {
   MAXIMUM_UNINTERRUPTED_WORK_TIME: {
     backendType: "maximumUninterruptedWorkTime",
     label: "Durée maximale de travail ininterrompu respectée",
-    labelNonCompliant: "Durée maximale de travail ininterrompu respectée",
+    labelNonCompliant: "Durée maximale de travail ininterrompu non respectée",
     explanation: "Durée maximale de travail sans interruption de 6 heures.",
     iconClass: cx(fr.cx("fr-icon-timer-line")),
     pictogram: "uninterrupted-work"
@@ -42,7 +42,7 @@ export const REGULATORY_THRESHOLD_TYPES = {
   MAXIMUM_WORKED_DAYS_IN_WEEK: {
     backendType: "maximumWorkedDaysInWeek",
     label: "Repos hebdomadaire respecté",
-    labelNonCompliant: "Repos hebdomadaire respecté",
+    labelNonCompliant: "Repos hebdomadaire non respecté",
     category: "weekly",
     explanation: "Repos hebdomadaire minimal de 35 heures consécutives.",
     iconClass: cx(fr.cx("fr-icon-calendar-2-line")),
@@ -69,7 +69,7 @@ export const THRESHOLDS_BY_CATEGORY = {
   weekly: ["maximumWorkedDaysInWeek", "maximumWorkInCalendarWeek"]
 };
 
-export const FIGMA_TO_BACKEND_LABELS = {
+export const THRESHOLD_LABEL_MAPPING = {
   "Temps de pause respecté": "enoughBreak",
   "Durée maximale de travail ininterrompu respectée":
     "maximumUninterruptedWorkTime",
@@ -82,21 +82,6 @@ export const FIGMA_TO_BACKEND_LABELS = {
 export const TAB_LABELS = {
   criteria: "Détail des critères",
   thresholds: "Respect des seuils réglementaires"
-};
-
-export const COMPLIANCE_STATUS = {
-  COMPLIANT: {
-    severity: "success",
-    icon: "✅",
-    label: "Conforme",
-    className: cx(fr.cx("fr-alert--success"))
-  },
-  NON_COMPLIANT: {
-    severity: "error",
-    icon: "⚠️",
-    label: "Non conforme",
-    className: cx(fr.cx("fr-alert--error"))
-  }
 };
 
 export const CATEGORY_LABELS = {
@@ -121,12 +106,14 @@ export const REGULATORY_CONSTANTS = {
 
 export const formatDurationFromSeconds = {
   toHours: (seconds, defaultValue = 0) => {
-    if (!seconds && seconds !== 0) return defaultValue;
+    if (seconds === null || seconds === undefined) return defaultValue;
+    if (typeof seconds !== "number") return defaultValue;
     return Math.round(seconds / 3600);
   },
 
   toMinutes: (seconds, defaultValue = 0) => {
-    if (!seconds && seconds !== 0) return defaultValue;
+    if (seconds === null || seconds === undefined) return defaultValue;
+    if (typeof seconds !== "number") return defaultValue;
     return Math.round(seconds / 60);
   },
 
@@ -157,14 +144,16 @@ export function getThresholdConfig(backendType) {
 }
 
 /**
- * Helper function to get compliance status styling
- * @param {boolean} isCompliant - Compliance status
- * @returns {object} DSFR styling configuration
+ * Get the appropriate label based on compliance status
+ * @param {string} backendType
+ * @param {boolean} isCompliant
+ * @returns {string}
  */
-export function getComplianceStatus(isCompliant) {
-  return isCompliant
-    ? COMPLIANCE_STATUS.COMPLIANT
-    : COMPLIANCE_STATUS.NON_COMPLIANT;
+export function getThresholdLabel(backendType, isCompliant) {
+  const config = getThresholdConfig(backendType);
+  if (!config) return "Seuil inconnu";
+
+  return isCompliant ? config.label : config.labelNonCompliant;
 }
 
 /**
