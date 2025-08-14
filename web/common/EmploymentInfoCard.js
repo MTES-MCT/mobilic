@@ -33,11 +33,15 @@ import { getNextHeadingComponent } from "common/utils/html";
 import { formatActivity } from "common/utils/businessTypes";
 import Notice from "./Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Stack } from "@mui/material";
+import { TextBadge } from "./Certification";
+import { useIsWidthDown } from "common/utils/useWidth";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
     fontWeight: "bold",
-    overflowWrap: "anywhere"
+    overflowWrap: "anywhere",
+    flexGrow: 1
   },
   buttonContainer: {
     padding: theme.spacing(2)
@@ -80,6 +84,11 @@ export function EmploymentInfoCard({
     [employment]
   );
 
+  const {
+    isCertified,
+    certificationMedal
+  } = employment.company.currentCompanyCertification;
+
   const emailsCurrentAdminsDisplay = useMemo(
     () => (
       <ul
@@ -113,6 +122,8 @@ export function EmploymentInfoCard({
 
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
+
+  const isMobile = useIsWidthDown("sm");
 
   async function handleEmploymentValidation(accept) {
     await alerts.withApiErrorHandling(
@@ -172,12 +183,27 @@ export function EmploymentInfoCard({
           wrap="nowrap"
         >
           <Grid item xs={8} sm={9}>
-            <Typography
-              className={classes.companyName}
-              component={headingComponent}
-            >
-              {employment.company.legalName || employment.company.name}
-            </Typography>
+            {isMobile ? (
+              <Stack direction="column" rowGap={1}>
+                {isCertified && <TextBadge medal={certificationMedal} />}
+                <Typography
+                  className={classes.companyName}
+                  component={headingComponent}
+                >
+                  {employment.company.legalName || employment.company.name}
+                </Typography>
+              </Stack>
+            ) : (
+              <Stack direction="row">
+                <Typography
+                  className={classes.companyName}
+                  component={headingComponent}
+                >
+                  {employment.company.legalName || employment.company.name}
+                </Typography>
+                {isCertified && <TextBadge medal={certificationMedal} />}
+              </Stack>
+            )}
           </Grid>
           {!hideStatus && (
             <Grid item xs={4} sm={3} pr={1}>
