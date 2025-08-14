@@ -34,8 +34,13 @@ import { formatActivity } from "common/utils/businessTypes";
 import Notice from "./Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Stack } from "@mui/material";
-import { TextBadge } from "./Certification";
+import {
+  CertificationImage,
+  getFrenchMedalName,
+  TextBadge
+} from "./Certification";
 import { useIsWidthDown } from "common/utils/useWidth";
+import { FieldTitle } from "./typography/FieldTitle";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
@@ -318,6 +323,21 @@ export function EmploymentInfoCard({
                 }}
                 uppercaseTitle={false}
               />
+            </Grid>
+          )}
+          {isCertified && (
+            <Grid item xs={12}>
+              <Stack direction="column" sx={{ flexGrow: 1 }}>
+                <FieldTitle uppercaseTitle={false}>Certificat</FieldTitle>
+                <Typography align="left" mb={2}>
+                  L'entreprise est certifiée{" "}
+                  <span style={{ fontWeight: "bold" }}>
+                    {getFrenchMedalName(certificationMedal)}
+                  </span>{" "}
+                  !
+                </Typography>
+                <CertificationImage medal={certificationMedal} />
+              </Stack>
             </Grid>
           )}
           {!hideActions && (
