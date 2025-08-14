@@ -33,7 +33,7 @@ import { getNextHeadingComponent } from "common/utils/html";
 import { formatActivity } from "common/utils/businessTypes";
 import Notice from "./Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import { Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import {
   CertificationImage,
   getFrenchMedalName,
@@ -41,6 +41,7 @@ import {
 } from "./Certification";
 import { useIsWidthDown } from "common/utils/useWidth";
 import { FieldTitle } from "./typography/FieldTitle";
+import { ExternalLink } from "./ExternalLink";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
@@ -327,16 +328,23 @@ export function EmploymentInfoCard({
           )}
           {isCertified && (
             <Grid item xs={12}>
-              <Stack direction="column" sx={{ flexGrow: 1 }}>
-                <FieldTitle uppercaseTitle={false}>Certificat</FieldTitle>
-                <Typography align="left" mb={2}>
-                  L'entreprise est certifiée{" "}
-                  <span style={{ fontWeight: "bold" }}>
-                    {getFrenchMedalName(certificationMedal)}
-                  </span>{" "}
-                  !
-                </Typography>
+              <Stack direction="column" sx={{ flexGrow: 1 }} rowGap={2}>
+                <Box>
+                  <FieldTitle uppercaseTitle={false}>Certificat</FieldTitle>
+                  <Typography align="left">
+                    L'entreprise est certifiée{" "}
+                    <span style={{ fontWeight: "bold" }}>
+                      {getFrenchMedalName(certificationMedal)}
+                    </span>{" "}
+                    !
+                  </Typography>
+                </Box>
                 <CertificationImage medal={certificationMedal} />
+                <ExternalLink
+                  url="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic/"
+                  text="Qu'est-ce que le certificat Mobilic ?"
+                  withIcon
+                />
               </Stack>
             </Grid>
           )}
