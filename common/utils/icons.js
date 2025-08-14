@@ -26,10 +26,6 @@ import _SupplyChainVillageImage from "../assets/images/press-logos/supply_chain_
 import _VirImage from "../assets/images/testimonials-logos/vir.jpg";
 import _AlexisDemenagementImage from "../assets/images/testimonials-logos/alexis_plus.jpg";
 import _BretagneMaceDemenagementImage from "../assets/images/testimonials-logos/bretagne_mace_demenagement.jpg";
-import _CertificationSquareBronze from "../assets/images/certification/squared/bronze.png";
-import _CertificationSquareArgent from "../assets/images/certification/squared/argent.png";
-import _CertificationSquareOr from "../assets/images/certification/squared/or.png";
-import _CertificationSquareDiamant from "../assets/images/certification/squared/diamant.png";
 import _ComputerImage from "../assets/images/computer.png";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 
@@ -233,20 +229,4 @@ export function ComputerImage(props) {
 
 export function MobilicQrCode(props) {
   return <img alt="Mobilic" src={_MobilicQrCode} {...props} />;
-}
-
-export function CertificationBronze(props) {
-  return <img alt="Certificat" src={_CertificationSquareBronze} {...props} />;
-}
-
-export function CertificationArgent(props) {
-  return <img alt="Certificat" src={_CertificationSquareArgent} {...props} />;
-}
-
-export function CertificationOr(props) {
-  return <img alt="Certificat" src={_CertificationSquareOr} {...props} />;
-}
-
-export function CertificationDiamant(props) {
-  return <img alt="Certificat" src={_CertificationSquareDiamant} {...props} />;
 }

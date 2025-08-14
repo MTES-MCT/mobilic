@@ -12,17 +12,12 @@ import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { captureSentryException } from "common/utils/sentry";
-import {
-  CertificationArgent,
-  CertificationBronze,
-  CertificationDiamant,
-  CertificationOr
-} from "common/utils/icons";
 import Box from "@mui/material/Box";
 import { usePageTitle } from "../common/UsePageTitle";
 import { Input } from "../common/forms/Input";
 import Notice from "../common/Notice";
 import { Main } from "../common/semantics/Main";
+import { CertificationImage } from "../common/Certification";
 
 const useStyles = makeStyles(theme => ({
   explanation: {
@@ -171,18 +166,13 @@ export function Certificate() {
           )}
           {searchResults?.length > 0 && (
             <Box sx={{ textAlign: "center" }}>
-              {searchResults[0].certification_level === "BRONZE" && (
-                <CertificationBronze className={classes.certificationImage} />
-              )}
-              {searchResults[0].certification_level === "SILVER" && (
-                <CertificationArgent className={classes.certificationImage} />
-              )}
-              {searchResults[0].certification_level === "GOLD" && (
-                <CertificationOr className={classes.certificationImage} />
-              )}
-              {searchResults[0].certification_level === "DIAMOND" && (
-                <CertificationDiamant className={classes.certificationImage} />
-              )}
+              <Box maxWidth="150px" margin="auto">
+                <CertificationImage
+                  medal={searchResults[0].certification_level}
+                  className={classes.certificationImage}
+                  forcedSquare={true}
+                />
+              </Box>
               <Table
                 fixedHeader
                 noCaption

@@ -68,12 +68,20 @@ const getBannerImage = medal => {
   }
 };
 
-export const CertificationImage = ({ medal, ...props }) => {
+export const CertificationImage = ({
+  medal,
+  forcedSquare = false,
+  ...props
+}) => {
   const isMobile = useIsWidthDown("sm");
   return (
     <img
       alt="Certificat"
-      src={isMobile ? getSquaredImage(medal) : getBannerImage(medal)}
+      src={
+        isMobile || forcedSquare
+          ? getSquaredImage(medal)
+          : getBannerImage(medal)
+      }
       style={{ width: "100%", height: "auto" }}
       {...props}
     />
