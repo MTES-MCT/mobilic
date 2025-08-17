@@ -1,25 +1,13 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { useApi } from "common/utils/api";
-import { formatApiError } from "common/utils/errors";
-import { USER_READ_REGULATION_COMPUTATIONS_QUERY } from "common/utils/apiQueries";
-import { useAdminStore } from "../store/store";
+import { useState, useEffect, useCallback } from "react";
 
 /**
  * useRegulatoryData - Regulatory Data Fetching Hook
  * Fetches regulatory computations data for certificate calculations
  */
 export function useRegulatoryData(companyId) {
-  const api = useApi();
-  const adminStore = useAdminStore();
-
   const [regulatoryData, setRegulatoryData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  const employees = useMemo(
-    () => adminStore.users?.filter(u => u.companyId === companyId) || [],
-    [adminStore.users, companyId]
-  );
 
   /**
    * Fetch regulatory computations data for the current month
@@ -44,11 +32,20 @@ export function useRegulatoryData(companyId) {
         ]
       },
       {
-        day: "2025-08-02", 
+        day: "2025-08-02",
         regulationComputations: [
-          { success: true, regulationCheck: { type: "maximumUninterruptedWorkTime" } },
-          { success: seed > 0, regulationCheck: { type: "maximumWorkedDaysInWeek" } },
-          { success: seed > 1, regulationCheck: { type: "maximumWorkInCalendarWeek" } }
+          {
+            success: true,
+            regulationCheck: { type: "maximumUninterruptedWorkTime" }
+          },
+          {
+            success: seed > 0,
+            regulationCheck: { type: "maximumWorkedDaysInWeek" }
+          },
+          {
+            success: seed > 1,
+            regulationCheck: { type: "maximumWorkInCalendarWeek" }
+          }
         ]
       }
     ];
