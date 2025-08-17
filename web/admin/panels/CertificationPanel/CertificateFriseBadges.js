@@ -1,6 +1,4 @@
 import React, { useMemo } from "react";
-import { fr } from "@codegouvfr/react-dsfr";
-import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 
 import { ReactComponent as BronzeActiveBadge } from "common/assets/images/certificat/Frise-item-clique/bronze_active_badge.svg";
@@ -13,10 +11,10 @@ import { ReactComponent as DiamantActiveBadge } from "common/assets/images/certi
 import { ReactComponent as DiamantBadge } from "common/assets/images/certificat/Frise-item-desactive/diamant_badge.svg";
 
 const CERTIFICATE_LEVELS = {
-  BRONZE: { label: "Bronze", percentage: 60 },
-  ARGENT: { label: "Argent", percentage: 70 },
-  OR: { label: "Or", percentage: 80 },
-  DIAMANT: { label: "Diamant", percentage: 95 }
+  BRONZE: { label: "Bronze" },
+  ARGENT: { label: "Argent" },
+  OR: { label: "Or" },
+  DIAMANT: { label: "Diamant" }
 };
 
 const BADGE_COMPONENTS = {
@@ -38,34 +36,58 @@ const BADGE_COMPONENTS = {
   }
 };
 
+const BACKEND_TO_FRONTEND_MEDAL_MAPPING = {
+  BRONZE: "BRONZE",
+  SILVER: "ARGENT",
+  GOLD: "OR",
+  DIAMOND: "DIAMANT"
+};
+
 export default function CertificateFriseBadges({
   companyWithInfo,
-  regulatoryScore = { compliant: 0, total: 6 },
   onDownloadCertificate = null
 }) {
   const achievedLevel = useMemo(() => {
-    if (!companyWithInfo?.certificateCriterias || !regulatoryScore) return null;
+    if (!companyWithInfo) return null;
 
-    const logInRealTime = companyWithInfo.certificateCriterias.logInRealTimeScore ?? 0;
-    const notTooManyChanges = companyWithInfo.certificateCriterias.notTooManyChangesScore ?? 0;
-    const beCompliant = regulatoryScore.compliant;
+    if (companyWithInfo.currentCompanyCertification?.certificationMedal) {
+      return (
+        BACKEND_TO_FRONTEND_MEDAL_MAPPING[
+          companyWithInfo.currentCompanyCertification.certificationMedal
+        ] || null
+      );
+    }
 
-    if (logInRealTime >= 95 && notTooManyChanges <= 1 && beCompliant >= 6) {
+    if (!companyWithInfo.currentCompanyCertification?.certificateCriterias)
+      return null;
+
+    const logInRealTime =
+      companyWithInfo.currentCompanyCertification.certificateCriterias
+        .logInRealTime ?? 0;
+    const adminChanges =
+      companyWithInfo.currentCompanyCertification.certificateCriterias
+        .adminChanges ?? 1;
+    const compliancy =
+      companyWithInfo.currentCompanyCertification.certificateCriterias
+        .compliancy ?? 0;
+
+    if (logInRealTime >= 0.95 && adminChanges <= 0.01 && compliancy >= 6) {
       return "DIAMANT";
-    } else if (logInRealTime >= 80 && notTooManyChanges <= 10 && beCompliant >= 4) {
+    } else if (logInRealTime >= 0.8 && adminChanges <= 0.1 && compliancy >= 4) {
       return "OR";
-    } else if (logInRealTime >= 70 && notTooManyChanges <= 20 && beCompliant >= 2) {
+    } else if (logInRealTime >= 0.7 && adminChanges <= 0.2 && compliancy >= 2) {
       return "ARGENT";
-    } else if (logInRealTime >= 60 && notTooManyChanges <= 30 && beCompliant >= 1) {
+    } else if (logInRealTime >= 0.6 && adminChanges <= 0.3 && compliancy >= 1) {
       return "BRONZE";
     }
 
     return null;
-  }, [companyWithInfo, regulatoryScore]);
+  }, [companyWithInfo]);
 
   const renderBadgeItem = level => {
     const isAchieved = achievedLevel === level;
-    const BadgeComponent = BADGE_COMPONENTS[level]?.[isAchieved ? "active" : "inactive"];
+    const BadgeComponent =
+      BADGE_COMPONENTS[level]?.[isAchieved ? "active" : "inactive"];
 
     if (!BadgeComponent) {
       return null;
@@ -87,7 +109,9 @@ export default function CertificateFriseBadges({
             width: "auto",
             height: "auto",
             maxWidth: "100%",
-            filter: isAchieved ? "drop-shadow(0px 6px 0px rgba(0, 0, 0, 0.25))" : "none"
+            filter: isAchieved
+              ? "drop-shadow(0px 6px 0px rgba(0, 0, 0, 0.25))"
+              : "none"
           }}
         />
       </div>
@@ -101,7 +125,8 @@ export default function CertificateFriseBadges({
         flexDirection: "column",
         alignSelf: "stretch",
         gap: "24px",
-        padding: "32px 0px"
+        padding: "0px 0px 32px 0px",
+        backgroundColor: "#F6F6F6"
       }}
     >
       <div
@@ -109,7 +134,7 @@ export default function CertificateFriseBadges({
           display: "flex",
           alignSelf: "stretch",
           gap: "10px",
-          padding: "0px 40px"
+          padding: "32px 40px 0px 40px"
         }}
       >
         <div
@@ -143,8 +168,12 @@ export default function CertificateFriseBadges({
             }}
           >
             {achievedLevel
-              ? `${companyWithInfo?.name || "Votre entreprise"} est certifiée ${CERTIFICATE_LEVELS[achievedLevel]?.label.toLowerCase()} sur Mobilic !`
-              : `Votre entreprise ${companyWithInfo?.name || ""} n'est pas encore certifiée.`}
+              ? `${companyWithInfo?.name ||
+                  "Votre entreprise"} est certifiée ${CERTIFICATE_LEVELS[
+                  achievedLevel
+                ]?.label.toLowerCase()} sur Mobilic !`
+              : `Votre entreprise ${companyWithInfo?.name ||
+                  ""} n'est pas encore certifiée.`}
           </p>
         </div>
 
@@ -182,7 +211,9 @@ export default function CertificateFriseBadges({
         }}
       >
         <a
-          href="#"
+          href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic"
+          target="_blank"
+          rel="noopener noreferrer"
           style={{
             fontFamily: "Marianne",
             fontWeight: 400,
@@ -192,14 +223,10 @@ export default function CertificateFriseBadges({
             textDecoration: "underline",
             cursor: "pointer"
           }}
-          onClick={(e) => {
-            e.preventDefault();
-          }}
         >
           Qu'est-ce que le certificat Mobilic ?
         </a>
       </div>
-
     </div>
   );
 }

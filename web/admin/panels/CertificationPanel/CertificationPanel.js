@@ -1,16 +1,7 @@
 import React, { useMemo } from "react";
-import { useApi } from "common/utils/api";
-import { useCertificationInfo } from "../../utils/certificationInfo";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import {
-  EDIT_COMPANIES_COMMUNICATION_SETTING,
-  HTTP_QUERIES
-} from "common/utils/apiQueries";
-import { Link } from "../../../common/LinkButton";
 import Skeleton from "@mui/material/Skeleton";
-import { CheckboxField } from "../../../common/CheckboxField";
-import { useSnackbarAlerts } from "../../../common/Snackbar";
+import Box from "@mui/material/Box";
 import CertificateCriteriaTable from "./CertificateCriteriaTable";
 import { useRegulatoryScore } from "./useRegulatoryScore";
 import RegulatoryThresholdsPanel from "./RegulatoryThresholdsPanel";
@@ -18,67 +9,34 @@ import CertificateFriseBadges from "./CertificateFriseBadges";
 import { fr } from "@codegouvfr/react-dsfr";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import Notice from "../../../common/Notice";
+import { useCertificationInfo } from "../../utils/certificationInfo";
 
-export default function CertificationPanel({ company }) {
-  const api = useApi();
-  const alerts = useSnackbarAlerts();
+export default function CertificationPanel() {
   const { companyWithInfo, loadingInfo } = useCertificationInfo();
   const regulatoryScore = useRegulatoryScore(companyWithInfo?.id);
 
-  const hasBronzeLevel = useMemo(() => {
-    if (!companyWithInfo?.certificateCriterias || !regulatoryScore)
+  const isCertified = useMemo(() => {
+    if (!companyWithInfo?.currentCompanyCertification?.certificateCriterias)
       return false;
 
+    if (companyWithInfo.currentCompanyCertification?.certificationMedal) {
+      return ["BRONZE", "SILVER", "GOLD", "DIAMOND"].includes(
+        companyWithInfo.currentCompanyCertification.certificationMedal
+      );
+    }
+
     const logInRealTime =
-      companyWithInfo.certificateCriterias.logInRealTimeScore ?? 0;
-    const notTooManyChanges =
-      companyWithInfo.certificateCriterias.notTooManyChangesScore ?? 0;
+      companyWithInfo.currentCompanyCertification.certificateCriterias
+        .logInRealTime ?? 0;
+    const adminChanges =
+      companyWithInfo.currentCompanyCertification.certificateCriterias
+        .adminChanges ?? 1;
+    const compliancy =
+      companyWithInfo.currentCompanyCertification.certificateCriterias
+        .compliancy ?? 0;
 
-    return !(
-      regulatoryScore.compliant < 1 ||
-      logInRealTime < 60 ||
-      notTooManyChanges > 30
-    );
-  }, [companyWithInfo, regulatoryScore]);
-
-  const [
-    acceptCertificationCommunication,
-    setAcceptCertificationCommunication
-  ] = React.useState(null);
-
-  React.useEffect(() => {
-    setAcceptCertificationCommunication(
-      companyWithInfo.acceptCertificationCommunication
-    );
+    return logInRealTime >= 0.6 && adminChanges <= 0.3 && compliancy >= 1;
   }, [companyWithInfo]);
-
-  async function changeCommunicationSetting(value) {
-    await api.graphQlMutate(
-      EDIT_COMPANIES_COMMUNICATION_SETTING,
-      {
-        companyIds: [companyWithInfo.id],
-        acceptCertificationCommunication: value
-      },
-      { context: { nonPublicApi: true } }
-    );
-    setAcceptCertificationCommunication(value);
-    alerts.success(
-      "Vos préférences de communication ont bien été prises en compte.",
-      "",
-      6000
-    );
-  }
-
-  const handleDownloadCertificate = async () => {
-    await alerts.withApiErrorHandling(async () => {
-      const options = {
-        company_id: company.id
-      };
-      await api.downloadFileHttpQuery(HTTP_QUERIES.downloadCertificate, {
-        json: options
-      });
-    }, "download-certificate");
-  };
 
   const noCertificateText = useMemo(() => {
     if (loadingInfo) {
@@ -87,10 +45,6 @@ export default function CertificationPanel({ company }) {
 
     if (companyWithInfo?.hasNoActivity) {
       return "Votre entreprise n'est pas encore certifiée car le calcul se fera lorsque vous aurez commencé à enregistrer des activités.";
-    }
-
-    if (!companyWithInfo?.certificateCriterias) {
-      return "Votre entreprise n'est pas encore certifiée car le calcul de certification se fera au début du mois prochain.";
     }
 
     return "";
@@ -105,96 +59,122 @@ export default function CertificationPanel({ company }) {
   }
 
   return (
-    <div
-      style={{
-        width: "100%",
-        padding: "1rem",
-        backgroundColor: "transparent"
+    <Box
+      sx={{
+        width: "100%"
       }}
     >
-      {/* Certificate Frise Badges - replaces panelTitle selon design Figma */}
       <CertificateFriseBadges
         companyWithInfo={companyWithInfo}
-        regulatoryScore={regulatoryScore}
         onDownloadCertificate={handleDownloadCertificate}
       />
 
-      {noCertificateText && (
-        <Box mb={2}>
-          <Typography variant="h6" component="span">
-            {noCertificateText}
-          </Typography>
-        </Box>
-      )}
-
-
-      {companyWithInfo.isCertified && (
-        <Box>
-          <CheckboxField
-            mt={2}
-            checked={acceptCertificationCommunication}
-            onChange={() =>
-              changeCommunicationSetting(!acceptCertificationCommunication)
-            }
-            label={`J'accepte que Mobilic communique sur le fait que l'entreprise ${companyWithInfo.name} soit certifiée, notamment auprès des plateformes de mise en relation entre entreprises et particuliers.`}
-          />
-        </Box>
-      )}
-
-
-      {companyWithInfo && (
-        <div className={cx(fr.cx("fr-container", "fr-mt-4w"))}>
-          <div className={cx(fr.cx("fr-mb-4w"))}>
-            {hasBronzeLevel && (
-              <h2
-                className={cx(fr.cx("fr-h4"))}
+      <Box sx={{ p: 1 }}>
+        {noCertificateText && (
+          <div className={cx(fr.cx("fr-container"))}>
+            <div
+              className={cx(fr.cx("fr-mb-4w"))}
+              style={{ padding: "0px 40px" }}
+            >
+              <Typography
+                variant="h6"
+                component="span"
                 style={{
-                  fontSize: "22px",
-                  fontWeight: 700,
-                  lineHeight: "28px",
-                  color: "#161616",
-                  margin: "0 0 32px 0"
+                  fontSize: "16px",
+                  fontWeight: 400,
+                  lineHeight: "24px",
+                  color: "#3A3A3A"
                 }}
               >
-                Les critères de certification
-              </h2>
-            )}
-            <CertificateCriteriaTable
-              companyWithInfo={companyWithInfo}
-              regulatoryScore={regulatoryScore}
-            />
-          </div>
-
-          {!loadingInfo && companyWithInfo && !companyWithInfo.hasNoActivity && (
-            <div className={cx(fr.cx("fr-mt-6w"))}>
-              <h2
-                className={cx(fr.cx("fr-h4"))}
-                style={{
-                  fontSize: "22px",
-                  fontWeight: 700,
-                  lineHeight: "28px",
-                  color: "#161616",
-                  margin: "0 0 32px 0"
-                }}
-              >
-                Respect des seuils réglementaires
-              </h2>
-              <RegulatoryThresholdsPanel companyWithInfo={companyWithInfo} />
+                {noCertificateText}
+              </Typography>
             </div>
-          )}
-
-          <div className={cx(fr.cx("fr-mt-6w"))}>
-            <Notice
-              type="warning"
-              description="Attention, le certificat Mobilic n'est en aucun cas un gage de respect total de la réglementation par l'entreprise. Il n'atteste que de la bonne utilisation de l'outil de suivi du temps de travail."
-              isFullWidth={true}
-              sx={{
-                textAlign: "justify"
-              }}
-            />
           </div>
-        </div>
-      )}
-    </div>
+        )}
+
+        {companyWithInfo && (
+          <div className={cx(fr.cx("fr-container", "fr-mt-4w"))}>
+            <div className={cx(fr.cx("fr-mb-4w"))}>
+              {!isCertified && (
+                <h2
+                  style={{
+                    fontFamily: "Marianne",
+                    fontWeight: 700,
+                    fontSize: "28px",
+                    lineHeight: "36px",
+                    color: "#161616",
+                    margin: "0 0 20px 0"
+                  }}
+                >
+                  Les critères de certification
+                </h2>
+              )}
+              {isCertified && (
+                <div
+                  style={{
+                    margin: "0 0 20px 0"
+                  }}
+                >
+                  <h2
+                    style={{
+                      fontFamily: "Marianne",
+                      fontWeight: 700,
+                      fontSize: "22px",
+                      lineHeight: "28px",
+                      color: "#161616",
+                      margin: "0 0 8px 0"
+                    }}
+                  >
+                    Votre niveau de certification
+                  </h2>
+                  <p
+                    style={{
+                      fontFamily: "Marianne",
+                      fontWeight: 400,
+                      fontSize: "16px",
+                      lineHeight: "24px",
+                      color: "#161616",
+                      margin: "0"
+                    }}
+                  >
+                    au 1er{" "}
+                    {new Date().toLocaleDateString("fr-FR", {
+                      month: "long",
+                      year: "numeric"
+                    })}
+                  </p>
+                </div>
+              )}
+              <CertificateCriteriaTable companyWithInfo={companyWithInfo} />
+            </div>
+
+            {!loadingInfo && companyWithInfo && !companyWithInfo.hasNoActivity && (
+              <div className={cx(fr.cx("fr-mt-6w"))}>
+                <RegulatoryThresholdsPanel
+                  companyId={companyWithInfo.id}
+                  regulatoryScore={regulatoryScore}
+                  companyWithInfo={companyWithInfo}
+                />
+              </div>
+            )}
+
+            <div className={cx(fr.cx("fr-mt-3w"))}>
+              <Notice
+                type="warning"
+                description="Attention, le certificat Mobilic n'est en aucun cas un gage de respect total de la réglementation par l'entreprise. Il n'atteste que de la bonne utilisation de l'outil de suivi du temps de travail."
+                isFullWidth={true}
+                sx={{
+                  textAlign: "justify"
+                }}
+              />
+            </div>
+          </div>
+        )}
+      </Box>
+    </Box>
   );
+
+  async function handleDownloadCertificate() {
+    console.log("Download certificate functionality to be implemented");
+  }
 }
