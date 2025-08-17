@@ -9,17 +9,84 @@ const CERTIFICATE_LEVELS = {
   DIAMANT: { label: "Diamant", percentage: 95 }
 };
 
-const NOT_TOO_MANY_CHANGES_THRESHOLDS = {
+const ADMIN_CHANGES_THRESHOLDS = {
   BRONZE: 30,
   ARGENT: 20,
   OR: 10,
   DIAMANT: 1
 };
 
-const CRITERIA_MAPPING = {
+const CRITERIA_LABELS = {
   logInRealTime: "Temps de travail enregistrés en temps réel",
-  notTooManyChanges: "Temps de travail modifiés par le gestionnaire",
-  beCompliant: "Respect des seuils réglementaires"
+  adminChanges: "Temps de travail modifiés par le gestionnaire",
+  compliancy: "Respect des seuils réglementaires"
+};
+
+const LEVEL_COLORS = {
+  BRONZE: {
+    active: {
+      header: "#E9A866",
+      body: "#F7EBE5",
+      text: "#855D48",
+      textBody: "#161616",
+      badge: "#FBF5F2"
+    },
+    inactive: {
+      header: "#F6F6F6",
+      body: "#FFFFFF",
+      text: "#3A3A3A",
+      textBody: "#3A3A3A",
+      badge: "#F6F6F6"
+    }
+  },
+  ARGENT: {
+    active: {
+      header: "#DBDBDB",
+      body: "#EEEEEE",
+      text: "#3A3A3A",
+      textBody: "#161616",
+      badge: "#F8F8F8"
+    },
+    inactive: {
+      header: "#F6F6F6",
+      body: "#FFFFFF",
+      text: "#3A3A3A",
+      textBody: "#3A3A3A",
+      badge: "#F6F6F6"
+    }
+  },
+  OR: {
+    active: {
+      header: "#FACE3D",
+      body: "#FEF7DA",
+      text: "#66673D",
+      textBody: "#161616",
+      badge: "#FEF7DA"
+    },
+    inactive: {
+      header: "#F6F6F6",
+      body: "#FFFFFF",
+      text: "#3A3A3A",
+      textBody: "#3A3A3A",
+      badge: "#F6F6F6"
+    }
+  },
+  DIAMANT: {
+    active: {
+      header: "#CAEDF0",
+      body: "#E5FBFD",
+      text: "#006A6F",
+      textBody: "#161616",
+      badge: "#E5FBFD"
+    },
+    inactive: {
+      header: "#F6F6F6",
+      body: "#FFFFFF",
+      text: "#3A3A3A",
+      textBody: "#3A3A3A",
+      badge: "#F6F6F6"
+    }
+  }
 };
 
 export default function CertificateCriteriaTable({
@@ -27,117 +94,79 @@ export default function CertificateCriteriaTable({
   regulatoryScore = { compliant: 0, total: 6 }
 }) {
   const calculateScore = useMemo(() => {
-    if (!companyWithInfo?.certificateCriterias) {
-      return { logInRealTime: 0, notTooManyChanges: 0, beCompliant: 0 };
+    if (!companyWithInfo?.currentCompanyCertification?.certificateCriterias) {
+      return { logInRealTime: 0, adminChanges: 1, compliancy: 0 };
     }
 
     const scores = {
       logInRealTime:
-        companyWithInfo.certificateCriterias.logInRealTimeScore ?? 0,
-      notTooManyChanges:
-        companyWithInfo.certificateCriterias.notTooManyChangesScore ?? 0,
-      beCompliant: regulatoryScore.compliant
+        companyWithInfo.currentCompanyCertification.certificateCriterias
+          .logInRealTime ?? 0,
+      adminChanges:
+        companyWithInfo.currentCompanyCertification.certificateCriterias
+          .adminChanges ?? 1,
+      compliancy:
+        companyWithInfo.currentCompanyCertification.certificateCriterias
+          .compliancy ?? 0
     };
 
     return scores;
   }, [companyWithInfo, regulatoryScore]);
 
-  /**
-   * Calculate which certificate levels the company has reached for each criteria
-   */
-  const calculateReachedLevels = useMemo(() => {
-    const { logInRealTime, notTooManyChanges, beCompliant } = calculateScore;
+  const reachedLevels = useMemo(() => {
+    const { logInRealTime, adminChanges, compliancy } = calculateScore;
 
-    const reachedLevels = {
+    return {
       logInRealTime: {
-        BRONZE: logInRealTime >= 60,
-        ARGENT: logInRealTime >= 70,
-        OR: logInRealTime >= 80,
-        DIAMANT: logInRealTime >= 95
+        BRONZE: logInRealTime >= 0.6,
+        ARGENT: logInRealTime >= 0.7,
+        OR: logInRealTime >= 0.8,
+        DIAMANT: logInRealTime >= 0.95
       },
-      notTooManyChanges: {
-        BRONZE: notTooManyChanges <= 30,
-        ARGENT: notTooManyChanges <= 20,
-        OR: notTooManyChanges <= 10,
-        DIAMANT: notTooManyChanges <= 1
+      adminChanges: {
+        BRONZE: adminChanges <= 0.3,
+        ARGENT: adminChanges <= 0.2,
+        OR: adminChanges <= 0.1,
+        DIAMANT: adminChanges <= 0.01
       },
-      beCompliant: {
-        BRONZE: beCompliant >= 0, // No minimum for Bronze regulatory
-        ARGENT: beCompliant >= 2,
-        OR: beCompliant >= 4,
-        DIAMANT: beCompliant >= 6
+      compliancy: {
+        BRONZE: compliancy >= 1,
+        ARGENT: compliancy >= 2,
+        OR: compliancy >= 4,
+        DIAMANT: compliancy >= 6
       }
     };
-
-    return reachedLevels;
   }, [calculateScore]);
 
-  /**
-   * Calculate overall certificate level reached (all criteria must be met)
-   */
-  const overallReachedLevel = useMemo(() => {
-    const levels = ['BRONZE', 'ARGENT', 'OR', 'DIAMANT'];
-    
+  const certificationLevel = useMemo(() => {
+    const levels = ["BRONZE", "ARGENT", "OR", "DIAMANT"];
+
     for (let i = levels.length - 1; i >= 0; i--) {
       const level = levels[i];
-      const allCriteriaMet = Object.values(calculateReachedLevels).every(
+      const allCriteriaMet = Object.values(reachedLevels).every(
         criteria => criteria[level]
       );
       if (allCriteriaMet) {
         return level;
       }
     }
-    return null; // No level reached
-  }, [calculateReachedLevels]);
+    return null;
+  }, [reachedLevels]);
 
-  /**
-   * Get Figma-compliant colors for certificate levels based on achievement
-   */
-  const getLevelColors = (level) => {
-    const isLevelReached = level === overallReachedLevel;
-    
-    const colorSchemes = {
-      BRONZE: {
-        header: isLevelReached ? "#E9A866" : "#F6F6F6", // Figma bronze color
-        body: isLevelReached ? "#F7EBE5" : "#FFFFFF",   // Figma light bronze background
-        text: isLevelReached ? "#855D48" : "#3A3A3A",   // Figma bronze badge text color
-        textBody: isLevelReached ? "#161616" : "#3A3A3A", // Figma body text color (noir)
-        badgeBackground: isLevelReached ? "#FBF5F2" : "#F6F6F6" // Figma badge background
-      },
-      ARGENT: {
-        header: isLevelReached ? "#DBDBDB" : "#F6F6F6", // Figma silver color
-        body: isLevelReached ? "#EEEEEE" : "#FFFFFF",   // Figma light silver background
-        text: isLevelReached ? "#FFFFFF" : "#3A3A3A",   // Figma silver badge text color
-        textBody: isLevelReached ? "#161616" : "#3A3A3A", // Figma body text color (noir)
-        badgeBackground: isLevelReached ? "#F8F8F8" : "#F6F6F6" // Figma badge background
-      },
-      OR: {
-        header: isLevelReached ? "#FACE3D" : "#F6F6F6", // Figma gold color
-        body: isLevelReached ? "#FEF7DA" : "#FFFFFF",   // Figma light gold background
-        text: isLevelReached ? "#66673D" : "#3A3A3A",   // Figma gold badge text color
-        textBody: isLevelReached ? "#161616" : "#3A3A3A", // Figma body text color (noir)
-        badgeBackground: isLevelReached ? "#FEF7DA" : "#F6F6F6" // Figma badge background
-      },
-      DIAMANT: {
-        header: isLevelReached ? "#CAEDF0" : "#F6F6F6", // Figma diamond color
-        body: isLevelReached ? "#E5FBFD" : "#FFFFFF",   // Figma light diamond background
-        text: isLevelReached ? "#006A6F" : "#3A3A3A",   // Figma diamond badge text color
-        textBody: isLevelReached ? "#161616" : "#3A3A3A", // Figma body text color (noir)
-        badgeBackground: isLevelReached ? "#E5FBFD" : "#F6F6F6" // Figma badge background
-      }
-    };
-
-    return colorSchemes[level] || colorSchemes.BRONZE;
+  const getLevelColors = level => {
+    const isActive = level === certificationLevel;
+    const colors = LEVEL_COLORS[level] || LEVEL_COLORS.BRONZE;
+    return isActive ? colors.active : colors.inactive;
   };
 
   const renderHeaderCell = (content, isScore = false, level = null) => {
     let backgroundColor = "#F6F6F6";
     let textColor = "#3A3A3A";
-    
+
     if (isScore) {
       backgroundColor = "#3965EA";
       textColor = "#F4F8FF";
-    } else if (level && overallReachedLevel === level) {
+    } else if (level && certificationLevel === level) {
       const colors = getLevelColors(level);
       backgroundColor = colors.header;
       textColor = colors.text;
@@ -158,12 +187,11 @@ export default function CertificateCriteriaTable({
           lineHeight: "24px"
         }}
       >
-        {level && overallReachedLevel === level ? (
-          // Badge avec padding et coins arrondis selon Figma
+        {level && certificationLevel === level ? (
           <div
             style={{
               display: "inline-block",
-              backgroundColor: getLevelColors(level).badgeBackground,
+              backgroundColor: getLevelColors(level).badge,
               color: getLevelColors(level).text,
               padding: "0px 6px",
               borderRadius: "4px",
@@ -181,16 +209,17 @@ export default function CertificateCriteriaTable({
     );
   };
 
-  const renderBadgeCell = (level, criteriaType = "default", criteriaName) => {
-    // Get Figma colors for this level
+  const renderDataCell = (level, value, unit, criteriaType = "percentage") => {
     const colors = getLevelColors(level);
-    const isOverallReached = overallReachedLevel === level;
-    
+    const isActive = certificationLevel === level;
+    const displayValue =
+      criteriaType === "adminChanges" ? ADMIN_CHANGES_THRESHOLDS[level] : value;
+
     return (
       <td
         className={cx(fr.cx("fr-p-3w"))}
         style={{
-          backgroundColor: isOverallReached ? colors.body : "#FFFFFF",
+          backgroundColor: colors.body,
           borderBottom: "1px solid #929292",
           textAlign: "center",
           minHeight: "72px",
@@ -205,31 +234,29 @@ export default function CertificateCriteriaTable({
             gap: "2px"
           }}
         >
-          <span 
-            style={{ 
-              fontSize: "20px", 
-              fontWeight: isOverallReached ? 700 : 400, 
-              color: isOverallReached ? colors.textBody : "#3A3A3A"
+          <span
+            style={{
+              fontSize: "20px",
+              fontWeight: isActive ? 700 : 400,
+              color: colors.textBody
             }}
           >
-            {criteriaType === "notTooManyChanges"
-              ? NOT_TOO_MANY_CHANGES_THRESHOLDS[level]
-              : CERTIFICATE_LEVELS[level].percentage}
+            {displayValue}
           </span>
-          <span 
-            style={{ 
-              fontSize: "14px", 
-              color: isOverallReached ? colors.textBody : "#3A3A3A"
+          <span
+            style={{
+              fontSize: "14px",
+              color: colors.textBody
             }}
           >
-            %
+            {unit}
           </span>
         </div>
       </td>
     );
   };
 
-  const renderScoreCell = (score, isRegulatory = false) => (
+  const renderScoreCell = (score, unit = "%") => (
     <td
       className={cx(fr.cx("fr-p-3w"))}
       style={{
@@ -251,58 +278,10 @@ export default function CertificateCriteriaTable({
         <span style={{ fontSize: "20px", fontWeight: 700, color: "#3A3A3A" }}>
           {score}
         </span>
-        <span style={{ fontSize: "14px", color: "#3A3A3A" }}>
-          {isRegulatory ? "/6" : "%"}
-        </span>
+        <span style={{ fontSize: "14px", color: "#3A3A3A" }}>{unit}</span>
       </div>
     </td>
   );
-
-  const renderBadgeCellWithScore = (level, score, criteriaName = "beCompliant") => {
-    // Get Figma colors for this level
-    const colors = getLevelColors(level);
-    const isOverallReached = overallReachedLevel === level;
-    
-    return (
-      <td
-        className={cx(fr.cx("fr-p-3w"))}
-        style={{
-          backgroundColor: isOverallReached ? colors.body : "#FFFFFF",
-          borderBottom: "1px solid #929292",
-          textAlign: "center",
-          minHeight: "72px",
-          verticalAlign: "middle"
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "2px"
-          }}
-        >
-          <span 
-            style={{ 
-              fontSize: "20px", 
-              fontWeight: isOverallReached ? 700 : 400, 
-              color: isOverallReached ? colors.textBody : "#3A3A3A"
-            }}
-          >
-            {score}
-          </span>
-          <span 
-            style={{ 
-              fontSize: "14px", 
-              color: isOverallReached ? colors.textBody : "#3A3A3A"
-            }}
-          >
-            /6
-          </span>
-        </div>
-      </td>
-    );
-  };
 
   const renderCriteriaCell = text => (
     <td
@@ -329,12 +308,8 @@ export default function CertificateCriteriaTable({
     </td>
   );
 
-  /**
-   * Render level-specific guidance messages according to Figma specs
-   */
   const renderLevelGuidanceMessage = () => {
-    if (!overallReachedLevel) {
-      // Show Bronze guidance only if no level reached
+    if (!certificationLevel) {
       return (
         <div className={cx(fr.cx("fr-mb-4w"))}>
           <h3
@@ -388,12 +363,12 @@ export default function CertificateCriteriaTable({
               ;
             </li>
             <li>
-              Demandez aux salariés à l'aise avec l'outil de prendre le temps
-              de former les autres ;
+              Demandez aux salariés à l'aise avec l'outil de prendre le temps de
+              former les autres ;
             </li>
             <li>
-              Expliquez-leur l'importance de saisir en temps réel : respect
-              des seuils réglementaires, respect du droit du travail ;
+              Expliquez-leur l'importance de saisir en temps réel : respect des
+              seuils réglementaires, respect du droit du travail ;
             </li>
             <li>
               L'équipe Mobilic est disponible en visioconférence pour plus de
@@ -422,14 +397,14 @@ export default function CertificateCriteriaTable({
               >
                 la réglementation en vigueur
               </a>
-              , incitez vos salariés à faire attention aux temps de pause et de repos.
+              , incitez vos salariés à faire attention aux temps de pause et de
+              repos.
             </li>
           </ul>
         </div>
       );
     }
 
-    // Messages specific to achieved levels according to Figma
     const levelMessages = {
       BRONZE: (
         <div className={cx(fr.cx("fr-mb-4w"))}>
@@ -467,11 +442,11 @@ export default function CertificateCriteriaTable({
               textAlign: "justify"
             }}
           >
+            <li>Formez vos salariés à l'usage de Mobilic ;</li>
             <li>
-              Formez vos salariés à l'usage de Mobilic ;
-            </li>
-            <li>
-              Assurez-vous en début de journée qu'ils aient bien lancé Mobilic (information vérifiable depuis l'onglet "Activités" de votre espace) ;
+              Assurez-vous en début de journée qu'ils aient bien lancé Mobilic
+              (information vérifiable depuis l'onglet "Activités" de votre
+              espace) ;
             </li>
             <li>
               Renseignez-vous sur{" "}
@@ -528,14 +503,14 @@ export default function CertificateCriteriaTable({
             }}
           >
             <li>
-              Expliquez à vos salariés pourquoi il est dans leur intérêt de saisir en temps réel ;
+              Expliquez à vos salariés pourquoi il est dans leur intérêt de
+              saisir en temps réel ;
             </li>
             <li>
-              En fin de journée, assurez-vous qu'ils mettent bien fin à leur mission en cours ;
+              En fin de journée, assurez-vous qu'ils mettent bien fin à leur
+              mission en cours ;
             </li>
-            <li>
-              Formez-les au respect des seuils réglementaires.
-            </li>
+            <li>Formez-les au respect des seuils réglementaires.</li>
           </ul>
         </div>
       ),
@@ -576,26 +551,29 @@ export default function CertificateCriteriaTable({
             }}
           >
             <li>
-              Chaque fois que vous communiquez avec vos salariés dans la journée, demandez-leur s'ils ont bien mis à jour Mobilic ;
+              Chaque fois que vous communiquez avec vos salariés dans la
+              journée, demandez-leur s'ils ont bien mis à jour Mobilic ;
             </li>
             <li>
-              Réservez la modification des missions aux oublis ou aux erreurs des salariés ;
+              Réservez la modification des missions aux oublis ou aux erreurs
+              des salariés ;
             </li>
             <li>
-              Identifiez les critères manquants à l'aide de la section "Respect des seuils réglementaires" ci-dessous et mettez en place une procédure spécifique pour y remédier.
+              Identifiez les critères manquants à l'aide de la section "Respect
+              des seuils réglementaires" ci-dessous et mettez en place une
+              procédure spécifique pour y remédier.
             </li>
           </ul>
         </div>
       ),
-      DIAMANT: null // No message for Diamant as it's the maximum level
+      DIAMANT: null
     };
 
-    return levelMessages[overallReachedLevel] || null;
+    return levelMessages[certificationLevel] || null;
   };
 
   return (
     <div>
-      {/* Certificate Criteria Table */}
       <div style={{ border: "1px solid #929292" }}>
         <table
           style={{
@@ -617,48 +595,47 @@ export default function CertificateCriteriaTable({
 
           <tbody>
             <tr>
-              {renderCriteriaCell(CRITERIA_MAPPING.logInRealTime)}
-              {renderBadgeCell("BRONZE", "default", "logInRealTime")}
-              {renderBadgeCell("ARGENT", "default", "logInRealTime")}
-              {renderBadgeCell("OR", "default", "logInRealTime")}
-              {renderBadgeCell("DIAMANT", "default", "logInRealTime")}
-              {renderScoreCell(calculateScore.logInRealTime)}
-            </tr>
-
-            <tr>
-              {renderCriteriaCell(CRITERIA_MAPPING.notTooManyChanges)}
-              {renderBadgeCell(
+              {renderCriteriaCell(CRITERIA_LABELS.logInRealTime)}
+              {renderDataCell(
                 "BRONZE",
-                "notTooManyChanges",
-                "notTooManyChanges"
+                CERTIFICATE_LEVELS.BRONZE.percentage,
+                "%"
               )}
-              {renderBadgeCell(
+              {renderDataCell(
                 "ARGENT",
-                "notTooManyChanges",
-                "notTooManyChanges"
+                CERTIFICATE_LEVELS.ARGENT.percentage,
+                "%"
               )}
-              {renderBadgeCell("OR", "notTooManyChanges", "notTooManyChanges")}
-              {renderBadgeCell(
+              {renderDataCell("OR", CERTIFICATE_LEVELS.OR.percentage, "%")}
+              {renderDataCell(
                 "DIAMANT",
-                "notTooManyChanges",
-                "notTooManyChanges"
+                CERTIFICATE_LEVELS.DIAMANT.percentage,
+                "%"
               )}
-              {renderScoreCell(calculateScore.notTooManyChanges)}
+              {renderScoreCell((calculateScore.logInRealTime * 100).toFixed(0))}
             </tr>
 
             <tr>
-              {renderCriteriaCell(CRITERIA_MAPPING.beCompliant)}
-              {renderBadgeCellWithScore("BRONZE", 0, "beCompliant")}
-              {renderBadgeCellWithScore("ARGENT", 2, "beCompliant")}
-              {renderBadgeCellWithScore("OR", 4, "beCompliant")}
-              {renderBadgeCellWithScore("DIAMANT", 6, "beCompliant")}
-              {renderScoreCell(calculateScore.beCompliant, true)}
+              {renderCriteriaCell(CRITERIA_LABELS.adminChanges)}
+              {renderDataCell("BRONZE", null, "%", "adminChanges")}
+              {renderDataCell("ARGENT", null, "%", "adminChanges")}
+              {renderDataCell("OR", null, "%", "adminChanges")}
+              {renderDataCell("DIAMANT", null, "%", "adminChanges")}
+              {renderScoreCell((calculateScore.adminChanges * 100).toFixed(0))}
+            </tr>
+
+            <tr>
+              {renderCriteriaCell(CRITERIA_LABELS.compliancy)}
+              {renderDataCell("BRONZE", 1, "/6")}
+              {renderDataCell("ARGENT", 2, "/6")}
+              {renderDataCell("OR", 4, "/6")}
+              {renderDataCell("DIAMANT", 6, "/6")}
+              {renderScoreCell(calculateScore.compliancy, "/6")}
             </tr>
           </tbody>
         </table>
       </div>
 
-      {/* Level-specific guidance messages - avec espacement standard */}
       <div className={cx(fr.cx("fr-mt-6w"))}>
         {renderLevelGuidanceMessage()}
       </div>
