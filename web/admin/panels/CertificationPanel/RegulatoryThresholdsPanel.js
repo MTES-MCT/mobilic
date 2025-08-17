@@ -16,7 +16,6 @@ export default function RegulatoryThresholdsPanel({
     refetch: refreshData
   } = useCompanyRegulatoryScore(companyWithInfo?.id);
 
-  // Convert company-wide score data to legacy format for RegulatoryThresholdsGrid
   const hasData = Boolean(regulatoryScore?.details?.length);
   const regulatoryDataForGrid = regulatoryScore;
 

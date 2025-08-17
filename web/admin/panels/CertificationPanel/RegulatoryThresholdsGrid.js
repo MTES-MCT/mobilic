@@ -162,13 +162,13 @@ function findRegulatoryDataByType(regulatoryData, backendType) {
       );
 
       if (matchingComputation) {
-        const result = {
-          success: matchingComputation.success,
-          extra: matchingComputation.extra,
-          day: dayData.day,
-          regulationRule: matchingComputation.regulationRule
-        };
+        return matchingComputation;
       }
+      // TODO: Fix was needed here because this block was empty and always returned null.
+      // This function should return the matching computation when found, but currently
+      // the data comes from mockup in web/admin/utils/useCompanyRegulatoryScore.js
+      // Once the backend provides real regulationComputations data via GraphQL,
+      // this function will work correctly to find regulatory data by type.
     }
   }
 
