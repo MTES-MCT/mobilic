@@ -3,7 +3,6 @@ import Typography from "@mui/material/Typography";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import CertificateCriteriaTable from "./CertificateCriteriaTable";
-import { useRegulatoryScore } from "./useRegulatoryScore";
 import RegulatoryThresholdsPanel from "./RegulatoryThresholdsPanel";
 import CertificateFriseBadges from "./CertificateFriseBadges";
 import { fr } from "@codegouvfr/react-dsfr";
@@ -13,7 +12,6 @@ import { useCertificationInfo } from "../../utils/certificationInfo";
 
 export default function CertificationPanel() {
   const { companyWithInfo, loadingInfo } = useCertificationInfo();
-  const regulatoryScore = useRegulatoryScore(companyWithInfo?.id);
 
   const isCertified = useMemo(() => {
     if (!companyWithInfo?.currentCompanyCertification?.certificateCriterias)
@@ -132,11 +130,7 @@ export default function CertificationPanel() {
 
             {!loadingInfo && companyWithInfo && !companyWithInfo.hasNoActivity && (
               <div className={cx(fr.cx("fr-mt-6w"))}>
-                <RegulatoryThresholdsPanel
-                  companyId={companyWithInfo.id}
-                  regulatoryScore={regulatoryScore}
-                  companyWithInfo={companyWithInfo}
-                />
+                <RegulatoryThresholdsPanel />
               </div>
             )}
 
@@ -157,6 +151,6 @@ export default function CertificationPanel() {
   );
 
   async function handleDownloadCertificate() {
-    console.log("Download certificate functionality to be implemented");
+    // TODO
   }
 }

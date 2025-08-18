@@ -3,46 +3,19 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import CircularProgress from "@mui/material/CircularProgress";
 import RegulatoryThresholdsGrid from "./RegulatoryThresholdsGrid";
-import { useCompanyRegulatoryScore } from "../../utils/useCompanyRegulatoryScore";
+import { useRegulatoryScore } from "./useRegulatoryScore";
+import { useCertificationInfo } from "../../utils/certificationInfo";
 
-export default function RegulatoryThresholdsPanel({
-  companyWithInfo = {},
-  className = ""
-}) {
-  const {
-    regulatoryScore,
-    loading,
-    error,
-    refetch: refreshData
-  } = useCompanyRegulatoryScore(companyWithInfo?.id);
-
-  const hasData = Boolean(regulatoryScore?.details?.length);
-  const regulatoryDataForGrid = regulatoryScore;
+export default function RegulatoryThresholdsPanel({ className = "" }) {
+  const { loadingInfo } = useCertificationInfo();
+  const regulatoryScore = useRegulatoryScore();
 
   return (
     <div className={className}>
-      {error && (
-        <div className={cx(fr.cx("fr-mb-4w"))}>
-          <div className={cx(fr.cx("fr-callout", "fr-callout--error"))}>
-            <h4 className={cx(fr.cx("fr-callout__title"))}>
-              Erreur de chargement des données
-            </h4>
-            <p className={cx(fr.cx("fr-callout__text", "fr-mb-2w"))}>
-              Une erreur s'est produite lors du chargement des données
-              réglementaires : {error}
-            </p>
-            <button
-              className={cx(fr.cx("fr-btn", "fr-btn--secondary", "fr-btn--sm"))}
-              onClick={refreshData}
-            >
-              Réessayer
-            </button>
-          </div>
-        </div>
-      )}
-
-      {!hasData ? (
-        <NoRegulatoryDataMessage loading={loading} />
+      {loadingInfo ? (
+        <NoRegulatoryDataMessage loading={true} />
+      ) : !regulatoryScore?.details?.length ? (
+        <NoRegulatoryDataMessage loading={false} />
       ) : (
         <>
           <h3 className={cx(fr.cx("fr-h3", "fr-mb-6w"))}>
@@ -54,7 +27,7 @@ export default function RegulatoryThresholdsPanel({
                 Seuils journaliers
               </h4>
               <RegulatoryThresholdsGrid
-                regulatoryData={regulatoryDataForGrid}
+                regulatoryData={regulatoryScore}
                 showOnlyDaily={true}
               />
             </div>
@@ -64,7 +37,7 @@ export default function RegulatoryThresholdsPanel({
                 Seuils hebdomadaires
               </h4>
               <RegulatoryThresholdsGrid
-                regulatoryData={regulatoryDataForGrid}
+                regulatoryData={regulatoryScore}
                 showOnlyWeekly={true}
               />
             </div>

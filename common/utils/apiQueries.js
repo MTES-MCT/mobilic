@@ -2274,6 +2274,7 @@ export const COMPANY_CERTIFICATION_COMMUNICATION_QUERY = gql`
           logInRealTime
           attributionDate
           expirationDate
+          info
         }
       }
     }

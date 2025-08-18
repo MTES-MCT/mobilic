@@ -149,27 +149,24 @@ function processThresholdsByCategory(category, regulatoryData) {
 }
 
 function findRegulatoryDataByType(regulatoryData, backendType) {
-  if (!regulatoryData || !regulatoryData.regulationComputations) {
+  // New data structure from useRegulatoryScore hook uses 'details' array
+  if (!regulatoryData || !regulatoryData.details) {
     return null;
   }
 
-  for (const dayData of regulatoryData.regulationComputations) {
-    if (dayData.regulationComputations) {
-      const matchingComputation = dayData.regulationComputations.find(
-        computation =>
-          computation.regulationCheck &&
-          computation.regulationCheck.type === backendType
-      );
+  // Find matching threshold data by type
+  const matchingDetail = regulatoryData.details.find(
+    detail => detail.type === backendType
+  );
 
-      if (matchingComputation) {
-        return matchingComputation;
-      }
-      // TODO: Fix was needed here because this block was empty and always returned null.
-      // This function should return the matching computation when found, but currently
-      // the data comes from mockup in web/admin/utils/useCompanyRegulatoryScore.js
-      // Once the backend provides real regulationComputations data via GraphQL,
-      // this function will work correctly to find regulatory data by type.
-    }
+  if (matchingDetail) {
+    return {
+      success: matchingDetail.compliant,
+      type: matchingDetail.type,
+      totalAlerts: matchingDetail.totalAlerts,
+      significantAlerts: matchingDetail.significantAlerts,
+      alertDetails: matchingDetail.alertDetails
+    };
   }
 
   return null;
