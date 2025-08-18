@@ -151,6 +151,7 @@ export default function CertificationPanel() {
   );
 
   async function handleDownloadCertificate() {
-    // TODO
+    console.log("Certificate download functionality not yet implemented");
+    // TODO: Implement certificate download API call
   }
 }

@@ -69,21 +69,6 @@ export const THRESHOLDS_BY_CATEGORY = {
   weekly: ["maximumWorkedDaysInWeek", "maximumWorkInCalendarWeek"]
 };
 
-export const THRESHOLD_LABEL_MAPPING = {
-  "Temps de pause respecté": "enoughBreak",
-  "Durée maximale de travail ininterrompu respectée":
-    "maximumUninterruptedWorkTime",
-  "Repos journalier non respecté": "minimumDailyRest",
-  "Durée du travail quotidien non respectée": "maximumWorkDayTime",
-  "Repos hebdomadaire respecté": "maximumWorkedDaysInWeek",
-  "Durée du travail hebdomadaire non respectée": "maximumWorkInCalendarWeek"
-};
-
-export const TAB_LABELS = {
-  criteria: "Détail des critères",
-  thresholds: "Respect des seuils réglementaires"
-};
-
 export const CATEGORY_LABELS = {
   daily: "Seuils journaliers",
   weekly: "Seuils hebdomadaires"

@@ -15,8 +15,8 @@ export default function RegulatoryThresholdItem({
     return null;
   }
 
-  const statusClass = isCompliant ? "success" : "error";
-  const conditionalTitle = isCompliant
+  const complianceStatusClass = isCompliant ? "success" : "error";
+  const titleByComplianceStatus = isCompliant
     ? thresholdConfig.label
     : thresholdConfig.labelNonCompliant;
 
@@ -37,7 +37,10 @@ export default function RegulatoryThresholdItem({
           }}
           className="regulatory-threshold-item"
         >
-          <Accordion label={conditionalTitle} className={statusClass}>
+          <Accordion
+            label={titleByComplianceStatus}
+            className={complianceStatusClass}
+          >
             {thresholdConfig.explanation}
           </Accordion>
         </div>

@@ -124,24 +124,24 @@ export default function RegulatoryThresholdsGrid({
 }
 
 function processThresholdsByCategory(category, regulatoryData) {
-  const thresholdConfigs = getThresholdsByCategory(category);
+  const categoryThresholds = getThresholdsByCategory(category);
 
-  return thresholdConfigs
+  return categoryThresholds
     .map(thresholdConfig => {
       if (!thresholdConfig) {
         return null;
       }
 
       const backendType = thresholdConfig.backendType;
-      const matchingData = findRegulatoryDataByType(
+      const thresholdDetail = findRegulatoryDataByType(
         regulatoryData,
         backendType
       );
 
       return {
         thresholdType: backendType,
-        isCompliant: matchingData ? matchingData.success : false,
-        data: matchingData,
+        isCompliant: thresholdDetail ? thresholdDetail.success : false,
+        data: thresholdDetail,
         config: thresholdConfig
       };
     })

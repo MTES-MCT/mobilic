@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import { jsToUnixTimestamp, prettyFormatDay } from "common/utils/time";
-import { CERTIFICATION_CRITERIAS } from "./certifiationCriterias";
+import { CERTIFICATION_CRITERIAS } from "./certificationCriterias";
 import CertificationCriteriaSingleResult from "./CertificationCriteriaSingleResult";
 import { Link } from "../../../common/LinkButton";
 import { fr } from "@codegouvfr/react-dsfr";
