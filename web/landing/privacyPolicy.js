@@ -430,7 +430,7 @@ function PrivacyPolicyContent() {
           </p>
           <p>
             Toutefois, votre consentement est nécessaire et se matérialise par
-            un bandeau cookies s&lsquo;agissant de Crisp et Google Ads.
+            un bandeau cookies s&lsquo;agissant de Crisp.
           </p>
           <p>
             Pour aller plus loin, vous pouvez consulter les fiches proposées par
