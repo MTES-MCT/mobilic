@@ -45,11 +45,14 @@ export default function RegulatoryThresholdsPanel({
         <NoRegulatoryDataMessage loading={loading} />
       ) : (
         <>
+          <h3 className={cx(fr.cx("fr-h3", "fr-mb-6w"))}>
+            Respect des seuils réglementaires
+          </h3>
           <div className={cx(fr.cx("fr-grid-row", "fr-grid-row--gutters"))}>
             <div className={cx(fr.cx("fr-col-md-6"))}>
-              <h3 className={cx(fr.cx("fr-h4", "fr-mb-4w"))}>
+              <h4 className={cx(fr.cx("fr-h4", "fr-mb-4w"))}>
                 Seuils journaliers
-              </h3>
+              </h4>
               <RegulatoryThresholdsGrid
                 regulatoryData={regulatoryDataForGrid}
                 showOnlyDaily={true}
@@ -57,9 +60,9 @@ export default function RegulatoryThresholdsPanel({
             </div>
 
             <div className={cx(fr.cx("fr-col-md-6"))}>
-              <h3 className={cx(fr.cx("fr-h4", "fr-mb-4w"))}>
+              <h4 className={cx(fr.cx("fr-h4", "fr-mb-4w"))}>
                 Seuils hebdomadaires
-              </h3>
+              </h4>
               <RegulatoryThresholdsGrid
                 regulatoryData={regulatoryDataForGrid}
                 showOnlyWeekly={true}

@@ -130,7 +130,7 @@ export default function CertificateCriteriaTable({
         DIAMANT: adminChanges <= 0.01
       },
       compliancy: {
-        BRONZE: compliancy >= 1,
+        BRONZE: compliancy >= 0,
         ARGENT: compliancy >= 2,
         OR: compliancy >= 4,
         DIAMANT: compliancy >= 6
@@ -143,10 +143,19 @@ export default function CertificateCriteriaTable({
 
     for (let i = levels.length - 1; i >= 0; i--) {
       const level = levels[i];
-      const allCriteriaMet = Object.values(reachedLevels).every(
-        criteria => criteria[level]
-      );
-      if (allCriteriaMet) {
+
+      let criteriaMet;
+      if (level === "BRONZE") {
+        criteriaMet =
+          reachedLevels.logInRealTime[level] &&
+          reachedLevels.adminChanges[level];
+      } else {
+        criteriaMet = Object.values(reachedLevels).every(
+          criteria => criteria[level]
+        );
+      }
+
+      if (criteriaMet) {
         return level;
       }
     }
@@ -312,27 +321,10 @@ export default function CertificateCriteriaTable({
     if (!certificationLevel) {
       return (
         <div className={cx(fr.cx("fr-mb-4w"))}>
-          <h3
-            style={{
-              fontSize: "22px",
-              fontWeight: 700,
-              lineHeight: "28px",
-              color: "#161616",
-              margin: "0 0 16px 0"
-            }}
-          >
+          <h3 className={cx(fr.cx("fr-h3", "fr-mb-4w"))}>
             Comment obtenir le premier niveau ?
           </h3>
-          <h4
-            style={{
-              fontSize: "16px",
-              fontWeight: 400,
-              lineHeight: "24px",
-              color: "#3A3A3A",
-              margin: "0 0 16px 0",
-              textAlign: "justify"
-            }}
-          >
+          <h4 className={cx(fr.cx("fr-h4", "fr-mb-4w"))}>
             Vous pouvez obtenir le niveau bronze !
           </h4>
           <ul
@@ -408,27 +400,10 @@ export default function CertificateCriteriaTable({
     const levelMessages = {
       BRONZE: (
         <div className={cx(fr.cx("fr-mb-4w"))}>
-          <h3
-            style={{
-              fontSize: "22px",
-              fontWeight: 700,
-              lineHeight: "28px",
-              color: "#161616",
-              margin: "0 0 16px 0"
-            }}
-          >
+          <h3 className={cx(fr.cx("fr-h3", "fr-mb-4w"))}>
             Comment passer au niveau suivant ?
           </h3>
-          <h4
-            style={{
-              fontSize: "16px",
-              fontWeight: 400,
-              lineHeight: "24px",
-              color: "#3A3A3A",
-              margin: "0 0 16px 0",
-              textAlign: "justify"
-            }}
-          >
+          <h4 className={cx(fr.cx("fr-h4", "fr-mb-4w"))}>
             Vous êtes sur la bonne voie !
           </h4>
           <ul
@@ -468,27 +443,10 @@ export default function CertificateCriteriaTable({
       ),
       ARGENT: (
         <div className={cx(fr.cx("fr-mb-4w"))}>
-          <h3
-            style={{
-              fontSize: "22px",
-              fontWeight: 700,
-              lineHeight: "28px",
-              color: "#161616",
-              margin: "0 0 16px 0"
-            }}
-          >
+          <h3 className={cx(fr.cx("fr-h3", "fr-mb-4w"))}>
             Comment passer au niveau suivant ?
           </h3>
-          <h4
-            style={{
-              fontSize: "16px",
-              fontWeight: 400,
-              lineHeight: "24px",
-              color: "#3A3A3A",
-              margin: "0 0 16px 0",
-              textAlign: "justify"
-            }}
-          >
+          <h4 className={cx(fr.cx("fr-h4", "fr-mb-4w"))}>
             Vous pouvez faire encore mieux !
           </h4>
           <ul
@@ -516,27 +474,10 @@ export default function CertificateCriteriaTable({
       ),
       OR: (
         <div className={cx(fr.cx("fr-mb-4w"))}>
-          <h3
-            style={{
-              fontSize: "22px",
-              fontWeight: 700,
-              lineHeight: "28px",
-              color: "#161616",
-              margin: "0 0 16px 0"
-            }}
-          >
+          <h3 className={cx(fr.cx("fr-h3", "fr-mb-4w"))}>
             Comment passer au niveau suivant ?
           </h3>
-          <h4
-            style={{
-              fontSize: "16px",
-              fontWeight: 400,
-              lineHeight: "24px",
-              color: "#3A3A3A",
-              margin: "0 0 16px 0",
-              textAlign: "justify"
-            }}
-          >
+          <h4 className={cx(fr.cx("fr-h4", "fr-mb-4w"))}>
             Vous y êtes presque !
           </h4>
           <ul
@@ -626,7 +567,7 @@ export default function CertificateCriteriaTable({
 
             <tr>
               {renderCriteriaCell(CRITERIA_LABELS.compliancy)}
-              {renderDataCell("BRONZE", 1, "/6")}
+              {renderDataCell("BRONZE", 0, "/6")}
               {renderDataCell("ARGENT", 2, "/6")}
               {renderDataCell("OR", 4, "/6")}
               {renderDataCell("DIAMANT", 6, "/6")}

@@ -9,6 +9,7 @@ import { CERTIFICATION_CRITERIAS } from "./certifiationCriterias";
 import CertificationCriteriaSingleResult from "./CertificationCriteriaSingleResult";
 import { Link } from "../../../common/LinkButton";
 import { fr } from "@codegouvfr/react-dsfr";
+import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 
 const useStyles = makeStyles(theme => ({
   italicInfo: {
@@ -76,9 +77,9 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
 
   return [
     <Box key={10} mt={4}>
-      <Typography variant="h4" component="h2">
+      <h3 className={cx(fr.cx("fr-h3", "fr-mb-4w"))}>
         Synthèse de l'obtention des critères
-      </Typography>
+      </h3>
       {companyWithInfo.currentCompanyCertification?.certificateCriterias && (
         <Typography mb={1} className={classes.italicInfo}>
           données calculées le {criteriaCalculationDate}

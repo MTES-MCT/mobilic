@@ -96,16 +96,7 @@ export default function CertificationPanel() {
           <div className={cx(fr.cx("fr-container", "fr-mt-4w"))}>
             <div className={cx(fr.cx("fr-mb-4w"))}>
               {!isCertified && (
-                <h2
-                  style={{
-                    fontFamily: "Marianne",
-                    fontWeight: 700,
-                    fontSize: "28px",
-                    lineHeight: "36px",
-                    color: "#161616",
-                    margin: "0 0 20px 0"
-                  }}
-                >
+                <h2 className={cx(fr.cx("fr-h2", "fr-mb-5w"))}>
                   Les critères de certification
                 </h2>
               )}
@@ -115,16 +106,7 @@ export default function CertificationPanel() {
                     margin: "0 0 20px 0"
                   }}
                 >
-                  <h2
-                    style={{
-                      fontFamily: "Marianne",
-                      fontWeight: 700,
-                      fontSize: "22px",
-                      lineHeight: "28px",
-                      color: "#161616",
-                      margin: "0 0 8px 0"
-                    }}
-                  >
+                  <h2 className={cx(fr.cx("fr-h2", "fr-mb-2w"))}>
                     Votre niveau de certification
                   </h2>
                   <p
