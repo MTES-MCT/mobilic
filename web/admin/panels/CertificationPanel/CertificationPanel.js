@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import Typography from "@mui/material/Typography";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
@@ -9,9 +9,11 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import Notice from "../../../common/Notice";
 import { useCertificationInfo } from "../../utils/certificationInfo";
+import CertificateBadgeEmbedModal from "./CertificateBadgeEmbedModal";
 
 export default function CertificationPanel() {
   const { companyWithInfo, loadingInfo } = useCertificationInfo();
+  const [badgeModalOpen, setBadgeModalOpen] = useState(false);
 
   const isCertified = useMemo(() => {
     if (!companyWithInfo?.currentCompanyCertification?.certificateCriterias)
@@ -147,11 +149,19 @@ export default function CertificationPanel() {
           </div>
         )}
       </Box>
+
+      <CertificateBadgeEmbedModal
+        open={badgeModalOpen}
+        onClose={() => setBadgeModalOpen(false)}
+        companyId={companyWithInfo?.id}
+        certificateLevel={
+          companyWithInfo?.currentCompanyCertification?.certificationMedal
+        }
+      />
     </Box>
   );
 
-  async function handleDownloadCertificate() {
-    console.log("Certificate download functionality not yet implemented");
-    // TODO: Implement certificate download API call
+  function handleDownloadCertificate() {
+    setBadgeModalOpen(true);
   }
 }

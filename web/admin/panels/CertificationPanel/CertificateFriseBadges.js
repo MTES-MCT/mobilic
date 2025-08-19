@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { backendToFrontend } from "../../utils/certificationConstants";
 
 import { ReactComponent as BronzeActiveBadge } from "common/assets/images/certificat/Frise-item-clique/bronze_active_badge.svg";
 import { ReactComponent as BronzeBadge } from "common/assets/images/certificat/Frise-item-desactive/bronze_badge.svg";
@@ -36,13 +37,6 @@ const BADGE_COMPONENTS = {
   }
 };
 
-const BACKEND_TO_FRONTEND_MEDAL_MAPPING = {
-  BRONZE: "BRONZE",
-  SILVER: "ARGENT",
-  GOLD: "OR",
-  DIAMOND: "DIAMANT"
-};
-
 export default function CertificateFriseBadges({
   companyWithInfo,
   onDownloadCertificate = null
@@ -51,10 +45,8 @@ export default function CertificateFriseBadges({
     if (!companyWithInfo) return null;
 
     if (companyWithInfo.currentCompanyCertification?.certificationMedal) {
-      return (
-        BACKEND_TO_FRONTEND_MEDAL_MAPPING[
-          companyWithInfo.currentCompanyCertification.certificationMedal
-        ] || null
+      return backendToFrontend(
+        companyWithInfo.currentCompanyCertification.certificationMedal
       );
     }
 
@@ -184,7 +176,7 @@ export default function CertificateFriseBadges({
             onClick={achievedLevel ? onDownloadCertificate : undefined}
             disabled={!achievedLevel}
           >
-            Télécharger le certificat
+            Afficher le certificat sur mon site internet
           </Button>
         </div>
       </div>
