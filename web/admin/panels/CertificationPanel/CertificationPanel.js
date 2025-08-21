@@ -15,28 +15,7 @@ export default function CertificationPanel() {
   const { companyWithInfo, loadingInfo } = useCertificationInfo();
   const [badgeModalOpen, setBadgeModalOpen] = useState(false);
 
-  const isCertified = useMemo(() => {
-    if (!companyWithInfo?.currentCompanyCertification?.certificateCriterias)
-      return false;
-
-    if (companyWithInfo.currentCompanyCertification?.certificationMedal) {
-      return ["BRONZE", "SILVER", "GOLD", "DIAMOND"].includes(
-        companyWithInfo.currentCompanyCertification.certificationMedal
-      );
-    }
-
-    const logInRealTime =
-      companyWithInfo.currentCompanyCertification.certificateCriterias
-        .logInRealTime ?? 0;
-    const adminChanges =
-      companyWithInfo.currentCompanyCertification.certificateCriterias
-        .adminChanges ?? 1;
-    const compliancy =
-      companyWithInfo.currentCompanyCertification.certificateCriterias
-        .compliancy ?? 0;
-
-    return logInRealTime >= 0.6 && adminChanges <= 0.3 && compliancy >= 1;
-  }, [companyWithInfo]);
+  const isCertified = companyWithInfo?.currentCompanyCertification?.isCertified;
 
   const noCertificateText = useMemo(() => {
     if (loadingInfo) {
