@@ -5,10 +5,11 @@ const {
   clearUpdateTimeCookie,
   snooze,
   shouldUpdate
-} = createUpdateTimeManager("nextUpdateBusinessTypeTime", 1);
+} = createUpdateTimeManager("nextUpdateNbWorkerTime", 1);
 
-export const shouldUpdateBusinessType = () => {
-  return shouldUpdate(true);
+export const shouldUpdateNbWorker = company => {
+  const hasNbWorkers = company?.nbWorkers && company.nbWorkers > 0;
+  return shouldUpdate(!hasNbWorkers);
 };
 
 export { clearUpdateTimeCookie, checkUpdateTimeCookieExists, snooze };

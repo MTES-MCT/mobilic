@@ -15,8 +15,10 @@ import {
   updateCompanyDetailsReducer,
   updateCompanyIdReducer,
   updateCompanyNameAndPhoneNumberReducer,
+  updateCompanyNbWorkerSnoozeReducer,
   updateEmploymentIdReducer,
-  updateShouldSeeCertificateInfoReducer
+  updateShouldSeeCertificateInfoReducer,
+  updateShouldForceNbWorkerInfoReducer
 } from "./sync";
 import {
   createItemsReducer,
@@ -51,6 +53,7 @@ export const ADMIN_ACTIONS = {
   updateCompaniesList: updateCompaniesListReducer,
   updateCompanyId: updateCompanyIdReducer,
   updateShouldSeeCertificateInfo: updateShouldSeeCertificateInfoReducer,
+  updateShouldForceNbWorkerInfo: updateShouldForceNbWorkerInfoReducer,
   updateEmploymentId: updateEmploymentIdReducer,
   updateActivitiesFilters: updateActivitiesFiltersReducer,
   updateValidationsFilters: updateValidationsFiltersReducer,
@@ -61,7 +64,8 @@ export const ADMIN_ACTIONS = {
   addUsers: addUsersReducer,
   putAsideOriginalMissions: putAsideOriginalMissionsReducer,
   revertMissionToOriginalValues: revertMissionToOriginalValuesReducer,
-  updateCompanyNameAndPhoneNumber: updateCompanyNameAndPhoneNumberReducer
+  updateCompanyNameAndPhoneNumber: updateCompanyNameAndPhoneNumberReducer,
+  updateCompanyNbWorkerSnooze: updateCompanyNbWorkerSnoozeReducer
 };
 
 const ADMIN_REDUCERS = {};
