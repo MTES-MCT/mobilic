@@ -100,8 +100,9 @@ export default function CertificateBadgeEmbedModal({
           <div className={cx(fr.cx("fr-mb-4w"))}>
             <p className={cx(fr.cx("fr-mb-3w"))}>
               Intégrez ce certificat sur votre site internet et mettez en
-              évidence votre engagement auprès de vos salariés, vos clients ou
-              vos donneurs d'ordre pour le respect de la réglementation.
+              évident votre engagement pour le respect de la réglementation
+              sociale auprès de vos salariés, vos clients ou vos donneurs
+              d'ordre.
             </p>
 
             <Alert
