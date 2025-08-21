@@ -1,46 +1,28 @@
 import React from "react";
 import { fr } from "@codegouvfr/react-dsfr";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
-import CircularProgress from "@mui/material/CircularProgress";
 import RegulatoryThresholdsGrid from "./RegulatoryThresholdsGrid";
-import { useRegulatoryScore } from "./useRegulatoryScore";
-import { useCertificationInfo } from "../../utils/certificationInfo";
+import { useCompanyCertification } from "../../../common/hooks/useCompanyCertification";
 
-export default function RegulatoryThresholdsPanel({ className = "" }) {
-  const { loadingInfo } = useCertificationInfo();
-  const regulatoryScore = useRegulatoryScore();
+export default function RegulatoryThresholdsPanel({
+  companyWithInfo,
+  className = ""
+}) {
+  const { compliancyReport } = useCompanyCertification(
+    companyWithInfo.currentCompanyCertification
+  );
 
   return (
     <div className={className}>
-      {loadingInfo ? (
-        <NoRegulatoryDataMessage loading={true} />
-      ) : !regulatoryScore?.details?.length ? (
-        <NoRegulatoryDataMessage loading={false} />
+      {!compliancyReport ? (
+        <NoRegulatoryDataMessage />
       ) : (
         <>
           <h3 className={cx(fr.cx("fr-h3", "fr-mb-6w"))}>
             Respect des seuils réglementaires
           </h3>
           <div className={cx(fr.cx("fr-grid-row", "fr-grid-row--gutters"))}>
-            <div className={cx(fr.cx("fr-col-md-6"))}>
-              <h4 className={cx(fr.cx("fr-h4", "fr-mb-4w"))}>
-                Seuils journaliers
-              </h4>
-              <RegulatoryThresholdsGrid
-                regulatoryData={regulatoryScore}
-                showOnlyDaily={true}
-              />
-            </div>
-
-            <div className={cx(fr.cx("fr-col-md-6"))}>
-              <h4 className={cx(fr.cx("fr-h4", "fr-mb-4w"))}>
-                Seuils hebdomadaires
-              </h4>
-              <RegulatoryThresholdsGrid
-                regulatoryData={regulatoryScore}
-                showOnlyWeekly={true}
-              />
-            </div>
+            <RegulatoryThresholdsGrid compliancyReport={compliancyReport} />
           </div>
         </>
       )}
@@ -48,28 +30,7 @@ export default function RegulatoryThresholdsPanel({ className = "" }) {
   );
 }
 
-function NoRegulatoryDataMessage({ loading = false }) {
-  if (loading) {
-    return (
-      <div
-        className={cx(fr.cx("fr-p-4w"))}
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center"
-        }}
-      >
-        <div
-          role="status"
-          aria-live="polite"
-          aria-label="Chargement des données réglementaires"
-        >
-          <CircularProgress color="primary" size={24} />
-        </div>
-      </div>
-    );
-  }
-
+function NoRegulatoryDataMessage() {
   return (
     <div className={cx(fr.cx("fr-callout", "fr-callout--info"))}>
       <h4 className={cx(fr.cx("fr-callout__title"))}>

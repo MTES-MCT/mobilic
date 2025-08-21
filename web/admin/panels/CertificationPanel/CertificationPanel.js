@@ -111,7 +111,7 @@ export default function CertificationPanel() {
 
             {!loadingInfo && companyWithInfo && !companyWithInfo.hasNoActivity && (
               <div className={cx(fr.cx("fr-mt-6w"))}>
-                <RegulatoryThresholdsPanel />
+                <RegulatoryThresholdsPanel companyWithInfo={companyWithInfo} />
               </div>
             )}
 

@@ -91,7 +91,7 @@ export function EmploymentInfoCard({
     frenchMedalLabel,
     TextBadge,
     CertificationImage
-  } = useCompanyCertification(employment.company.currentCompanyCertification);
+  } = useCompanyCertification(employment.company?.currentCompanyCertification);
 
   const emailsCurrentAdminsDisplay = useMemo(
     () => (

@@ -1,25 +1,8 @@
 import React from "react";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 import Box from "@mui/material/Box";
-import { getThresholdConfig } from "./regulatoryThresholdConstants";
 
-export default function RegulatoryThresholdItem({
-  thresholdType = "",
-  isCompliant = false,
-  className = ""
-}) {
-  const thresholdConfig = getThresholdConfig(thresholdType);
-
-  if (!thresholdConfig) {
-    console.warn(`Unknown threshold type: ${thresholdType}`);
-    return null;
-  }
-
-  const complianceStatusClass = isCompliant ? "success" : "error";
-  const titleByComplianceStatus = isCompliant
-    ? thresholdConfig.label
-    : thresholdConfig.labelNonCompliant;
-
+export default function RegulatoryThresholdItem({ compliancyItem }) {
   return (
     <>
       <style>{`
@@ -30,7 +13,7 @@ export default function RegulatoryThresholdItem({
           padding-right: 1rem !important;
         }
       `}</style>
-      <Box sx={{ marginY: 1 }} className={className}>
+      <Box sx={{ marginY: 1 }}>
         <div
           style={{
             pointerEvents: "none"
@@ -38,11 +21,13 @@ export default function RegulatoryThresholdItem({
           className="regulatory-threshold-item"
         >
           <Accordion
-            label={titleByComplianceStatus}
-            className={complianceStatusClass}
-          >
-            {thresholdConfig.explanation}
-          </Accordion>
+            label={
+              compliancyItem.isOk
+                ? compliancyItem.labelOk
+                : compliancyItem.labelKo
+            }
+            className={compliancyItem.isOk ? "success" : "error"}
+          />
         </div>
       </Box>
     </>
