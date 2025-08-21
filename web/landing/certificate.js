@@ -17,7 +17,7 @@ import { usePageTitle } from "../common/UsePageTitle";
 import { Input } from "../common/forms/Input";
 import Notice from "../common/Notice";
 import { Main } from "../common/semantics/Main";
-import { CertificationImage } from "../common/hooks/useCompanyCertification";
+import { CertificationImage } from "../common/certification";
 
 const useStyles = makeStyles(theme => ({
   explanation: {

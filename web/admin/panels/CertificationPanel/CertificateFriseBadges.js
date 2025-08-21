@@ -1,40 +1,13 @@
 import React from "react";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-
-import { ReactComponent as BronzeActiveBadge } from "common/assets/images/certificat/Frise-item-clique/bronze_active_badge.svg";
-import { ReactComponent as BronzeBadge } from "common/assets/images/certificat/Frise-item-desactive/bronze_badge.svg";
-import { ReactComponent as ArgentActiveBadge } from "common/assets/images/certificat/Frise-item-clique/argent_active_badge.svg";
-import { ReactComponent as ArgentBadge } from "common/assets/images/certificat/Frise-item-desactive/argent_badge.svg";
-import { ReactComponent as OrActiveBadge } from "common/assets/images/certificat/Frise-item-clique/or_active_badge.svg";
-import { ReactComponent as OrBadge } from "common/assets/images/certificat/Frise-item-desactive/or_badge.svg";
-import { ReactComponent as DiamantActiveBadge } from "common/assets/images/certificat/Frise-item-clique/diamant_active_badge.svg";
-import { ReactComponent as DiamantBadge } from "common/assets/images/certificat/Frise-item-desactive/diamant_badge.svg";
 import { useCompanyCertification } from "../../../common/hooks/useCompanyCertification";
+import { renderBadge } from "../../../common/certification";
 
 const CERTIFICATE_LEVELS = {
   BRONZE: { label: "Bronze" },
   SILVER: { label: "Argent" },
   GOLD: { label: "Or" },
   DIAMOND: { label: "Diamant" }
-};
-
-const BADGE_COMPONENTS = {
-  BRONZE: {
-    inactive: BronzeBadge,
-    active: BronzeActiveBadge
-  },
-  SILVER: {
-    inactive: ArgentBadge,
-    active: ArgentActiveBadge
-  },
-  GOLD: {
-    inactive: OrBadge,
-    active: OrActiveBadge
-  },
-  DIAMOND: {
-    inactive: DiamantBadge,
-    active: DiamantActiveBadge
-  }
 };
 
 export default function CertificateFriseBadges({
@@ -44,37 +17,6 @@ export default function CertificateFriseBadges({
   const { medal, frenchMedalLabel, isCertified } = useCompanyCertification(
     companyWithInfo.currentCompanyCertification
   );
-
-  const renderBadgeItem = level => {
-    const isAchieved = medal === level;
-    const BadgeComponent =
-      BADGE_COMPONENTS[level]?.[isAchieved ? "active" : "inactive"];
-
-    if (!BadgeComponent) {
-      return null;
-    }
-
-    return (
-      <div
-        key={level}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flex: isAchieved ? "none" : 1,
-          minHeight: "96px"
-        }}
-      >
-        <BadgeComponent
-          style={{
-            width: "auto",
-            height: "auto",
-            maxWidth: "100%"
-          }}
-        />
-      </div>
-    );
-  };
 
   return (
     <div
@@ -160,7 +102,9 @@ export default function CertificateFriseBadges({
           justifyContent: "stretch"
         }}
       >
-        {Object.keys(CERTIFICATE_LEVELS).map(level => renderBadgeItem(level))}
+        {Object.keys(CERTIFICATE_LEVELS).map(m =>
+          renderBadge(medal, medal === m)
+        )}
       </div>
 
       <div
