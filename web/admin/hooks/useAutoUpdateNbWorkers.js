@@ -29,8 +29,6 @@ export function useAutoUpdateNbWorkers(company, validEmployments, adminStore) {
             type: ADMIN_ACTIONS.updateCompanyNameAndPhoneNumber,
             payload: {
               companyId: company.id,
-              companyName: company.name,
-              companyPhoneNumber: company.phoneNumber,
               companyNbWorkers: currentCount
             }
           });
@@ -59,8 +57,6 @@ export function useAutoUpdateNbWorkers(company, validEmployments, adminStore) {
     company?.nbWorkers,
     api,
     adminStore,
-    alerts,
-    company?.name,
-    company?.phoneNumber
+    alerts
   ]);
 }
