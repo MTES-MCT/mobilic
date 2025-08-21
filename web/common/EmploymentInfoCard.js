@@ -34,7 +34,6 @@ import { formatActivity } from "common/utils/businessTypes";
 import Notice from "./Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Box, Stack } from "@mui/material";
-import { CertificationImage } from "./Certification";
 import { useIsWidthDown } from "common/utils/useWidth";
 import { FieldTitle } from "./typography/FieldTitle";
 import { ExternalLink } from "./ExternalLink";
@@ -89,9 +88,9 @@ export function EmploymentInfoCard({
 
   const {
     isCertified,
-    medal: certificationMedal,
     frenchMedalLabel,
-    TextBadge
+    TextBadge,
+    CertificationImage
   } = useCompanyCertification(employment.company.currentCompanyCertification);
 
   const emailsCurrentAdminsDisplay = useMemo(
@@ -338,7 +337,7 @@ export function EmploymentInfoCard({
                     !
                   </Typography>
                 </Box>
-                <CertificationImage medal={certificationMedal} />
+                <CertificationImage />
                 <ExternalLink
                   url="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic/"
                   text="Qu'est-ce que le certificat Mobilic ?"
