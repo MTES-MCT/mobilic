@@ -101,11 +101,11 @@ function _Admin() {
                 type: ADMIN_ACTIONS.updateCompanyId,
                 payload: { companyId: companyId }
               });
+              // Note: filtrage des entreprises certifiées désactivé temporairement
+              // car certificationMedal n'est plus disponible dans ADMIN_COMPANIES_LIST_QUERY
               setCompaniesToAcceptCertificateCommunication(
                 companies?.filter(
-                  company =>
-                    !!company.isCertified &&
-                    company.acceptCertificationCommunication === null
+                  company => company.acceptCertificationCommunication === null
                 )
               );
             },

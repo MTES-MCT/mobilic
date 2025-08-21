@@ -593,7 +593,6 @@ export const ADMIN_COMPANIES_LIST_QUERY = gql`
         name
         siren
         phoneNumber
-        isCertified
         acceptCertificationCommunication
       }
     }
@@ -2266,18 +2265,44 @@ export const COMPANY_CERTIFICATION_COMMUNICATION_QUERY = gql`
     company(id: $companyId) {
       id
       name
-      isCertified
       hasNoActivity
       acceptCertificationCommunication
-      lastDayCertified
-      startLastCertificationPeriod
-      certificateCriterias {
-        creationTime
-        beActive
-        beCompliant
-        notTooManyChanges
-        validateRegularly
-        logInRealTime
+      currentCompanyCertification {
+        isCertified
+        certificationMedal
+        lastDayCertified
+        startLastCertificationPeriod
+        certificateCriterias {
+          compliancy
+          adminChanges
+          logInRealTime
+          attributionDate
+          expirationDate
+          info
+        }
+      }
+    }
+  }
+`;
+
+export const COMPANY_REGULATORY_SCORE_QUERY = gql`
+  query companyRegulatoryScore(
+    $companyId: Int!
+    $fromDate: Date
+    $toDate: Date
+  ) {
+    company(id: $companyId) {
+      id
+      companyRegulatoryScore(fromDate: $fromDate, toDate: $toDate) {
+        compliant
+        total
+        details {
+          type
+          totalAlerts
+          significantAlerts
+          compliant
+          complianceRate
+        }
       }
     }
   }

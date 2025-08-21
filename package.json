@@ -12,7 +12,7 @@
   "dependencies": {
     "@babel/core": "^7.22.6",
     "@babel/runtime": "^7.6.2",
-    "@codegouvfr/react-dsfr": "^1.19.0",
+    "@codegouvfr/react-dsfr": "^1.26.0",
     "@datapunt/matomo-tracker-react": "0.5.1",
     "@emotion/react": "^11.8.1",
     "@emotion/styled": "^11.8.1",
@@ -89,6 +89,7 @@
     "react-qr-reader": "^3.0.0-beta-1",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.3.3",
+    "react-syntax-highlighter": "^15.6.1",
     "react-virtualized": "^9.22.2",
     "react-world-flags": "^1.6.0",
     "recharts": "^2.1.5",

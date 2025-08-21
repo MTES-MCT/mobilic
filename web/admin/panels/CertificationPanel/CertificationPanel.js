@@ -1,80 +1,21 @@
-import React, { useMemo } from "react";
-import { useApi } from "common/utils/api";
-import { useCertificationInfo } from "../../utils/certificationInfo";
-import Box from "@mui/material/Box";
+import React, { useMemo, useState } from "react";
 import Typography from "@mui/material/Typography";
-import {
-  EDIT_COMPANIES_COMMUNICATION_SETTING,
-  HTTP_QUERIES
-} from "common/utils/apiQueries";
-import { usePanelStyles } from "../Company";
-import { Link } from "../../../common/LinkButton";
 import Skeleton from "@mui/material/Skeleton";
-import { CheckboxField } from "../../../common/CheckboxField";
-import { useSnackbarAlerts } from "../../../common/Snackbar";
-import { getMonthsBetweenTwoDates } from "common/utils/time";
-import CertificationCriteriaGlobalResult from "./CertificationCriteriaGlobalResult";
-import { Button } from "@codegouvfr/react-dsfr/Button";
+import Box from "@mui/material/Box";
+import CertificateCriteriaTable from "./CertificateCriteriaTable";
+import RegulatoryThresholdsPanel from "./RegulatoryThresholdsPanel";
+import CertificateFriseBadges from "./CertificateFriseBadges";
+import { fr } from "@codegouvfr/react-dsfr";
+import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import Notice from "../../../common/Notice";
+import { useCertificationInfo } from "../../utils/certificationInfo";
+import CertificateBadgeEmbedModal from "./CertificateBadgeEmbedModal";
 
-export default function CertificationPanel({ company }) {
-  const api = useApi();
-  const alerts = useSnackbarAlerts();
-  const classes = usePanelStyles();
+export default function CertificationPanel() {
   const { companyWithInfo, loadingInfo } = useCertificationInfo();
-  const [
-    acceptCertificationCommunication,
-    setAcceptCertificationCommunication
-  ] = React.useState(null);
+  const [badgeModalOpen, setBadgeModalOpen] = useState(false);
 
-  React.useEffect(() => {
-    setAcceptCertificationCommunication(
-      companyWithInfo.acceptCertificationCommunication
-    );
-  }, [companyWithInfo]);
-
-  const nbMonthSinceLastCertification = useMemo(() => {
-    if (companyWithInfo?.lastDayCertified) {
-      return getMonthsBetweenTwoDates(
-        new Date(companyWithInfo?.lastDayCertified),
-        new Date()
-      );
-    }
-  }, [companyWithInfo]);
-
-  async function changeCommunicationSetting(value) {
-    await api.graphQlMutate(
-      EDIT_COMPANIES_COMMUNICATION_SETTING,
-      {
-        companyIds: [companyWithInfo.id],
-        acceptCertificationCommunication: value
-      },
-      { context: { nonPublicApi: true } }
-    );
-    setAcceptCertificationCommunication(value);
-    alerts.success(
-      "Vos préférences de communication ont bien été prises en compte.",
-      "",
-      6000
-    );
-  }
-
-  const panelTitle = useMemo(() => {
-    if (loadingInfo || !companyWithInfo?.certificateCriterias) {
-      return "Certificat Mobilic";
-    } else if (companyWithInfo.isCertified) {
-      const nbMonthCertified =
-        getMonthsBetweenTwoDates(
-          new Date(companyWithInfo?.startLastCertificationPeriod),
-          new Date()
-        ) + 1;
-      return `Certificat Mobilic : Félicitations, votre entreprise est certifiée depuis ${nbMonthCertified} mois.`;
-    } else {
-      return companyWithInfo.lastDayCertified
-        ? `Certificat Mobilic : Votre entreprise ${companyWithInfo.name} n'est plus certifiée depuis ${nbMonthSinceLastCertification} mois`
-        : `Certificat Mobilic : Votre entreprise ${companyWithInfo.name} n'est pas encore certifiée.`;
-    }
-  }, [loadingInfo, companyWithInfo.isCertified, nbMonthSinceLastCertification]);
+  const isCertified = companyWithInfo?.currentCompanyCertification?.isCertified;
 
   const noCertificateText = useMemo(() => {
     if (loadingInfo) {
@@ -85,95 +26,121 @@ export default function CertificationPanel({ company }) {
       return "Votre entreprise n'est pas encore certifiée car le calcul se fera lorsque vous aurez commencé à enregistrer des activités.";
     }
 
-    if (!companyWithInfo?.certificateCriterias) {
-      return "Votre entreprise n'est pas encore certifiée car le calcul de certification se fera au début du mois prochain.";
-    }
-
     return "";
   }, [companyWithInfo, loadingInfo]);
 
-  return [
-    <Box key={3} className={classes.title}>
-      <Typography variant="h4" component="h2">
-        {panelTitle}
-      </Typography>
-      {!loadingInfo && companyWithInfo.isCertified && (
-        <Button
-          priority="secondary"
-          iconId="fr-icon-download-fill"
-          iconPosition="left"
-          onClick={async () =>
-            alerts.withApiErrorHandling(async () => {
-              const options = {
-                company_id: company.id
-              };
-              await api.downloadFileHttpQuery(
-                HTTP_QUERIES.downloadCertificate,
-                {
-                  json: options
-                }
-              );
-            }, "download-certificate")
-          }
-        >
-          Télécharger le certificat
-        </Button>
-      )}
-    </Box>,
-    loadingInfo && (
-      <Skeleton key={2} variant="rectangular" width="100%" height={100} />
-    ),
-    noCertificateText && (
-      <Box key={5} mb={2}>
-        <Typography variant="h6" component="span">
-          {noCertificateText}
-        </Typography>
-      </Box>
-    ),
-    !loadingInfo && (
-      <Box key={8} mb={2}>
-        <Typography mb={2}>
-          Le certificat, fourni par l'équipe Mobilic, atteste du fait qu'une
-          entreprise se plie à la réglementation de suivi du temps de travail
-          et, pour cela, utilise Mobilic de manière conforme. L'attestation est
-          valable pour une durée de 6 mois.
-        </Typography>
-        <Notice
-          type="warning"
-          description="Attention, le certificat Mobilic n'est en aucun cas un gage de respect
-          total de la réglementation par l'entreprise. Il n'atteste que de la
-          bonne utilisation de l'outil de suivi du temps de travail."
-        />
-      </Box>
-    ),
-    !loadingInfo && companyWithInfo.isCertified && (
-      <Box key={9}>
-        <CheckboxField
-          mt={2}
-          checked={acceptCertificationCommunication}
-          onChange={() =>
-            changeCommunicationSetting(!acceptCertificationCommunication)
-          }
-          label={`J'accepte que Mobilic communique sur le fait que l'entreprise ${companyWithInfo.name} soit certifiée, notamment auprès des plateformes de mise en relation entre entreprises et particuliers.`}
-        />
-      </Box>
-    ),
-    !loadingInfo && (
-      <Typography key={15} mt={2}>
-        <Link
-          href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Qu'est-ce que le certificat Mobilic ?
-        </Link>
-      </Typography>
-    ),
-    !loadingInfo && companyWithInfo && (
-      <CertificationCriteriaGlobalResult
-        key={20}
+  if (loadingInfo) {
+    return (
+      <div style={{ width: "100%", padding: "1rem" }}>
+        <Skeleton variant="rectangular" width="100%" height={100} />
+      </div>
+    );
+  }
+
+  return (
+    <Box
+      sx={{
+        width: "100%"
+      }}
+    >
+      <CertificateFriseBadges
         companyWithInfo={companyWithInfo}
+        onDownloadCertificate={handleDownloadCertificate}
       />
-    )
-  ];
+
+      <Box sx={{ p: 1 }}>
+        {noCertificateText && (
+          <div className={cx(fr.cx("fr-container"))}>
+            <div
+              className={cx(fr.cx("fr-mb-4w"))}
+              style={{ padding: "0px 40px" }}
+            >
+              <Typography
+                variant="h6"
+                component="span"
+                style={{
+                  fontSize: "16px",
+                  fontWeight: 400,
+                  lineHeight: "24px",
+                  color: "#3A3A3A"
+                }}
+              >
+                {noCertificateText}
+              </Typography>
+            </div>
+          </div>
+        )}
+
+        {companyWithInfo && (
+          <div className={cx(fr.cx("fr-container", "fr-mt-4w"))}>
+            <div className={cx(fr.cx("fr-mb-4w"))}>
+              {!isCertified && (
+                <h2 className={cx(fr.cx("fr-h2", "fr-mb-5w"))}>
+                  Les critères de certification
+                </h2>
+              )}
+              {isCertified && (
+                <div
+                  style={{
+                    margin: "0 0 20px 0"
+                  }}
+                >
+                  <h2 className={cx(fr.cx("fr-h2", "fr-mb-2w"))}>
+                    Votre niveau de certification
+                  </h2>
+                  <p
+                    style={{
+                      fontFamily: "Marianne",
+                      fontWeight: 400,
+                      fontSize: "16px",
+                      lineHeight: "24px",
+                      color: "#161616",
+                      margin: "0"
+                    }}
+                  >
+                    au 1er{" "}
+                    {new Date().toLocaleDateString("fr-FR", {
+                      month: "long",
+                      year: "numeric"
+                    })}
+                  </p>
+                </div>
+              )}
+              <CertificateCriteriaTable companyWithInfo={companyWithInfo} />
+            </div>
+
+            {!loadingInfo && companyWithInfo && !companyWithInfo.hasNoActivity && (
+              <div className={cx(fr.cx("fr-mt-6w"))}>
+                <RegulatoryThresholdsPanel />
+              </div>
+            )}
+
+            <div className={cx(fr.cx("fr-mt-3w"))}>
+              <Notice
+                type="warning"
+                description="Attention, le certificat Mobilic n'est en aucun cas un gage de respect total de la réglementation par l'entreprise. Il n'atteste que de la bonne utilisation de l'outil de suivi du temps de travail."
+                isFullWidth={true}
+                sx={{
+                  textAlign: "justify"
+                }}
+              />
+            </div>
+          </div>
+        )}
+      </Box>
+
+      <CertificateBadgeEmbedModal
+        open={badgeModalOpen}
+        onClose={() => setBadgeModalOpen(false)}
+        companyId={companyWithInfo?.id}
+        certificateLevel={
+          companyWithInfo?.currentCompanyCertification?.certificationMedal
+        }
+      />
+    </Box>
+  );
+
+  function handleDownloadCertificate() {
+    setBadgeModalOpen(true);
+  }
 }
