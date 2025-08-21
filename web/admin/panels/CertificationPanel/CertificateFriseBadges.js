@@ -9,12 +9,13 @@ import { ReactComponent as OrActiveBadge } from "common/assets/images/certificat
 import { ReactComponent as OrBadge } from "common/assets/images/certificat/Frise-item-desactive/or_badge.svg";
 import { ReactComponent as DiamantActiveBadge } from "common/assets/images/certificat/Frise-item-clique/diamant_active_badge.svg";
 import { ReactComponent as DiamantBadge } from "common/assets/images/certificat/Frise-item-desactive/diamant_badge.svg";
+import { getFrenchMedalName } from "../../../common/Certification";
 
 const CERTIFICATE_LEVELS = {
   BRONZE: { label: "Bronze" },
-  ARGENT: { label: "Argent" },
-  OR: { label: "Or" },
-  DIAMANT: { label: "Diamant" }
+  SILVER: { label: "Argent" },
+  GOLD: { label: "Or" },
+  DIAMOND: { label: "Diamant" }
 };
 
 const BADGE_COMPONENTS = {
@@ -22,15 +23,15 @@ const BADGE_COMPONENTS = {
     inactive: BronzeBadge,
     active: BronzeActiveBadge
   },
-  ARGENT: {
+  SILVER: {
     inactive: ArgentBadge,
     active: ArgentActiveBadge
   },
-  OR: {
+  GOLD: {
     inactive: OrBadge,
     active: OrActiveBadge
   },
-  DIAMANT: {
+  DIAMOND: {
     inactive: DiamantBadge,
     active: DiamantActiveBadge
   }
@@ -67,10 +68,7 @@ export default function CertificateFriseBadges({
           style={{
             width: "auto",
             height: "auto",
-            maxWidth: "100%",
-            filter: isAchieved
-              ? "drop-shadow(0px 6px 0px rgba(0, 0, 0, 0.25))"
-              : "none"
+            maxWidth: "100%"
           }}
         />
       </div>
@@ -126,13 +124,15 @@ export default function CertificateFriseBadges({
               margin: 0
             }}
           >
-            {achievedLevel
-              ? `${companyWithInfo?.name ||
-                  "Votre entreprise"} est certifiée ${CERTIFICATE_LEVELS[
-                  achievedLevel
-                ]?.label.toLowerCase()} sur Mobilic !`
-              : `Votre entreprise ${companyWithInfo?.name ||
-                  ""} n'est pas encore certifiée.`}
+            {achievedLevel ? (
+              <>
+                {companyWithInfo?.name || "Votre entreprise"} est certifiée{" "}
+                <b>{getFrenchMedalName(achievedLevel)}</b> sur Mobilic !
+              </>
+            ) : (
+              `Votre entreprise ${companyWithInfo?.name ||
+                ""} n'est pas encore certifiée.`
+            )}
           </p>
         </div>
 
