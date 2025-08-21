@@ -482,8 +482,6 @@ export function Employees({ company, containerRef }) {
   );
 
   const employeeProgressData = useEmployeeProgress(company, validEmployments);
-
-  // Auto-update du nombre de salariés quand nécessaire
   useAutoUpdateNbWorkers(company, validEmployments, adminStore);
 
   const isAddingEmployment =
