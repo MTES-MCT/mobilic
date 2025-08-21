@@ -12,7 +12,12 @@ import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { captureSentryException } from "common/utils/sentry";
-import { CertificationImage } from "common/utils/icons";
+import {
+  CertificationArgent,
+  CertificationBronze,
+  CertificationDiamant,
+  CertificationOr
+} from "common/utils/icons";
 import Box from "@mui/material/Box";
 import { usePageTitle } from "../common/UsePageTitle";
 import { Input } from "../common/forms/Input";
@@ -37,7 +42,13 @@ const useStyles = makeStyles(theme => ({
   },
   certificationImage: {
     marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(3)
+    marginBottom: theme.spacing(3),
+    height: "150px"
+  },
+  resultTable: {
+    [theme.breakpoints.up("md")]: {
+      marginLeft: "12rem"
+    }
   }
 }));
 
@@ -138,45 +149,56 @@ export function Certificate() {
               />
             </Grid>
           </Grid>
+          {searchResults?.length > 1 && (
+            <Typography variant="h4">
+              Certains établissements de l'entreprise sont certifiés.
+            </Typography>
+          )}
+          {searchResults?.length === 1 && (
+            <Typography variant="h4">L'entreprise est certifiée.</Typography>
+          )}
+          {searchResults?.length === 0 && searchDone && (
+            <Box sx={{ textAlign: "center" }}>
+              <Typography variant="h4" mt={3}>
+                Nous n'avons pas trouvé de certification pour cette entreprise.
+              </Typography>
+              <Typography>
+                Il est possible qu'elle ne soit pas utilisatrice de Mobilic,
+                qu'elle ne soit pas certifiée ou qu'elle n'ait pas consenti à
+                partager l'information.
+              </Typography>
+            </Box>
+          )}
+          {searchResults?.length > 0 && (
+            <Box sx={{ textAlign: "center" }}>
+              {searchResults[0].certification_level === "BRONZE" && (
+                <CertificationBronze className={classes.certificationImage} />
+              )}
+              {searchResults[0].certification_level === "SILVER" && (
+                <CertificationArgent className={classes.certificationImage} />
+              )}
+              {searchResults[0].certification_level === "GOLD" && (
+                <CertificationOr className={classes.certificationImage} />
+              )}
+              {searchResults[0].certification_level === "DIAMOND" && (
+                <CertificationDiamant className={classes.certificationImage} />
+              )}
+              <Table
+                fixedHeader
+                noCaption
+                tableID="certificationTable"
+                headers={["Nom", "SIREN", "SIRET", "Date de certification"]}
+                data={searchResults.map(r => [
+                  r.company_name,
+                  r.siren,
+                  r.siret,
+                  r.certification_attribution_date
+                ])}
+                className={classes.resultTable}
+              />
+            </Box>
+          )}
         </Container>
-        {searchResults?.length > 1 && (
-          <Typography variant="h4">
-            Certains établissements de l'entreprise sont certifiés.
-          </Typography>
-        )}
-        {searchResults?.length === 1 && (
-          <Typography variant="h4">L'entreprise est certifiée.</Typography>
-        )}
-        {searchResults?.length === 0 && searchDone && (
-          <Box sx={{ textAlign: "center" }}>
-            <Typography variant="h4" mt={3}>
-              Nous n'avons pas trouvé de certification pour cette entreprise.
-            </Typography>
-            <Typography>
-              Il est possible qu'elle ne soit pas utilisatrice de Mobilic,
-              qu'elle ne soit pas certifiée ou qu'elle n'ait pas consenti à
-              partager l'information.
-            </Typography>
-          </Box>
-        )}
-        {searchResults?.length > 0 && (
-          <Box sx={{ textAlign: "center" }}>
-            <CertificationImage className={classes.certificationImage} />
-            <Table
-              fixedHeader
-              noCaption
-              tableID="certificationTable"
-              headers={["Nom", "SIREN", "SIRET", "Date de certification"]}
-              data={searchResults.map(r => [
-                r.company_name,
-                r.siren,
-                r.siret,
-                r.certification_attribution_date
-              ])}
-              className={classes.resultTable}
-            />
-          </Box>
-        )}
       </Main>
       <Footer />
     </>
