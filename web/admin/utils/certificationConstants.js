@@ -55,15 +55,6 @@ export const CDN_BASE_URL =
 // };
 
 /**
- * Converts backend medal level to frontend equivalent
- * @param {string} backendLevel - Backend level (BRONZE, SILVER, GOLD, DIAMOND)
- * @returns {string} Frontend level (BRONZE, ARGENT, OR, DIAMANT) or original if no mapping
- */
-export function backendToFrontend(backendLevel) {
-  return BACKEND_TO_FRONTEND_MAPPING[backendLevel] || backendLevel;
-}
-
-/**
  * Internal utility to map a level to a specific mapping object
  * @param {string} level - Medal level (backend or frontend)
  * @param {Object} mapping - Target mapping object

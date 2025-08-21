@@ -1,6 +1,5 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import { backendToFrontend } from "../../utils/certificationConstants";
 
 import { ReactComponent as BronzeActiveBadge } from "common/assets/images/certificat/Frise-item-clique/bronze_active_badge.svg";
 import { ReactComponent as BronzeBadge } from "common/assets/images/certificat/Frise-item-desactive/bronze_badge.svg";
@@ -41,40 +40,8 @@ export default function CertificateFriseBadges({
   companyWithInfo,
   onDownloadCertificate = null
 }) {
-  const achievedLevel = useMemo(() => {
-    if (!companyWithInfo) return null;
-
-    if (companyWithInfo.currentCompanyCertification?.certificationMedal) {
-      return backendToFrontend(
-        companyWithInfo.currentCompanyCertification.certificationMedal
-      );
-    }
-
-    if (!companyWithInfo.currentCompanyCertification?.certificateCriterias)
-      return null;
-
-    const logInRealTime =
-      companyWithInfo.currentCompanyCertification.certificateCriterias
-        .logInRealTime ?? 0;
-    const adminChanges =
-      companyWithInfo.currentCompanyCertification.certificateCriterias
-        .adminChanges ?? 1;
-    const compliancy =
-      companyWithInfo.currentCompanyCertification.certificateCriterias
-        .compliancy ?? 0;
-
-    if (logInRealTime >= 0.95 && adminChanges <= 0.01 && compliancy >= 6) {
-      return "DIAMANT";
-    } else if (logInRealTime >= 0.8 && adminChanges <= 0.1 && compliancy >= 4) {
-      return "OR";
-    } else if (logInRealTime >= 0.7 && adminChanges <= 0.2 && compliancy >= 2) {
-      return "ARGENT";
-    } else if (logInRealTime >= 0.6 && adminChanges <= 0.3 && compliancy >= 1) {
-      return "BRONZE";
-    }
-
-    return null;
-  }, [companyWithInfo]);
+  const achievedLevel =
+    companyWithInfo?.currentCompanyCertification?.certificationMedal;
 
   const renderBadgeItem = level => {
     const isAchieved = achievedLevel === level;
