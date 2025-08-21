@@ -9,7 +9,7 @@ import { ReactComponent as OrActiveBadge } from "common/assets/images/certificat
 import { ReactComponent as OrBadge } from "common/assets/images/certificat/Frise-item-desactive/or_badge.svg";
 import { ReactComponent as DiamantActiveBadge } from "common/assets/images/certificat/Frise-item-clique/diamant_active_badge.svg";
 import { ReactComponent as DiamantBadge } from "common/assets/images/certificat/Frise-item-desactive/diamant_badge.svg";
-import { getFrenchMedalName } from "../../../common/Certification";
+import { useCompanyCertification } from "../../../common/hooks/useCompanyCertification";
 
 const CERTIFICATE_LEVELS = {
   BRONZE: { label: "Bronze" },
@@ -41,11 +41,12 @@ export default function CertificateFriseBadges({
   companyWithInfo,
   onDownloadCertificate = null
 }) {
-  const achievedLevel =
-    companyWithInfo?.currentCompanyCertification?.certificationMedal;
+  const { medal, frenchMedalLabel, isCerfified } = useCompanyCertification(
+    companyWithInfo.currentCompanyCertification
+  );
 
   const renderBadgeItem = level => {
-    const isAchieved = achievedLevel === level;
+    const isAchieved = medal === level;
     const BadgeComponent =
       BADGE_COMPONENTS[level]?.[isAchieved ? "active" : "inactive"];
 
@@ -124,10 +125,10 @@ export default function CertificateFriseBadges({
               margin: 0
             }}
           >
-            {achievedLevel ? (
+            {isCerfified ? (
               <>
                 {companyWithInfo?.name || "Votre entreprise"} est certifiée{" "}
-                <b>{getFrenchMedalName(achievedLevel)}</b> sur Mobilic !
+                <b>{frenchMedalLabel}</b> sur Mobilic !
               </>
             ) : (
               `Votre entreprise ${companyWithInfo?.name ||
@@ -140,8 +141,8 @@ export default function CertificateFriseBadges({
           <Button
             priority="secondary"
             size="medium"
-            onClick={achievedLevel ? onDownloadCertificate : undefined}
-            disabled={!achievedLevel}
+            onClick={isCerfified ? onDownloadCertificate : undefined}
+            disabled={!isCerfified}
           >
             Afficher le certificat sur mon site internet
           </Button>

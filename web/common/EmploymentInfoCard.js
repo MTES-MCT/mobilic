@@ -34,14 +34,11 @@ import { formatActivity } from "common/utils/businessTypes";
 import Notice from "./Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Box, Stack } from "@mui/material";
-import {
-  CertificationImage,
-  getFrenchMedalName,
-  TextBadge
-} from "./Certification";
+import { CertificationImage, TextBadge } from "./Certification";
 import { useIsWidthDown } from "common/utils/useWidth";
 import { FieldTitle } from "./typography/FieldTitle";
 import { ExternalLink } from "./ExternalLink";
+import { useCompanyCertification } from "./hooks/useCompanyCertification";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
@@ -92,8 +89,9 @@ export function EmploymentInfoCard({
 
   const {
     isCertified,
-    certificationMedal
-  } = employment.company.currentCompanyCertification;
+    medal: certificationMedal,
+    frenchMedalLabel
+  } = useCompanyCertification(employment.company.currentCompanyCertification);
 
   const emailsCurrentAdminsDisplay = useMemo(
     () => (
@@ -334,7 +332,7 @@ export function EmploymentInfoCard({
                   <Typography align="left">
                     L'entreprise est certifiée{" "}
                     <span style={{ fontWeight: "bold" }}>
-                      {getFrenchMedalName(certificationMedal)}
+                      {frenchMedalLabel}
                     </span>{" "}
                     !
                   </Typography>
