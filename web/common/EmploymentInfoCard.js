@@ -34,7 +34,7 @@ import { formatActivity } from "common/utils/businessTypes";
 import Notice from "./Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Box, Stack } from "@mui/material";
-import { CertificationImage, TextBadge } from "./Certification";
+import { CertificationImage } from "./Certification";
 import { useIsWidthDown } from "common/utils/useWidth";
 import { FieldTitle } from "./typography/FieldTitle";
 import { ExternalLink } from "./ExternalLink";
@@ -90,7 +90,8 @@ export function EmploymentInfoCard({
   const {
     isCertified,
     medal: certificationMedal,
-    frenchMedalLabel
+    frenchMedalLabel,
+    TextBadge
   } = useCompanyCertification(employment.company.currentCompanyCertification);
 
   const emailsCurrentAdminsDisplay = useMemo(
@@ -189,7 +190,7 @@ export function EmploymentInfoCard({
           <Grid item xs={8} sm={9}>
             {isMobile ? (
               <Stack direction="column" rowGap={1}>
-                {isCertified && <TextBadge medal={certificationMedal} />}
+                {isCertified && <TextBadge />}
                 <Typography
                   className={classes.companyName}
                   component={headingComponent}
@@ -205,7 +206,7 @@ export function EmploymentInfoCard({
                 >
                   {employment.company.legalName || employment.company.name}
                 </Typography>
-                {isCertified && <TextBadge medal={certificationMedal} />}
+                {isCertified && <TextBadge />}
               </Stack>
             )}
           </Grid>

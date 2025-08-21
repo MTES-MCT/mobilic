@@ -41,7 +41,7 @@ export default function CertificateFriseBadges({
   companyWithInfo,
   onDownloadCertificate = null
 }) {
-  const { medal, frenchMedalLabel, isCerfified } = useCompanyCertification(
+  const { medal, frenchMedalLabel, isCertified } = useCompanyCertification(
     companyWithInfo.currentCompanyCertification
   );
 
@@ -125,7 +125,7 @@ export default function CertificateFriseBadges({
               margin: 0
             }}
           >
-            {isCerfified ? (
+            {isCertified ? (
               <>
                 {companyWithInfo?.name || "Votre entreprise"} est certifiée{" "}
                 <b>{frenchMedalLabel}</b> sur Mobilic !
@@ -141,8 +141,8 @@ export default function CertificateFriseBadges({
           <Button
             priority="secondary"
             size="medium"
-            onClick={isCerfified ? onDownloadCertificate : undefined}
-            disabled={!isCerfified}
+            onClick={isCertified ? onDownloadCertificate : undefined}
+            disabled={!isCertified}
           >
             Afficher le certificat sur mon site internet
           </Button>

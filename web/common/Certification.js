@@ -1,5 +1,4 @@
 import React from "react";
-import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import _CertificationSquareBronze from "common/assets/images/certification/squared/bronze.png";
 import _CertificationSquareArgent from "common/assets/images/certification/squared/argent.png";
 import _CertificationSquareOr from "common/assets/images/certification/squared/or.png";
@@ -9,34 +8,6 @@ import _CertificationBannerArgent from "common/assets/images/certification/banne
 import _CertificationBannerOr from "common/assets/images/certification/banner/or.png";
 import _CertificationBannerDiamant from "common/assets/images/certification/banner/diamant.png";
 import { useIsWidthDown } from "common/utils/useWidth";
-
-export const getFrenchMedalName = medal => {
-  switch (medal) {
-    case "BRONZE":
-      return "bronze";
-    case "SILVER":
-      return "argent";
-    case "GOLD":
-      return "or";
-    case "DIAMOND":
-      return "diamant";
-    default:
-      return "";
-  }
-};
-
-export const TextBadge = ({ medal }) => {
-  return (
-    <Badge
-      severity="new"
-      noIcon
-      small
-      style={{ color: "#716043", backgroundColor: "#FEF6E3" }}
-    >
-      Certifiée {getFrenchMedalName(medal)}
-    </Badge>
-  );
-};
 
 const getSquaredImage = medal => {
   switch (medal) {
