@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function _Admin() {
+function AdminComponent() {
   const api = useApi();
   const adminStore = useAdminStore();
   const [, company] = useAdminCompanies();
@@ -270,7 +270,7 @@ export default function Admin(props) {
   return (
     <LoadingScreenContextProvider>
       <AdminStoreProvider>
-        <_Admin {...props} />
+        <AdminComponent {...props} />
       </AdminStoreProvider>
     </LoadingScreenContextProvider>
   );
