@@ -33,11 +33,21 @@ import { getNextHeadingComponent } from "common/utils/html";
 import { formatActivity } from "common/utils/businessTypes";
 import Notice from "./Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Box, Stack } from "@mui/material";
+import {
+  CertificationImage,
+  getFrenchMedalName,
+  TextBadge
+} from "./Certification";
+import { useIsWidthDown } from "common/utils/useWidth";
+import { FieldTitle } from "./typography/FieldTitle";
+import { ExternalLink } from "./ExternalLink";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
     fontWeight: "bold",
-    overflowWrap: "anywhere"
+    overflowWrap: "anywhere",
+    flexGrow: 1
   },
   buttonContainer: {
     padding: theme.spacing(2)
@@ -80,6 +90,11 @@ export function EmploymentInfoCard({
     [employment]
   );
 
+  const {
+    isCertified,
+    certificationMedal
+  } = employment.company.currentCompanyCertification;
+
   const emailsCurrentAdminsDisplay = useMemo(
     () => (
       <ul
@@ -113,6 +128,8 @@ export function EmploymentInfoCard({
 
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
+
+  const isMobile = useIsWidthDown("sm");
 
   async function handleEmploymentValidation(accept) {
     await alerts.withApiErrorHandling(
@@ -172,12 +189,27 @@ export function EmploymentInfoCard({
           wrap="nowrap"
         >
           <Grid item xs={8} sm={9}>
-            <Typography
-              className={classes.companyName}
-              component={headingComponent}
-            >
-              {employment.company.legalName || employment.company.name}
-            </Typography>
+            {isMobile ? (
+              <Stack direction="column" rowGap={1}>
+                {isCertified && <TextBadge medal={certificationMedal} />}
+                <Typography
+                  className={classes.companyName}
+                  component={headingComponent}
+                >
+                  {employment.company.legalName || employment.company.name}
+                </Typography>
+              </Stack>
+            ) : (
+              <Stack direction="row">
+                <Typography
+                  className={classes.companyName}
+                  component={headingComponent}
+                >
+                  {employment.company.legalName || employment.company.name}
+                </Typography>
+                {isCertified && <TextBadge medal={certificationMedal} />}
+              </Stack>
+            )}
           </Grid>
           {!hideStatus && (
             <Grid item xs={4} sm={3} pr={1}>
@@ -292,6 +324,28 @@ export function EmploymentInfoCard({
                 }}
                 uppercaseTitle={false}
               />
+            </Grid>
+          )}
+          {isCertified && (
+            <Grid item xs={12}>
+              <Stack direction="column" sx={{ flexGrow: 1 }} rowGap={2}>
+                <Box>
+                  <FieldTitle uppercaseTitle={false}>Certificat</FieldTitle>
+                  <Typography align="left">
+                    L'entreprise est certifiée{" "}
+                    <span style={{ fontWeight: "bold" }}>
+                      {getFrenchMedalName(certificationMedal)}
+                    </span>{" "}
+                    !
+                  </Typography>
+                </Box>
+                <CertificationImage medal={certificationMedal} />
+                <ExternalLink
+                  url="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic/"
+                  text="Qu'est-ce que le certificat Mobilic ?"
+                  withIcon
+                />
+              </Stack>
             </Grid>
           )}
           {!hideActions && (
