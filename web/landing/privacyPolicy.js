@@ -12,7 +12,7 @@ const dataCustodyHeaders = ["Catégorie de données", "Durée de conservation"];
 const dataCustody = [
   [
     "Données d’état civil, de coordonnées, identifiant FranceConnect des personnels roulants et des gestionnaires",
-    "es données sont conservées pendant 3 ans, conformément à l’article 4 de l’arrêté du 6 mars 2025"
+    "Les données sont conservées pendant 3 ans, conformément à l’article 4 de l’arrêté du 6 mars 2025"
   ],
   [
     "Données d’état civil, de coordonnées, identifiant ProConnect des agents de contrôle",
