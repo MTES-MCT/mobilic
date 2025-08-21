@@ -10,13 +10,11 @@ import { BusinessType } from "../../common/BusinessType";
 import { MandatoryField } from "../../common/MandatoryField";
 import { Input } from "../../common/forms/Input";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import { NumericInput } from "../../common/forms/NumericInput";
 import {
-  MAX_NB_WORKERS,
+  NbWorkersInput,
   MIN_NB_WORKERS,
-  NB_WORKERS_LABEL,
-  NB_WORKERS_HINT_TEXT
-} from "common/utils/companyConstants";
+  MAX_NB_WORKERS
+} from "../../common/forms/NbWorkersInput";
 
 const useStyles = makeStyles(theme => ({
   verticalFormButton: {
@@ -161,17 +159,12 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                     label="Numéro de téléphone de l'entreprise"
                     accessibilityHelpText={`${facility.address}, ${facility.postal_code}`}
                   />
-                  <NumericInput
+                  <NbWorkersInput
                     initialValue={0}
                     onChangeValue={newNbWorkers => {
                       setHasValidatedChoice(false);
                       updateFacility(facility, "nbWorkers", newNbWorkers);
                     }}
-                    label={NB_WORKERS_LABEL}
-                    hintText={NB_WORKERS_HINT_TEXT}
-                    required
-                    min={MIN_NB_WORKERS}
-                    max={MAX_NB_WORKERS}
                   />
                   <BusinessType
                     onChangeBusinessType={newBusinessType => {

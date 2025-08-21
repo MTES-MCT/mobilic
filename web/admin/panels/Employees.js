@@ -39,6 +39,7 @@ import { readCookie, setCookie } from "common/utils/cookie";
 import BatchInviteModal from "../modals/BatchInviteModal";
 import { EmployeeProgressBar } from "../components/EmployeeProgressBar";
 import { useEmployeeProgress } from "../hooks/useEmployeeProgress";
+import { useAutoUpdateNbWorkers } from "../hooks/useAutoUpdateNbWorkers";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -480,11 +481,10 @@ export function Employees({ company, containerRef }) {
     [validEmployments]
   );
 
-  const employeeProgressData = useEmployeeProgress(
-    company,
-    validEmployments,
-    adminStore
-  );
+  const employeeProgressData = useEmployeeProgress(company, validEmployments);
+
+  // Auto-update du nombre de salariés quand nécessaire
+  useAutoUpdateNbWorkers(company, validEmployments, adminStore);
 
   const isAddingEmployment =
     pendingEmploymentsTableRef.current &&
@@ -740,18 +740,32 @@ export function Employees({ company, containerRef }) {
               </Button>
             }
           </Typography>
-          <Button
-            size="small"
-            onClick={() => {
-              setHidePendingEmployments(false);
-              pendingEmploymentsTableRef.current.newRow({
-                hasAdminRights: EMPLOYMENT_ROLE.employee,
-                teamId: NO_TEAM_ID
-              });
-            }}
-          >
-            Inviter un nouveau salarié
-          </Button>
+
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Button
+              priority="secondary"
+              size="small"
+              onClick={() =>
+                modals.open("batchInvite", {
+                  handleSubmit: inviteEmails
+                })
+              }
+            >
+              Inviter une liste d'emails
+            </Button>
+            <Button
+              size="small"
+              onClick={() => {
+                setHidePendingEmployments(false);
+                pendingEmploymentsTableRef.current.newRow({
+                  hasAdminRights: EMPLOYMENT_ROLE.employee,
+                  teamId: NO_TEAM_ID
+                });
+              }}
+            >
+              Inviter un nouveau salarié
+            </Button>
+          </Box>
         </Box>
         <AugmentedTable
           columns={pendingEmploymentColumns}
@@ -816,8 +830,7 @@ export function Employees({ company, containerRef }) {
         </Typography>
         <Box className={classes.title}>
           <EmployeeProgressBar progressData={employeeProgressData} />
-          {!canDisplayPendingEmployments &&
-          employeeProgressData?.shouldShowSingleInviteButton ? (
+          {employeeProgressData?.shouldShowSingleInviteButton ? (
             <Button
               size="small"
               onClick={() =>
@@ -834,11 +847,10 @@ export function Employees({ company, containerRef }) {
               Inviter les salariés manquants
             </Button>
           ) : !canDisplayPendingEmployments ? (
-            <>
+            <Box sx={{ display: "flex", gap: 1 }}>
               <Button
                 priority="secondary"
                 size="small"
-                sx={{ marginRight: 1 }}
                 onClick={() =>
                   modals.open("batchInvite", {
                     handleSubmit: inviteEmails
@@ -862,7 +874,7 @@ export function Employees({ company, containerRef }) {
                 )}
                 Inviter un nouveau salarié
               </Button>
-            </>
+            </Box>
           ) : null}
         </Box>
 

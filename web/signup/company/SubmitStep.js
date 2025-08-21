@@ -9,13 +9,11 @@ import { BusinessType } from "../../common/BusinessType";
 import { Section } from "../../common/Section";
 import { MandatoryField } from "../../common/MandatoryField";
 import { Input } from "../../common/forms/Input";
-import { NumericInput } from "../../common/forms/NumericInput";
 import {
+  NbWorkersInput,
   MIN_NB_WORKERS,
-  MAX_NB_WORKERS,
-  NB_WORKERS_HINT_TEXT,
-  NB_WORKERS_LABEL
-} from "common/utils/companyConstants";
+  MAX_NB_WORKERS
+} from "../../common/forms/NbWorkersInput";
 
 const useStyles = makeStyles(theme => ({
   verticalFormButton: {
@@ -70,14 +68,9 @@ export function SubmitStep({
               setCurrentPhoneNumber={setPhoneNumber}
               label="Numéro de téléphone de l'entreprise"
             />
-            <NumericInput
+            <NbWorkersInput
               initialValue={nbWorkers}
               onChangeValue={setNbWorkers}
-              label={NB_WORKERS_LABEL}
-              hintText={NB_WORKERS_HINT_TEXT}
-              required
-              min={MIN_NB_WORKERS}
-              max={MAX_NB_WORKERS}
             />
             <Section title="Veuillez indiquer votre type d'activité">
               <BusinessType

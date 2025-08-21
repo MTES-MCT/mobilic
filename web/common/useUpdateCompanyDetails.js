@@ -23,7 +23,7 @@ export const useUpdateCompanyDetails = (
     adminStore.business?.businessType
   );
   const [newNbWorkers, setNewNbWorkers] = React.useState(
-    company?.nbWorkers && company.nbWorkers > 0 ? company.nbWorkers : null
+    company?.nbWorkers || null
   );
 
   const hasBusinessTypeChanged = React.useMemo(

@@ -1,25 +1,30 @@
 import React from "react";
 import { Box, Typography, LinearProgress } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 export function EmployeeProgressBar({ progressData }) {
+  const theme = useTheme();
+
   if (!progressData) {
     return null;
   }
 
   const getProgressColor = color => {
     switch (color) {
-      case "error":
-        return "error";
-      case "warning":
-        return "warning";
-      case "success":
-        return "success";
       case "info":
-        return "info";
+        return { backgroundColor: theme.palette.primary.main };
+      case "warning":
+        return { backgroundColor: theme.palette.warning.light };
+      case "success":
+        return { color: "success" };
+      case "error":
+        return { color: "error" };
       default:
-        return "primary";
+        return { backgroundColor: theme.palette.primary.main };
     }
   };
+
+  const colorProps = getProgressColor(progressData.color);
 
   return (
     <Box sx={{ marginBottom: 3, maxWidth: 400 }}>
@@ -32,13 +37,16 @@ export function EmployeeProgressBar({ progressData }) {
           <LinearProgress
             variant="determinate"
             value={progressData.percentage}
-            color={getProgressColor(progressData.color)}
+            {...(colorProps.color ? { color: colorProps.color } : {})}
             sx={{
               height: 10,
               borderRadius: 5,
               backgroundColor: "#f0f0f0",
               "& .MuiLinearProgress-bar": {
-                borderRadius: 5
+                borderRadius: 5,
+                ...(colorProps.backgroundColor && {
+                  backgroundColor: colorProps.backgroundColor
+                })
               }
             }}
           />

@@ -9,13 +9,11 @@ import { useUpdateCompanyDetails } from "../../common/useUpdateCompanyDetails";
 import Modal from "../../common/Modal";
 import { MandatoryField } from "../../common/MandatoryField";
 import { Input } from "../../common/forms/Input";
-import { NumericInput } from "../../common/forms/NumericInput";
 import {
+  NbWorkersInput,
   MIN_NB_WORKERS,
-  MAX_NB_WORKERS,
-  NB_WORKERS_HINT_TEXT,
-  NB_WORKERS_LABEL
-} from "common/utils/companyConstants";
+  MAX_NB_WORKERS
+} from "../../common/forms/NbWorkersInput";
 
 export default function UpdateCompanyDetailsModal({
   open,
@@ -97,14 +95,9 @@ export default function UpdateCompanyDetailsModal({
             }
             label="Numéro de téléphone de l'entreprise"
           />
-          <NumericInput
+          <NbWorkersInput
             initialValue={newNbWorkers}
             onChangeValue={setNewNbWorkers}
-            label={NB_WORKERS_LABEL}
-            hintText={NB_WORKERS_HINT_TEXT}
-            required
-            min={MIN_NB_WORKERS}
-            max={MAX_NB_WORKERS}
           />
           {adminStore.business && (
             <>

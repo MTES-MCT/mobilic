@@ -2377,15 +2377,6 @@ export const UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE = gql`
   }
 `;
 
-export const SNOOZE_NB_WORKER_MUTATION = gql`
-  mutation snoozeNbWorker($companyId: Int!, $snoozeDate: Date!) {
-    snoozeNbWorker(companyId: $companyId, snoozeDate: $snoozeDate) {
-      id
-      snoozeNbWorkerDate
-    }
-  }
-`;
-
 export const USER_QUERY_ENOUGH_BREAK = gql`
   query hasEnoughBreak($id: Int!) {
     user(id: $id) {

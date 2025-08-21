@@ -7,13 +7,11 @@ import { useApi } from "common/utils/api";
 import { SNOOZE_NB_WORKER_INFO } from "common/utils/apiQueries";
 import { clearUpdateTimeCookie, snooze } from "common/utils/updateNbWorker";
 import Modal from "../../common/Modal";
-import { NumericInput } from "../../common/forms/NumericInput";
 import {
+  NbWorkersInput,
   MIN_NB_WORKERS,
-  MAX_NB_WORKERS,
-  NB_WORKERS_HINT_TEXT,
-  NB_WORKERS_LABEL
-} from "common/utils/companyConstants";
+  MAX_NB_WORKERS
+} from "../../common/forms/NbWorkersInput";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
 
@@ -68,23 +66,16 @@ export default function UpdateNbWorkerModal() {
     <Modal
       open={isOpen}
       handleClose={canClose ? handleClose : undefined}
-      size="sm"
       title="Nombre de chauffeurs et/ou travailleurs mobiles"
       content={
         <>
-          <p>
-            Veuillez renseigner le nombre de salariés concernés par Mobilic:
-          </p>
-          <NumericInput
+          <NbWorkersInput
+            label="Veuillez renseigner le nombre de salariés concernés par Mobilic:"
             value={newNbWorkers}
             onChangeValue={setNewNbWorkers}
-            label={NB_WORKERS_LABEL}
-            hintText={NB_WORKERS_HINT_TEXT}
-            required
-            min={MIN_NB_WORKERS}
-            max={MAX_NB_WORKERS}
+            required={false}
           />
-          <p>Cette informatin est nécéssaire au calcul de votre certificat.</p>
+          <p>Cette information est nécéssaire au calcul de votre certificat.</p>
         </>
       }
       actions={
