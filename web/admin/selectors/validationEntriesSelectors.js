@@ -23,19 +23,38 @@ export const missionToValidationEntries = mission =>
     id: `${mission.id}${us.user.id}`,
     multipleDays:
       getStartOfDay(mission.startTime) !==
-      getStartOfDay(mission.endTime ? mission.endTime - 1 : now())
+      getStartOfDay(mission.endTime ? mission.endTime - 1 : now()),
+    isDeleted: mission.isDeleted,
+    deletedAt: mission.deletedAt,
+    deletedBy: mission.deletedBy,
+    isHoliday: mission.isHoliday
   }));
 
 export const entryToBeValidatedByAdmin = (
   tableEntry,
   currentUserId,
-  adminCanBypass = false
-) =>
-  !tableEntry.adminValidation &&
-  (entryValidatedByWorkerOrOutdated(tableEntry) ||
+  adminCanBypass = false,
+  overrideValidationJustification = ""
+) => {
+  if (tableEntry.isDeleted) {
+    return false;
+  }
+
+  if (tableEntry.adminManualValidation) {
+    return false;
+  }
+
+  if (tableEntry.adminAutoValidation) {
+    return !!overrideValidationJustification;
+  }
+
+  return (
+    entryValidatedByWorkerOrOutdated(tableEntry) ||
     tableEntry.lastActivitySubmitterId === currentUserId ||
     adminCanBypass ||
-    tableEntry.activities?.length === 0);
+    tableEntry.activities?.length === 0
+  );
+};
 
 export const entryToBeValidatedByWorker = tableEntry =>
   !tableEntry.adminValidation && !tableEntry.workerValidation;
@@ -44,3 +63,5 @@ const entryValidatedByWorkerOrOutdated = tableEntry =>
   tableEntry.workerValidation ||
   tableEntry.missionTooOld ||
   tableEntry.missionNotUpdatedForTooLong;
+
+export const entryDeleted = tableEntry => tableEntry.isDeleted;

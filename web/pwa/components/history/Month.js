@@ -4,6 +4,7 @@ import {
   renderPeriodKpis,
   WorkTimeSummaryKpiGrid
 } from "../WorkTimeSummary";
+import { PeriodHeader } from "./PeriodHeader";
 
 export function Month({
   activitiesWithNextAndPreviousDay,
@@ -11,18 +12,34 @@ export function Month({
   selectedPeriodEnd,
   missionsInPeriod
 }) {
+  const hasWorkMissions = React.useMemo(
+    () => missionsInPeriod.filter(mission => !mission.isHoliday).length > 0,
+    [missionsInPeriod]
+  );
+  const kpis = React.useMemo(() => {
+    let allKpis = renderPeriodKpis(
+      splitByLongBreaksAndComputePeriodStats(
+        activitiesWithNextAndPreviousDay,
+        selectedPeriodStart,
+        selectedPeriodEnd,
+        missionsInPeriod
+      )
+    ).filter(kpi => kpi.name !== "service");
+    if (hasWorkMissions) {
+      return allKpis;
+    }
+    return allKpis.filter(kpi => kpi.name === "offDays");
+  }, [
+    hasWorkMissions,
+    activitiesWithNextAndPreviousDay,
+    selectedPeriodStart,
+    selectedPeriodEnd,
+    missionsInPeriod
+  ]);
+
   return (
-    <div>
-      <WorkTimeSummaryKpiGrid
-        metrics={renderPeriodKpis(
-          splitByLongBreaksAndComputePeriodStats(
-            activitiesWithNextAndPreviousDay,
-            selectedPeriodStart,
-            selectedPeriodEnd,
-            missionsInPeriod
-          )
-        ).filter(m => m.name !== "service")}
-      />
-    </div>
+    <PeriodHeader>
+      <WorkTimeSummaryKpiGrid metrics={kpis} />
+    </PeriodHeader>
   );
 }

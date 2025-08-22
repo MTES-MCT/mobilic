@@ -7,11 +7,13 @@ export const resourceCardsClasses = makeStyles(theme => ({
     backgroundColor: theme.palette.grey[100],
     borderColor: theme.palette.primary.main,
     width: "100%",
-    height: "100%"
+    height: "100%",
+    position: "relative"
   },
   description: {
     marginBottom: theme.spacing(2),
-    textAlign: "center"
+    textAlign: "center",
+    fontSize: "1.125em"
   },
   linkWholeCard: {
     padding: 0,
@@ -37,7 +39,8 @@ export const resourceCardsClasses = makeStyles(theme => ({
   },
   testimonialImage: {
     maxHeight: 90,
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
+    objectFit: "contain"
   },
   testimonialSentence: {
     marginBottom: theme.spacing(4),

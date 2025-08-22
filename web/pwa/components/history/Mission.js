@@ -12,7 +12,11 @@ import { makeStyles } from "@mui/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { ItalicWarningTypography } from "./ItalicWarningTypography";
-import { prettyFormatDay } from "common/utils/time";
+import {
+  prettyFormatDay,
+  frenchFormatDateStringOrTimeStamp,
+  unixTimestampToDate
+} from "common/utils/time";
 import { InfoCard, useInfoCardStyles } from "../../../common/InfoCard";
 import { useToggleContradictory } from "./toggleContradictory";
 import { ContradictorySwitch } from "../ContradictorySwitch";
@@ -24,7 +28,16 @@ import { formatApiError } from "common/utils/errors";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { useApi } from "common/utils/api";
-import { MissionValidationInfo } from "../../../common/MissionValidationInfo";
+import {
+  getNextHeadingComponent,
+  getPrevHeadingComponent
+} from "common/utils/html";
+import { NoContradictory } from "./NoContradictory";
+import { PeriodHeader } from "./PeriodHeader";
+import { Box, Stack } from "@mui/material";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { fr } from "@codegouvfr/react-dsfr";
+import { PastMissionNotice } from "../../../admin/components/MissionDetails/PastMissionNotice";
 
 const useStyles = makeStyles(theme => ({
   alternateCard: {
@@ -34,11 +47,6 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.grey[700],
     color: theme.palette.primary.contrastText
   },
-  contradictorySwitch: {
-    marginBottom: ({ showMetrics }) => (showMetrics ? theme.spacing(1) : 0),
-    paddingRight: ({ showMetrics }) => (showMetrics ? 0 : theme.spacing(2)),
-    paddingLeft: ({ showMetrics }) => (showMetrics ? 0 : theme.spacing(2))
-  },
   buttonContainer: {
     display: "flex",
     flexWrap: "nowrap",
@@ -47,6 +55,25 @@ const useStyles = makeStyles(theme => ({
   employeeValidation: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1)
+  },
+  missionName: {
+    fontWeight: 700,
+    fontSize: "1.25rem",
+    color: "white"
+  },
+  missionDate: {
+    fontWeight: 400,
+    fontSize: "1rem",
+    color: "white"
+  },
+  downloadButton: {
+    color: "white",
+    boxShadow: "inset 0 0 0 1px white",
+    "&:hover": {
+      color: fr.colors.decisions.text.actionHigh.blueFrance.default,
+      boxShadow: "inset 0 0 0 1px var(--border-action-high-blue-france)"
+    },
+    flexShrink: 0
   }
 }));
 
@@ -71,7 +98,8 @@ export function Mission({
   untilTime,
   registerKilometerReading,
   controlledShouldDisplayInitialEmployeeVersion = false,
-  controlId = null
+  controlId = null,
+  headingComponent
 }) {
   const [open, setOpen] = React.useState(defaultOpenCollapse);
   const [
@@ -84,7 +112,8 @@ export function Mission({
   const alerts = useSnackbarAlerts();
 
   const canDisplayContradictoryVersions =
-    mission.adminValidation && mission.validation;
+    (mission.adminValidation && mission.validation) ||
+    (mission.isDeleted && mission.complete);
 
   React.useEffect(() => {
     if (
@@ -97,15 +126,14 @@ export function Mission({
       );
   }, [controlledShouldDisplayInitialEmployeeVersion]);
 
-  const [
-    missionResourcesToUse,
-    // eslint-disable-next-line no-unused-vars
-    _,
-    loadingEmployeeVersion,
+  const {
+    employeeVersion,
+    adminVersion,
+    isComputingContradictory: loadingEmployeeVersion,
     hasComputedContradictory,
     contradictoryIsEmpty,
     contradictoryComputationError
-  ] = useToggleContradictory(
+  } = useToggleContradictory(
     canDisplayContradictoryVersions,
     shouldDisplayInitialEmployeeVersion,
     setShouldDisplayInitialEmployeeVersion,
@@ -114,18 +142,70 @@ export function Mission({
     controlId
   );
 
-  const userActivitiesToUse = missionResourcesToUse.activities.filter(
-    a => a.userId === userId
+  const employeeVersionUserActivitiesToUse = React.useMemo(
+    () => employeeVersion?.activities?.filter(a => a.userId === userId),
+    [employeeVersion]
   );
-  const userExpendituresToUse = missionResourcesToUse.expenditures.filter(
-    a => a.userId === userId
+
+  const adminVersionUserActivitiesToUse = React.useMemo(
+    () => adminVersion?.activities?.filter(a => a.userId === userId),
+    [adminVersion]
+  );
+
+  const userActivitiesToUse = React.useMemo(
+    () =>
+      shouldDisplayInitialEmployeeVersion
+        ? employeeVersionUserActivitiesToUse
+        : adminVersionUserActivitiesToUse,
+    [
+      shouldDisplayInitialEmployeeVersion,
+      adminVersionUserActivitiesToUse,
+      employeeVersionUserActivitiesToUse
+    ]
+  );
+
+  const userExpendituresToUse = React.useMemo(
+    () =>
+      (shouldDisplayInitialEmployeeVersion
+        ? employeeVersion
+        : adminVersion
+      ).expenditures.filter(a => a.userId === userId),
+    [shouldDisplayInitialEmployeeVersion, adminVersion, employeeVersion]
   );
 
   const classes = useStyles({ showMetrics });
   const infoCardStyles = useInfoCardStyles();
 
-  const kpis = computeTimesAndDurationsFromActivities(userActivitiesToUse);
+  const adminKpis =
+    adminVersionUserActivitiesToUse &&
+    computeTimesAndDurationsFromActivities(adminVersionUserActivitiesToUse);
+  const employeeKpis =
+    employeeVersionUserActivitiesToUse &&
+    computeTimesAndDurationsFromActivities(employeeVersionUserActivitiesToUse);
+
   const actualDay = mission?.startTime;
+
+  const onDownloadMission = async e => {
+    e.stopPropagation();
+    e.preventDefault();
+    trackLink({
+      href: `/generate_mission_export`,
+      linkType: "download"
+    });
+    try {
+      if (controlId) {
+        await api.downloadFileHttpQuery(HTTP_QUERIES.missionControlExport, {
+          json: { mission_id: mission.id, control_id: controlId }
+        });
+      } else {
+        await api.downloadFileHttpQuery(HTTP_QUERIES.missionExport, {
+          json: { mission_id: mission.id, user_id: userId }
+        });
+      }
+    } catch (err) {
+      alerts.error(formatApiError(err), "generate_mission_export", 6000);
+    }
+  };
 
   const MissionDetailsComponent = (
     <MissionDetails
@@ -154,140 +234,164 @@ export function Mission({
       untilTime={untilTime}
       editKilometerReading={registerKilometerReading}
       controlId={controlId}
+      titleProps={{
+        component:
+          headingComponent && collapsable
+            ? getNextHeadingComponent(headingComponent)
+            : headingComponent
+      }}
     />
+  );
+
+  const contradictoryNotYetAvailable = !canDisplayContradictoryVersions;
+  const emptyContradictory = hasComputedContradictory && contradictoryIsEmpty;
+
+  const displayContradictory = !(
+    contradictoryNotYetAvailable ||
+    contradictoryComputationError ||
+    emptyContradictory
   );
 
   return (
     <>
-      <InfoCard
-        className={`${alternateDisplay ? classes.darkCard : ""} ${
-          infoCardStyles.bottomMargin
-        }`}
-        textAlign="left"
-      >
-        <Grid
-          container
-          spacing={2}
-          justifyContent="space-between"
-          alignItems="center"
-          wrap="nowrap"
-          onClick={() => setOpen(!open)}
+      {collapsable && (
+        <InfoCard
+          className={`${alternateDisplay ? classes.darkCard : ""} ${
+            infoCardStyles.bottomMargin
+          }`}
+          textAlign="left"
+          elevation={0}
         >
-          <Grid item>
-            <Typography className="bold">
-              {mission.name
-                ? `Nom de la mission : ${mission.name}`
-                : `Mission du ${prettyFormatDay(actualDay)}`}
-            </Typography>
-          </Grid>
-          <Grid item className={classes.buttonContainer}>
-            <IconButton
-              color={alternateDisplay ? "inherit" : "primary"}
-              className="no-margin-no-padding"
-              style={{ marginRight: 16 }}
-              onClick={async e => {
-                e.stopPropagation();
-                e.preventDefault();
-                trackLink({
-                  href: `/generate_mission_export`,
-                  linkType: "download"
-                });
-                try {
-                  if (controlId) {
-                    await api.downloadFileHttpQuery(
-                      HTTP_QUERIES.missionControlExport,
-                      {
-                        json: { mission_id: mission.id, control_id: controlId }
-                      }
-                    );
-                  } else {
-                    await api.downloadFileHttpQuery(
-                      HTTP_QUERIES.missionExport,
-                      {
-                        json: { mission_id: mission.id, user_id: userId }
-                      }
-                    );
-                  }
-                } catch (err) {
-                  alerts.error(
-                    formatApiError(err),
-                    "generate_mission_export",
-                    6000
-                  );
-                }
-              }}
-            >
-              <GetAppIcon />
-            </IconButton>
-            {collapsable && (
-              <IconButton
-                aria-label={open ? "Masquer" : "Afficher"}
-                color="inherit"
-                className="no-margin-no-padding"
+          <Grid
+            container
+            spacing={2}
+            justifyContent="space-between"
+            alignItems="center"
+            wrap="nowrap"
+            onClick={() => setOpen(!open)}
+            px={2}
+          >
+            <Grid item>
+              <Typography
+                component={getPrevHeadingComponent(headingComponent)}
+                sx={{ color: "inherit" }}
               >
-                {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                <span className="bold">
+                  {mission.name
+                    ? `Nom de la mission : ${mission.name}`
+                    : `Mission du ${prettyFormatDay(actualDay)}`}
+                </span>
+                {mission.isDeleted
+                  ? ` (mission supprimée le ${frenchFormatDateStringOrTimeStamp(
+                      unixTimestampToDate(mission?.deletedAt)
+                    )} par ${mission?.deletedBy})`
+                  : ""}
+              </Typography>
+            </Grid>
+            <Grid item className={classes.buttonContainer}>
+              <IconButton
+                color={alternateDisplay ? "inherit" : "primary"}
+                className="no-margin-no-padding"
+                style={{ marginRight: 16 }}
+                onClick={onDownloadMission}
+              >
+                <GetAppIcon />
               </IconButton>
-            )}
+              {collapsable && (
+                <IconButton
+                  aria-label={open ? "Masquer" : "Afficher"}
+                  color="inherit"
+                  className="no-margin-no-padding"
+                >
+                  {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                </IconButton>
+              )}
+            </Grid>
           </Grid>
-        </Grid>
-      </InfoCard>
+        </InfoCard>
+      )}
       <Collapse in={open || !collapsable}>
-        {!mission.ended && (
+        {!mission.ended && !mission.isDeleted && (
           <InfoCard
             {...(alternateDisplay
               ? {
-                  elevation: 0,
                   className: `${classes.alternateCard} ${infoCardStyles.bottomMargin}`
                 }
               : { className: infoCardStyles.bottomMargin })}
+            elevation={0}
           >
             <ItalicWarningTypography>
               Mission en cours !
             </ItalicWarningTypography>
           </InfoCard>
         )}
-        {(!validateMission ||
-          mission.validation ||
-          mission.adminValidation) && (
-          <>
-            <MissionValidationInfo validation={mission.validation} />
-            <MissionValidationInfo
-              className={classes.employeeValidation}
-              validation={mission.adminValidation}
-              isAdmin
+        <PeriodHeader>
+          <Stack direction="row" justifyContent="space-between">
+            <Box sx={{ textAlign: "left" }}>
+              <Typography className={classes.missionName}>
+                Mission {mission.name}
+              </Typography>
+              <Typography className={classes.missionDate}>
+                {prettyFormatDay(mission.startTime, true)}
+              </Typography>
+            </Box>
+            <Button
+              iconId="fr-icon-download-line"
+              priority="secondary"
+              onClick={onDownloadMission}
+              title="Télécharger la mission"
+              className={classes.downloadButton}
+              size="small"
             />
-          </>
+          </Stack>
+          {showMetrics && (
+            <WorkTimeSummaryKpiGrid
+              loading={loadingEmployeeVersion}
+              metrics={renderMissionKpis(
+                adminKpis,
+                employeeKpis,
+                shouldDisplayInitialEmployeeVersion,
+                "Durée",
+                true
+              )}
+              cardProps={
+                alternateDisplay
+                  ? { elevation: 0, className: classes.alternateCard }
+                  : {}
+              }
+            />
+          )}
+          {!mission.isDeleted && displayContradictory && (
+            <ContradictorySwitch
+              shouldDisplayInitialEmployeeVersion={
+                shouldDisplayInitialEmployeeVersion
+              }
+              setShouldDisplayInitialEmployeeVersion={
+                setShouldDisplayInitialEmployeeVersion
+              }
+              disabled={loadingEmployeeVersion}
+            />
+          )}
+        </PeriodHeader>
+        {!displayContradictory && (
+          <NoContradictory
+            contradictoryNotYetAvailable={contradictoryNotYetAvailable}
+            contradictoryComputationError={contradictoryComputationError}
+          />
         )}
-        <ContradictorySwitch
-          contradictoryNotYetAvailable={!canDisplayContradictoryVersions}
-          emptyContradictory={contradictoryIsEmpty && hasComputedContradictory}
-          className={classes.contradictorySwitch}
-          shouldDisplayInitialEmployeeVersion={
-            shouldDisplayInitialEmployeeVersion
-          }
-          setShouldDisplayInitialEmployeeVersion={
-            setShouldDisplayInitialEmployeeVersion
-          }
-          contradictoryComputationError={contradictoryComputationError}
-          disabled={loadingEmployeeVersion}
-        />
-        {showMetrics && (
-          <WorkTimeSummaryKpiGrid
-            loading={loadingEmployeeVersion}
-            metrics={renderMissionKpis(kpis, "Durée", true)}
-            cardProps={
-              alternateDisplay
-                ? { elevation: 0, className: classes.alternateCard }
-                : {}
-            }
+        {mission.pastRegistrationJustification && (
+          <PastMissionNotice
+            missionName={mission.name}
+            justification={mission.pastRegistrationJustification}
+            submitter={mission.submitter}
           />
         )}
         {showMetrics ? (
           <InfoCard
-            className={infoCardStyles.topMargin}
             loading={loadingEmployeeVersion}
             px={0}
             py={0}
+            elevation={0}
           >
             {MissionDetailsComponent}
           </InfoCard>

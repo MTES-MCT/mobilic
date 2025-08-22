@@ -1,109 +1,84 @@
 import React from "react";
-import DialogTitle from "@mui/material/DialogTitle";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import Typography from "@mui/material/Typography";
 import { LoadingButton } from "common/components/LoadingButton";
-import { makeStyles } from "@mui/styles";
-import { useIsWidthDown } from "common/utils/useWidth";
-import Button from "@mui/material/Button";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import { CustomDialogActions } from "../common/CustomDialogTitle";
-import { Header } from "../common/Header";
-import Container from "@mui/material/Container";
-import { usePageTitle } from "../common/UsePageTitle";
+import Modal from "../common/Modal";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { ExternalLink } from "../common/ExternalLink";
+import Typography from "@mui/material/Typography";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 
-const useStyles = makeStyles(theme => ({
-  frameContainer: {
-    padding: theme.spacing(4),
-    paddingBottom: theme.spacing(1),
-    margin: "auto",
-    height: "100%"
-  }
-}));
-
-export function CGU() {
-  return [<Header key={0} />, <CGUContent key={1} />];
-}
-
-function CGUContent() {
-  usePageTitle("CGU - Mobilic");
-  const classes = useStyles();
-
-  return (
-    <Container className={classes.frameContainer} maxWidth={false}>
-      <iframe
-        title="Conditions Générales d'Utilisation"
-        src="https://cgu.mobilic.beta.gouv.fr"
-        frameBorder="0"
-        width="100%"
-        height="100%"
-        style={{ backgroundColor: "transparent" }}
-      ></iframe>
-    </Container>
-  );
-}
+export const CGU_EXTERNAL_URL = "https://cgu.mobilic.beta.gouv.fr";
+export const CGU_API_EXTERNAL_URL = "https://cgu-api.mobilic.beta.gouv.fr/";
 
 function CGUModal({ open, handleClose, handleAccept, handleReject }) {
   const store = useStoreSyncedWithLocalStorage();
-  const isSmDown = useIsWidthDown("sm");
+  const [isChecked, setIsChecked] = React.useState(false);
 
   return (
-    <Dialog
-      onClose={handleClose}
+    <Modal
+      size="sm"
       open={open}
-      scroll="paper"
-      fullWidth
-      fullScreen={isSmDown}
-      maxWidth="lg"
-      PaperProps={{ style: { height: "100%" } }}
-    >
-      <DialogTitle disableTypography>
-        <Typography variant="h4">Conditions générales d'utilisation</Typography>
-      </DialogTitle>
-      <DialogContent dividers>
-        <CGUContent />
-      </DialogContent>
-      <CustomDialogActions>
-        {handleAccept && (
-          <LoadingButton
-            aria-label="Accepter"
-            variant="contained"
-            color="primary"
-            onClick={async () => {
-              await handleAccept();
-              await store.setHasAcceptedCgu();
-              handleClose();
-            }}
-          >
-            Accepter
-          </LoadingButton>
-        )}
-        {handleAccept && (
-          <LoadingButton
-            aria-label="Refuser"
-            variant="outlined"
-            color="primary"
-            onClick={async () => {
-              if (handleReject) await handleReject();
-              handleClose();
-            }}
-          >
-            Refuser
-          </LoadingButton>
-        )}
-        {!handleAccept && (
-          <Button
-            aria-label="Fermer"
-            variant="outlined"
-            color="primary"
-            onClick={handleClose}
-          >
-            Fermer
-          </Button>
-        )}
-      </CustomDialogActions>
-    </Dialog>
+      handleClose={handleClose}
+      title="Conditions générales d'utilisation"
+      content={
+        <>
+          <Typography sx={{ marginTop: 1 }}>
+            Pour créer un compte, vous devez accepter nos{" "}
+            <ExternalLink
+              url={CGU_EXTERNAL_URL}
+              text="conditions générales d’utilisation"
+              withIcon
+            />
+            . Veuillez les lire attentivement avant d'accepter.
+          </Typography>
+          <Checkbox
+            legend=""
+            options={[
+              {
+                label:
+                  "En cochant cette case, vous confirmez avoir lu et accepté nos conditions générales d'utilisation",
+                nativeInputProps: {
+                  checked: isChecked,
+                  onChange: e => setIsChecked(e.target.checked)
+                }
+              }
+            ]}
+          />
+        </>
+      }
+      actions={
+        <>
+          {handleReject && (
+            <LoadingButton
+              priority="secondary"
+              onClick={async () => {
+                if (handleReject) await handleReject();
+                handleClose();
+              }}
+            >
+              Refuser
+            </LoadingButton>
+          )}
+          {!handleReject && (
+            <Button priority="secondary" onClick={handleClose}>
+              Fermer
+            </Button>
+          )}
+          {handleAccept && (
+            <LoadingButton
+              onClick={async () => {
+                await handleAccept();
+                await store.setHasAcceptedCgu();
+                handleClose();
+              }}
+              disabled={!isChecked}
+            >
+              Accepter
+            </LoadingButton>
+          )}
+        </>
+      }
+    />
   );
 }
 

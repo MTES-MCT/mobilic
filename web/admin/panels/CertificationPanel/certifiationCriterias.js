@@ -55,7 +55,7 @@ export const CERTIFICATION_CRITERIAS = {
         Les activités enregistrées ne doivent pas provoquer d'alertes
         réglementaires.
         <br />
-        Mobilic applique un seuil de tolérance de 10%
+        Mobilic applique un seuil de tolérance de 10%.
       </span>
     )
   }

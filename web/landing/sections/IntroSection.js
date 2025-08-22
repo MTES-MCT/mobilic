@@ -1,14 +1,14 @@
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import React from "react";
-import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizontal.png";
+import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizontal.jpg";
 import BackgroundVerticalImage from "common/assets/images/landing-hero-vertical.jpg";
-import { Alert } from "@mui/material";
 import { Link } from "../../common/LinkButton";
 import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthDown } from "common/utils/useWidth";
-import { VideoCard, VIDEOS } from "../ResourcePage/VideoCard";
+import classNames from "classnames";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   heroContainer: {
@@ -23,17 +23,14 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(2)
     }
   },
-  agentConnectLink: {
+  loginLink: {
     whiteSpace: "nowrap"
-  },
-  agentConnectAlert: {
-    textAlign: "left"
   },
   underlineBlue: {
     backgroundColor: "rgba(49, 132, 255, 0.2)"
   },
   leftBlockIntro: {
-    marginLeft: theme.spacing(12),
+    marginLeft: theme.spacing(4),
     [theme.breakpoints.down("sm")]: {
       marginLeft: theme.spacing(2)
     },
@@ -54,7 +51,8 @@ const useStyles = makeStyles(theme => ({
     }
   },
   explanation: {
-    fontSize: "1.25em",
+    fontSize: "1.25rem",
+    lineHeight: "1.75rem",
     marginTop: theme.spacing(10),
     [theme.breakpoints.down("sm")]: {
       marginTop: theme.spacing(2),
@@ -64,7 +62,6 @@ const useStyles = makeStyles(theme => ({
   },
   objective: {
     fontWeight: "bold",
-    fontSize: "1em",
     marginTop: theme.spacing(3)
   },
   phoneImageContainer: {
@@ -84,20 +81,20 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down("sm")]: {
       marginLeft: theme.spacing(-2)
     }
-  },
-  videoSection: {
-    marginTop: theme.spacing(5),
-    [theme.breakpoints.down("sm")]: {
-      paddingRight: theme.spacing(3.5),
-      marginLeft: theme.spacing(1)
-    }
   }
 }));
 
 const PhoneImageComponent = ({ isSmDown }) => {
   const classes = useStyles();
   return (
-    <Grid item xs={12} sm={6} lg={8} className={classes.phoneImageContainer}>
+    <Grid
+      item
+      xs={12}
+      sm={6}
+      lg={8}
+      className={classes.phoneImageContainer}
+      zIndex={-1}
+    >
       <img
         className={classes.phoneImage}
         src={isSmDown ? BackgroundVerticalImage : BackgroundHorizontalImage}
@@ -120,10 +117,12 @@ const Explanation = () => {
           entreprises concernées par la réglementation de suivi du temps de
           travail dans le transport léger et dans le déménagement (-3.5T)
         </span>
-        <Typography className={classes.objective}>
-          L'objectif : faciliter l'application{" "}
-          <span style={{ whiteSpace: "nowrap" }}>de la réglementation !</span>
-        </Typography>
+      </Typography>
+      <Typography
+        className={classNames(classes.objective, classes.explanation)}
+      >
+        L'objectif : faciliter l'application{" "}
+        <span style={{ whiteSpace: "nowrap" }}>de la réglementation !</span>
       </Typography>
     </Grid>
   );
@@ -135,29 +134,47 @@ export function IntroSection() {
 
   return (
     <Container maxWidth={false} className={classes.heroContainer}>
-      <Alert severity="info" className={classes.agentConnectAlert}>
-        Accès Agent Public :{" "}
-        <Link variant="login controleur" to="/controller-login">
-          <span className={classes.agentConnectLink}>
-            se connecter à mon espace
-          </span>
-        </Link>
-      </Alert>
+      <Notice
+        size="small"
+        description={
+          <Link variant="login" to="/login-selection">
+            <span className={classes.loginLink}>Se connecter à mon espace</span>
+          </Link>
+        }
+      />
       <Container maxWidth="xl" className={`fade-in-image ${classes.heroInner}`}>
         <Grid container direction="row" className={classes.leftBlockIntro}>
           <Grid item xs={12} marginTop={4}>
-            <Typography className={classes.textTitle} variant="h1">
-              La plateforme numérique gouvernementale
-            </Typography>
-            <Typography className={classes.textIntro} variant="h2">
-              de{" "}
-              <span className={classes.underlineBlue}>
-                suivi du temps de travail
-              </span>
-            </Typography>
-            <Typography className={classes.textIntro} variant="h2">
-              dans le transport routier léger
-            </Typography>
+            <h1 className="fr-sr-only">
+              La plateforme numérique gouvernementale de suivi du temps de
+              travail dans le transport routier léger
+            </h1>
+            <div aria-hidden="true">
+              <Typography
+                className={classes.textTitle}
+                variant="h1"
+                component="p"
+              >
+                La plateforme numérique gouvernementale{" "}
+              </Typography>
+              <Typography
+                className={classes.textIntro}
+                variant="h2"
+                component="p"
+              >
+                de{" "}
+                <span className={classes.underlineBlue}>
+                  suivi du temps de travail
+                </span>{" "}
+              </Typography>
+              <Typography
+                className={classes.textIntro}
+                variant="h2"
+                component="p"
+              >
+                dans le transport routier léger
+              </Typography>
+            </div>
           </Grid>
           {isSmDown ? (
             <>
@@ -170,16 +187,6 @@ export function IntroSection() {
               <PhoneImageComponent isSmDown={isSmDown} />
             </>
           )}
-        </Grid>
-      </Container>
-      <Container maxWidth="md" className={classes.videoSection}>
-        <Grid container direction="row" alignItems="center" spacing={1}>
-          <Grid item xs={12} sm={6}>
-            <VideoCard video={VIDEOS.Home_Mobilic} />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <VideoCard video={VIDEOS.Home_Regulation} />
-          </Grid>
         </Grid>
       </Container>
     </Container>

@@ -19,6 +19,16 @@ export function updateShouldSeeCertificateInfoReducer(
   };
 }
 
+export function updateShouldForceNbWorkerInfoReducer(
+  state,
+  { shouldForceNbWorkerInfo }
+) {
+  return {
+    ...state,
+    shouldForceNbWorkerInfo
+  };
+}
+
 export function updateEmploymentIdReducer(state, { employmentId }) {
   return {
     ...state,
@@ -32,20 +42,54 @@ export function updateCompaniesListReducer(state, { companiesPayload }) {
     companies: companiesPayload.map(c => ({
       id: c.id,
       name: c.name,
-      siren: c.siren
+      siren: c.siren,
+      phoneNumber: c.phoneNumber,
+      nbWorkers: c.nbWorkers
     }))
   };
 }
 
-export function updateCompanyNameReducer(state, action) {
-  const { companyId, companyName } = action;
+export function updateCompanyNameAndPhoneNumberReducer(state, action) {
+  const {
+    companyId,
+    companyName,
+    companyPhoneNumber,
+    companyNbWorkers
+  } = action;
 
   const updatedCompanies = state.companies.map(({ id, ...rest }) => {
     if (id !== companyId) {
       return { id, ...rest };
     }
 
-    return { id, ...rest, name: companyName };
+    return {
+      id,
+      ...rest,
+      name: companyName,
+      phoneNumber: companyPhoneNumber,
+      ...(companyNbWorkers !== undefined && { nbWorkers: companyNbWorkers })
+    };
+  });
+
+  return {
+    ...state,
+    companies: updatedCompanies
+  };
+}
+
+export function updateCompanyNbWorkerSnoozeReducer(state, action) {
+  const { companyId, snoozeNbWorkerDate } = action;
+
+  const updatedCompanies = state.companies.map(({ id, ...rest }) => {
+    if (id !== companyId) {
+      return { id, ...rest };
+    }
+
+    return {
+      id,
+      ...rest,
+      snoozeNbWorkerDate
+    };
   });
 
   return {
@@ -67,6 +111,11 @@ export function updateCompanyDetailsReducer(
   const users = flatMap(
     companiesPayload.map(c => c.users.map(u => ({ ...u, companyId: c.id })))
   );
+  const currentUsers = flatMap(
+    companiesPayload.map(c =>
+      c.currentUsers.map(u => ({ ...u, companyId: c.id }))
+    )
+  );
   const allEmployments = flatMap(
     companiesPayload.map(c =>
       c.employments.map(e => ({
@@ -87,9 +136,31 @@ export function updateCompanyDetailsReducer(
     teams
   );
 
+  const regularMissions = flatMap(
+    companiesPayload.map(c =>
+      c.missions.edges.map(m => ({
+        ...m.node,
+        companyId: c.id,
+        isDeleted: false
+      }))
+    )
+  );
+  const deletedMissions = flatMap(
+    companiesPayload.map(c =>
+      c.missionsDeleted.edges.map(m => ({
+        ...m.node,
+        companyId: c.id,
+        isDeleted: true
+      }))
+    )
+  );
+
+  const missions = deletedMissions.concat(regularMissions);
+
   return {
     ...stateWithWorkDays,
     users,
+    currentUsers,
     teams: teams,
     employments: allEmployments,
     vehicles: flatMap(
@@ -98,6 +169,10 @@ export function updateCompanyDetailsReducer(
       )
     ),
     settings: companiesPayload[0].settings,
+    business: companiesPayload[0].business || {
+      businessType: "",
+      transportType: ""
+    },
     knownAddresses: flatMap(
       companiesPayload.map(c =>
         c.knownAddresses
@@ -114,13 +189,7 @@ export function updateCompanyDetailsReducer(
           )
       )
     ),
-    missions: [
-      ...flatMap(
-        companiesPayload.map(c =>
-          c.missions.edges.map(m => ({ ...m.node, companyId: c.id }))
-        )
-      )
-    ],
+    missions,
     activitiesFilters: {
       ...state.activitiesFilters,
       teams: usersAndTeamsFilters.activitiesFilters.teams,

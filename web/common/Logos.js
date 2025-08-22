@@ -26,12 +26,12 @@ export function Logos({ leaveSpaceForMenu = true }) {
         </Box>
       )}
       <LinkButton
-        style={{ borderRadius: 0, textTransform: "none" }}
         to={getFallbackRoute({
           userInfo: store.userInfo(),
           controllerInfo: store.controllerInfo(),
           companies: store.companies()
         })}
+        style={{ padding: "0.25rem 0.5rem" }}
       >
         <img alt="Mobilic" height={45} width={128} src={MobilicLogoWithText} />
       </LinkButton>

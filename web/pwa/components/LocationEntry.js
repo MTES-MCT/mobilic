@@ -5,10 +5,10 @@ import {
   formatAddressMainText,
   formatAddressSubText
 } from "common/utils/addresses";
-import Button from "@mui/material/Button";
 import ListItem from "@mui/material/ListItem";
 import { makeStyles } from "@mui/styles";
 import { useModals } from "common/utils/modals";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   kilometerReading: {
@@ -54,7 +54,9 @@ export default function LocationEntry({
 
   return (
     <ListItem disableGutters>
-      <ListItemIcon>{isStart ? "Début" : "Fin"}</ListItemIcon>
+      <ListItemIcon sx={{ marginRight: 1 }}>
+        {isStart ? "Début" : "Fin"}
+      </ListItemIcon>
       <ListItemText
         primary={location ? formatAddressMainText(location) : null}
         secondary={location ? formatAddressSubText(location) : null}
@@ -66,8 +68,7 @@ export default function LocationEntry({
           secondary={
             editKilometerReading ? (
               <Button
-                className="no-margin-no-padding"
-                color="primary"
+                priority="tertiary"
                 size="small"
                 onClick={handleEditKilometerReading}
               >
@@ -79,8 +80,7 @@ export default function LocationEntry({
       ) : location && editKilometerReading ? (
         <ListItemText className={classes.kilometerReading} disableTypography>
           <Button
-            variant="outlined"
-            color="primary"
+            priority="tertiary"
             size="small"
             onClick={handleEditKilometerReading}
           >

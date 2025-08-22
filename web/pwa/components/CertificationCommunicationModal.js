@@ -1,36 +1,16 @@
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import Button from "@mui/material/Button";
-import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
 import { EDIT_COMPANIES_COMMUNICATION_SETTING } from "common/utils/apiQueries";
 import React, { useMemo, useState } from "react";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import {
-  CustomDialogActions,
-  CustomDialogTitle
-} from "../../common/CustomDialogTitle";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Link } from "../../common/LinkButton";
-
-const useStyles = makeStyles(theme => ({
-  modalFooter: {
-    display: "flex",
-    flexDirection: "row-reverse"
-  },
-  modalButton: {
-    marginLeft: theme.spacing(2)
-  },
-  prioritaryModal: {
-    zIndex: 2400
-  }
-}));
+import Modal from "../../common/Modal";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export default function CertificationCommunicationModal({
   companies,
   onClose
 }) {
-  const classes = useStyles();
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const [isOpen, setIsOpen] = useState(true);
@@ -84,50 +64,44 @@ export default function CertificationCommunicationModal({
   };
 
   return (
-    <Dialog
-      className={classes.prioritaryModal}
-      maxWidth="md"
-      onClose={handleClose}
+    <Modal
+      title={modalTitle}
       open={isOpen}
-      fullWidth
-    >
-      <CustomDialogTitle handleClose={handleClose} title={modalTitle} />
-      <DialogContent>
-        <p>{modalText}</p>
-        <p>
-          <Link
-            href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic"
-            target="_blank"
-            rel="noopener noreferrer"
+      handleClose={handleClose}
+      content={
+        <>
+          <p>{modalText}</p>
+          <p>
+            <Link
+              href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Qu'est-ce que le certificat Mobilic ?
+            </Link>
+          </p>
+        </>
+      }
+      actions={
+        <>
+          <Button
+            priority="secondary"
+            onClick={() => {
+              handleSubmit(false);
+            }}
           >
-            Qu'est-ce que le certificat Mobilic ?
-          </Link>
-        </p>
-      </DialogContent>
-      <CustomDialogActions>
-        <Button
-          className={classes.modalButton}
-          title="Je refuse"
-          secondary
-          onClick={() => {
-            handleSubmit(false);
-          }}
-        >
-          Je refuse
-        </Button>
-        <LoadingButton
-          className={classes.modalButton}
-          title="J'accepte"
-          color="primary"
-          variant="contained"
-          onClick={async e => {
-            handleSubmit(true);
-          }}
-          loading={loading}
-        >
-          J'accepte
-        </LoadingButton>
-      </CustomDialogActions>
-    </Dialog>
+            Je refuse
+          </Button>
+          <LoadingButton
+            onClick={async e => {
+              handleSubmit(true);
+            }}
+            loading={loading}
+          >
+            J'accepte
+          </LoadingButton>
+        </>
+      }
+    />
   );
 }

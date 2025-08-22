@@ -14,7 +14,6 @@ import Container from "@mui/material/Container";
 import { LoadingButton } from "common/components/LoadingButton";
 import { Section } from "../common/Section";
 import { useModals } from "common/utils/modals";
-import { PasswordField } from "common/components/PasswordField";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainerTitle } from "../common/PaperContainer";
 import {
@@ -28,7 +27,7 @@ import TimezoneSelect from "../common/TimezoneSelect";
 import { getClientTimezone } from "common/utils/timezones";
 import { WayHeardOfMobilic } from "../common/WayHeardOfMobilic";
 import { getPasswordErrors } from "common/utils/passwords";
-import { PasswordHelper } from "../common/PasswordHelper";
+import { PasswordInput } from "../common/forms/PasswordInput";
 
 const useStyles = makeStyles(theme => ({
   text: {
@@ -58,7 +57,7 @@ export function EmailSelection() {
   const [password, setPassword] = React.useState("");
   const [choosePassword, setChoosePassword] = React.useState(false);
   const [subscribeToNewsletter, setSubscribeToNewsletter] = React.useState(
-    true
+    isAdmin ? true : false
   );
   const [loading, setLoading] = React.useState(false);
 
@@ -177,20 +176,28 @@ export function EmailSelection() {
           </Typography>
           <EmailField
             required
-            fullWidth
-            className="vertical-form-text-input"
             label="Adresse e-mail"
             value={email}
             setValue={setEmail}
             validate
-            error={emailError}
+            error={!!emailError}
             setError={setEmailError}
+            showHint
           />
-          <CheckboxField
-            checked={subscribeToNewsletter}
-            onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}
-            label="Je souhaite m'abonner à la lettre d'information de Mobilic pour rester informé par mail des nouveautés du produit"
-          />
+          {!isAdmin && (
+            <CheckboxField
+              checked={subscribeToNewsletter}
+              onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}
+              label="En cochant cette case, j'accepte que mon adresse e-mail soit utilisée pour m'envoyer la lettre d'information Mobilic et pour me contacter en cas de besoin d'assistance technique."
+            />
+          )}
+          {isAdmin && (
+            <CheckboxField
+              checked={!subscribeToNewsletter}
+              onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}
+              label="Je m’oppose à ce que mon adresse e-mail soit utilisée pour recevoir la lettre d'information, les informations sur les nouvelles fonctionnalités et les dates de formation gestionnaire."
+            />
+          )}
         </Section>
         <Section title="2. Mot de passe (facultatif)">
           <Typography align="justify" className={classes.text}>
@@ -211,22 +218,16 @@ export function EmailSelection() {
             label="Choisir un mot de passe"
           />
           {choosePassword && (
-            <>
-              <PasswordField
-                required
-                fullWidth
-                className="vertical-form-text-input"
-                label="Choisissez un mot de passe"
-                autoComplete="current-password"
-                variant="standard"
-                value={password}
-                onChange={e => {
-                  setPassword(e.target.value);
-                }}
-                error={password ? getPasswordErrors(password) : null}
-              />
-              <PasswordHelper password={password} />
-            </>
+            <PasswordInput
+              label="Choisissez un mot de passe"
+              nativeInputProps={{
+                autoComplete: "current-password",
+                value: password,
+                onChange: e => setPassword(e.target.value)
+              }}
+              displayMessages
+              required
+            />
           )}
         </Section>
         <Section title="3. Fuseau horaire">
@@ -247,13 +248,10 @@ export function EmailSelection() {
         )}
         <Box my={4}>
           <LoadingButton
-            aria-label="Continuer"
-            variant="contained"
-            color="primary"
             type="submit"
             loading={loading}
             disabled={
-              emailError ||
+              !!emailError ||
               !email ||
               (choosePassword && (!password || getPasswordErrors(password)))
             }

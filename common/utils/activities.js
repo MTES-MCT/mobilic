@@ -1,16 +1,23 @@
 import React from "react";
-import { RestIcon, TransferIcon, TruckIcon, WorkIcon } from "./icons";
+import {
+  HolidayIcon,
+  RestIcon,
+  TransferIcon,
+  TruckIcon,
+  WorkIcon
+} from "./icons";
 import { now } from "./time";
 import forEach from "lodash/forEach";
 import maxBy from "lodash/maxBy";
 import minBy from "lodash/minBy";
+import { fr } from "@codegouvfr/react-dsfr";
 
 export const SWITCH_ACTIVITIES = {
   drive: {
     name: "drive",
     label: "Déplacement",
     renderIcon: props => <TruckIcon {...props} />,
-    color: "#6BE670",
+    color: fr.colors.decisions.artwork.major.greenArchipel.default,
     canBeFirst: true
   },
   work: {
@@ -18,13 +25,13 @@ export const SWITCH_ACTIVITIES = {
     label: "Autre tâche",
     renderIcon: props => <WorkIcon {...props} />,
     canBeFirst: true,
-    color: "#F3A817"
+    color: fr.colors.decisions.artwork.major.pinkTuile.default
   },
   break: {
     name: "break",
     label: "Pause",
     renderIcon: props => <RestIcon {...props} />,
-    color: "#9A9CF8"
+    color: fr.colors.decisions.artwork.major.purpleGlycine.default
   }
 };
 
@@ -34,13 +41,19 @@ export const ACTIVITIES = {
     name: "support",
     label: "Accompagnement",
     renderIcon: props => <TruckIcon {...props} />,
-    color: "#219358"
+    color: fr.colors.decisions.border.plain.greenEmeraude.default
   },
   transfer: {
     name: "transfer",
     label: "Liaison",
     renderIcon: props => <TransferIcon {...props} />,
-    color: "#417DC4"
+    color: fr.colors.decisions.border.plain.orangeTerreBattue.default
+  },
+  off: {
+    name: "off",
+    label: "Congé",
+    renderIcon: props => <HolidayIcon {...props} />,
+    color: fr.colors.decisions.border.default.blueEcume.default
   }
 };
 
@@ -64,7 +77,8 @@ export function parseActivityPayloadFromBackend(activity) {
     endTime: activity.endTime,
     missionId: activity.missionId,
     userId: activity.userId,
-    context: activity.context
+    context: activity.context,
+    isMissionDeleted: activity.isMissionDeleted || false
   };
 }
 

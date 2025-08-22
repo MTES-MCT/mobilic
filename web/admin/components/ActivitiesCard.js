@@ -7,7 +7,7 @@ import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 import { AugmentedTable } from "./AugmentedTable";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { ACTIVITIES } from "common/utils/activities";
-import Button from "@mui/material/Button";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useActivitiesCardStyles } from "./styles/ActivitiesCardStyle";
 import SvgIcon from "@mui/material/SvgIcon";
 import EditIcon from "@mui/icons-material/Edit";
@@ -18,6 +18,8 @@ import {
 } from "common/utils/matomoTags";
 
 export function ActivitiesCard({
+  missionDeleted = false,
+  isHoliday = false,
   activities,
   onCreateActivity,
   onEditActivity,
@@ -26,7 +28,10 @@ export function ActivitiesCard({
   loading,
   fromTime,
   untilTime,
-  datetimeFormatter = formatTimeOfDay
+  datetimeFormatter = formatTimeOfDay,
+  titleProps = {},
+  actionButtonLabel = "",
+  onActionButtonClick = null
 }) {
   const classes = useActivitiesCardStyles();
   const ref = React.useRef();
@@ -58,6 +63,8 @@ export function ActivitiesCard({
       format: time =>
         time ? (
           datetimeFormatter(time)
+        ) : missionDeleted ? (
+          "-"
         ) : (
           <span className={classes.warningText}>En cours</span>
         ),
@@ -68,9 +75,11 @@ export function ActivitiesCard({
       name: "duration",
       align: "right",
       format: (duration, entry) =>
-        formatTimer(
-          (entry.displayedEndTime || now()) - entry.displayedStartTime
-        ),
+        missionDeleted && !entry.displayedEndTime
+          ? "-"
+          : formatTimer(
+              (entry.displayedEndTime || now()) - entry.displayedStartTime
+            ),
       minWidth: 60
     }
   ];
@@ -101,8 +110,6 @@ export function ActivitiesCard({
 
   const AddActivityButton = () => (
     <Button
-      aria-label="Ajouter une activité"
-      color="primary"
       size="small"
       className={classes.addActivityButton}
       onClick={e => {
@@ -111,17 +118,26 @@ export function ActivitiesCard({
         trackEvent(ADD_ACTIVITY_IN_MISSION_PANEL);
         onCreateActivity();
       }}
+      iconId="fr-icon-add-line"
+      iconPosition="right"
     >
       Ajouter une activité
     </Button>
   );
 
   return (
-    <MissionInfoCard title={title} extraPaddingBelowTitle loading={loading}>
+    <MissionInfoCard
+      title={title}
+      extraPaddingBelowTitle
+      loading={loading}
+      titleProps={titleProps}
+      actionButtonLabel={actionButtonLabel}
+      onActionButtonClick={onActionButtonClick}
+    >
       <Grid container key={2} spacing={2}>
         <Grid item xs={12}>
           <Grid key={1} item xs={12} className={classes.listActivitiesGrid}>
-            {onCreateActivity && <AddActivityButton />}
+            {onCreateActivity && !isHoliday && <AddActivityButton />}
             <AugmentedTable
               columns={activityColumns}
               ref={ref}
@@ -131,25 +147,42 @@ export function ActivitiesCard({
             />
           </Grid>
         </Grid>
-        {activities.length > 0 && [
-          <Grid key={1} item xs={12} sm={4} className={classes.chartContainer}>
-            <Typography variant="h6">Frise temporelle</Typography>
-            <VerticalTimeline
-              width={300}
-              activities={activities}
-              datetimeFormatter={datetimeFormatter}
-            />
-          </Grid>,
-          <Grid key={2} item xs={12} sm={8} className={classes.chartContainer}>
-            <Typography variant="h6">Répartition</Typography>
-            <ActivitiesPieChart
-              activities={activities}
-              fromTime={fromTime}
-              untilTime={untilTime}
-              maxWidth={500}
-            />
-          </Grid>
-        ]}
+        {activities.length > 0 &&
+          !missionDeleted && [
+            <Grid
+              key={1}
+              item
+              xs={12}
+              sm={4}
+              className={classes.chartContainer}
+            >
+              <Typography variant="h6" component="span">
+                Frise temporelle
+              </Typography>
+              <VerticalTimeline
+                width={300}
+                activities={activities}
+                datetimeFormatter={datetimeFormatter}
+              />
+            </Grid>,
+            <Grid
+              key={2}
+              item
+              xs={12}
+              sm={8}
+              className={classes.chartContainer}
+            >
+              <Typography variant="h6" component="span">
+                Répartition
+              </Typography>
+              <ActivitiesPieChart
+                activities={activities}
+                fromTime={fromTime}
+                untilTime={untilTime}
+                maxWidth={500}
+              />
+            </Grid>
+          ]}
       </Grid>
     </MissionInfoCard>
   );

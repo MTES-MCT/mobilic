@@ -1,9 +1,19 @@
-import TextField from "@mui/material/TextField";
 import { CheckboxField } from "../../common/CheckboxField";
 import { LoadingButton } from "common/components/LoadingButton";
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import { Step } from "./Step";
+import { PhoneNumber } from "../../common/PhoneNumber";
+import Stack from "@mui/material/Stack";
+import { BusinessType } from "../../common/BusinessType";
+import { Section } from "../../common/Section";
+import { MandatoryField } from "../../common/MandatoryField";
+import { Input } from "../../common/forms/Input";
+import {
+  NbWorkersInput,
+  MIN_NB_WORKERS,
+  MAX_NB_WORKERS
+} from "../../common/forms/NbWorkersInput";
 
 const useStyles = makeStyles(theme => ({
   verticalFormButton: {
@@ -16,6 +26,12 @@ export function SubmitStep({
   loading,
   companyName,
   setCompanyName,
+  phoneNumber,
+  setPhoneNumber,
+  businessType,
+  setBusinessType,
+  nbWorkers,
+  setNbWorkers,
   ...props
 }) {
   const [claimedRights, setClaimedRights] = React.useState(false);
@@ -36,28 +52,54 @@ export function SubmitStep({
         onSubmit={handleSubmit}
       >
         {usingCompanyName && (
-          <TextField
-            fullWidth
-            variant="standard"
-            required={usingCompanyName}
-            label="Nom usuel"
-            value={companyName}
-            onChange={e => setCompanyName(e.target.value.trimLeft())}
-          />
+          <Stack direction="column" spacing={2} textAlign="left">
+            <MandatoryField />
+            <Input
+              id="company-usual-name"
+              required
+              nativeInputProps={{
+                value: companyName,
+                onChange: e => setCompanyName(e.target.value.trimLeft())
+              }}
+              label="Nom usuel"
+            />
+            <PhoneNumber
+              currentPhoneNumber={phoneNumber}
+              setCurrentPhoneNumber={setPhoneNumber}
+              label="Numéro de téléphone de l'entreprise"
+            />
+            <NbWorkersInput
+              initialValue={nbWorkers}
+              onChangeValue={setNbWorkers}
+            />
+            <Section title="Veuillez indiquer votre type d'activité">
+              <BusinessType
+                onChangeBusinessType={setBusinessType}
+                required
+                displayInfo
+              />
+            </Section>
+          </Stack>
         )}
-        <CheckboxField
-          checked={claimedRights}
-          onChange={() => setClaimedRights(!claimedRights)}
-          label="J'atteste être habilité(e) à administrer l'entreprise"
-          required
-        />
+        <Section title="Attestation d'habilitation">
+          <CheckboxField
+            checked={claimedRights}
+            onChange={() => setClaimedRights(!claimedRights)}
+            label="J'atteste être habilité(e) à administrer l'entreprise"
+            required
+          />
+        </Section>
         <LoadingButton
           aria-label="Terminer inscription"
           className={classes.verticalFormButton}
-          variant="contained"
-          color="primary"
           type="submit"
-          disabled={!claimedRights || (usingCompanyName && !companyName)}
+          disabled={
+            nbWorkers < MIN_NB_WORKERS ||
+            nbWorkers > MAX_NB_WORKERS ||
+            !claimedRights ||
+            (usingCompanyName && !companyName) ||
+            (usingCompanyName && !businessType)
+          }
           loading={loading}
         >
           Terminer

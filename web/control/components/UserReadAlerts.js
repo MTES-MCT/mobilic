@@ -1,19 +1,37 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import Alert from "@mui/material/Alert";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
-import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
-import { AlertGroup } from "./AlertGroup";
 import { prettyFormatDayHour } from "common/utils/time";
 import Stack from "@mui/material/Stack";
-import { Button } from "@dataesr/react-dsfr";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import Notice from "../../common/Notice";
+import { AlertGroup } from "./Alerts/AlertGroup";
+import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
+
+import { FieldTitle } from "../../common/typography/FieldTitle";
+import { DisplayBusinessTypes } from "./Alerts/BusinessTypesFromGroupedAlerts";
+import { getBusinessTypesFromGroupedAlerts } from "../utils/businessTypesFromGroupedAlerts";
+import { Description } from "../../common/typography/Description";
+import { CONTROL_TYPES } from "../../controller/utils/useReadControlData";
+import { useInfractions } from "../../controller/utils/contextInfractions";
+import { sanctionComparator } from "../utils/sanctionComparator";
+import { useControl } from "../../controller/utils/contextControl";
+import { TitleContainer } from "./TitleContainer";
+import Grid from "@mui/material/Grid";
+import { useIsWidthUp } from "common/utils/useWidth";
+import { UserReadAlertsPictures } from "./UserReadAlertsPictures";
 
 const useStyles = makeStyles(theme => ({
   container: {
-    paddingBottom: theme.spacing(4)
+    paddingBottom: theme.spacing(4),
+    marginTop: theme.spacing(2),
+    [theme.breakpoints.up("sm")]: {
+      paddingLeft: theme.spacing(0),
+      paddingRight: theme.spacing(0)
+    }
   },
   linkContainer: {
     textAlign: "center",
@@ -24,128 +42,217 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.grey[600],
     marginTop: theme.spacing(2)
   },
-  subtitle: {
-    color: theme.palette.grey[600]
-  },
-  helpText: {
-    fontWeight: "bold"
-  },
   divider: {
     marginTop: theme.spacing(4),
     marginBottom: theme.spacing(4)
+  },
+  bottomButtons: {
+    position: "sticky",
+    bottom: "-20px",
+    background: "white",
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    zIndex: 300,
+    width: "100%"
   }
 }));
 
-const HELPER_TEXT_SEVERAL_INFRACTIONS =
-  "Sélectionnez la ou les infractions que vous souhaitez verbaliser";
-const HELPER_TEXT_SINGLE_INFRACTION =
-  "Sélectionnez l’infraction si vous souhaitez la verbaliser";
+const HELPER_TEXT_SEVERAL_INFRACTIONS = (
+  <>Sélectionnez la ou les infractions que vous souhaitez verbaliser&nbsp;:</>
+);
+const HELPER_TEXT_SINGLE_INFRACTION = (
+  <>Sélectionnez l’infraction si vous souhaitez la verbaliser&nbsp;:</>
+);
+const HELPER_TEXT_LIC_PAPIER = (
+  <>
+    Sélectionnez les infractions que vous souhaitez verbaliser à partir du
+    livret individuel de contrôle présenté&nbsp;:
+  </>
+);
+
+export const WarningComputedAlerts = () => (
+  <Notice
+    description="Les infractions calculées par Mobilic se basent sur la version
+              validée par le gestionnaire, ou, si elle n’a pas été faite au
+              moment du contrôle, sur celle du salarié."
+  />
+);
 
 export function UserReadAlerts({
-  setTab,
-  groupedAlerts,
-  totalAlertsNumber,
+  onChangeTab,
   setPeriodOnFocus,
-  isReportingInfractions,
-  saveInfractions,
-  cancelInfractions,
-  onUpdateInfraction,
-  reportedInfractionsLastUpdateTime,
   readOnlyAlerts,
-  noLic
+  groupedAlerts = undefined
 }) {
   const classes = useStyles();
+  const isDesktop = useIsWidthUp("lg");
+  const {
+    groupedAlerts: infractionsGroupedAlerts,
+    isReportingInfractions,
+    totalAlertsNumber,
+    reportedInfractionsLastUpdateTime,
+    saveInfractions,
+    cancelInfractions,
+    setIsReportingInfractions
+  } = useInfractions();
+  const { controlType, controlData } = useControl();
+
+  const reportInfraction = () => {
+    setIsReportingInfractions(true);
+  };
+
+  const _groupedAlerts = groupedAlerts ?? infractionsGroupedAlerts;
+  const businessTypes = React.useMemo(
+    () => getBusinessTypesFromGroupedAlerts(_groupedAlerts),
+    [_groupedAlerts]
+  );
+
+  const updateInfractionsTitle = React.useMemo(
+    () =>
+      controlType === CONTROL_TYPES.LIC_PAPIER.label
+        ? HELPER_TEXT_LIC_PAPIER
+        : totalAlertsNumber === 1
+        ? HELPER_TEXT_SINGLE_INFRACTION
+        : HELPER_TEXT_SEVERAL_INFRACTIONS,
+    [totalAlertsNumber, controlType]
+  );
+
+  const displayPictures = React.useMemo(
+    () =>
+      isReportingInfractions &&
+      controlType === CONTROL_TYPES.LIC_PAPIER.label &&
+      controlData.pictures.length > 0 &&
+      isDesktop,
+    [controlType, isReportingInfractions, controlData.pictures, isDesktop]
+  );
 
   return (
-    <Container maxWidth="md" className={classes.container}>
+    <Container maxWidth={displayPictures ? "lg" : "md"} sx={{ padding: 0 }}>
+      {controlType === CONTROL_TYPES.MOBILIC.label && (
+        <DisplayBusinessTypes businessTypes={businessTypes} />
+      )}
+      <Container className={classes.container}>
+        <Grid container spacing={2}>
+          {displayPictures && (
+            <Grid item xs={5}>
+              <UserReadAlertsPictures />
+            </Grid>
+          )}
+          <Grid item xs={displayPictures ? 7 : 12}>
+            <Stack direction="column" rowGap={1}>
+              {isReportingInfractions && (
+                <Typography>{updateInfractionsTitle}</Typography>
+              )}
+              {!isReportingInfractions && (
+                <TitleContainer>
+                  <Typography
+                    component="h2"
+                    fontWeight="bold"
+                    fontSize="1.125rem"
+                  >
+                    Infractions retenues
+                  </Typography>
+                  <Button
+                    priority="primary"
+                    onClick={reportInfraction}
+                    disabled={false}
+                    size="small"
+                  >
+                    Modifier
+                  </Button>
+                </TitleContainer>
+              )}
+              {!isReportingInfractions && reportedInfractionsLastUpdateTime && (
+                <Description noMargin>
+                  {`Date de la dernière modification des infractions retenues : ${prettyFormatDayHour(
+                    reportedInfractionsLastUpdateTime
+                  )}`}
+                </Description>
+              )}
+              {controlType === CONTROL_TYPES.MOBILIC.label && (
+                <>
+                  <FieldTitle uppercaseTitle component="h2">
+                    Infractions calculées par Mobilic
+                  </FieldTitle>
+                  <WarningComputedAlerts />
+                </>
+              )}
+              {_groupedAlerts?.length > 0 ? (
+                <List
+                  sx={{
+                    ...(isReportingInfractions && {
+                      overflow: "scroll",
+                      height: "65vh"
+                    })
+                  }}
+                >
+                  {_groupedAlerts.sort(sanctionComparator).map(group => (
+                    <ListItem
+                      key={`${group.type}_${group.sanction}`}
+                      disableGutters
+                      disablePadding
+                      sx={{ marginBottom: "8px" }}
+                    >
+                      <AlertGroup
+                        {...group}
+                        setPeriodOnFocus={setPeriodOnFocus}
+                        onChangeTab={onChangeTab}
+                        readOnlyAlerts={readOnlyAlerts}
+                        titleProps={{ component: "h3" }}
+                        displayBusinessType={
+                          businessTypes && businessTypes.length > 1
+                        }
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              ) : (
+                <Typography className={classes.italicInfo}>
+                  Il n'y a aucune alerte réglementaire sur la période
+                </Typography>
+              )}
+              <>
+                {!isReportingInfractions &&
+                  controlType === CONTROL_TYPES.MOBILIC.label && (
+                    <Notice
+                      type="warning"
+                      description={
+                        <>
+                          Les données collectées par Mobilic sont déclaratives
+                          et sont donc susceptibles d'erreurs ou d'oublis. En
+                          cas de données manquantes ou inexactes les alertes
+                          réglementaires ne peuvent pas être remontées
+                          correctement.
+                          <br />
+                          Mobilic sert à faciliter le travail d'enquête des
+                          inspecteurs sans se substituer à lui.
+                        </>
+                      }
+                    />
+                  )}
+              </>
+            </Stack>
+          </Grid>
+        </Grid>
+      </Container>
       {isReportingInfractions && (
-        <Typography className={classes.helpText}>
-          {totalAlertsNumber === 1
-            ? HELPER_TEXT_SINGLE_INFRACTION
-            : HELPER_TEXT_SEVERAL_INFRACTIONS}
-        </Typography>
+        <ButtonsGroup
+          className={classes.bottomButtons}
+          buttons={[
+            {
+              onClick: () => saveInfractions(),
+              children: "Enregistrer"
+            },
+            {
+              children: "Annuler",
+              onClick: () => cancelInfractions(),
+              priority: "secondary"
+            }
+          ]}
+          inlineLayoutWhen="sm and up"
+          alignment="right"
+        />
       )}
-      {!isReportingInfractions && reportedInfractionsLastUpdateTime && (
-        <Typography className={classes.helpText}>
-          {`Date de la dernière modification des infractions retenues : ${prettyFormatDayHour(
-            reportedInfractionsLastUpdateTime
-          )}`}
-        </Typography>
-      )}
-      {!noLic && (
-        <>
-          <Typography
-            align="left"
-            className={classes.subtitle}
-            variant="overline"
-          >
-            Infractions calculées par Mobilic
-          </Typography>{" "}
-          <Alert severity="info">
-            <Typography gutterBottom>
-              Les infractions calculées par Mobilic se basent sur la version
-              validée par le gestionnaire, ou, si elle n’a pas été faite au
-              moment du contrôle, sur celle du salarié.
-            </Typography>
-          </Alert>
-        </>
-      )}
-      {groupedAlerts?.length > 0 ? (
-        <List>
-          {groupedAlerts
-            .sort((alert1, alert2) =>
-              alert1.sanction.localeCompare(alert2.sanction)
-            )
-            .map(group => (
-              <ListItem key={`${group.type}_${group.sanction}`} disableGutters>
-                <AlertGroup
-                  {...group}
-                  setPeriodOnFocus={setPeriodOnFocus}
-                  setTab={setTab}
-                  isReportingInfractions={isReportingInfractions}
-                  onUpdateInfraction={onUpdateInfraction}
-                  readOnlyAlerts={readOnlyAlerts}
-                />
-              </ListItem>
-            ))}
-        </List>
-      ) : (
-        <Typography className={classes.italicInfo}>
-          Il n'y a aucune alerte réglementaire sur la période
-        </Typography>
-      )}
-      <>
-        {isReportingInfractions ? (
-          <Stack direction="row" justifyContent="flex-start" p={2} spacing={4}>
-            <Button title="Valider" onClick={() => saveInfractions()}>
-              Valider
-            </Button>
-            <Button
-              title="Annuler"
-              onClick={() => cancelInfractions()}
-              secondary
-            >
-              Annuler
-            </Button>
-          </Stack>
-        ) : (
-          !noLic && (
-            <Alert severity="warning">
-              <Typography gutterBottom>
-                Les données collectées par Mobilic sont déclaratives et sont
-                donc susceptibles d'erreurs ou d'oublis. En cas de données
-                manquantes ou inexactes les alertes réglementaires ne peuvent
-                pas être remontées correctement.
-              </Typography>
-              <Typography>
-                Mobilic sert à faciliter le travail d'enquête des inspecteurs
-                sans se substituer à lui.
-              </Typography>
-            </Alert>
-          )
-        )}
-      </>
-      <Divider className={`hr-unstyled ${classes.divider}`} />
     </Container>
   );
 }

@@ -1,47 +1,58 @@
+import { fr } from "@codegouvfr/react-dsfr";
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
-import { red } from "@mui/material/colors";
 
-const customOptions = {
+export const customOptions = {
   components: {
-    MuiLink: {
-      defaultProps: {
-        underline: "always"
-      }
-    },
-    MuiButton: {
+    MuiAccordionSummary: {
       styleOverrides: {
         root: {
-          borderRadius: "20px"
+          "&.Mui-focusVisible": {
+            backgroundColor: "transparent"
+          }
         }
       }
     },
-    MuiTableSortLabel: {
+    MuiMenuItem: {
       styleOverrides: {
-        icon: {
-          opacity: 0.3
+        root: {
+          "&.Mui-focusVisible": {
+            backgroundColor: "transparent"
+          }
         }
       }
     }
+    //   MuiLink: {
+    //     defaultProps: {
+    //       underline: "always"
+    //     }
+    //   },
+    // MuiButton: {
+    //   styleOverrides: {
+    //     root: {
+    //       borderRadius: "20px"
+    //     }
+    //   }
+    // },
+    //   MuiTableSortLabel: {
+    //     styleOverrides: {
+    //       icon: {
+    //         opacity: 0.3
+    //       }
+    //     }
+    //   }
   },
   palette: {
-    work: "#F3A817",
-    break: "#9A9CF8",
-    drive: "#6BE670",
-    transfer: "#417DC4",
-    rest: red[600],
     primary: {
-      main: "#3284FF",
-      light: "#006be6",
-      lighter: "#b4e1fa",
-      dark: "#0053b3"
+      main: "#3965EA",
+      light: "#DAE9FF",
+      lighter: "#F4F8FF",
+      dark: "#202DA7"
     },
-    background: {
-      default: "#f7f9fa",
-      paper: "#fff",
-      dark: "#26353f"
-    },
-    text: {
-      primary: "#26353f"
+    warning: {
+      light: fr.colors.options.warning._425_625.default,
+      main: fr.colors.options.warning._425_625.default,
+      dark: fr.colors.options.warning._425_625.hover,
+      contrastText: fr.colors.options.grey._1000_50.default
     }
   },
   typography: {

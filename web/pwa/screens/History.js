@@ -2,13 +2,10 @@ import moment from "moment";
 import React, { useMemo } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import GetAppIcon from "@mui/icons-material/GetApp";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
@@ -47,7 +44,9 @@ import {
   jsToUnixTimestamp,
   shortPrettyFormatDay,
   SHORT_MONTHS,
-  startOfDayAsDate
+  startOfDayAsDate,
+  isMoreOrLessTheSameDay,
+  formatCompleteDayOfWeek
 } from "common/utils/time";
 import { usePageTitle } from "../../common/UsePageTitle";
 
@@ -61,91 +60,78 @@ import { Week } from "../components/history/Week";
 import { PeriodCarouselPicker } from "../components/PeriodCarouselPicker";
 import { PeriodFilter } from "../components/PeriodFilter";
 import { syncMissions } from "common/utils/loadUserData";
+import { useHolidays } from "../../common/useHolidays";
+import { LogHolidayButton } from "../../common/LogHolidayButton";
+import { cx } from "@codegouvfr/react-dsfr/tools/cx";
+import { fr } from "@codegouvfr/react-dsfr";
+import { getDayChip } from "../components/history/Chips";
 
 const tabs = {
   mission: {
     label: "Mission",
     value: "mission",
     ...PERIOD_UNITS.mission,
-    formatPeriod: (period, missions) => {
+    getTitle: (period, _) => shortPrettyFormatDay(period),
+    getSubtitle: (_, missions) => {
       const mission = missions ? missions[0] : {};
-      return (
-        <Box className="flex-column-space-between">
-          <Typography className="bold">{mission.name || "Sans nom"}</Typography>
-          <Typography>{shortPrettyFormatDay(period)}</Typography>
-        </Box>
-      );
+      return mission.name || "Sans nom";
     },
+    renderChip: getDayChip,
     renderPeriod: ({ missionsInPeriod, ...props }) => (
-      <Mission mission={missionsInPeriod[0]} collapsable={false} {...props} />
+      <Mission
+        mission={missionsInPeriod[0]}
+        collapsable={false}
+        headingComponent="h2"
+        {...props}
+      />
     )
   },
   day: {
     label: "Jour",
     value: "day",
+    getTitle: (period, _) => shortPrettyFormatDay(period),
+    getSubtitle: (period, _) => formatCompleteDayOfWeek(period),
+    renderChip: getDayChip,
     ...PERIOD_UNITS.day,
-    renderPeriod: props => <Day {...props} />
+    renderPeriod: props => <Day headingComponent="h2" {...props} />
   },
   week: {
     label: "Semaine",
     value: "week",
     ...PERIOD_UNITS.week,
-    formatPeriod: (period, missions) => {
-      return (
-        <Box className="flex-column-space-between">
-          <Typography className={missions ? "bold" : ""}>
-            {shortPrettyFormatDay(period)}
-          </Typography>
-          <Typography
-            className={missions ? "bold" : ""}
-            style={{ lineHeight: 0 }}
-          >
-            -
-          </Typography>
-          <Typography className={missions ? "bold" : ""}>
-            {shortPrettyFormatDay(period + DAY * 7)}
-          </Typography>
-        </Box>
-      );
-    },
-    renderPeriod: props => <Week {...props} />
+    getTitle: (period, _) => shortPrettyFormatDay(period),
+    getSubtitle: (period, _) => `au ${shortPrettyFormatDay(period + DAY * 6)}`,
+    renderChip: getDayChip,
+    renderPeriod: props => <Week headingComponent="h2" {...props} />
   },
   month: {
     label: "Mois",
     value: "month",
     ...PERIOD_UNITS.month,
     renderPeriod: props => <Month {...props} />,
-    formatPeriod: (period, missions) => {
+    getTitle: (period, _) => {
       const periodDate = new Date(period * 1000);
-      return (
-        <Box className="flex-column-space-between">
-          <Typography
-            variant="h5"
-            style={{ fontWeight: missions ? "bold" : "normal" }}
-          >
-            {SHORT_MONTHS[periodDate.getMonth()]}
-          </Typography>
-          <Typography>{periodDate.getFullYear()}</Typography>
-        </Box>
-      );
-    }
+      return SHORT_MONTHS[periodDate.getMonth()];
+    },
+    getSubtitle: (period, _) => {
+      const periodDate = new Date(period * 1000);
+      return periodDate.getFullYear();
+    },
+    renderChip: getDayChip
   }
 };
 
 const useStyles = makeStyles(theme => ({
   contentContainer: {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
-    borderRadius: "24px 24px 0 0",
     flexGrow: 1,
     flexShrink: 0,
-    paddingTop: theme.spacing(4),
     textAlign: "center",
-    paddingBottom: theme.spacing(4)
+    paddingLeft: 0,
+    paddingRight: 0
   },
   placeholderContainer: {
     backgroundColor: "inherit",
-    color: theme.palette.grey[500]
+    color: fr.colors.decisions.text.mention.grey.default
   },
   periodSelector: {
     paddingTop: theme.spacing(1),
@@ -166,6 +152,19 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "center"
+  },
+  tab: {
+    textTransform: "none",
+    fontSize: "1rem",
+    lineHeight: "1.5rem",
+    fontWeight: 400,
+    opacity: 1,
+    color: fr.colors.decisions.background.flat.grey.default,
+    padding: theme.spacing(1),
+    "&.Mui-selected": {
+      color: fr.colors.decisions.background.flat.blueFrance.default,
+      fontWeight: 500
+    }
   }
 }));
 
@@ -188,7 +187,8 @@ export function History({
   createMission = null,
   openPeriod = null,
   controlId = null,
-  regulationComputationsByDay = []
+  regulationComputationsByDay = [],
+  groupedAlerts = null
 }) {
   const location = useLocation();
   const history = useHistory();
@@ -197,6 +197,7 @@ export function History({
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const classes = useStyles();
+  const { openHolidaysModal, closeHolidaysModal } = useHolidays();
   usePageTitle("Historique - Mobilic");
 
   const actualUserId = userId || store.userId();
@@ -210,6 +211,7 @@ export function History({
   );
 
   React.useEffect(() => {
+    closeHolidaysModal();
     let params = openPeriod;
     if (!params) {
       const queryString = new URLSearchParams(location.search);
@@ -382,6 +384,29 @@ export function History({
     return periodElement ? periodElement.regulationComputations : [];
   }, [selectedPeriod, regulationComputationsByDay]);
 
+  const alertsInPeriod = React.useMemo(() => {
+    if (!groupedAlerts) {
+      return null;
+    }
+    if (currentTab === "day" || currentTab === "week") {
+      return groupedAlerts.reduce((arr, curr) => {
+        let { alerts, ...rest } = curr;
+        alerts = alerts
+          .filter(
+            alert =>
+              !!alert[currentTab] &&
+              isMoreOrLessTheSameDay(alert[currentTab], selectedPeriod)
+          )
+          .map(alert => ({
+            ...alert,
+            ...rest
+          }));
+        return [...arr, ...alerts];
+      }, []);
+    }
+    return null;
+  }, [selectedPeriod, currentTab, groupedAlerts]);
+
   /* MANAGE MESSAGE WHEN NO DATA */
 
   const noDataMessage = currentTab => {
@@ -401,33 +426,31 @@ export function History({
       disableGutters
       maxWidth="md"
     >
-      {!isInControl && [
-        <AccountButton p={2} key={1} onBackButtonClick={onBackButtonClick} />,
-        <Box key={2} className={classes.accessControlContainer}>
-          <Button
-            aria-label="Accès contrôleur"
-            className={classes.generateAccessButton}
-            color="error"
-            variant="outlined"
-            onClick={() => {
-              modals.open("userReadQRCode");
-            }}
+      {!isInControl && (
+        <>
+          <AccountButton p={2} onBackButtonClick={onBackButtonClick} />
+          <Box className={classes.accessControlContainer}>
+            <Button
+              priority="secondary"
+              className={cx(classes.generateAccessButton, "error")}
+              onClick={() => {
+                modals.open("userReadQRCode");
+              }}
+            >
+              Accès contrôleurs
+            </Button>
+          </Box>
+          <Grid
+            container
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            marginBottom={2}
           >
-            Accès contrôleurs
-          </Button>
-        </Box>,
-        <Grid
-          container
-          key={3}
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Grid container item direction="row" alignItems="center" sm={6}>
-            {currentCompanies?.length > 0 && (
-              <>
-                <IconButton
-                  color="primary"
+            <Grid container item direction="row" alignItems="center" sm={6}>
+              {currentCompanies?.length > 0 && (
+                <Button
+                  priority="tertiary no outline"
                   onClick={() =>
                     modals.open("newMission", {
                       companies: store.companies(),
@@ -443,7 +466,9 @@ export function History({
                             name: missionInfos.mission,
                             vehicle: missionInfos.vehicle,
                             startLocation: missionInfos.address,
-                            endLocation: missionInfos.endAddress
+                            endLocation: missionInfos.endAddress,
+                            pastRegistrationJustification:
+                              missionInfos.pastRegistrationJustification
                           });
                           await api.executePendingRequests();
                           const actualMissionId = store.identityMap()[
@@ -466,46 +491,46 @@ export function History({
                       }
                     })
                   }
+                  iconId="fr-icon-add-circle-fill"
+                  iconPosition="left"
                 >
-                  <AddCircleIcon fontSize="large" />
-                </IconButton>
-                <Typography align="left">Ajouter une mission passée</Typography>
-              </>
-            )}
-          </Grid>
-          <Grid
-            container
-            item
-            direction="row"
-            alignItems="center"
-            justifyContent={{ sm: "flex-end" }}
-            sm={6}
-          >
-            <IconButton
-              color="primary"
-              onClick={() =>
-                modals.open("pdfExport", {
-                  initialMinDate: startPeriodFilter,
-                  initialMaxDate: endPeriodFilter
-                })
-              }
+                  Ajouter une mission passée
+                </Button>
+              )}
+            </Grid>
+            <LogHolidayButton onClick={() => openHolidaysModal()} />
+            <Grid
+              container
+              item
+              direction="row"
+              alignItems="center"
+              justifyContent={{ sm: "flex-end" }}
+              xs={12}
             >
-              <GetAppIcon fontSize="large" />
-            </IconButton>
-            <Typography align="left" mr={2}>
-              Télécharger un relevé d'heures
-            </Typography>
+              <Button
+                priority="tertiary no outline"
+                iconId="fr-icon-download-fill"
+                iconPosition="left"
+                onClick={() =>
+                  modals.open("pdfExport", {
+                    initialMinDate: startPeriodFilter,
+                    initialMaxDate: endPeriodFilter
+                  })
+                }
+              >
+                Télécharger un relevé d'heures
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>,
-        <PeriodFilter
-          key={4}
-          minDate={startPeriodFilter}
-          setMinDate={onChangeStartPeriodFilter}
-          maxDate={endPeriodFilter}
-          setMaxDate={onChangeEndPeriodFilter}
-          periodFilterRangeError={periodFilterRangeError}
-        />
-      ]}
+          <PeriodFilter
+            minDate={startPeriodFilter}
+            setMinDate={onChangeStartPeriodFilter}
+            maxDate={endPeriodFilter}
+            setMaxDate={onChangeEndPeriodFilter}
+            periodFilterRangeError={periodFilterRangeError}
+          />
+        </>
+      )}
       <Container className={classes.periodSelector} maxWidth={false}>
         <Tabs
           value={currentTab}
@@ -514,12 +539,20 @@ export function History({
           variant="fullWidth"
           indicatorColor="primary"
           textColor="inherit"
+          sx={{
+            "& .MuiTabs-indicator": {
+              backgroundColor:
+                fr.colors.decisions.background.flat.blueFrance.default
+            },
+            marginBottom: 1
+          }}
         >
           {Object.values(tabs).map((tabProps, index) => (
             <Tab
               key={index + 1}
               label={tabProps.label}
               value={tabProps.value}
+              className={classes.tab}
               style={{ flexGrow: 1, flexShrink: 1, minWidth: 0 }}
             />
           ))}
@@ -533,7 +566,7 @@ export function History({
               resetLocation();
             }}
             periodStatuses={periodStatuses[currentTab] || {}}
-            renderPeriod={tabs[currentTab].formatPeriod}
+            {...tabs[currentTab]}
             periodMissionsGetter={period => groupedMissions[period]}
           />
         )}
@@ -574,7 +607,8 @@ export function History({
             coworkers,
             vehicles,
             userId: actualUserId,
-            controlId: controlId
+            controlId: controlId,
+            alertsInPeriod
           })
         ) : (
           <Box className={classes.placeholder}>

@@ -1,6 +1,7 @@
 import React from "react";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import { makeStyles } from "@mui/styles";
+import { useInfractions } from "./contextInfractions";
 
 const useStyles = makeStyles(theme => ({
   missionDrawer: {
@@ -9,8 +10,31 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ControlDrawer({ isOpen, onClose, children }) {
+export function ControlDrawer({
+  isOpen,
+  onClose,
+  children,
+  controlId = undefined
+}) {
   const classes = useStyles();
+
+  React.useEffect(() => {
+    if (isOpen && controlId) {
+      const previousTitle = document.title;
+      document.title = `Contrôle #${controlId} - Mobilic`;
+      return () => (document.title = previousTitle);
+    }
+  }, [isOpen, controlId]);
+
+  const _useInfractions = useInfractions();
+
+  const _onClose = () => {
+    if (_useInfractions && _useInfractions.setIsReportingInfractions) {
+      _useInfractions.setIsReportingInfractions(false);
+    }
+    onClose();
+  };
+
   return (
     <SwipeableDrawer
       anchor="right"
@@ -18,7 +42,7 @@ export function ControlDrawer({ isOpen, onClose, children }) {
       disableSwipeToOpen
       disableDiscovery
       onOpen={() => {}}
-      onClose={onClose}
+      onClose={_onClose}
       PaperProps={{
         className: classes.missionDrawer,
         sx: {

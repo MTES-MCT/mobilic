@@ -10,46 +10,45 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useApi } from "common/utils/api";
 
-import Alert from "@mui/material/Alert";
-import AlertTitle from "@mui/material/AlertTitle";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";
 import { usePageTitle } from "../common/UsePageTitle";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 
 const STATUS_MAP = {
   SUCCESS: {
-    title: "FICHIER INTÈGRE",
+    title: "fichier intègre",
     desc: "Le fichier n'a pas été modifié après sa génération par Mobilic"
   },
   INTERNAL_ERROR: {
-    title: "ERREUR INTERNE",
+    title: "erreur interne",
     desc:
       "La vérification d'intégrité n'a pas pu être effectuée à cause d'une erreur interne. Veuillez réessayer plus tard."
   },
   NETWORK_ERROR: {
-    title: "ERREUR DE CONNEXION",
+    title: "erreur de connexion",
     desc: "Le serveur Mobilic semble injoignable. Veuillez réessayer plus tard."
   },
   MISSING_FILE: {
-    title: "PAS DE FICHIER",
+    title: "pas de fichier",
     desc: "Aucun fichier n'a été détecté"
   },
   MISSING_SIGNATURE: {
-    title: "VÉRIFICATION IMPOSSIBLE",
-    desc:
-      "Le fichier ne comporte pas d'informations d'intégrité, il est impossible d'effectuer la vérification. Êtes-vous sûrs qu'il a bien été généré par Mobilic ?"
+    title: "vérification impossible",
+    desc: "Le fichier ne provient pas de Mobilic."
   },
   INVALID_FORMAT: {
-    title: "MAUVAIS FORMAT",
+    title: "mauvais format",
     desc: "Le fichier n'est pas dans un format .xlsx valide"
   },
   SIGNATURE_DOES_NOT_MATCH: {
-    title: "FICHIER NON INTÈGRE",
+    title: "fichier non intègre",
     desc: "Le fichier a été modifié après sa génération par Mobilic."
   },
   UNAVAILABLE: {
-    title: "SERVICE NON DISPONIBLE",
+    title: "service non disponible",
     desc:
       "Impossible d'effectuer la vérification d'intégrité, veuillez réessayer plus tard."
   }
@@ -123,8 +122,8 @@ const useStyles = makeStyles(theme => ({
     textAlign: "justify",
     marginTop: theme.spacing(2)
   },
-  placeholder: {
-    padding: theme.spacing(2)
+  titleUppercase: {
+    textTransform: "uppercase"
   }
 }));
 
@@ -192,61 +191,67 @@ export function XlsxVerifier() {
       : verifyResponse.error_code
     : null;
 
-  return [
-    <Header key={1} disableMenu />,
-    <PaperContainer key={2}>
-      <Container className={`centered ${classes.root}`} maxWidth="sm">
-        <PaperContainerTitle>
-          Vérification de l'intégrité d'un fichier
-        </PaperContainerTitle>
-        <Typography align="justify" className={classes.text}>
-          Vous pouvez vérifier ici l'intégrité des rapports d'activité générés
-          par Mobilic au format Excel (.xlsx). Un fichier est considéré comme
-          intègre si le fichier n'a subi aucune modification après sa
-          génération. Cela permet de sécuriser que les données du rapport
-          d'activité n'ont pas été modifiées avant de vous le transmettre.
-        </Typography>
-        <Box className={classes.outer}>
-          <Box
-            {...getRootProps({ className: classes.container })}
-            style={{ filter: loading ? "blur" : "abc" }}
-          >
-            <input {...getInputProps()} />
-            {fileName && <DescriptionIcon color="inherit" />}
-            <Typography className={classes.placeholder} color="inherit">
-              {fileName
-                ? fileName
-                : "Déposez votre fichier ici ou cliquez pour choisir un fichier. Seuls les .xlsx sont acceptés."}
-            </Typography>
-          </Box>
-          {loading && (
-            <Box className={classes.inner}>
-              <CircularProgress
-                style={{ position: "absolute" }}
-                color="primary"
-              />
+  return (
+    <>
+      <Header disableMenu />
+      <PaperContainer>
+        <Container className={`centered ${classes.root}`} maxWidth="sm">
+          <PaperContainerTitle>
+            Vérification de l'intégrité d'un fichier
+          </PaperContainerTitle>
+          <Typography align="justify" className={classes.text}>
+            Vous pouvez vérifier ici l'intégrité des rapports d'activité au
+            format Excel (.xlsx) <strong>téléchargés depuis Mobilic</strong> et
+            envoyés par les entreprises. Un fichier est considéré comme intègre
+            s’il n'a subi{" "}
+            <strong>aucune modification après son téléchargement</strong>. Cela
+            vous assure que les données du rapport d'activité n'ont pas été
+            modifiées avant de vous le transmettre.
+          </Typography>
+          <Box className={classes.outer}>
+            <Box
+              {...getRootProps({ className: classes.container })}
+              style={{ filter: loading ? "blur" : "abc" }}
+            >
+              <input {...getInputProps()} />
+              {fileName && <DescriptionIcon color="inherit" />}
+              <Typography sx={{ padding: 2 }} color="inherit">
+                {fileName
+                  ? fileName
+                  : "Déposez votre fichier ici ou cliquez pour choisir un fichier. Seuls les .xlsx sont acceptés."}
+              </Typography>
             </Box>
-          )}
-        </Box>
-        {verifyResponse && (
-          <Alert
-            variant="filled"
-            className={classes.response}
-            severity={verifyResponse.success ? "success" : "error"}
-          >
-            <AlertTitle className="bold">
+            {loading && (
+              <Box className={classes.inner}>
+                <CircularProgress
+                  style={{ position: "absolute" }}
+                  color="primary"
+                />
+              </Box>
+            )}
+          </Box>
+          {verifyResponse && (
+            <Alert
+              variant="filled"
+              className={classes.response}
+              severity={verifyResponse.success ? "success" : "error"}
+            >
+              <AlertTitle className={`bold ${classes.titleUppercase}`}>
+                {
+                  (
+                    STATUS_MAP[verifyResponseStatus] ||
+                    STATUS_MAP.INTERNAL_ERROR
+                  ).title
+                }{" "}
+              </AlertTitle>
               {
                 (STATUS_MAP[verifyResponseStatus] || STATUS_MAP.INTERNAL_ERROR)
-                  .title
+                  .desc
               }
-            </AlertTitle>
-            {
-              (STATUS_MAP[verifyResponseStatus] || STATUS_MAP.INTERNAL_ERROR)
-                .desc
-            }
-          </Alert>
-        )}
-      </Container>
-    </PaperContainer>
-  ];
+            </Alert>
+          )}
+        </Container>
+      </PaperContainer>
+    </>
+  );
 }

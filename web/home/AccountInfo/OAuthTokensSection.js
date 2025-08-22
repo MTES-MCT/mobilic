@@ -6,16 +6,16 @@ import {
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import { currentUserId } from "common/utils/cookie";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { OAuthTokenCard } from "./OAuthTokenCard";
 import Skeleton from "@mui/material/Skeleton";
-import { Alert } from "@mui/material";
 import TextField from "common/utils/TextField";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import Notice from "../../common/Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   section: {
@@ -38,12 +38,6 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(2),
     marginBottom: theme.spacing(2)
   },
-  addNewTokenAlert: {
-    marginBottom: theme.spacing(2)
-  },
-  addNewTokenExplanation: {
-    fontSize: "0.875rem"
-  },
   alreadyGeneratedKeysTitle: {
     color: theme.palette.grey[600]
   }
@@ -61,17 +55,20 @@ export function OAuthTokenSection() {
   );
   const [loadingAccessTokens, setLoadingAccessTokens] = React.useState(false);
 
-  React.useEffect(async () => {
-    setLoadingAccessTokens(true);
-    const apiResponse = await api.graphQlQuery(
-      OAUTH_TOKEN_QUERY,
-      {
-        userId: currentUserId()
-      },
-      { context: { nonPublicApi: true } }
-    );
-    setAccessTokens(apiResponse.data.oauthAccessTokens);
-    setLoadingAccessTokens(false);
+  React.useEffect(() => {
+    const loadData = async () => {
+      setLoadingAccessTokens(true);
+      const apiResponse = await api.graphQlQuery(
+        OAUTH_TOKEN_QUERY,
+        {
+          userId: currentUserId()
+        },
+        { context: { nonPublicApi: true } }
+      );
+      setAccessTokens(apiResponse.data.oauthAccessTokens);
+      setLoadingAccessTokens(false);
+    };
+    loadData();
   }, []);
 
   const onValidateNewClientId = async () => {
@@ -114,7 +111,7 @@ export function OAuthTokenSection() {
     <Box my={6} mb={6} className={classes.section}>
       <Grid container>
         <Grid item xs={6}>
-          <Typography className={classes.mainTitle} variant="h5">
+          <Typography className={classes.mainTitle} variant="h5" component="h2">
             Mon API Mobilic
           </Typography>
         </Grid>
@@ -122,8 +119,6 @@ export function OAuthTokenSection() {
           <Grid item xs={6} className={classes.buttonAddKey}>
             <Button
               size="small"
-              color="primary"
-              variant="contained"
               onClick={() => {
                 setNewTokenSectionVisible(true);
               }}
@@ -136,12 +131,12 @@ export function OAuthTokenSection() {
           <Grid item xs={12} className={classes.addNewTokenSection}>
             <Grid container alignItems={"center"}>
               <Grid item xs={12}>
-                <Alert severity="info" className={classes.addNewTokenAlert}>
-                  <Typography className={classes.addNewTokenExplanation}>
-                    Rapprochez-vous de votre éditeur de logiciel pour obtenir
-                    son client_id.
-                  </Typography>
-                </Alert>
+                <Notice
+                  description="Rapprochez-vous de votre éditeur de logiciel pour obtenir son
+              client_id."
+                  sx={{ marginBottom: 2 }}
+                  size="small"
+                />{" "}
               </Grid>
               <Grid item xs={12}>
                 <Typography>client_id</Typography>
@@ -164,8 +159,6 @@ export function OAuthTokenSection() {
                 <LoadingButton
                   type="submit"
                   size="small"
-                  color="primary"
-                  variant="contained"
                   disabled={!newClientId}
                   onClick={async e => {
                     e.stopPropagation();
@@ -177,8 +170,7 @@ export function OAuthTokenSection() {
                 </LoadingButton>
                 <Button
                   size="small"
-                  color="primary"
-                  variant="outlined"
+                  priority="secondary"
                   onClick={() => {
                     setNewClientId("");
                     setNewTokenSectionVisible(false);

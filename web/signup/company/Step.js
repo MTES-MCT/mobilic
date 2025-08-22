@@ -55,7 +55,7 @@ export function Steps({ children }) {
   return steps.map((element, index) =>
     React.cloneElement(element, {
       key: element.name,
-      title: `${index + 1}. ${element.props.title}`,
+      title: element.props.title,
       hidden: index > currentStepIndex,
       reportNewCompletionStatus: status =>
         setStepCompletionMap(map => ({ ...map, [element.props.name]: status }))

@@ -34,11 +34,17 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     startLocation: missionPayload.startLocation,
     endLocation: missionPayload.endLocation,
     ended: missionPayload.ended !== undefined ? missionPayload.ended : true,
-    submitter: missionPayload.submitter || null
+    submitter: missionPayload.submitter,
+    deletedAt: missionPayload.deletedAt,
+    deletedBy: missionPayload.deletedBy,
+    isHoliday:
+      missionPayload.isHoliday !== undefined ? missionPayload.isHoliday : false,
+    validations: missionPayload.validations,
+    pastRegistrationJustification: missionPayload.pastRegistrationJustification
   };
 }
 
-const getWorkerValidationForUser = (validations, userId) =>
+export const getWorkerValidationForUser = (validations, userId) =>
   validations?.find(
     v =>
       (!v.userId && v.submitterId === userId) ||
@@ -73,11 +79,17 @@ export function augmentMissionWithProperties(mission, userId, companies = []) {
     startTime:
       activities.length > 0 ? activities[0].startTime : mission.receptionTime,
     isComplete:
-      activities.length > 0 && !!activities[activities.length - 1].endTime,
-    endTime:
-      activities.length > 0 ? activities[activities.length - 1].endTime : null,
+      mission.isDeleted ||
+      (activities.length > 0 && !!activities[activities.length - 1].endTime),
+    endTime: mission.isDeleted
+      ? mission.deletedAt
+      : activities.length > 0
+      ? activities[activities.length - 1].endTime
+      : null,
     teamChanges: computeTeamChanges(mission.allActivities, userId),
-    ended: mission.ended && activities.every(a => !!a.endTime),
+    ended:
+      mission.isDeleted ||
+      (mission.ended && activities.every(a => !!a.endTime)),
     submittedBySomeoneElse:
       mission.submitter && mission.submitter.id !== userId,
     lastActivityStartTime: activities[activities.length - 1]?.startTime
@@ -155,16 +167,29 @@ export function computeMissionStats(m, users) {
       endTime,
       endTimeOrNow,
       service: endTimeOrNow - startTime,
-      totalWorkDuration: totalWorkDuration - transferDuration,
+      totalWorkDuration: m.isHoliday ? 0 : totalWorkDuration - transferDuration,
       transferDuration,
       isComplete: _activities.every(a => !!a.endTime),
-      breakDuration: endTimeOrNow - startTime - totalWorkDuration,
+      breakDuration: m.isHoliday
+        ? 0
+        : endTimeOrNow - startTime - totalWorkDuration,
       expenditures: m.expenditures.filter(e => e.userId.toString() === userId),
       adminValidation:
         m.validations.find(v => v.userId?.toString() === userId && v.isAdmin) ||
         adminGlobalValidation,
+      adminAutoValidation: m.validations.find(
+        v => v.userId?.toString() === userId && v.isAdmin && v.isAuto
+      ),
+      adminManualValidation: m.validations.find(
+        v => v.userId?.toString() === userId && v.isAdmin && !v.isAuto
+      ),
       workerValidation: getWorkerValidationForUser(m.validations, user?.id),
-      lastActivitySubmitterId
+      lastActivitySubmitterId,
+      validations: m.validations.filter(
+        v =>
+          (!v.userId && v.submitterId.toString() === userId) ||
+          v.userId.toString() === userId
+      )
     };
   });
   const missionNotUpdatedForTooLong = values(userStats).some(

@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import { Header } from "../../common/Header";
 import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
-import { Breadcrumb, BreadcrumbItem } from "@dataesr/react-dsfr";
+import { Breadcrumb } from "@codegouvfr/react-dsfr/Breadcrumb";
 import { resourcePagesClasses } from "./styles/ResourcePagesStyle";
 import { RegulationCard } from "./RegulationCard";
 import { makeStyles } from "@mui/styles";
@@ -14,6 +14,7 @@ import { useRegulationDrawer } from "./RegulationDrawer";
 import { useHistory, useLocation } from "react-router-dom";
 import { findKey } from "lodash";
 import { usePageTitle } from "../../common/UsePageTitle";
+import { Main } from "../../common/semantics/Main";
 
 const useStyles = makeStyles(theme => ({
   ruleScope: {
@@ -42,45 +43,60 @@ export function RegulationPage() {
     );
   }, [location]);
 
-  return [
-    <Header key={1} />,
-    <Container
-      key={2}
-      className={`${classes.container} ${classes.whiteSection}`}
-      maxWidth={false}
-    >
-      <Container maxWidth="lg" className={classes.inner}>
-        <Breadcrumb>
-          <BreadcrumbItem href="/resources/home">Documentation</BreadcrumbItem>
-          <BreadcrumbItem>Réglementation</BreadcrumbItem>
-        </Breadcrumb>
-        <PaperContainerTitle variant="h1" className={classes.title}>
-          La réglementation du temps de travail dans le transport routier léger
-        </PaperContainerTitle>
-        <Typography variant="caption" className={otherClasses.ruleScope}>
-          Les règles suivantes concernent le personnel roulant soumis au livret
-          individuel de contrôle et ne sont pas forcément applicables aux autres
-          personnels des entreprises de transport routier. Par ailleurs les
-          dérogations ou règles propres à chaque secteur (déménagement,
-          messagerie, ...) ne sont pas précisées. Les conducteurs soumis au
-          règlement (CE) n°561/2006 sont par ailleurs soumis aux seuils de ce
-          règlement pour les dispositions en matière de durée des repos et de
-          temps de conduite.
-        </Typography>
-        <Grid container direction="row" alignItems="stretch" spacing={6}>
-          {Object.values(REGULATION_RULES).map((rule, index) => (
-            <Grid item xs={12} sm={4} key={index}>
-              <RegulationCard
-                rule={rule}
-                onClick={() =>
-                  history.push("/resources/regulations?regle=" + rule.url)
+  return (
+    <>
+      <Header />
+      <Main
+        maxWidth={false}
+        className={`${classes.container} ${classes.whiteSection}`}
+      >
+        <Container maxWidth="xl" className={classes.inner}>
+          <Breadcrumb
+            currentPageLabel="Réglementation"
+            homeLinkProps={{
+              to: "/"
+            }}
+            segments={[
+              {
+                label: "Documentation",
+                linkProps: {
+                  to: "/resources/home"
                 }
-              />
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
-    </Container>,
-    <Footer key={4} />
-  ];
+              }
+            ]}
+          />
+          <PaperContainerTitle variant="h1" className={classes.title}>
+            La réglementation du temps de travail dans le transport routier
+            léger
+          </PaperContainerTitle>
+          <Typography variant="caption" className={otherClasses.ruleScope}>
+            Les règles suivantes concernent le personnel roulant du transport
+            léger soumis au livret individuel de contrôle selon les articles
+            R3312-19 et R3312-58 du Code des transports : salariés du transport
+            routier de marchandises (TRM) : longue distance, courte distance,
+            messagerie, fonds et valeurs ; et du transport routier de voyageurs
+            (TRV) : lignes régulières, occasionel, taxis, VTC, LOTI. Par
+            ailleurs, les dérogations ou règles spécifiques à certains secteurs
+            ne sont pas précisées. Les conducteurs soumis au règlement (CE)
+            n°561/2006 sont, d'autre part, soumis aux seuils de ce règlement
+            pour les dispositions en matière de durée des repos et de temps de
+            conduite.
+          </Typography>
+          <Grid container direction="row" alignItems="stretch" spacing={6}>
+            {Object.values(REGULATION_RULES).map((rule, index) => (
+              <Grid item xs={12} sm={4} key={index}>
+                <RegulationCard
+                  rule={rule}
+                  onClick={() =>
+                    history.push("/resources/regulations?regle=" + rule.url)
+                  }
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Main>
+      <Footer />
+    </>
+  );
 }

@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
@@ -15,6 +14,7 @@ import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
 import { ControlsList } from "../list/ControlsList";
 import { ControllerHistoryFilters } from "./ControllerHistoryFilters";
 import { usePageTitle } from "../../../common/UsePageTitle";
+import { Main } from "../../../common/semantics/Main";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -58,47 +58,52 @@ export function ControllerHistory() {
   React.useEffect(() => {
     _loadControls();
   }, [controlFilters]);
-  return [
-    <Header key={0} />,
-    <Container
-      key={1}
-      className={`${classes.container} ${classes.whiteSection}`}
-      maxWidth="xl"
-    >
-      <ControllerControlDrawer
-        controlId={controlOnFocus?.id}
-        controlType={controlOnFocus?.type}
-        onClose={() => {
-          _loadControls();
-          setControlOnFocus(null);
-        }}
-      />
-      <Typography sx={{ typography: { xs: "h3", sm: "h1" } }}>
-        Historique des contrôles
-      </Typography>
-      <Box
-        sx={{
-          marginBottom: theme => ({
-            xs: theme.spacing(2),
-            md: theme.spacing(12)
-          })
-        }}
+  return (
+    <>
+      <Header />
+      <Main
+        className={`${classes.container} ${classes.whiteSection}`}
+        maxWidth="xl"
       >
-        <ControllerHistoryFilters
-          controlFilters={controlFilters}
-          setControlFilters={setControlFilters}
-          period={period}
-          setPeriod={setPeriod}
+        <ControllerControlDrawer
+          controlId={controlOnFocus?.id}
+          controlType={controlOnFocus?.type}
+          onClose={() => {
+            _loadControls();
+            setControlOnFocus(null);
+          }}
         />
-      </Box>
-      {controls && controls.length > 0 && (
-        <ControlsList
-          controls={controls}
-          period={period}
-          loading={loadingControls}
-          clickOnRow={(id, type) => setControlOnFocus({ id, type })}
-        />
-      )}
-    </Container>
-  ];
+        <Typography
+          sx={{ typography: { xs: "h3", sm: "h1" } }}
+          component="h1"
+          mb={{ xs: 2, sm: 3 }}
+        >
+          Historique des contrôles
+        </Typography>
+        <Box
+          sx={{
+            marginBottom: theme => ({
+              xs: theme.spacing(2),
+              md: theme.spacing(12)
+            })
+          }}
+        >
+          <ControllerHistoryFilters
+            controlFilters={controlFilters}
+            setControlFilters={setControlFilters}
+            period={period}
+            setPeriod={setPeriod}
+          />
+        </Box>
+        {controls && controls.length > 0 && (
+          <ControlsList
+            controls={controls}
+            period={period}
+            loading={loadingControls}
+            clickOnRow={(id, type) => setControlOnFocus({ id, type })}
+          />
+        )}
+      </Main>
+    </>
+  );
 }

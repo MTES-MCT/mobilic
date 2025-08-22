@@ -11,6 +11,7 @@ import {
 import { AccountButton } from "../components/AccountButton";
 import { prettyFormatDay } from "common/utils/time";
 import { MissionDetails } from "../components/MissionDetails";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   overviewTimersContainer: {
@@ -46,6 +47,8 @@ export function MissionReview({
           className={classes.overviewTimersTitle}
           align="left"
           variant="h5"
+          component="h1"
+          color={fr.colors.decisions.text.inverted.grey.default}
         >
           Récapitulatif de la mission
           {` ${currentMission.name} du ${prettyFormatDay(
@@ -73,6 +76,7 @@ export function MissionReview({
         logComment={logComment}
         cancelComment={cancelComment}
         editKilometerReading={registerKilometerReading}
+        titleProps={{ component: "h2" }}
       />
     </Container>
   );

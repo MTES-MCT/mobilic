@@ -13,6 +13,10 @@ const initAxeptio = () => {
   })(document, "script");
 };
 
+function gtag() {
+  window.dataLayer.push(arguments);
+}
+
 const initGoogleAds = () => {
   const el = document.createElement("script");
   el.setAttribute(
@@ -25,11 +29,22 @@ const initGoogleAds = () => {
   }
 
   window.dataLayer = window.dataLayer || [];
-  function gtag() {
-    window.dataLayer.push(arguments);
-  }
   gtag("js", new Date());
   gtag("config", "AW-11378818239");
+};
+
+const isGoogleAdsInitiated = () => {
+  return !!window.dataLayer;
+};
+
+const trackGoogleAds = () => {
+  if (!isGoogleAdsInitiated()) {
+    console.info("Google ads script not initiated: event won't be sent");
+  } else {
+    gtag("event", "conversion", {
+      send_to: "AW-11378818239/ErUFCOnghf8YEL_567Eq"
+    });
+  }
 };
 
 const removeGoogleAds = () => {
@@ -41,5 +56,7 @@ const removeGoogleAds = () => {
 module.exports = {
   initAxeptio,
   initGoogleAds,
-  removeGoogleAds
+  trackGoogleAds,
+  removeGoogleAds,
+  isGoogleAdsInitiated
 };

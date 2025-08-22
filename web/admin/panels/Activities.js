@@ -5,7 +5,6 @@ import { EmployeeFilter } from "../components/EmployeeFilter";
 import Paper from "@mui/material/Paper";
 import { PeriodToggle } from "../components/PeriodToggle";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { useWidth } from "common/utils/useWidth";
@@ -31,14 +30,13 @@ import { ReactComponent as TachoIcon } from "common/assets/images/tacho.svg";
 import { LoadingButton } from "common/components/LoadingButton";
 import Drawer from "@mui/material/Drawer";
 import NewMissionForm from "../../common/NewMissionForm";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import {
   ADMIN_WORK_DAYS_QUERY,
   buildLogLocationPayloadFromAddress,
   CREATE_MISSION_MUTATION,
+  LOG_HOLIDAY_MUTATION,
   LOG_LOCATION_MUTATION
 } from "common/utils/apiQueries";
 import { MobileDatePicker } from "@mui/x-date-pickers";
@@ -49,6 +47,7 @@ import {
   ACTIVITY_FILTER_EMPLOYEE,
   ACTIVITY_FILTER_MAX_DATE,
   ACTIVITY_FILTER_MIN_DATE,
+  ADMIN_ADD_HOLIDAY,
   ADMIN_ADD_MISSION,
   ADMIN_EXPORT_C1B,
   ADMIN_EXPORT_EXCEL
@@ -58,7 +57,14 @@ import {
   getUsersToSelectFromTeamSelection,
   unselectAndGetAllTeams
 } from "../store/reducers/team";
+import { LogHolidayButton } from "../../common/LogHolidayButton";
+import { LogHolidayForm } from "../../common/LogHolidayForm";
+import { graphQLErrorMatchesCode } from "common/utils/errors";
 import { usePageTitle } from "../../common/UsePageTitle";
+import { useGetUsersSinceDate } from "../../common/hooks/useGetUsersSinceDate";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import CloseButton from "../../common/CloseButton";
+import { PickersDay } from "@mui/x-date-pickers/PickersDay";
 
 const useStyles = makeStyles(theme => ({
   filterGrid: {
@@ -84,9 +90,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
     paddingTop: theme.spacing(1)
   },
-  closeButton: {
-    padding: 0
-  },
   missionTitle: {
     marginRight: theme.spacing(4)
   },
@@ -96,6 +99,31 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center"
   }
 }));
+
+const refreshWorkDays = async (
+  setLoading,
+  alerts,
+  api,
+  userId,
+  minDate,
+  maxDate,
+  companyId,
+  addWorkDays,
+  addUsers
+) => {
+  setLoading(true);
+  await alerts.withApiErrorHandling(async () => {
+    const companiesPayload = await api.graphQlQuery(ADMIN_WORK_DAYS_QUERY, {
+      id: userId,
+      activityAfter: minDate,
+      activityBefore: maxDate,
+      companyIds: [companyId]
+    });
+    addWorkDays(companiesPayload.data.user.adminedCompanies, minDate);
+    addUsers(companiesPayload.data.user.adminedCompanies);
+  }, "load-work-days");
+  setLoading(false);
+};
 
 const onMinDateChange = debounce(
   async (
@@ -110,18 +138,17 @@ const onMinDateChange = debounce(
     alerts
   ) => {
     if (newMinDate < maxDate) {
-      setLoading(true);
-      await alerts.withApiErrorHandling(async () => {
-        const companiesPayload = await api.graphQlQuery(ADMIN_WORK_DAYS_QUERY, {
-          id: userId,
-          activityAfter: newMinDate,
-          activityBefore: maxDate,
-          companyIds: [companyId]
-        });
-        addWorkDays(companiesPayload.data.user.adminedCompanies, newMinDate);
-        addUsers(companiesPayload.data.user.adminedCompanies);
-      }, "load-work-days");
-      setLoading(false);
+      await refreshWorkDays(
+        setLoading,
+        alerts,
+        api,
+        userId,
+        newMinDate,
+        maxDate,
+        companyId,
+        addWorkDays,
+        addUsers
+      );
     }
   },
   500
@@ -136,6 +163,7 @@ function ActivitiesPanel() {
   const api = useApi();
   const history = useHistory();
   const { trackEvent } = useMatomo();
+  const { getUsersSinceDate } = useGetUsersSinceDate();
 
   const [users, setUsers] = React.useState(adminStore.activitiesFilters.users);
   const [teams, setTeams] = React.useState(adminStore.activitiesFilters.teams);
@@ -151,6 +179,7 @@ function ActivitiesPanel() {
     adminStore.activitiesFilters.period
   );
   const [openNewMission, setOpenNewMission] = React.useState(false);
+  const [openLogHoliday, setOpenLogHoliday] = React.useState(false);
 
   const minDateOfFetchedData = adminStore.minWorkDaysDate;
 
@@ -222,10 +251,6 @@ function ActivitiesPanel() {
   }, [adminCompanies]);
 
   React.useEffect(() => {
-    setUsers(adminStore.activitiesFilters.users);
-  }, [adminStore.activitiesFilters.users]);
-
-  React.useEffect(() => {
     setTeams(adminStore.activitiesFilters.teams);
   }, [adminStore.activitiesFilters.teams]);
 
@@ -249,18 +274,29 @@ function ActivitiesPanel() {
     trackEvent(ACTIVITY_FILTER_EMPLOYEE);
   }, [users]);
 
-  let selectedUsers = users.filter(u => u.selected);
-  if (selectedUsers.length === 0) selectedUsers = users;
+  const selectedUsers = React.useMemo(() => {
+    const selected = users.filter(u => u.selected);
+    if (selected.length === 0) {
+      return users;
+    }
+    return selected;
+  }, [users]);
 
-  const selectedWorkDays = adminStore.workDays.filter(
-    wd =>
-      selectedUsers.map(u => u.id).includes(wd.user.id) &&
-      (!minDate || wd.day >= minDate) &&
-      (!maxDate || wd.day <= maxDate)
+  const selectedWorkDays = React.useMemo(
+    () =>
+      adminStore.workDays.filter(
+        wd =>
+          selectedUsers.map(u => u.id).includes(wd.user.id) &&
+          (!minDate || wd.day >= minDate) &&
+          (!maxDate || wd.day <= maxDate)
+      ),
+    [minDate, maxDate, selectedUsers, adminStore.workDays]
   );
 
-  // TODO : memoize this
-  const periodAggregates = aggregateWorkDayPeriods(selectedWorkDays, period);
+  const periodAggregates = React.useMemo(
+    () => aggregateWorkDayPeriods(selectedWorkDays, period),
+    [selectedWorkDays, period]
+  );
   const ref = React.useRef(null);
   const width = useWidth();
 
@@ -304,6 +340,11 @@ function ActivitiesPanel() {
             }}
             cancelText={null}
             maxDate={today}
+            // renderDay is needed to fix issue caused by key being passed with props
+            renderDay={(day, selectedDates, pickersDayProps) => {
+              const { key, ...safeProps } = pickersDayProps;
+              return <PickersDay {...safeProps} />;
+            }}
             renderInput={props => (
               <TextField {...props} required variant="outlined" size="small" />
             )}
@@ -323,6 +364,11 @@ function ActivitiesPanel() {
             }}
             cancelText={null}
             maxDate={today}
+            // renderDay is needed to fix issue caused by key being passed with props
+            renderDay={(day, selectedDates, pickersDayProps) => {
+              const { key, ...safeProps } = pickersDayProps;
+              return <PickersDay {...safeProps} />;
+            }}
             renderInput={props => (
               <TextField {...props} required variant="outlined" size="small" />
             )}
@@ -330,10 +376,8 @@ function ActivitiesPanel() {
         </Grid>
         <Grid item>
           <Button
-            className={classes.exportButton}
-            color="primary"
             onClick={e => setExportMenuAnchorEl(e.currentTarget)}
-            variant="contained"
+            size="small"
           >
             Exporter
           </Button>
@@ -355,7 +399,8 @@ function ActivitiesPanel() {
                   defaultMinDate: minDate ? new Date(minDate) : null,
                   defaultMaxDate: maxDate
                     ? new Date(maxDate)
-                    : startOfDayAsDate(new Date())
+                    : startOfDayAsDate(new Date()),
+                  getUsersSinceDate
                 });
               }}
             >
@@ -376,7 +421,8 @@ function ActivitiesPanel() {
                   defaultMinDate: minDate ? new Date(minDate) : null,
                   defaultMaxDate: maxDate
                     ? new Date(maxDate)
-                    : startOfDayAsDate(new Date())
+                    : startOfDayAsDate(new Date()),
+                  getUsersSinceDate
                 });
               }}
             >
@@ -391,8 +437,14 @@ function ActivitiesPanel() {
       <Box
         className={`flex-column ${classes.workTimeTableContainer}`}
         style={{ maxHeight: ref.current ? ref.current.clientHeight : 0 }}
+        sx={{ marginTop: 1 }}
       >
-        <Typography align="left" variant="h6">
+        <Typography
+          align="left"
+          variant="h6"
+          component="span"
+          style={{ fontSize: "1rem" }}
+        >
           {`${periodAggregates.length} résultats${
             periodAggregates.length > 0
               ? ` pour ${
@@ -405,19 +457,32 @@ function ActivitiesPanel() {
               : "."
           }`}
         </Typography>
-        <LoadingButton
-          style={{ marginTop: 8, alignSelf: "flex-start" }}
-          color="primary"
-          variant="contained"
-          size="small"
-          className={classes.subButton}
-          onClick={() => {
-            trackEvent(ADMIN_ADD_MISSION);
-            setOpenNewMission(true);
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "space-between"
           }}
         >
-          Ajouter des activités
-        </LoadingButton>
+          <LoadingButton
+            style={{ marginTop: 8, alignSelf: "flex-start" }}
+            size="small"
+            className={classes.subButton}
+            onClick={() => {
+              trackEvent(ADMIN_ADD_MISSION);
+              setOpenNewMission(true);
+            }}
+          >
+            Ajouter des activités
+          </LoadingButton>
+          <LogHolidayButton
+            onClick={() => {
+              trackEvent(ADMIN_ADD_HOLIDAY);
+              setOpenLogHoliday(true);
+            }}
+          />
+        </Box>
         <WorkTimeTable
           className={classes.workTimeTable}
           period={period}
@@ -429,6 +494,77 @@ function ActivitiesPanel() {
         />
         <Drawer
           anchor="right"
+          open={openLogHoliday}
+          onClose={() => {
+            setOpenLogHoliday(false);
+          }}
+        >
+          <Box p={3} className={classes.missionTitleContainer}>
+            <Typography variant="h1" className={classes.missionTitle}>
+              Congé ou absence passé
+            </Typography>
+            <CloseButton
+              onClick={() => {
+                setOpenLogHoliday(false);
+              }}
+            />
+          </Box>
+          <LogHolidayForm
+            users={users}
+            handleSubmit={async payload =>
+              await alerts.withApiErrorHandling(
+                async () => {
+                  await api.graphQlMutate(LOG_HOLIDAY_MUTATION, {
+                    ...payload,
+                    companyId: company.id
+                  });
+                  alerts.success(
+                    "Votre congé ou absence a bien été enregistré(e)",
+                    "",
+                    6000
+                  );
+                  setOpenLogHoliday(false);
+                  refreshWorkDays(
+                    setLoading,
+                    alerts,
+                    api,
+                    adminStore.userId,
+                    minDate,
+                    maxDate,
+                    company.id,
+                    (companiesPayload, newMinDate) =>
+                      adminStore.dispatch({
+                        type: ADMIN_ACTIONS.addWorkDays,
+                        payload: {
+                          companiesPayload,
+                          minDate: newMinDate,
+                          reset: true
+                        }
+                      }),
+                    companiesPayload =>
+                      adminStore.dispatch({
+                        type: ADMIN_ACTIONS.addUsers,
+                        payload: { companiesPayload }
+                      })
+                  );
+                },
+                "create-holiday",
+                graphQLError => {
+                  if (
+                    graphQLErrorMatchesCode(
+                      graphQLError,
+                      "OVERLAPPING_MISSIONS"
+                    )
+                  ) {
+                    return "Des activités sont déjà enregistrées sur cette période.";
+                  }
+                }
+              )
+            }
+          />
+        </Drawer>
+        <Drawer
+          anchor="right"
           open={openNewMission}
           onClose={() => {
             setOpenNewMission(false);
@@ -438,15 +574,11 @@ function ActivitiesPanel() {
             <Typography variant="h1" className={classes.missionTitle}>
               Mission passée
             </Typography>
-            <IconButton
-              aria-label="Fermer"
-              className={classes.closeButton}
+            <CloseButton
               onClick={() => {
                 setOpenNewMission(false);
               }}
-            >
-              <CloseIcon />
-            </IconButton>
+            />
           </Box>
           <NewMissionForm
             companies={adminCompanies}
@@ -470,7 +602,9 @@ function ActivitiesPanel() {
                       : null,
                     vehicleRegistrationNumber: missionInfos.vehicle
                       ? missionInfos.vehicle.registrationNumber
-                      : null
+                      : null,
+                    pastRegistrationJustification:
+                      missionInfos.pastRegistrationJustification
                   }
                 );
                 const mission = missionResponse.data.activities.createMission;

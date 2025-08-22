@@ -20,8 +20,8 @@ export const VIDEOS = {
     description: "Vous inscrire sur Mobilic"
   },
   Admin_Utilisation: {
-    id: "873641999",
-    title: "gestionnaire-utilisation",
+    id: "1092714544",
+    title: "gestionnaire-utilisation-mai-2025",
     description: "Utiliser l'interface gestionnaire"
   },
   Employee_Inscription: {
@@ -45,8 +45,8 @@ export const VIDEOS = {
     description: "Utiliser Mobilic au quotidien"
   },
   Tuto_Ctt: {
-    id: "874704098",
-    title: "tuto-ctt-it-septembre-2023",
+    id: "1092713758",
+    title: "tuto-ctt-it-mai-2025",
     description: "Effectuer un contrôle en bord de route"
   },
   Tuto_Police: {
@@ -101,19 +101,22 @@ function getCdnUrl(id) {
   return `https://player.vimeo.com/video/${id}?badge=0&amp;autopause=0&amp;quality_selector=1&amp;progress_bar=1&amp;player_id=0&amp;app_id=58479`;
 }
 
-export function VideoCard({ video, ...props }) {
+export function VideoCard({ video, titleProps = {}, ...props }) {
   const classes = resourceCardsClasses();
 
   const { id, title, description } = video;
   return (
     <Card variant="outlined" className={classes.card} {...props}>
-      <Typography variant={"h5"} className={classes.description}>
+      <Typography
+        variant={"h5"}
+        className={classes.description}
+        {...titleProps}
+      >
         {description}
       </Typography>
       <div style={{ padding: "20rem 0 0 0", position: "relative" }}>
         <iframe
           src={getCdnUrl(id)}
-          frameBorder="0"
           allow="autoplay; fullscreen; picture-in-picture"
           style={{
             position: "absolute",

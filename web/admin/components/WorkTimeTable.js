@@ -21,10 +21,6 @@ import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { OPEN_WORKDAY_DRAWER } from "common/utils/matomoTags";
 
 const useStyles = makeStyles(theme => ({
-  warningText: {
-    color: theme.palette.warning.main,
-    fontWeight: "bold"
-  },
   expenditures: {
     padding: theme.spacing(4)
   },

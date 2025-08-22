@@ -11,8 +11,8 @@ export const EXPENDITURES = {
     plural: `repas${"\u00A0"}soir`
   },
   sleep_over: {
-    label: "découché",
-    plural: "découchés"
+    label: "découcher",
+    plural: "découchers"
   },
   snack: {
     label: "casse-croûte",

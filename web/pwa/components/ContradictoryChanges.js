@@ -57,7 +57,8 @@ export function ContradictoryChanges({
   showEventsBeforeValidation = true,
   userId,
   cacheInStore,
-  controlId = null
+  controlId = null,
+  titleProps = {}
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
@@ -75,15 +76,20 @@ export function ContradictoryChanges({
     if (event.type !== "CREATE") {
       return classes.updateActivityEvent;
     }
-    if (event.resourceType === MISSION_RESOURCE_TYPES.validation) {
+    if (
+      event.resourceType === MISSION_RESOURCE_TYPES.validation ||
+      event.resourceType === MISSION_RESOURCE_TYPES.autoValidationAdmin ||
+      event.resourceType === MISSION_RESOURCE_TYPES.autoValidationEmployee
+    ) {
       return classes.validationEvent;
     }
     return classes.missionEvent;
   };
 
-  const changesHistory = contradictoryInfo[1];
-  const loadingEmployeeVersion = contradictoryInfo[2];
-  const contradictoryComputationError = contradictoryInfo[5];
+  const changesHistory = contradictoryInfo.eventsHistory;
+  const loadingEmployeeVersion = contradictoryInfo.isComputingContradictory;
+  const contradictoryComputationError =
+    contradictoryInfo.contradictoryComputationError;
 
   const userChangesHistory = changesHistory.filter(
     c =>
@@ -106,7 +112,9 @@ export function ContradictoryChanges({
         expandIcon={<ExpandMoreIcon />}
         className={classes.accordionTitle}
       >
-        <Typography className="bold">Historique de saisie</Typography>
+        <Typography className="bold" {...titleProps}>
+          Historique de saisie
+        </Typography>
       </AccordionSummary>
       <AccordionDetails className={classes.collapse}>
         {loadingEmployeeVersion ? (
@@ -133,6 +141,12 @@ export function ContradictoryChanges({
                     time={userChange.time}
                     withFullDate={true}
                     iconBackgroundColor={color}
+                    isAutomatic={
+                      userChange.resourceType ===
+                        MISSION_RESOURCE_TYPES.autoValidationAdmin ||
+                      userChange.resourceType ===
+                        MISSION_RESOURCE_TYPES.autoValidationEmployee
+                    }
                   />
                 ));
               })}

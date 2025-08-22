@@ -1,17 +1,23 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { FunnelModal } from "./FunnelModal";
 import Container from "@mui/material/Container";
-import { MainCtaButton } from "./MainCtaButton";
 import TextField from "common/utils/TextField";
 import { Expenditures } from "./Expenditures";
 import { AddressField } from "../../common/AddressField";
 import KilometerReadingField from "../../common/KilometerReadingField";
 import { NativeDateTimePicker } from "../../common/NativeDateTimePicker";
-import { getDaysBetweenTwoDates, now } from "common/utils/time";
+import {
+  MINUTE,
+  getDaysBetweenTwoDates,
+  isDateBeforeToday,
+  now
+} from "common/utils/time";
 import { setCurrentLocation } from "common/utils/location";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import { MandatoryField } from "../../common/MandatoryField";
+import { LoadingButton } from "common/components/LoadingButton";
 
 export default function EndMissionModal({
   open,
@@ -25,7 +31,10 @@ export default function EndMissionModal({
   missionMinEndTime
 }) {
   const [expenditures, setExpenditures] = React.useState({});
-  const [endTime, setEndTime] = React.useState(missionEndTime);
+  const [endTime, setEndTime] = React.useState(
+    missionEndTime ||
+      (missionMinEndTime ? missionMinEndTime + 30 * MINUTE : null)
+  );
   const [comment, setComment] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [address, setAddress] = React.useState(false);
@@ -35,13 +44,22 @@ export default function EndMissionModal({
   );
   const [missionEndTimeError, setMissionEndTimeError] = React.useState("");
   const [currentPosition, setCurrentPosition] = React.useState(null);
+  const [
+    pastRegistrationJustification,
+    setPastRegistrationJustification
+  ] = React.useState("");
 
+  const isPastMission = useMemo(
+    () => isDateBeforeToday(currentMission.startTime),
+    [currentMission.startTime]
+  );
   function canSubmit() {
     return (
       (currentEndLocation || address) &&
       !kilometerReadingError &&
       endTime &&
-      !missionEndTimeError
+      !missionEndTimeError &&
+      (!isPastMission || pastRegistrationJustification)
     );
   }
   const alerts = useSnackbarAlerts();
@@ -89,30 +107,36 @@ export default function EndMissionModal({
   return (
     <FunnelModal open={open} handleBack={handleClose}>
       <Container className="flex-column-space-between" style={{ flexGrow: 1 }}>
-        <form
-          autoComplete="off"
-          onSubmit={async e => {
-            e.preventDefault();
-            setLoading(true);
-            await new Promise(resolve => setTimeout(resolve, 100));
-            await handleMissionEnd(
-              expenditures,
-              comment,
-              address,
-              kilometerReading,
-              endTime
-            );
-            handleClose();
-          }}
+        <Container
+          className="flex-column"
+          style={{ flexShrink: 0 }}
+          disableGutters
         >
-          <Container
-            className="flex-column"
-            style={{ flexShrink: 0 }}
-            disableGutters
+          <MandatoryField />
+          <form
+            autoComplete="off"
+            onSubmit={async e => {
+              e.preventDefault();
+              setLoading(true);
+              await new Promise(resolve => setTimeout(resolve, 100));
+              await handleMissionEnd(
+                expenditures,
+                comment,
+                address,
+                kilometerReading,
+                endTime,
+                pastRegistrationJustification
+              );
+              handleClose();
+            }}
           >
             {!missionEndTime && (
               <Box key={0}>
-                <Typography variant="h5" className="form-field-title">
+                <Typography
+                  variant="h5"
+                  component="p"
+                  className="form-field-title"
+                >
                   Quelle est l'heure de fin de la mission&nbsp;?
                 </Typography>
                 <NativeDateTimePicker
@@ -128,7 +152,7 @@ export default function EndMissionModal({
                 />
               </Box>
             )}
-            <Typography variant="h5" className="form-field-title">
+            <Typography variant="h5" component="p" className="form-field-title">
               Quel est le lieu de fin de service&nbsp;?
             </Typography>
             <AddressField
@@ -150,7 +174,12 @@ export default function EndMissionModal({
             currentMission.startLocation &&
             currentMission.startLocation.kilometerReading
               ? [
-                  <Typography key={0} variant="h5" className="form-field-title">
+                  <Typography
+                    key={0}
+                    variant="h5"
+                    component="p"
+                    className="form-field-title"
+                  >
                     Quel est le relevé kilométrique de fin de service&nbsp;?
                   </Typography>,
                   <KilometerReadingField
@@ -167,7 +196,11 @@ export default function EndMissionModal({
               !currentMission.company.settings ||
               currentMission.company.settings.requireExpenditures) && (
               <>
-                <Typography variant="h5" className="form-field-title">
+                <Typography
+                  variant="h5"
+                  component="p"
+                  className="form-field-title"
+                >
                   Avez-vous eu des frais lors de cette mission&nbsp;?
                 </Typography>
                 <Expenditures
@@ -180,8 +213,32 @@ export default function EndMissionModal({
                 />
               </>
             )}
-            <Typography variant="h5" className="form-field-title">
-              Avez-vous une observation&nbsp;? (optionnel)
+            {isPastMission && (
+              <>
+                <Typography
+                  variant="h5"
+                  component="p"
+                  className="form-field-title"
+                >
+                  Motif
+                </Typography>
+                <TextField
+                  required
+                  fullWidth
+                  multiline
+                  minRows={3}
+                  label="Raison de l'ajout d'une mission passée"
+                  variant="filled"
+                  value={pastRegistrationJustification}
+                  onChange={e =>
+                    setPastRegistrationJustification(e.target.value)
+                  }
+                  inputProps={{ maxLength: 48 }}
+                />
+              </>
+            )}
+            <Typography variant="h5" component="p" className="form-field-title">
+              Avez-vous une observation&nbsp;?
             </Typography>
             <TextField
               fullWidth
@@ -193,17 +250,18 @@ export default function EndMissionModal({
               value={comment}
               onChange={e => setComment(e.target.value)}
             />
-          </Container>
-          <Box className="cta-container" my={4}>
-            <MainCtaButton
-              type="submit"
-              disabled={!canSubmit()}
-              loading={loading}
-            >
-              Suivant
-            </MainCtaButton>
-          </Box>
-        </form>
+
+            <Box className="cta-container" my={4}>
+              <LoadingButton
+                type="submit"
+                disabled={!canSubmit()}
+                loading={loading}
+              >
+                Suivant
+              </LoadingButton>
+            </Box>
+          </form>
+        </Container>
       </Container>
     </FunnelModal>
   );

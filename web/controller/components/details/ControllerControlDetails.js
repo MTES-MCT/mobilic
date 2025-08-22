@@ -10,7 +10,8 @@ import { orderEmployments } from "common/utils/employments";
 import { ControllerControlHeader } from "./ControllerControlHeader";
 import _ from "lodash";
 import { ControlBulletinDrawer } from "../controlBulletin/ControlBulletinDrawer";
-import { useReportInfractions } from "../../utils/useReportInfractions";
+import { formatActivity } from "common/utils/businessTypes";
+import { useInfractions } from "../../utils/contextInfractions";
 
 export function ControllerControlDetails({
   controlData,
@@ -23,24 +24,27 @@ export function ControllerControlDetails({
   const [coworkers, setCoworkers] = React.useState([]);
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
   const [isEditingBC, setIsEditingBC] = React.useState(false);
-  const [
-    reportedInfractionsLastUpdateTime,
-    groupedAlerts,
+  const {
     checkedAlertsNumber,
     totalAlertsNumber,
     isReportingInfractions,
     setIsReportingInfractions,
-    hasModifiedInfractions,
-    saveInfractions,
-    cancelInfractions,
-    onUpdateInfraction
-  ] = useReportInfractions(controlData);
+    reportedInfractionsLastUpdateTime,
+    groupedAlerts
+  } = useInfractions();
 
   // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
   const legacyTokenInfo = {
     creationDay: new Date(unixToJSTimestamp(controlData.qrCodeGenerationTime)),
     historyStartDay: controlData.historyStartDate,
     creationTime: controlData.creationTime
+  };
+
+  const _onClose = () => {
+    if (setIsReportingInfractions) {
+      setIsReportingInfractions(false);
+    }
+    onClose();
   };
 
   React.useEffect(() => {
@@ -58,23 +62,37 @@ export function ControllerControlDetails({
       setVehicles([]);
     }
 
-    if (controlData.missions) {
-      const _missions = augmentAndSortMissions(
-        controlData.missions.map(m => ({
-          ...m,
-          ...parseMissionPayloadFromBackend(m, controlData.user.id),
-          allActivities: _.orderBy(m.activities, ["startTime", "endTime"])
-        })),
-        controlData.user.id
-      ).filter(m => m.activities.length > 0);
-      setMissions(_missions);
+    const missionData = [];
+    const _coworkers = {};
 
-      const _coworkers = {};
+    if (controlData.missions) {
+      controlData.missions.forEach(mission => {
+        const isMissionDeleted = !!mission.deletedAt;
+        const activities = mission.activities.map(activity => ({
+          ...activity,
+          isMissionDeleted
+        }));
+        missionData.push({
+          ...mission,
+          ...parseMissionPayloadFromBackend(mission, controlData.user.id),
+          isDeleted: isMissionDeleted,
+          allActivities: _.orderBy(activities, ["startTime", "endTime"])
+        });
+      });
+
       controlData.missions.forEach(m => {
         m.activities.forEach(a => {
           _coworkers[a.user.id.toString()] = a.user;
         });
       });
+    }
+
+    if (missionData.length > 0) {
+      const _missions = augmentAndSortMissions(
+        missionData,
+        controlData.user.id
+      ).filter(m => m.activities.length > 0);
+      setMissions(_missions);
       setCoworkers(_coworkers);
     } else {
       setMissions([]);
@@ -82,58 +100,56 @@ export function ControllerControlDetails({
     }
   }, [controlData]);
 
-  return [
-    <ControllerControlHeader
-      key={0}
-      controlId={controlData.id}
-      controlDate={legacyTokenInfo?.creationTime}
-      onCloseDrawer={onClose}
-    />,
-    <UserReadTabs
-      key={1}
-      tabs={getTabs(checkedAlertsNumber)}
-      totalAlertsNumber={totalAlertsNumber}
-      regulationComputationsByDay={controlData.regulationComputationsByDay}
-      tokenInfo={legacyTokenInfo}
-      controlTime={controlData.qrCodeGenerationTime}
-      missions={missions}
-      employments={employments}
-      coworkers={coworkers}
-      vehicles={vehicles}
-      periodOnFocus={periodOnFocus}
-      setPeriodOnFocus={setPeriodOnFocus}
-      workingDaysNumber={controlData.nbControlledDays || 0}
-      allowC1BExport={false}
-      controlId={controlData.id}
-      companyName={controlData.companyName}
-      vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
-      openBulletinControl={() => setIsEditingBC(true)}
-      controlData={controlData}
-      reportedInfractionsLastUpdateTime={reportedInfractionsLastUpdateTime}
-      isReportingInfractions={isReportingInfractions}
-      setIsReportingInfractions={setIsReportingInfractions}
-      groupedAlerts={groupedAlerts}
-      saveInfractions={saveInfractions}
-      cancelInfractions={cancelInfractions}
-      onUpdateInfraction={onUpdateInfraction}
-      hasModifiedInfractions={hasModifiedInfractions}
-      readOnlyAlerts={false}
-    />,
-    <ControlBulletinDrawer
-      key={2}
-      isOpen={isEditingBC}
-      onClose={() => setIsEditingBC(false)}
-      controlData={controlData}
-      onSaveControlBulletin={newControlData =>
-        setControlData(prevControlData => ({
-          ...prevControlData,
-          ...newControlData
-        }))
-      }
-      groupedAlerts={groupedAlerts}
-      saveInfractions={saveInfractions}
-      onUpdateInfraction={onUpdateInfraction}
-      cancelInfractions={cancelInfractions}
-    />
-  ];
+  const businesses = React.useMemo(
+    () => [
+      ...new Set(
+        employments.map(e => formatActivity(e.business)).filter(b => !!b)
+      )
+    ],
+    [employments]
+  );
+
+  return (
+    <>
+      <ControllerControlHeader
+        controlDate={legacyTokenInfo?.creationTime}
+        onCloseDrawer={_onClose}
+      />
+      <UserReadTabs
+        tabs={getTabs(checkedAlertsNumber)}
+        totalAlertsNumber={totalAlertsNumber}
+        tokenInfo={legacyTokenInfo}
+        controlTime={controlData.qrCodeGenerationTime}
+        missions={missions}
+        employments={employments}
+        businesses={businesses}
+        coworkers={coworkers}
+        vehicles={vehicles}
+        periodOnFocus={periodOnFocus}
+        setPeriodOnFocus={setPeriodOnFocus}
+        workingDaysNumber={controlData.nbControlledDays || 0}
+        allowC1BExport={false}
+        controlId={controlData.id}
+        companyName={controlData.companyName}
+        vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
+        openBulletinControl={() => setIsEditingBC(true)}
+        reportedInfractionsLastUpdateTime={reportedInfractionsLastUpdateTime}
+        isReportingInfractions={isReportingInfractions}
+        setIsReportingInfractions={setIsReportingInfractions}
+        readOnlyAlerts={false}
+        groupedAlerts={groupedAlerts}
+      />
+      <ControlBulletinDrawer
+        isOpen={isEditingBC}
+        onClose={() => setIsEditingBC(false)}
+        controlData={controlData}
+        onSaveControlBulletin={newControlData =>
+          setControlData(prevControlData => ({
+            ...prevControlData,
+            ...newControlData
+          }))
+        }
+      />
+    </>
+  );
 }

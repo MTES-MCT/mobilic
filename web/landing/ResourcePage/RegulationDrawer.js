@@ -1,5 +1,4 @@
 import React from "react";
-import { Accordion, AccordionDetails, Alert } from "@mui/material";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Grid from "@mui/material/Grid";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -9,8 +8,7 @@ import Container from "@mui/material/Container";
 import { makeStyles } from "@mui/styles";
 import Box from "@mui/material/Box";
 import { RegulationArticlesBlock } from "./RegulationLegalArticle";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 
 export const useStyles = makeStyles(theme => ({
   container: {
@@ -43,35 +41,6 @@ export const useStyles = makeStyles(theme => ({
   },
   computationDetails: {
     marginBottom: theme.spacing(2)
-  },
-  collapse: {
-    display: "block",
-    background: "inherit",
-    padding: 0,
-    marginTop: theme.spacing(2)
-  },
-  accordion: {
-    "&::before": {
-      content: "none"
-    },
-    "&.Mui-disabled": {
-      background: "inherit"
-    },
-    background: "inherit"
-  },
-  accordionTitle: {
-    padding: 0,
-    fontWeight: "bold",
-    minHeight: "unset",
-    margin: 0,
-    "& .MuiAccordionSummary-content": {
-      margin: 0
-    },
-    "&.Mui-expanded": {
-      minHeight: "unset",
-      margin: 0,
-      backgroundColor: "inherit"
-    }
   }
 }));
 
@@ -93,6 +62,17 @@ function Section({ title, children, className }) {
     </>
   );
 }
+
+export const RegulationBlock = ({ rule }) => {
+  const classes = useStyles();
+  return (
+    <Box className={classes.computationDetails}>
+      <Accordion label="Méthode de calcul" className="info">
+        {rule.computation}
+      </Accordion>
+    </Box>
+  );
+};
 
 const RegulationDrawerContext = React.createContext(() => {});
 
@@ -145,33 +125,16 @@ export const RegulationDrawerContextProvider = ({ children }) => {
             </Grid>
             <Section className={classes.details}>
               {displayComputationDetails && rule.computation && (
-                <Alert severity="info" className={classes.computationDetails}>
-                  <Accordion elevation={0} className={classes.accordion}>
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      className={classes.accordionTitle}
-                    >
-                      Méthode de calcul
-                    </AccordionSummary>
-                    <AccordionDetails className={classes.collapse}>
-                      {rule.computation}
-                    </AccordionDetails>
-                  </Accordion>
-                </Alert>
+                <RegulationBlock rule={rule} />
               )}
-              <Typography variant="body2">{rule.details}</Typography>
+              <Box>{rule.details}</Box>
             </Section>
             {rule.definitions && rule.definitions.length > 0 && (
               <Section className={classes.definitions} title="Définitions">
                 <ul className={classes.definitionList}>
                   {rule.definitions.map((def, index) => (
-                    <li key={index}>
-                      <Typography
-                        variant="body2"
-                        className={classes.definition}
-                      >
-                        <span className="bold">{def.name}</span> : {def.content}
-                      </Typography>
+                    <li key={index} className={classes.definition}>
+                      <span className="bold">{def.name}</span> : {def.content}
                     </li>
                   ))}
                 </ul>

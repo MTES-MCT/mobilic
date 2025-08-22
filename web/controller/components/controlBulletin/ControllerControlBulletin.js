@@ -1,7 +1,6 @@
 import React from "react";
 
-import Stack from "@mui/material/Stack";
-import { Button, Stepper } from "@dataesr/react-dsfr";
+import { Stepper } from "@codegouvfr/react-dsfr/Stepper";
 import Typography from "@mui/material/Typography";
 import { ControlBulletinHeader } from "./ControlBulletinHeader";
 import {
@@ -21,10 +20,13 @@ import {
 } from "common/store/store";
 import { syncControllerUser } from "../../utils/loadControllerUserData";
 import {
-  canDownloadBDC,
   checkRequiredFieldStep1,
   checkRequiredFieldStep2
 } from "../../utils/controlBulletin";
+import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
+import { useInfractions } from "../../utils/contextInfractions";
+import { useControl } from "../../utils/contextControl";
+import { scrollToId } from "../../../common/hooks/useScroll";
 
 const STEPS = {
   1: {
@@ -38,19 +40,16 @@ const STEPS = {
     successMessage: "Les informations ont été enregistrées"
   },
   3: {
-    title: "Infractions retenues et observations",
+    title: "Relevé des infractions",
     successMessage: "Le bulletin de contrôle a été enregistré"
   }
 };
 
 export function ControllerControlBulletin({
-  controlData,
   onClose,
   setMustConfirmBeforeClosing,
   onSaveControlBulletin,
-  groupedAlerts,
-  saveInfractions,
-  onUpdateInfraction
+  saveInfractions
 }) {
   const store = useStoreSyncedWithLocalStorage();
   const controllerUserInfo = store.controllerInfo();
@@ -64,15 +63,15 @@ export function ControllerControlBulletin({
     controllerUserInfo.grecoId || ""
   );
   const [showErrors, setShowErrors] = React.useState(false);
-
-  const controlCanBeDownloaded = React.useMemo(() => {
-    return canDownloadBDC(controlData);
-  }, [controlData]);
+  const { setIsReportingInfractions } = useInfractions();
+  const { controlData } = useControl();
 
   const onUpdateGrecoId = newGrecoId => {
     setGrecoId(newGrecoId);
     setFieldUpdated(true);
   };
+
+  React.useEffect(() => scrollToId("control-bulletin-header"), [step]);
 
   React.useEffect(() => {
     setControlBulletin(initControlBulletinFromControlData());
@@ -85,15 +84,6 @@ export function ControllerControlBulletin({
   const initControlBulletinFromControlData = () => {
     if (!controlData) {
       return { userNationality: "FRA", vehicleRegistrationCountry: "FRA" };
-    } else if (controlData.controlBulletinCreationTime) {
-      return {
-        userFirstName: controlData.userFirstName,
-        userLastName: controlData.userLastName,
-        userBirthDate: controlData.user?.birthDate,
-        companyName: controlData.companyName,
-        vehicleRegistrationNumber: controlData.vehicleRegistrationNumber,
-        ...controlData.controlBulletin
-      };
     } else {
       return {
         userFirstName: controlData.userFirstName,
@@ -101,11 +91,9 @@ export function ControllerControlBulletin({
         userBirthDate: controlData.user?.birthDate,
         companyName: controlData.companyName,
         vehicleRegistrationNumber: controlData.vehicleRegistrationNumber,
-        siren: controlData.controlBulletin?.siren,
-        companyAddress: controlData.controlBulletin?.companyAddress,
-        missionAddressBegin: controlData.controlBulletin?.missionAddressBegin,
-        userNationality: "FRA",
-        vehicleRegistrationCountry: "FRA"
+        vehicleRegistrationCountry:
+          controlData.controlBulletin?.vehicleRegistrationCountry,
+        ...controlData.controlBulletin
       };
     }
   };
@@ -116,6 +104,10 @@ export function ControllerControlBulletin({
       ...prevState,
       [name]: value
     }));
+    setFieldUpdated(true);
+  };
+
+  const onModifyInfractions = () => {
     setFieldUpdated(true);
   };
 
@@ -139,6 +131,7 @@ export function ControllerControlBulletin({
         alerts.success(STEPS[step].successMessage, "", 3000);
       }
       if (!STEPS[step + 1]) {
+        setIsReportingInfractions(false);
         onClose(true);
       } else {
         setStep(step + 1);
@@ -211,74 +204,67 @@ export function ControllerControlBulletin({
       }
     });
 
-  return [
-    <ControlBulletinHeader
-      key={0}
-      onCloseDrawer={onBackOrCloseButton}
-      backLinkLabel={
-        !STEPS[step - 1]
-          ? `Retour au contrôle ${controlData.id}`
-          : `Revenir à l'étape ${step - 1}/${Object.keys(STEPS).length}`
-      }
-    />,
-    <Typography key={5} variant="h1" mb={2}>
-      Éditer un bulletin de contrôle
-    </Typography>,
-    <Typography key={10}>
-      Pour éditer un bulletin de contrôle au format PDF, veuillez renseigner les
-      champs ci-dessous.
-    </Typography>,
-    <Stepper
-      key={15}
-      currentStep={step}
-      steps={3}
-      currentTitle={STEPS[step].title}
-      nextStepTitle={STEPS[step + 1]?.title || ""}
-    />,
-    step === 1 && (
-      <ControlBulletinFormStep1
-        key={20}
-        handleEditControlBulletin={handleEditControlBulletin}
-        controlBulletin={controlBulletin}
-        showErrors={showErrors}
+  return (
+    <>
+      <ControlBulletinHeader
+        onCloseDrawer={onBackOrCloseButton}
+        backLinkLabel={
+          !STEPS[step - 1]
+            ? `Retour au contrôle ${controlData.id}`
+            : `Revenir à l'étape ${step - 1}/${Object.keys(STEPS).length}`
+        }
       />
-    ),
-    step === 2 && (
-      <ControlBulletinFormStep2
-        key={30}
-        handleEditControlBulletin={handleEditControlBulletin}
-        controlBulletin={controlBulletin}
-        showErrors={showErrors}
+      <Typography variant="h1" mb={2}>
+        Éditer un bulletin de contrôle
+      </Typography>
+      <Typography>
+        Pour éditer un bulletin de contrôle au format PDF, veuillez renseigner
+        les champs ci-dessous.
+      </Typography>
+      <Stepper
+        currentStep={step}
+        nextTitle={STEPS[step + 1]?.title || null}
+        stepCount={3}
+        title={STEPS[step].title}
       />
-    ),
-    step === 3 && (
-      <ControlBulletinFormStep3
-        key={40}
-        handleEditControlBulletin={handleEditControlBulletin}
-        controlBulletin={controlBulletin}
-        grecoId={grecoId}
-        onUpdateGrecoId={onUpdateGrecoId}
-        controlCanBeDownloaded={controlCanBeDownloaded}
-        onUpdateInfraction={(...args) => {
-          setFieldUpdated(true);
-          onUpdateInfraction(...args);
-        }}
-        groupedAlerts={groupedAlerts}
+      {step === 1 && (
+        <ControlBulletinFormStep1
+          handleEditControlBulletin={handleEditControlBulletin}
+          controlBulletin={controlBulletin}
+          showErrors={showErrors}
+        />
+      )}
+      {step === 2 && (
+        <ControlBulletinFormStep2
+          handleEditControlBulletin={handleEditControlBulletin}
+          controlBulletin={controlBulletin}
+          showErrors={showErrors}
+        />
+      )}
+      {step === 3 && (
+        <ControlBulletinFormStep3
+          handleEditControlBulletin={handleEditControlBulletin}
+          controlBulletin={controlBulletin}
+          grecoId={grecoId}
+          onUpdateGrecoId={onUpdateGrecoId}
+          onModifyInfractions={onModifyInfractions}
+        />
+      )}
+      <ButtonsGroup
+        buttons={[
+          {
+            onClick: () => onSaveButton(controlBulletin),
+            children: !STEPS[step + 1] ? "Enregistrer" : "Suivant"
+          },
+          {
+            children: "Annuler",
+            onClick: () => onClose(),
+            priority: "secondary"
+          }
+        ]}
+        inlineLayoutWhen="sm and up"
+        alignment="right"
       />
-    ),
-    <Stack
-      key={50}
-      direction="row"
-      justifyContent="flex-start"
-      p={2}
-      spacing={4}
-    >
-      <Button title="Enregistrer" onClick={() => onSaveButton(controlBulletin)}>
-        {!STEPS[step + 1] ? "Enregistrer" : "Suivant"}
-      </Button>
-      <Button title="Annuler" onClick={() => onClose()} secondary>
-        Annuler
-      </Button>
-    </Stack>
-  ];
+    </>
+  );
 }

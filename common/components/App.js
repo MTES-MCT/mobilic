@@ -12,8 +12,8 @@ import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
 import { useApi } from "../utils/api";
 import EditPastMission from "../../web/pwa/components/EditPastMission";
 import { makeStyles } from "@mui/styles";
-import Container from "@mui/material/Container";
 import { sortActivities } from "../utils/activities";
+import { Main } from "../../web/common/semantics/Main";
 
 const useStyles = makeStyles(theme => ({
   appContainer: {
@@ -55,12 +55,17 @@ function _App({ ScreenComponent, loadUser }) {
   );
 
   const missions = unfilteredMissions.filter(m => m.activities.length > 0);
+  const notDeletedMissions = missions.filter(m => !m.deletedAt);
 
   const currentMission =
-    missions.length > 0 ? missions[missions.length - 1] : null;
+    notDeletedMissions.length > 0
+      ? notDeletedMissions[notDeletedMissions.length - 1]
+      : null;
 
   const previousMission =
-    missions.length > 1 ? missions[missions.length - 2] : null;
+    notDeletedMissions.length > 1
+      ? notDeletedMissions[notDeletedMissions.length - 2]
+      : null;
   const previousMissionEnd = previousMission
     ? previousMission.activities[previousMission.activities.length - 1].endTime
     : 0;
@@ -80,8 +85,8 @@ function _App({ ScreenComponent, loadUser }) {
   }
 
   return (
-    <Container className={classes.appContainer} maxWidth="md" disableGutters>
-      <Switch color="secondary">
+    <Main className={classes.appContainer} maxWidth="md" disableGutters>
+      <Switch>
         <Route path={`${path}/history`}>
           <History
             handleBack={() => history.push(path)}
@@ -144,7 +149,7 @@ function _App({ ScreenComponent, loadUser }) {
           />
         </Route>
       </Switch>
-    </Container>
+    </Main>
   );
 }
 

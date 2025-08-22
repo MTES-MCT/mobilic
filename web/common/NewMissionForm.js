@@ -5,11 +5,12 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import { useStyles as useFunnelModalStyles } from "../pwa/components/FunnelModal";
 import MenuItem from "@mui/material/MenuItem";
-import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { VehicleFieldForApp } from "../pwa/components/VehicleFieldForApp";
 import { AddressField } from "./AddressField";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { DAY } from "common/utils/time";
+import { MandatoryField } from "./MandatoryField";
+import { LoadingButton } from "common/components/LoadingButton";
 
 export default function NewMissionForm({
   handleSubmit,
@@ -22,7 +23,8 @@ export default function NewMissionForm({
   companyId = null,
   overrideSettings = null,
   askCurrentPosition = () => {},
-  disableGeolocation = false
+  disableGeolocation = false,
+  onSelectNoAdminCompany = null
 }) {
   const getInitialCompany = () => {
     if (companyId) {
@@ -43,8 +45,15 @@ export default function NewMissionForm({
   const [endAddress, setEndAddress] = React.useState(null);
   const [kilometerReading, setKilometerReading] = React.useState("");
   const [defaultAddresses, setDefaultAddresses] = React.useState([]);
+  const [
+    pastRegistrationJustification,
+    setPastRegistrationJustification
+  ] = React.useState("");
 
   React.useEffect(() => {
+    if (onSelectNoAdminCompany && company.hasNoAdmin) {
+      onSelectNoAdminCompany();
+    }
     if (vehicle?.companyId) setVehicle("");
     if (address?.companyId) setAddress("");
 
@@ -71,32 +80,40 @@ export default function NewMissionForm({
 
   return (
     <Container>
-      <form
-        autoComplete="off"
-        onSubmit={async e => {
-          setLoading(true);
-          e.preventDefault();
-          const payLoad = {
-            mission,
-            vehicle,
-            address,
-            company,
-            endAddress,
-            kilometerReading,
-            day
-          };
-          await handleSubmit(payLoad);
-          setLoading(false);
-        }}
+      <Container
+        className={`day-info-inputs ${funnelModalClasses.slimContainer}`}
+        style={{ flexShrink: 0 }}
+        disableGutters
       >
-        <Container
-          className={`day-info-inputs ${funnelModalClasses.slimContainer}`}
-          style={{ flexShrink: 0 }}
-          disableGutters
+        <MandatoryField />
+        <form
+          style={{ width: "100%" }}
+          autoComplete="off"
+          onSubmit={async e => {
+            setLoading(true);
+            e.preventDefault();
+            const payLoad = {
+              mission,
+              vehicle,
+              address,
+              company,
+              endAddress,
+              kilometerReading,
+              day,
+              pastRegistrationJustification
+            };
+            await handleSubmit(payLoad);
+            setLoading(false);
+          }}
         >
           {companies &&
             companies.length > 1 && [
-              <Typography key={0} variant="h5" className="form-field-title">
+              <Typography
+                key={0}
+                variant="h5"
+                component="p"
+                className="form-field-title"
+              >
                 Pour quelle entreprise&nbsp;?
               </Typography>,
               <TextField
@@ -120,7 +137,12 @@ export default function NewMissionForm({
               </TextField>
             ]}
           {settings?.requireMissionName && [
-            <Typography key={1} variant="h5" className="form-field-title">
+            <Typography
+              key={1}
+              variant="h5"
+              component="p"
+              className="form-field-title"
+            >
               Quel est le nom de la mission&nbsp;?
             </Typography>,
             <TextField
@@ -134,7 +156,12 @@ export default function NewMissionForm({
             />
           ]}
           {withDay && [
-            <Typography key={1} variant="h5" className="form-field-title">
+            <Typography
+              key={1}
+              variant="h5"
+              component="p"
+              className="form-field-title"
+            >
               Quel jour s'est déroulée la mission ?
             </Typography>,
             <MobileDatePicker
@@ -152,7 +179,7 @@ export default function NewMissionForm({
               )}
             />
           ]}
-          <Typography variant="h5" className="form-field-title">
+          <Typography variant="h5" component="p" className="form-field-title">
             Quel est le lieu de prise de service&nbsp;?
           </Typography>
           <AddressField
@@ -169,7 +196,12 @@ export default function NewMissionForm({
             disableGeolocation={disableGeolocation}
           />
           {withEndLocation && [
-            <Typography key={0} variant="h5" className="form-field-title">
+            <Typography
+              key={0}
+              variant="h5"
+              component="p"
+              className="form-field-title"
+            >
               Quel est le lieu de fin de service&nbsp;?
             </Typography>,
             <AddressField
@@ -186,7 +218,7 @@ export default function NewMissionForm({
               disableGeolocation={true}
             />
           ]}
-          <Typography variant="h5" className="form-field-title">
+          <Typography variant="h5" component="p" className="form-field-title">
             Utilisez-vous un véhicule&nbsp;?{" "}
           </Typography>
           <VehicleFieldForApp
@@ -205,22 +237,44 @@ export default function NewMissionForm({
                 : null
             }
           />
-        </Container>
-        <Box className="cta-container" my={4}>
-          <MainCtaButton
-            disabled={
-              !address ||
-              (!mission && settings?.requireMissionName) ||
-              (withEndLocation && !endAddress) ||
-              (withDay && !day)
-            }
-            type="submit"
-            loading={loading}
-          >
-            Continuer
-          </MainCtaButton>
-        </Box>
-      </form>
+          {withDay && (
+            <>
+              <Typography
+                variant="h5"
+                component="p"
+                className="form-field-title"
+              >
+                Motif
+              </Typography>
+              <TextField
+                required
+                fullWidth
+                multiline
+                minRows={3}
+                label="Raison de l'ajout d'une mission passée"
+                variant="filled"
+                value={pastRegistrationJustification}
+                onChange={e => setPastRegistrationJustification(e.target.value)}
+                inputProps={{ maxLength: 48 }}
+              />
+            </>
+          )}
+          <Box className="cta-container" my={4}>
+            <LoadingButton
+              disabled={
+                !address ||
+                (!mission && settings?.requireMissionName) ||
+                (withEndLocation && !endAddress) ||
+                (withDay && (!day || !pastRegistrationJustification))
+              }
+              type="submit"
+              loading={loading}
+            >
+              Continuer
+            </LoadingButton>
+          </Box>
+        </form>
+      </Container>
     </Container>
   );
 }

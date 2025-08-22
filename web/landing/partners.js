@@ -7,10 +7,12 @@ import Grid from "@mui/material/Grid";
 import { Header } from "../common/Header";
 import { Footer } from "./footer";
 import { PaperContainerTitle } from "../common/PaperContainer";
-import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { shuffle } from "lodash/collection";
 import { LoadingButton } from "common/components/LoadingButton";
 import { usePageTitle } from "../common/UsePageTitle";
+import { Main } from "../common/semantics/Main";
+import { LinkButton } from "../common/LinkButton";
+import { ExternalLink } from "../common/ExternalLink";
 
 // This condition actually should detect if it's a Node environment
 if (typeof require.context === "undefined") {
@@ -114,7 +116,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function Partners() {
-  usePageTitle("Partenaires - Mobilic");
+  usePageTitle("Partenaires et logiciels - Mobilic");
   const classes = useStyles();
   const [partnersToShow, setPartnersToShow] = React.useState([]);
   const [showAllPartners, setShowAllPartners] = React.useState(false);
@@ -131,144 +133,155 @@ export function Partners() {
     }
   }, [shuffledPartners, showAllPartners]);
 
-  return [
-    <Header key={1} />,
-    <Container
-      key={2}
-      className={`${classes.container} ${classes.whiteSection}`}
-      maxWidth={false}
-    >
-      <Container maxWidth="lg" className={classes.inner}>
-        <Box>
-          <PaperContainerTitle variant="h1" className={classes.title}>
-            Qui sont les partenaires de Mobilic ?
-          </PaperContainerTitle>
-        </Box>
-        <Grid container spacing={14}>
-          <Grid item xs={12} md={6}>
-            <Typography variant="h2" className={classes.title}>
-              Les entreprises
-            </Typography>
-            <Typography className={classes.paragraphDescription}>
-              Les entreprises partenaires{" "}
-              <strong>utilisent Mobilic de manière active</strong>, c'est-à-dire
-              qu'au moins 60% de leurs salariés inscrits sur Mobilic s'en
-              servent au quotidien.
-            </Typography>
-            <Grid
-              container
-              justifyContent="space-evenly"
-              alignItems="center"
-              spacing={{ xs: 2, md: 4 }}
-            >
-              {partnersToShow.map(src => (
-                <Grid item key={src}>
-                  <img
-                    alt={src}
-                    src={partnersSrcs(src)}
-                    className={classes.partnerImage}
-                  />
-                </Grid>
-              ))}
+  return (
+    <>
+      <Header />
+      <Main
+        className={`${classes.container} ${classes.whiteSection}`}
+        maxWidth={false}
+      >
+        <Container maxWidth="xl" className={classes.inner}>
+          <Box>
+            <PaperContainerTitle variant="h1" className={classes.title}>
+              Partenaires et logiciels habilités
+            </PaperContainerTitle>
+          </Box>
+          <Grid container spacing={14}>
+            <Grid item xs={12} md={6} textAlign="center">
+              <Typography variant="h5" component="h2" className={classes.title}>
+                Les entreprises partenaires
+              </Typography>
+              <Typography className={classes.paragraphDescription}>
+                Les entreprises partenaires soutiennent activement l’utilisation
+                de Mobilic pour le suivi du temps de travail.
+              </Typography>
+              <Grid
+                container
+                justifyContent="space-evenly"
+                alignItems="center"
+                spacing={{ xs: 2, md: 4 }}
+              >
+                {partnersToShow.map(src => (
+                  <Grid item key={src}>
+                    <img
+                      alt={src}
+                      src={partnersSrcs(src)}
+                      className={classes.partnerImage}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+              {!showAllPartners && (
+                <LoadingButton
+                  className={classes.cta}
+                  onClick={() => setShowAllPartners(true)}
+                  priority="secondary"
+                >
+                  Voir plus
+                </LoadingButton>
+              )}
+              <div>
+                <LinkButton
+                  className={classes.cta}
+                  to="mailto:contact@mobilic.beta.gouv.fr"
+                  priority="primary"
+                >
+                  Devenir partenaire
+                </LinkButton>
+              </div>
             </Grid>
-            {!showAllPartners && (
-              <LoadingButton
-                className={classes.cta}
-                onClick={() => setShowAllPartners(true)}
-              >
-                Voir plus
-              </LoadingButton>
-            )}
-            <div>
-              <MainCtaButton
-                aria-label="Devenir partenaire"
-                className={classes.cta}
-                href="mailto:mobilic@beta.gouv.fr"
-              >
-                Devenir partenaire
-              </MainCtaButton>
-            </div>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Box marginBottom={16}>
-              <Typography variant="h2" className={classes.title}>
-                Les éditeurs de logiciels
-              </Typography>
-              <Typography
-                className={classes.paragraphDescription}
-                component="div"
-              >
-                Les éditeurs de logiciels partenaires sont{" "}
-                <strong>
-                  interfacés avec{" "}
-                  <span style={{ whiteSpace: "nowrap" }}>l'API Mobilic :</span>
-                </strong>
-                <br />
-                <br />
-                <ul>
-                  <li>
-                    Les logiciels de suivi du temps de travail envoient
-                    automatiquement à Mobilic les données enregistrées par les
-                    salariés, ce qui leur permet d'être conformes à la
-                    réglementation en cas de contrôle ;
-                  </li>
+            <Grid item xs={12} md={6} textAlign="center">
+              <Box marginBottom={16}>
+                <Typography
+                  variant="h5"
+                  component="h2"
+                  className={classes.title}
+                >
+                  Les logiciels habilités
+                </Typography>
+                <Typography
+                  className={classes.paragraphDescription}
+                  component="div"
+                >
+                  Les éditeurs de logiciel sont habilités à assurer le suivi du
+                  temps de travail conformément à{" "}
+                  <ExternalLink
+                    text="l'arrêté du 6 mars 2025"
+                    url="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000051347969"
+                  />{" "}
+                  :
                   <br />
-                  <li>
-                    Les autres logiciels récupèrent automatiquement les données
-                    enregistrées dans Mobilic pour établir des bulletins de paie
-                    ou aider à la gestion des effectifs de leurs clients
-                  </li>
-                </ul>
-              </Typography>
-              <Grid
-                container
-                justifyContent="space-evenly"
-                alignItems="center"
-                spacing={{ xs: 2, sm: 4 }}
-              >
-                {interfacedSrcs.keys().map(src => (
-                  <Grid item key={src}>
-                    <img
-                      alt={src}
-                      src={interfacedSrcs(src)}
-                      className={classes.interfacedImage}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-              <MainCtaButton
-                aria-label="S'interfacer avec Mobilic"
-                className={classes.cta}
-                href="mailto:mobilic@beta.gouv.fr"
-              >
-                S'interfacer avec Mobilic
-              </MainCtaButton>
-            </Box>
-            <Box>
-              <Typography variant="h2" className={classes.title}>
-                Les différents soutiens
-              </Typography>
-              <Grid
-                container
-                justifyContent="space-evenly"
-                alignItems="center"
-                spacing={{ xs: 2, sm: 4 }}
-              >
-                {sponsorsSrcs.keys().map(src => (
-                  <Grid item key={src}>
-                    <img
-                      alt={src}
-                      src={sponsorsSrcs(src)}
-                      className={classes.sponsorImage}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
+                  <br />
+                  <ul>
+                    <li>
+                      Les logiciels de suivi du temps de travail envoient
+                      automatiquement à Mobilic les données enregistrées par les
+                      salariés, ce qui leur permet d'être conformes à la
+                      réglementation en cas de contrôle ;
+                    </li>
+                    <br />
+                    <li>
+                      Les autres logiciels récupèrent automatiquement les
+                      données enregistrées dans Mobilic pour établir des
+                      bulletins de paie ou aider à la gestion des effectifs de
+                      leurs clients
+                    </li>
+                  </ul>
+                </Typography>
+                <Grid
+                  container
+                  justifyContent="space-evenly"
+                  alignItems="center"
+                  spacing={{ xs: 2, sm: 4 }}
+                >
+                  {interfacedSrcs.keys().map(src => (
+                    <Grid item key={src}>
+                      <img
+                        alt={src}
+                        src={interfacedSrcs(src)}
+                        className={classes.interfacedImage}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+                <LinkButton
+                  className={classes.cta}
+                  to="mailto:interfacage@mobilic.beta.gouv.fr"
+                  priority="primary"
+                >
+                  S'interfacer avec Mobilic
+                </LinkButton>
+              </Box>
+              <Box>
+                <Typography
+                  variant="h5"
+                  component="h2"
+                  className={classes.title}
+                >
+                  Les différents soutiens institutionnels
+                </Typography>
+                <Grid
+                  container
+                  justifyContent="center"
+                  alignItems="center"
+                  spacing={{ xs: 2, sm: 4 }}
+                >
+                  {sponsorsSrcs.keys().map(src => (
+                    <Grid item key={src}>
+                      <img
+                        alt={src}
+                        src={sponsorsSrcs(src)}
+                        className={classes.sponsorImage}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
-      </Container>
-    </Container>,
-    <Footer key={3} />
-  ];
+        </Container>
+      </Main>
+      <Footer />
+    </>
+  );
 }

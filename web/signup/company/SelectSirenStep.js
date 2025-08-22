@@ -1,8 +1,6 @@
-import Box from "@mui/material/Box";
 import { SirenInputField } from "./SirenInputField";
 import { LoadingButton } from "common/components/LoadingButton";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import { Link } from "../../common/LinkButton";
 import React from "react";
 import { Step } from "./Step";
@@ -11,6 +9,8 @@ import { formatApiError } from "common/utils/errors";
 import { LegalUnitInfo } from "./LegalUnitInfo";
 import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
+import { MandatoryField } from "../../common/MandatoryField";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -23,10 +23,6 @@ const useStyles = makeStyles(theme => ({
   },
   sirenResultText: {
     marginTop: theme.spacing(4)
-  },
-  findSirenText: {
-    display: "block",
-    paddingTop: theme.spacing(4)
   }
 }));
 
@@ -86,35 +82,31 @@ export function SelectSirenStep({
       complete={siren && !sirenFormatError && hasValidatedSiren}
       {...props}
     >
+      <MandatoryField />
       <form
         className="vertical-form centered"
         autoComplete="off"
         onSubmit={handleSirenSubmit}
       >
-        <Box
-          className="flex-row-space-between"
-          style={{ alignItems: "baseline" }}
-        >
-          <SirenInputField
-            siren={siren}
-            setSiren={value => {
-              resetApiResponse();
-              setSiren(value);
-            }}
-            error={sirenFormatError}
-            setError={setSirenFormatError}
-          />
-          <LoadingButton
-            aria-label="Rechercher SIREN"
-            variant="contained"
-            color="primary"
-            type="submit"
-            loading={loadingSirenInfo}
-            disabled={!siren || sirenFormatError}
-          >
-            Rechercher
-          </LoadingButton>
-        </Box>
+        <SirenInputField
+          siren={siren}
+          setSiren={value => {
+            resetApiResponse();
+            setSiren(value);
+          }}
+          error={sirenFormatError}
+          setError={setSirenFormatError}
+          button={
+            <LoadingButton
+              aria-label="Rechercher SIREN"
+              type="submit"
+              loading={loadingSirenInfo}
+              disabled={!siren || sirenFormatError}
+            >
+              Rechercher
+            </LoadingButton>
+          }
+        />
         {apiError || sirenAlreadyFullyRegistered ? (
           <Typography display="block" align="justify" color="error">
             {sirenAlreadyFullyRegistered
@@ -137,8 +129,7 @@ export function SelectSirenStep({
           !hasValidatedSiren &&
           (apiError || sirenInfo) && (
             <Button
-              variant={apiError ? "outlined" : "contained"}
-              color={apiError ? "secondary" : "primary"}
+              priority={apiError ? "secondary" : "primary"}
               className={classes.button}
               onClick={() => {
                 setApiError("");
@@ -153,25 +144,14 @@ export function SelectSirenStep({
         {(!siren || sirenFormatError) && (
           <>
             <Typography
-              className={classes.findSirenText}
-              align="left"
-              variant="caption"
-            >
-              <Link
-                href="https://annuaire-entreprises.data.gouv.fr/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Trouvez facilement le numéro SIREN de votre entreprise
-              </Link>
-            </Typography>
-            <Typography
               className={classes.noSirenText}
               align="left"
               variant="caption"
             >
               Vous n'avez pas de numéro SIREN ?{" "}
-              <Link href="mailto:mobilic@beta.gouv.fr">Ecrivez-nous.</Link>
+              <Link href="mailto:contact@mobilic.beta.gouv.fr">
+                Ecrivez-nous.
+              </Link>
             </Typography>
           </>
         )}

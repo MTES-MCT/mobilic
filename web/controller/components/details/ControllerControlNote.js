@@ -1,7 +1,6 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import TextField from "common/utils/TextField";
 import { makeStyles } from "@mui/styles";
 import { SubmitCancelButtons } from "../../../common/SubmitCancelButtons";
@@ -9,29 +8,32 @@ import { CONTROLLER_ADD_CONTROL_NOTE } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { useApi } from "common/utils/api";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { useControl } from "../../utils/contextControl";
+import { Description } from "../../../common/typography/Description";
+import { TitleContainer } from "../../../control/components/TitleContainer";
 
 const useStyles = makeStyles(() => ({
   addNoteButton: {
-    textTransform: "none",
-    textDecoration: "underline",
-    fontSize: "1rem"
+    textDecoration: "underline"
   },
   note: {
     whiteSpace: "pre-line"
   }
 }));
 
-export function ControllerControlNote({ controlData }) {
+export function ControllerControlNote() {
   const classes = useStyles();
   const [isEditing, setIsEditing] = React.useState(false);
-  const [note, setNote] = React.useState(controlData.note);
+  const { controlData } = useControl();
+  const [note, setNote] = React.useState(controlData.note || "");
 
   const alerts = useSnackbarAlerts();
   const api = useApi();
 
   React.useEffect(() => {
     if (controlData) {
-      setNote(controlData.note);
+      setNote(controlData.note || "");
     }
   }, [controlData]);
 
@@ -55,18 +57,20 @@ export function ControllerControlNote({ controlData }) {
 
   return (
     <Stack spacing={0} sx={{ width: "100%" }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h6">Mes notes</Typography>
+      <TitleContainer>
+        <Typography variant="h5" component="h2">
+          Mes notes
+        </Typography>
         {!isEditing && (
           <Button
-            variant="text"
-            className={classes.addNoteButton}
+            priority="tertiary"
+            size="small"
             onClick={() => setIsEditing(true)}
           >
-            {note ? "Modifier mes notes" : "Ajouter des notes"}
+            {note ? "Modifier" : "Ajouter"}
           </Button>
         )}
-      </Stack>
+      </TitleContainer>
       {isEditing ? (
         <Stack direction="column">
           <TextField
@@ -88,10 +92,12 @@ export function ControllerControlNote({ controlData }) {
             }}
           />
         </Stack>
+      ) : note ? (
+        <Typography className={classes.note}>{note}</Typography>
       ) : (
-        <Typography className={classes.note}>
-          {note || "Vous n'avez pas encore renseigné d'annotations de contrôle"}
-        </Typography>
+        <Description noMargin>
+          Vous n'avez pas encore renseigné d'annotations de contrôle.
+        </Description>
       )}
     </Stack>
   );

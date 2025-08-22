@@ -17,14 +17,14 @@ import {
 import { makeStyles } from "@mui/styles";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { MissionValidationInfo } from "../../common/MissionValidationInfo";
 import Hidden from "@mui/material/Hidden";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { ContradictoryChanges } from "../../pwa/components/ContradictoryChanges";
 import { useCacheContradictoryInfoInAdminStore } from "common/utils/contradictory";
 import Emoji from "../../common/Emoji";
-import { Alert } from "@mui/material";
-import classNames from "classnames";
+import { getNextHeadingComponent } from "common/utils/html";
+import { MissionValidations } from "../../pwa/components/MissionValidations";
+import Notice from "../../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   cardRecapKPIContainer: {
@@ -39,9 +39,6 @@ const useStyles = makeStyles(theme => ({
   runningMissionText: {
     color: theme.palette.warning.main,
     fontWeight: "bold"
-  },
-  linkAdminBypassValidation: {
-    fontSize: "0.875rem"
   }
 }));
 
@@ -55,8 +52,11 @@ export function MissionEmployeeCard({
   showExpenditures,
   onEditExpenditures,
   removeUser,
+  isDeleted = false,
   defaultOpen = false,
-  displayIcon = true
+  displayIcon = true,
+  headingComponent,
+  overrideValidation = null
 }) {
   const stats = mission.userStats[user.id.toString()] || {};
   const activities = stats.activities || [];
@@ -82,6 +82,9 @@ export function MissionEmployeeCard({
 
   const cacheContradictoryInfoInAdminStore = useCacheContradictoryInfoInAdminStore();
 
+  const adminAutoValidationOnly =
+    stats.adminAutoValidation && !stats.adminManualValidation;
+
   return (
     <Accordion
       variant="outlined"
@@ -98,11 +101,13 @@ export function MissionEmployeeCard({
         >
           <Grid item container spacing={3} wrap="nowrap">
             <Grid item>
-              <Typography>{formatPersonName(user)}</Typography>
+              <Typography component={headingComponent}>
+                {formatPersonName(user)}
+              </Typography>
             </Grid>
             {!open &&
               activities.length > 0 && [
-                !stats.isComplete && (
+                !stats.isComplete && !isDeleted && (
                   <Hidden xsDown key={0}>
                     <Grid item>
                       <Typography
@@ -120,7 +125,10 @@ export function MissionEmployeeCard({
                       variant="caption"
                       className={classes.workDurationCaption}
                     >
-                      Temps de travail : {formatTimer(stats.totalWorkDuration)}
+                      Temps de travail :{" "}
+                      {isDeleted && !stats.isComplete
+                        ? "-"
+                        : formatTimer(stats.totalWorkDuration)}
                     </Typography>
                   </Grid>
                 </Hidden>,
@@ -173,29 +181,23 @@ export function MissionEmployeeCard({
       </AccordionSummary>
       <AccordionDetails style={{ display: "block" }}>
         <Grid container spacing={2} direction="column" wrap="nowrap">
-          <Grid item>
-            {isAdminBypassingEmployeeValidation ? (
-              <Alert severity="warning">
-                La validation par le salarié n'a pas eu lieu pour{" "}
-                <a
-                  href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic/suivi-et-validation-du-temps-de-travail#en-tant-que-gestionnaire-je-peux-uniquement-modifier-et-valider-les-missions-validees-par-les-salari"
-                  className={classNames(
-                    "fr-link fr-icon-external-link-line fr-link--icon-right",
-                    classes.linkAdminBypassValidation
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  l'une des raisons suivantes
-                </a>
-              </Alert>
+          {!isDeleted &&
+            (isAdminBypassingEmployeeValidation ? (
+              <Notice
+                type="warning"
+                description={
+                  <>La validation par le salarié n'a pas eu lieu pour </>
+                }
+                linkText="l'une des raisons suivantes."
+                linkUrl="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic/suivi-et-validation-du-temps-de-travail#en-tant-que-gestionnaire-je-peux-uniquement-modifier-et-valider-les-missions-validees-par-les-salari"
+              />
             ) : (
-              <MissionValidationInfo validation={stats.workerValidation} />
-            )}
-          </Grid>
-          <Grid item>
-            <MissionValidationInfo validation={stats.adminValidation} isAdmin />
-          </Grid>
+              <MissionValidations
+                mission={mission}
+                validations={stats.validations}
+                userId={user.id}
+              />
+            ))}
           <Grid item container spacing={2} alignItems="stretch">
             <Grid xs={12} sm={6} item className={classes.cardRecapKPIContainer}>
               <MetricCard
@@ -204,17 +206,30 @@ export function MissionEmployeeCard({
                 py={2}
                 variant="outlined"
                 title="Amplitude"
-                value={formatTimer(stats.service)}
+                titleProps={{
+                  variant: "h6",
+                  component: getNextHeadingComponent(headingComponent)
+                }}
+                value={
+                  !stats.isComplete && isDeleted
+                    ? "-"
+                    : formatTimer(stats.service)
+                }
                 valueProps={{
                   variant: "body1",
-                  className: !stats.isComplete ? classes.runningMissionText : ""
+                  className:
+                    !stats.isComplete && !isDeleted
+                      ? classes.runningMissionText
+                      : ""
                 }}
                 subText={
                   stats.startTime ? (
                     <span>
                       de {datetimeFormatter(stats.startTime)} à{" "}
-                      {datetimeFormatter(stats.endTimeOrNow)}{" "}
-                      {!stats.isComplete ? (
+                      {!stats.isComplete && isDeleted
+                        ? " -"
+                        : datetimeFormatter(stats.endTimeOrNow)}{" "}
+                      {!stats.isComplete && !isDeleted ? (
                         <span className={classes.runningMissionText}>
                           (en cours)
                         </span>
@@ -235,13 +250,24 @@ export function MissionEmployeeCard({
                 py={2}
                 variant="outlined"
                 title="Temps de travail"
-                value={formatTimer(stats.totalWorkDuration)}
+                titleProps={{
+                  variant: "h6",
+                  component: getNextHeadingComponent(headingComponent)
+                }}
+                value={
+                  !stats.isComplete && isDeleted
+                    ? "-"
+                    : formatTimer(stats.totalWorkDuration)
+                }
                 valueProps={{
                   variant: "body1",
-                  className: !stats.isComplete ? classes.runningMissionText : ""
+                  className:
+                    !stats.isComplete && !isDeleted
+                      ? classes.runningMissionText
+                      : ""
                 }}
                 subText={
-                  !stats.isComplete ? (
+                  !stats.isComplete && !isDeleted ? (
                     <span className={classes.runningMissionText}>En cours</span>
                   ) : null
                 }
@@ -250,12 +276,23 @@ export function MissionEmployeeCard({
           </Grid>
           <Grid item xs={12}>
             <ActivitiesCard
+              missionDeleted={isDeleted}
+              isHoliday={mission.isHoliday}
               activities={augmentedAndSortedActivities}
               onCreateActivity={onCreateActivity}
               onEditActivity={onEditActivity}
               day={day}
               title="Activités"
               datetimeFormatter={datetimeFormatter}
+              titleProps={{
+                variant: "h6",
+                component: getNextHeadingComponent(headingComponent)
+              }}
+              {...(overrideValidation &&
+                adminAutoValidationOnly && {
+                  onActionButtonClick: overrideValidation,
+                  actionButtonLabel: "J'ai été absent : modifier les saisies"
+                })}
             />
           </Grid>
           {showExpenditures && (
@@ -267,16 +304,20 @@ export function MissionEmployeeCard({
                 onEditExpenditures={onEditExpenditures}
                 minSpendingDate={stats.startTime}
                 maxSpendingDate={stats.endTime}
+                titleProps={{
+                  variant: "h6",
+                  component: getNextHeadingComponent(headingComponent)
+                }}
               />
             </Grid>
           )}
-          {stats.adminValidation && stats.workerValidation && (
+          {((stats.adminValidation && stats.workerValidation) || isDeleted) && (
             <Grid item xs={12}>
               <MissionInfoCard>
                 <ContradictoryChanges
                   mission={mission}
-                  validationTime={stats.workerValidation.receptionTime}
-                  showEventsBeforeValidation={false}
+                  validationTime={stats.workerValidation?.receptionTime}
+                  showEventsBeforeValidation={isDeleted}
                   userId={user.id}
                   cacheInStore={cacheContradictoryInfoInAdminStore}
                 />

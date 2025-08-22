@@ -1,9 +1,7 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
-import classNames from "classnames";
-import { Link } from "react-router-dom";
 import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
+import { ControllerControlBackButton } from "../utils/ControllerControlBackButton";
 
 const useStyles = makeStyles(theme => ({
   controlHeaderContainer: {
@@ -21,21 +19,13 @@ const useStyles = makeStyles(theme => ({
 export function ControlBulletinHeader({ onCloseDrawer, backLinkLabel }) {
   const classes = useStyles();
   return (
-    <Container className={classes.controlHeaderContainer}>
-      <Box className={classes.subHeaderSection}>
-        <Link
-          to="#"
-          className={classNames(
-            classes.linkHomeMobile,
-            "fr-link",
-            "fr-fi-arrow-left-line",
-            "fr-link--icon-left"
-          )}
-          onClick={onCloseDrawer}
-        >
-          {backLinkLabel}
-        </Link>
-      </Box>
+    <Container
+      className={classes.controlHeaderContainer}
+      id="control-bulletin-header"
+    >
+      <ControllerControlBackButton onClick={onCloseDrawer}>
+        {backLinkLabel}
+      </ControllerControlBackButton>
     </Container>
   );
 }

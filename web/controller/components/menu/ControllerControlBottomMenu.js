@@ -1,75 +1,50 @@
 import React from "react";
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import EditIcon from "@mui/icons-material/Edit";
-import DownloadIcon from "@mui/icons-material/Download";
 import { makeStyles } from "@mui/styles";
+import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
+import { Box } from "@mui/material";
+import { useControl } from "../../utils/contextControl";
 
 const useStyles = makeStyles(theme => ({
   textButton: {
-    textTransform: "none",
-    textDecoration: "underline",
-    fontSize: "1rem"
+    textDecoration: "underline"
   }
 }));
 
-export function ControllerControlBottomMenu({
-  reportInfractions,
-  updatedInfractions,
-  disabledReportInfractions,
-  editBDC,
-  downloadBDC,
-  canDownloadBDC,
-  bdcAlreadyExisting,
-  totalAlertsNumber
-}) {
+export function ControllerControlBottomMenu({ editBDC, downloadBDC }) {
   const classes = useStyles();
+  const { canDownloadBDC, bdcAlreadyExists } = useControl();
+
   return (
-    <Stack direction="column" spacing={2} mt={2} alignItems="center">
-      {bdcAlreadyExisting ? (
-        <Button
-          color="primary"
-          variant="contained"
-          size="small"
-          onClick={downloadBDC}
-          startIcon={<DownloadIcon />}
-          disabled={!canDownloadBDC}
-        >
-          télécharger le bulletin de contrôle
-        </Button>
-      ) : (
-        <Button
-          color="primary"
-          variant="contained"
-          size="small"
-          onClick={editBDC}
-        >
-          éditer un bulletin de contrôle
-        </Button>
-      )}
-      {reportInfractions && (
-        <Button
-          color="primary"
-          variant="outlined"
-          size="small"
-          startIcon={<EditIcon />}
-          onClick={reportInfractions}
-          disabled={disabledReportInfractions}
-        >
-          {updatedInfractions
-            ? totalAlertsNumber === 1
-              ? "Modifier l'infraction retenue"
-              : "Modifier les infractions retenues"
-            : totalAlertsNumber === 1
-            ? "Modifier l'infraction relevée"
-            : "Modifier les infractions relevées"}
-        </Button>
-      )}
-      {bdcAlreadyExisting && (
-        <Button variant="text" className={classes.textButton} onClick={editBDC}>
-          Modifier le bulletin de contrôle
-        </Button>
-      )}
-    </Stack>
+    <Box padding={2}>
+      <ButtonsGroup
+        buttons={[
+          bdcAlreadyExists
+            ? {
+                children: "Télécharger le bulletin de contrôle",
+                onClick: downloadBDC,
+                iconId: "fr-icon-download-line",
+                iconPosition: "left",
+                disabled: !canDownloadBDC
+              }
+            : {
+                children: "Éditer un bulletin de contrôle",
+                onClick: editBDC,
+                priority: "secondary"
+              },
+          ...(bdcAlreadyExists
+            ? [
+                {
+                  children: "Modifier le bulletin de contrôle",
+                  priority: "tertiary no outline",
+                  className: classes.textButton,
+                  onClick: editBDC
+                }
+              ]
+            : [])
+        ]}
+        inlineLayoutWhen="md and up"
+        alignment="center"
+      />
+    </Box>
   );
 }

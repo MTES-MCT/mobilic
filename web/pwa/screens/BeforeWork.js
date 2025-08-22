@@ -29,6 +29,12 @@ import LogoWithText from "common/assets/images/mobilic-logo-white-with-text.svg"
 import { shouldDisplayEmployeeSocialImpactSurveyOnMainPage } from "common/utils/surveys";
 import { usePageTitle } from "../../common/UsePageTitle";
 
+import { useHolidays } from "../../common/useHolidays";
+import { WarningBreaks } from "../components/WarningBreaks";
+import { useEnoughBreak } from "../../common/useEnoughBreak";
+import Stack from "@mui/material/Stack";
+import { Notifications } from "../components/notifications/Notifications";
+
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
 const useStyles = makeStyles(theme => ({
@@ -40,26 +46,11 @@ const useStyles = makeStyles(theme => ({
     backgroundSize: "cover",
     position: "relative"
   },
-  container: {
-    position: "relative",
-    justifyContent: "flex-start",
-    flexGrow: 1,
-    flexShrink: 0,
-    overflowY: "hidden"
-  },
-  heroImage: {
-    width: "100%",
-    height: "auto",
-    color: theme.palette.background.default
-  },
   accountButton: {
     alignSelf: "flex-end",
     position: "absolute",
     top: "0",
     right: "0"
-  },
-  welcomeText: {
-    marginBottom: theme.spacing(2)
   },
   missionsToValidateList: {
     backgroundColor: theme.palette.background.paper,
@@ -106,7 +97,10 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2)
   },
   subButton: {
-    color: theme.palette.primary.contrastText
+    color: theme.palette.primary.contrastText,
+    "&:hover": {
+      color: theme.palette.primary.main
+    }
   },
   promiseText: {
     color: theme.palette.primary.contrastText,
@@ -119,10 +113,17 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   const modals = useModals();
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
+  const { openHolidaysModal } = useHolidays();
+  const { hasEnoughBreak } = useEnoughBreak();
 
   const companies = store.companies();
   const userId = store.userId();
   const userInfo = store.userInfo();
+
+  const areAllCompaniesWithoutAdmins = React.useMemo(
+    () => companies.every(c => !!c.hasNoAdmin),
+    [companies]
+  );
 
   function handleFirstActivitySelection(teamMates, missionInfos) {
     const team = teamMates ? [userId, ...teamMates.map(cw => cw.id)] : [userId];
@@ -159,28 +160,35 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   }
 
   const onEnterNewMissionFunnel = () => {
-    modals.open("newMission", {
-      companies,
-      companyAddresses: store.getEntity("knownAddresses"),
-      handleContinue: missionInfos => {
-        const company = companies.find(c => c.id === missionInfos.company.id);
-        if (company.settings && company.settings.allowTeamMode) {
-          modals.open("teamOrSoloChoice", {
-            handleContinue: isTeamMode => {
-              if (isTeamMode) {
-                modals.open("teamSelection", {
-                  mission: null,
-                  companyId: missionInfos.company.id,
-                  handleContinue: teamMates =>
-                    handleFirstActivitySelection(teamMates, missionInfos)
-                });
-              } else handleFirstActivitySelection(null, missionInfos);
-            }
-          });
-        } else handleFirstActivitySelection(null, missionInfos);
-      }
-    });
+    if (areAllCompaniesWithoutAdmins) {
+      modals.open("blockedTime", {});
+    } else {
+      modals.open("newMission", {
+        companies,
+        companyAddresses: store.getEntity("knownAddresses"),
+        handleContinue: missionInfos => {
+          const company = companies.find(c => c.id === missionInfos.company.id);
+          if (company.settings && company.settings.allowTeamMode) {
+            modals.open("teamOrSoloChoice", {
+              handleContinue: isTeamMode => {
+                if (isTeamMode) {
+                  modals.open("teamSelection", {
+                    mission: null,
+                    companyId: missionInfos.company.id,
+                    handleContinue: teamMates =>
+                      handleFirstActivitySelection(teamMates, missionInfos)
+                  });
+                } else handleFirstActivitySelection(null, missionInfos);
+              }
+            });
+          } else handleFirstActivitySelection(null, missionInfos);
+        },
+        onSelectNoAdminCompany: () => modals.open("blockedTime", {})
+      });
+    }
   };
+
+  const onEnterNewHolidayFunnel = () => openHolidaysModal();
 
   const classes = useStyles();
 
@@ -190,6 +198,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   const nonValidatedMissions = orderBy(
     missionsInHistory.filter(
       m =>
+        !m.isDeleted &&
         !m.validation &&
         !m.adminValidation &&
         m.startTime >= currentTime - DAY * 31
@@ -212,35 +221,49 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   return (
     <Container maxWidth={false} className={classes.outer} disableGutters>
       <AccountButton p={2} className={classes.accountButton} darkBackground />
-      <PlaceHolder>
+      <PlaceHolder style={{ textAlign: "center" }}>
         <img alt="mobilic-logo-text" src={LogoWithText} width={150} />
       </PlaceHolder>
-      <Box key={2} mt={2} className="cta-container" mb={2}>
+      <Box mt={2} className="cta-container" mb={8}>
         <Typography className={classes.promiseText}>
           Le suivi de votre temps de travail
         </Typography>
         <Typography className={`${classes.promiseText} bold`}>
           Fiable, facile et rapide !
         </Typography>
-        <LoadingButton
-          variant="contained"
-          className={classes.ctaButton}
-          onClick={onEnterNewMissionFunnel}
-        >
-          Commencer une mission
-        </LoadingButton>
-        <LoadingButton
-          style={{ marginTop: 8 }}
-          className={classes.subButton}
-          onClick={() => {
-            openHistory();
-          }}
-        >
-          Voir mon historique
-        </LoadingButton>
+        {process.env.REACT_APP_ENOUGH_BREAK_BANNER === "1" &&
+          !hasEnoughBreak && <WarningBreaks />}
+        <Stack direction="column" spacing={1} alignItems="center">
+          <LoadingButton
+            className={classes.ctaButton}
+            onClick={onEnterNewMissionFunnel}
+          >
+            Commencer une mission
+          </LoadingButton>
+          <LoadingButton
+            className={classes.subButton}
+            onClick={() => {
+              openHistory();
+            }}
+            priority="tertiary no outline"
+          >
+            Voir mon historique
+          </LoadingButton>
+          <LoadingButton
+            className={classes.subButton}
+            onClick={() => {
+              onEnterNewHolidayFunnel();
+            }}
+            priority="tertiary no outline"
+            iconId="fr-icon-calendar-2-fill"
+            iconPosition="left"
+          >
+            Renseigner une indisponibilité
+          </LoadingButton>
+        </Stack>
       </Box>
       {nonValidatedMissions.length > 0 && (
-        <Box key={3} className={classes.missionsToValidateList}>
+        <Box className={classes.missionsToValidateList}>
           <List
             subheader={
               <ListSubheader
@@ -292,6 +315,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
           </List>
         </Box>
       )}
+      <Notifications openHistory={openHistory} />
     </Container>
   );
 }

@@ -7,7 +7,9 @@ import {
 import { startOfMonth, subMonths } from "date-fns";
 import {
   COMPANY_SETTINGS_FRAGMENT,
-  FULL_MISSION_FRAGMENT
+  FULL_MISSION_FRAGMENT,
+  NOTIFICATION_FRAGMENT,
+  USER_AGREEMENT
 } from "./apiFragments";
 import { gql } from "graphql-tag";
 import { captureSentryException } from "./sentry";
@@ -76,6 +78,8 @@ const CURRENT_EMPLOYMENTS_QUERY = gql`
 const USER_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FULL_MISSION_FRAGMENT}
+  ${USER_AGREEMENT}
+  ${NOTIFICATION_FRAGMENT}
   query user($id: Int!, $activityAfter: TimeStamp) {
     user(id: $id) {
       id
@@ -87,14 +91,16 @@ const USER_QUERY = gql`
       }
       firstName
       lastName
+      gender
       birthDate
+      phoneNumber
       timezoneName
       shouldUpdatePassword
       email
       hasConfirmedEmail
       hasActivatedEmail
       disabledWarnings
-      missions(fromTime: $activityAfter) {
+      missions(fromTime: $activityAfter, includeDeletedMissions: true) {
         edges {
           node {
             ...FullMissionData
@@ -108,6 +114,10 @@ const USER_QUERY = gql`
         isAcknowledged
         hasAdminRights
         hideEmail
+        business {
+          transportType
+          businessType
+        }
         authorizedClients {
           id
           name
@@ -117,8 +127,16 @@ const USER_QUERY = gql`
           name
           siren
           sirets
+          hasNoActiveAdmins
+          hasCeasedActivity
           ...CompanySettings
         }
+      }
+      userAgreementStatus {
+        ...UserAgreementData
+      }
+      notifications {
+        ...NotificationData
       }
     }
   }
@@ -221,10 +239,19 @@ export async function syncMissions(missions, store, syncMethod) {
   const comments = [];
 
   missions.forEach(mission => {
-    activities.push(...mission.activities);
+    const isMissionDeleted = !!mission.deletedAt;
+    activities.push(
+      ...mission.activities.map(activity => ({
+        ...activity,
+        isMissionDeleted
+      }))
+    );
     expenditures.push(...mission.expenditures);
     comments.push(...mission.comments);
-    missionData.push(parseMissionPayloadFromBackend(mission, store.userId()));
+    missionData.push({
+      ...parseMissionPayloadFromBackend(mission, store.userId()),
+      isDeleted: isMissionDeleted
+    });
   });
 
   missions && syncActions.push(syncMethod(missionData, "missions"));
@@ -244,9 +271,11 @@ export async function syncUser(userPayload, api, store) {
   const {
     firstName,
     lastName,
+    gender,
     email,
     creationTime,
     birthDate,
+    phoneNumber,
     timezoneName,
     shouldUpdatePassword,
     hasConfirmedEmail,
@@ -254,16 +283,19 @@ export async function syncUser(userPayload, api, store) {
     disabledWarnings,
     missions: missionsPayload,
     employments,
-    surveyActions
+    surveyActions,
+    userAgreementStatus,
+    notifications
   } = userPayload;
 
   onLogIn(shouldUpdatePassword);
 
   const missions = missionsPayload.edges.map(e => e.node);
 
+  const notDeletedMissions = missions.filter(mission => !mission.deletedAt);
   // Get end status for latest mission;
-  if (missions.length > 0) {
-    const latestMission = missions[0];
+  if (notDeletedMissions.length > 0) {
+    const latestMission = notDeletedMissions[0];
     try {
       const latestMissionInfo = await api.graphQlQuery(CURRENT_MISSION_INFO, {
         id: latestMission.id
@@ -271,6 +303,7 @@ export async function syncUser(userPayload, api, store) {
       latestMission.ended = latestMissionInfo.data.mission.isEndedForSelf;
       latestMission.submitter = latestMissionInfo.data.mission.submitter;
     } catch (err) {
+      console.error(err);
       captureSentryException(err);
     }
   }
@@ -283,14 +316,18 @@ export async function syncUser(userPayload, api, store) {
         {
           firstName,
           lastName,
+          gender,
           email,
           creationTime,
           timezoneName,
           birthDate,
+          phoneNumber,
           hasConfirmedEmail,
           hasActivatedEmail,
           disabledWarnings,
-          surveyActions
+          surveyActions,
+          userAgreementStatus,
+          notifications
         },
         false
       )

@@ -2,13 +2,13 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthUp } from "common/utils/useWidth";
 import { prettyFormatDayHour } from "common/utils/time";
-import classNames from "classnames";
-import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import { useModals } from "common/utils/modals";
+import { ControllerControlExportMenu } from "./ControllerControlExportMenu";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { useControl } from "../../utils/contextControl";
+import { ControllerControlBackButton } from "../utils/ControllerControlBackButton";
 
 const useStyles = makeStyles(theme => ({
   desktopHeaderContainer: {
@@ -18,14 +18,11 @@ const useStyles = makeStyles(theme => ({
     textAlign: "right",
     width: "100%"
   },
-  linkHomeDesktop: {
-    cursor: "pointer"
-  },
   subHeaderSection: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "end",
     paddingLeft: "none",
     paddingRight: "none",
     paddingBottom: theme.spacing(1),
@@ -40,71 +37,40 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function ExportButton({ controlId }) {
-  const modals = useModals();
+export function ControllerControlHeader({ controlDate, onCloseDrawer }) {
   const classes = useStyles();
-  return (
-    <Button
-      color="primary"
-      variant="outlined"
-      size="small"
-      className={classes.batchInviteButton}
-      onClick={() => {
-        modals.open("controllerExportExcelOne", { controlId });
-      }}
-    >
-      Exporter le contrôle
-    </Button>
-  );
-}
-
-export function ControllerControlHeader({
-  controlId,
-  controlDate,
-  onCloseDrawer,
-  enableExport = true
-}) {
-  const classes = useStyles();
+  const { controlId } = useControl();
   const isOnDesktop = useIsWidthUp("md");
   return isOnDesktop ? (
-    <Container className={classes.desktopHeaderContainer}>
+    <Container className={classes.desktopHeaderContainer} id="control-header">
       <Box className={classes.linkHomeDesktopLine}>
-        <Typography
-          className={classNames(
-            classes.linkHomeDesktop,
-            "fr-link",
-            "fr-fi-close-line",
-            "fr-link--icon-right"
-          )}
+        <Button
           onClick={onCloseDrawer}
+          priority="secondary"
+          iconPosition="right"
+          iconId="fr-icon-close-line"
+          size="small"
         >
           Fermer
-        </Typography>
+        </Button>
       </Box>
-      <h5>Contrôle #{controlId}</h5>
+      <Typography variant="h3" component="h1">
+        Contrôle #{controlId}
+      </Typography>
       <Box className={classes.subHeaderSection}>
         <Typography>
           Date et heure du contrôle : <b>{prettyFormatDayHour(controlDate)}</b>
         </Typography>
-        {enableExport && <ExportButton controlId={controlId} />}
+        <ControllerControlExportMenu />
       </Box>
     </Container>
   ) : (
-    <Container className={classes.mobileHeaderContainer}>
+    <Container className={classes.mobileHeaderContainer} id="control-header">
       <Box className={classes.subHeaderSection}>
-        <Link
-          to="#"
-          className={classNames(
-            classes.linkHomeMobile,
-            "fr-link",
-            "fr-fi-arrow-left-line",
-            "fr-link--icon-left"
-          )}
-          onClick={onCloseDrawer}
-        >
+        <ControllerControlBackButton onClick={onCloseDrawer}>
           Fermer
-        </Link>
-        {enableExport && <ExportButton controlId={controlId} />}
+        </ControllerControlBackButton>
+        <ControllerControlExportMenu />
       </Box>
     </Container>
   );

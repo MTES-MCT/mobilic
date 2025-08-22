@@ -14,20 +14,29 @@ export const getAlertsGroupedByDay = observedInfractions => {
   return Object.entries(infractionsGroupedByLabel).map(
     ([label, infractions]) => {
       const firstInfraction = infractions[0];
-      const { sanction, type, description, unit } = firstInfraction;
+      const { sanction, type, unit } = firstInfraction;
       return {
         alerts: infractions.map(
-          ({ date, isReportable, isReported, extra }) => ({
+          ({
+            date,
+            isReportable,
+            isReported,
+            extra,
+            business,
+            description
+          }) => ({
             ...(unit === PERIOD_UNITS.DAY && { day: date }),
             ...(unit === PERIOD_UNITS.WEEK && { week: date }),
+            unit,
             checked: isReported,
             reportable: isReportable,
-            extra
+            extra,
+            business,
+            description
           })
         ),
         infringementLabel: label,
         type,
-        description,
         sanction
       };
     }
@@ -54,6 +63,7 @@ export const getAlertsGroupedByDayFromRegulationComputationsByDay = regulationCo
               ...(breachedRegCheck.unit === PERIOD_UNITS.DAY && {
                 day: timestamp
               }),
+              unit: breachedRegCheck.unit,
               extra,
               checked: false
             };
