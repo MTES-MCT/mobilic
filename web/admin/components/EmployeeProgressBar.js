@@ -51,11 +51,6 @@ export function EmployeeProgressBar({ progressData }) {
             }}
           />
         </Box>
-        <Box sx={{ minWidth: 35 }}>
-          <Typography variant="body2" color="text.secondary">
-            {progressData.percentage}%
-          </Typography>
-        </Box>
       </Box>
     </Box>
   );

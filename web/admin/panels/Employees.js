@@ -481,7 +481,15 @@ export function Employees({ company, containerRef }) {
     [validEmployments]
   );
 
-  const employeeProgressData = useEmployeeProgress(company, validEmployments);
+  const activeValidEmployments = React.useMemo(
+    () => validEmployments.filter(e => e.active),
+    [validEmployments]
+  );
+
+  const employeeProgressData = useEmployeeProgress(
+    company,
+    activeValidEmployments
+  );
   useAutoUpdateNbWorkers(company, validEmployments, adminStore);
 
   const isAddingEmployment =

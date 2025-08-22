@@ -11,7 +11,9 @@ function calculateProgressData(declaredNbWorkers, registeredEmployees) {
   );
 
   let color;
-  if (percentage >= 75) {
+  if (percentage === 100) {
+    color = "info";
+  } else if (percentage >= 75) {
     color = "success";
   } else if (percentage >= 25) {
     color = "warning";
