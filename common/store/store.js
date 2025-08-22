@@ -137,9 +137,9 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     );
   }
 
-  batchUpdate = () => {
+  batchUpdate = async () => {
     if (this.pendingActions.length > 0) {
-      this.update(
+      await this.update(
         this.pendingActions.map(a => a.action),
         uniq(flatMap(this.pendingActions, upd => upd.fieldsToSync)),
         () => {
@@ -158,27 +158,30 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     });
   };
 
-  update = (actionOrActions, fieldsToSync, callback = () => {}) => {
+  update = async (actionOrActions, fieldsToSync, callback = () => {}) => {
     const actions = Array.isArray(actionOrActions)
       ? actionOrActions
       : [actionOrActions];
 
-    this.setState(
-      state => {
-        const newState = actions.reduce(rootReducer, state);
-        return newState;
-      },
-      () => {
-        if (this.allowOfflineMode)
-          fieldsToSync.forEach(field => {
-            this.storage.setItem(
-              field,
-              LOCAL_STORAGE_SCHEMA[field].serialize(this.state[field])
-            );
-          });
-        callback();
-      }
-    );
+    return new Promise(resolve => {
+      this.setState(
+        state => {
+          const newState = actions.reduce(rootReducer, state);
+          return newState;
+        },
+        () => {
+          if (this.allowOfflineMode)
+            fieldsToSync.forEach(field => {
+              this.storage.setItem(
+                field,
+                LOCAL_STORAGE_SCHEMA[field].serialize(this.state[field])
+              );
+            });
+          callback();
+          resolve();
+        }
+      );
+    });
   };
 
   setItems = (itemValueMap, callback = () => {}, commitImmediately = true) => {
@@ -411,14 +414,18 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
     {
       firstName,
       lastName,
+      gender,
       timezoneName,
       email,
       creationTime,
       birthDate,
+      phoneNumber,
       hasConfirmedEmail,
       hasActivatedEmail,
       disabledWarnings,
-      surveyActions
+      surveyActions,
+      userAgreementStatus,
+      notifications
     },
     commitImmediately = true
   ) =>
@@ -428,14 +435,18 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
           userInfo: {
             firstName,
             lastName,
+            gender,
             email,
             creationTime,
             birthDate,
+            phoneNumber,
             timezoneName,
             hasConfirmedEmail,
             hasActivatedEmail,
             disabledWarnings,
-            surveyActions
+            surveyActions,
+            userAgreementStatus,
+            notifications
           }
         },
         resolve,
@@ -460,7 +471,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
         name: e.company.name,
         admin: e.hasAdminRights,
         siren: e.company.siren,
-        settings: e.company.settings
+        settings: e.company.settings,
+        hasNoAdmin: e.company.hasNoActiveAdmins
       })),
       c => c.id
     );
@@ -499,6 +511,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
   controllerId = () => this.state.controllerId;
 
   userInfo = () => ({ id: this.state.userId, ...this.state.userInfo });
+
+  missions = () => this.state.missions;
 
   controllerInfo = () => ({
     id: this.state.controllerId,

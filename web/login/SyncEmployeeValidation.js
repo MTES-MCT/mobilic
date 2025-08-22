@@ -11,20 +11,18 @@ import {
 } from "common/utils/apiQueries";
 import { useLocation } from "react-router-dom";
 import Typography from "@mui/material/Typography";
-import { Alert } from "@mui/material";
 import { useModals } from "common/utils/modals";
 import { LoadingButton } from "common/components/LoadingButton";
 import CircularProgress from "@mui/material/CircularProgress";
 import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
+import { usePageTitle } from "../common/UsePageTitle";
+import Notice from "../common/Notice";
 
 const useStyles = makeStyles(theme => ({
   container: {
     textAlign: "left",
     paddingRight: theme.spacing(12),
     paddingLeft: theme.spacing(12)
-  },
-  cguAlert: {
-    marginTop: theme.spacing(2)
   },
   openCGULink: {
     cursor: "pointer",
@@ -42,6 +40,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function SyncEmployeeValidation() {
+  usePageTitle("Rattachement Compte - Mobilic");
   const classes = useStyles();
   const api = useApi();
   const alerts = useSnackbarAlerts();
@@ -70,7 +69,7 @@ export function SyncEmployeeValidation() {
     setHasAcceptedTokenGeneration
   ] = React.useState(false);
 
-  React.useEffect(async () => {
+  React.useEffect(() => {
     const queryString = new URLSearchParams(location.search);
     const queryToken = queryString.get("token");
     const queryClientId = queryString.get("client_id");
@@ -79,38 +78,41 @@ export function SyncEmployeeValidation() {
     setClientId(queryClientId);
     setEmploymentId(queryEmploymentId);
     setLoading(true);
-    try {
-      const apiResponse = await api.graphQlQuery(
-        THIRD_PARTY_CLIENT_EMPLOYMENT_QUERY,
-        {
-          clientId: queryClientId,
-          employmentId: queryEmploymentId,
-          invitationToken: queryToken
-        },
-        { context: { nonPublicApi: true } }
-      );
-      const link = apiResponse.data.clientEmploymentLink;
-      const user = link?.employment?.user;
+    const loadData = async () => {
+      try {
+        const apiResponse = await api.graphQlQuery(
+          THIRD_PARTY_CLIENT_EMPLOYMENT_QUERY,
+          {
+            clientId: queryClientId,
+            employmentId: queryEmploymentId,
+            invitationToken: queryToken
+          },
+          { context: { nonPublicApi: true } }
+        );
+        const link = apiResponse.data.clientEmploymentLink;
+        const user = link?.employment?.user;
 
-      setClientName(link?.clientName);
-      setCompanyName(link?.employment?.company?.name);
-      setMustAcceptEmploymentCreation(!link?.employment?.isAcknowledged);
-      setEmail(user?.email);
-      setMustAcceptAccountCreation(
-        !user?.hasConfirmedEmail || !user?.hasActivatedEmail
-      );
-    } catch (err) {
-      const errorMessage = formatApiError(err, gqlError => {
-        if (graphQLErrorMatchesCode(gqlError, "AUTHORIZATION_ERROR")) {
-          return "Paramètres invalides. Veuillez suivre le lien d'activation inclus dans le mail reçu. Si le problème persiste, contactez votre éditeur de logiciel.";
-        }
-      });
-      setApiError(errorMessage);
-    }
-    setLoading(false);
+        setClientName(link?.clientName);
+        setCompanyName(link?.employment?.company?.name);
+        setMustAcceptEmploymentCreation(!link?.employment?.isAcknowledged);
+        setEmail(user?.email);
+        setMustAcceptAccountCreation(
+          !user?.hasConfirmedEmail || !user?.hasActivatedEmail
+        );
+      } catch (err) {
+        const errorMessage = formatApiError(err, gqlError => {
+          if (graphQLErrorMatchesCode(gqlError, "AUTHORIZATION_ERROR")) {
+            return "Paramètres invalides. Veuillez suivre le lien d'activation inclus dans le mail reçu. Si le problème persiste, contactez votre éditeur de logiciel.";
+          }
+        });
+        setApiError(errorMessage);
+      }
+      setLoading(false);
+    };
+    loadData();
   }, []);
 
-  React.useEffect(async () => {
+  React.useEffect(() => {
     if (mustAcceptAccountCreation) {
       openCGUModal();
     }
@@ -193,20 +195,25 @@ export function SyncEmployeeValidation() {
                     Confirmation d'autorisation d'accès
                   </PaperContainerTitle>
                   {mustAcceptAccountCreation && (
-                    <Alert severity="warning" className={classes.cguAlert}>
-                      <Typography>
-                        Vous devez d'abord accepter les Conditions Générales
-                        pour pouvoir confirmer l'accès au logiciel {clientName}.
-                        <br />
-                        <span
-                          className={classes.openCGULink}
-                          onClick={openCGUModal}
-                        >
-                          Ouvrir les CGU
-                        </span>{" "}
-                        pour continuer.
-                      </Typography>
-                    </Alert>
+                    <Notice
+                      type="warning"
+                      sx={{ marginTop: 2 }}
+                      description={
+                        <>
+                          Vous devez d'abord accepter les Conditions Générales
+                          pour pouvoir confirmer l'accès au logiciel{" "}
+                          {clientName}.
+                          <br />
+                          <span
+                            className={classes.openCGULink}
+                            onClick={openCGUModal}
+                          >
+                            Ouvrir les CGU
+                          </span>{" "}
+                          pour continuer.
+                        </>
+                      }
+                    />
                   )}
                   <Typography variant="h6" className={classes.explanationBlock}>
                     Votre entreprise {companyName} utilise le logiciel de
@@ -231,9 +238,6 @@ export function SyncEmployeeValidation() {
                   </Typography>
                   <LoadingButton
                     disabled={mustAcceptAccountCreation}
-                    aria-label="Confirmer"
-                    variant="contained"
-                    color="primary"
                     size="small"
                     className={classes.validationButton}
                     onClick={async e => {

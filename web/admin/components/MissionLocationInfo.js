@@ -21,7 +21,8 @@ export function MissionLocationInfo({
   defaultAddresses,
   minKmReading,
   maxKmReading,
-  showKm
+  showKm,
+  showLocation
 }) {
   const [kmError, setKmError] = React.useState(null);
 
@@ -35,38 +36,40 @@ export function MissionLocationInfo({
         </Tooltip>
         {time}
       </ListItem>
-      <ListItem disableGutters>
-        <Tooltip title="Lieu" disableInteractive>
-          <ListItemIcon>
-            <LocationIcon />
-          </ListItemIcon>
-        </Tooltip>
-        <EditableMissionInfo
-          fullWidth
-          value={location}
-          format={address =>
-            address ? (
-              <span>
-                {formatAddressMainText(address)}{" "}
-                <span>{formatAddressSubText(address)}</span>
-              </span>
-            ) : null
-          }
-          renderEditMode={(newAddress, setNewAddress) => (
-            <AddressField
-              value={newAddress}
-              defaultAddresses={defaultAddresses}
-              variant="outlined"
-              label="Lieu"
-              small
-              onChange={setNewAddress}
-            />
-          )}
-          onEdit={editLocation}
-          disabledEdit={location => !location}
-        />
-      </ListItem>
-      {showKm && location && (
+      {showLocation && (
+        <ListItem disableGutters>
+          <Tooltip title="Lieu" disableInteractive>
+            <ListItemIcon>
+              <LocationIcon />
+            </ListItemIcon>
+          </Tooltip>
+          <EditableMissionInfo
+            fullWidth
+            value={location}
+            format={address =>
+              address ? (
+                <span>
+                  {formatAddressMainText(address)}{" "}
+                  <span>{formatAddressSubText(address)}</span>
+                </span>
+              ) : null
+            }
+            renderEditMode={(newAddress, setNewAddress) => (
+              <AddressField
+                value={newAddress}
+                defaultAddresses={defaultAddresses}
+                variant="outlined"
+                label="Lieu"
+                small
+                onChange={setNewAddress}
+              />
+            )}
+            onEdit={editLocation}
+            disabledEdit={location => !location}
+          />
+        </ListItem>
+      )}
+      {showKm && showLocation && location && (
         <ListItem disableGutters>
           <Tooltip title="Relevé kilométrique du véhicule" disableInteractive>
             <ListItemIcon>KM</ListItemIcon>

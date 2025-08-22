@@ -4,17 +4,17 @@ export const HOUR = 3600;
 export const MINUTE = 60;
 export const SHORT_MONTHS = [
   "jan",
-  "fev",
+  "fév",
   "mar",
   "avr",
   "mai",
   "juin",
   "juil",
-  "aou",
+  "aoû",
   "sep",
   "oct",
   "nov",
-  "dec"
+  "déc"
 ];
 const MONTHS = [
   "janvier",
@@ -44,6 +44,8 @@ export const DAYS = [
 ];
 
 export const LONG_BREAK_DURATION = 10 * HOUR;
+
+export const CURRENT_YEAR = new Date().getFullYear();
 
 export function formatTimer(timerDuration) {
   if (!timerDuration && timerDuration !== 0) return null;
@@ -108,6 +110,11 @@ export function formatDayOfWeek(unixTimestamp) {
   return SHORT_DAYS[date.getDay()];
 }
 
+export function formatCompleteDayOfWeek(unixTimestamp) {
+  const date = new Date(unixTimestamp * 1000);
+  return DAYS[date.getDay()];
+}
+
 export function getPrettyDateByperiod(date, period) {
   const dateAsUnixTimestamp = date.getTime() / 1000;
   switch (period) {
@@ -162,8 +169,10 @@ export function prettyFormatDayHour(unixTimestamp) {
   )}`;
 }
 
-export function formatMinutesFromSeconds(seconds) {
-  return `${Math.floor(seconds / MINUTE)}m`;
+export function formatMinutesFromSeconds(seconds, withSpace = true) {
+  return seconds >= HOUR
+    ? formatTimer(seconds)
+    : `${Math.floor(seconds / MINUTE)}${withSpace ? "\u00A0" : ""}min`;
 }
 
 export function textualPrettyFormatWeek(startOfWeek) {
@@ -246,6 +255,10 @@ export function startOfDay(date) {
 export function getStartOfDay(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
   return startOfDay(date);
+}
+
+export function isDateBeforeToday(unixTimestamp) {
+  return getStartOfDay(unixTimestamp) < startOfDay(new Date());
 }
 
 export function truncateMinute(unixTimestamp) {
@@ -356,3 +369,9 @@ export function unixTimestampToDate(unixTimestamp) {
 export function isDateBeforeNbDays(dateToTest, nbDays) {
   return dateToTest < addDaysToDate(new Date(), -nbDays);
 }
+
+export const isMoreOrLessTheSameDay = (time1, time2) =>
+  Math.abs(time1 - time2) < HOUR * 3;
+
+export const strToUnixTimestamp = dateStr =>
+  jsToUnixTimestamp(startOfDayAsDate(new Date(dateStr)).getTime());

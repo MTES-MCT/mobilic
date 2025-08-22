@@ -1,20 +1,14 @@
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import React from "react";
+import { CONTROL_TYPES } from "../../utils/useReadControlData";
 
 const controlsTypes = [
   {
     label: "Tous les types",
     value: ""
   },
-  {
-    label: "Mobilic",
-    value: "mobilic"
-  },
-  {
-    label: "Pas de LIC",
-    value: "sans_lic"
-  }
+  ...Object.values(CONTROL_TYPES)
 ];
 
 export function ControlTypeFilters({ controlsType, setControlsType }) {

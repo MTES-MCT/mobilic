@@ -5,8 +5,6 @@ import Box from "@mui/material/Box";
 import { useApi } from "common/utils/api";
 import { USER_WORK_DAY_QUERY } from "common/utils/apiQueries";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
 import { useStyles } from "./styles/WorkTimeDetailsStyle";
 import {
   addBreaksToActivityList,
@@ -33,6 +31,7 @@ import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL } from "common/utils/matomoTags";
 import { DayRegulatoryAlerts } from "../../regulatory/DayRegulatoryAlerts";
 import { WeekRegulatoryAlerts } from "../../regulatory/WeekRegulatoryAlerts";
+import CloseButton from "../../common/CloseButton";
 
 export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
   const classes = useStyles();
@@ -139,20 +138,18 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
 
   return [
     <Box key={0} className={classes.workTimeDetailsTitleContainer}>
-      <Typography variant="h3" className={classes.workTimeDetailsTitle}>
+      <Typography
+        variant="h3"
+        component="h1"
+        className={classes.workTimeDetailsTitle}
+      >
         Détail de la journée du{" "}
         {prettyFormatDay(workTimeEntry.periodActualStart, true)}
       </Typography>
-      <IconButton
-        aria-label="Fermer"
-        className={classes.closeButton}
-        onClick={handleClose}
-      >
-        <CloseIcon />
-      </IconButton>
+      <CloseButton onClick={handleClose} />
     </Box>,
-    <Box key={1}>
-      <Typography variant="h3" className={classes.employeeName}>
+    <Box key={1} marginTop={1} marginBottom={3}>
+      <Typography variant="h6" component="p" className={classes.employeeName}>
         {workTimeEntry.workerName}
       </Typography>
     </Box>,
@@ -173,14 +170,15 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
               textAlign="center"
               py={2}
               variant="outlined"
-              titleProps={{ variant: "h3" }}
+              titleProps={{ variant: "h6", component: "h2" }}
               title="Amplitude"
               value={formatTimer(workTimeEntry.service)}
               valueProps={{
                 className: `${classes.amplitudeText} ${
                   !workTimeEntry.endTime ? classes.runningMissionText : ""
                 }`,
-                variant: "body1"
+                variant: "h1",
+                component: "p"
               }}
               subText={
                 <span>
@@ -204,14 +202,15 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
               textAlign="center"
               py={2}
               variant="outlined"
-              titleProps={{ variant: "h3" }}
+              titleProps={{ variant: "h6", component: "h2" }}
               title="Temps de travail"
               value={formatTimer(workTimeEntry.totalWork)}
               valueProps={{
                 className: `${classes.amplitudeText} ${
                   !workTimeEntry.endTime ? classes.runningMissionText : ""
                 }`,
-                variant: "body1"
+                variant: "h1",
+                component: "p"
               }}
               subText={
                 !workTimeEntry.endTime ? (
@@ -227,6 +226,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
           <MissionInfoCard
             title="Seuils réglementaires"
             className={classes.regulatoryAlertCard}
+            titleProps={{ component: "h2", variant: "h6" }}
           >
             <div>Alertes quotidiennes</div>
             <DayRegulatoryAlerts
@@ -252,6 +252,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
           title="Frais de la journée"
           loading={loading}
           expenditures={workTimeEntry.expenditures}
+          titleProps={{ component: "h2", variant: "h6" }}
         />
       </Grid>
       <Grid item xs={12}>
@@ -261,10 +262,18 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
           loading={loading}
           fromTime={workTimeEntry.periodStart}
           untilTime={periodEnd.getTime() / 1000}
+          titleProps={{
+            variant: "h6",
+            component: "h2"
+          }}
         />
       </Grid>
       <Grid item xs={12}>
-        <MissionInfoCard title="Missions de la journée" extraPaddingBelowTitle>
+        <MissionInfoCard
+          title="Missions de la journée"
+          extraPaddingBelowTitle
+          titleProps={{ component: "h2", variant: "h6" }}
+        >
           {missions.length > 0 && (
             <AugmentedTable
               columns={missionTableColumns}

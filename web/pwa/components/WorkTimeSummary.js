@@ -3,6 +3,7 @@ import Typography from "@mui/material/Typography";
 import {
   DAY,
   formatDateTime,
+  formatMinutesFromSeconds,
   formatTimeOfDay,
   formatTimer,
   getStartOfDay,
@@ -19,8 +20,9 @@ import {
   sortActivities
 } from "common/utils/activities";
 import { InfoCard, MetricCard } from "../../common/InfoCard";
+import { partition } from "lodash";
 
-function formatRangeString(startTime, endTime) {
+export function formatRangeString(startTime, endTime) {
   return getStartOfDay(startTime) === getStartOfDay(endTime - 1)
     ? `De ${formatTimeOfDay(startTime)} à ${formatTimeOfDay(endTime)}`
     : `Du ${formatDateTime(startTime)} au ${formatDateTime(endTime)}`;
@@ -28,21 +30,23 @@ function formatRangeString(startTime, endTime) {
 
 export function WorkTimeSummaryKpiGrid({ metrics, cardProps = {}, loading }) {
   return (
-    <Grid
-      container
-      direction="row"
-      justifyContent="center"
-      alignItems={"baseline"}
-      spacing={2}
-    >
+    <Grid container spacing={2}>
       {metrics.map((metric, index) => {
         const CardComponent = metric.render ? InfoCard : MetricCard;
         return (
-          <Grid key={index} item xs={metric.fullWidth ? 12 : true}>
+          <Grid item xs={6} key={index} sx={{ display: "flex" }}>
             <CardComponent
               {...omit(metric, "render")}
               {...cardProps}
               loading={loading}
+              titleProps={{ component: "h2" }}
+              sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center"
+              }}
+              centered
             >
               {metric.render && metric.render()}
             </CardComponent>
@@ -58,8 +62,9 @@ export function computeTimesAndDurationsFromActivities(
   fromTime = null,
   untilTime = null
 ) {
+  const notDismissedActivities = activities.filter(a => !a.isMissionDeleted);
   const filteredActivities = filterActivitiesOverlappingPeriod(
-    activities,
+    notDismissedActivities,
     fromTime,
     untilTime
   );
@@ -106,7 +111,7 @@ export function computeTimesAndDurationsFromActivities(
   });
 
   const dayTimers = computeTotalActivityDurations(
-    activities,
+    notDismissedActivities,
     fromTime,
     untilTime
   );
@@ -121,16 +126,27 @@ export function computeTimesAndDurationsFromActivities(
   };
 }
 
+const diffSecondsToText = diffInS =>
+  diffInS === 0
+    ? ""
+    : `${diffInS > 0 ? "+" : "-"}${formatMinutesFromSeconds(
+        Math.abs(diffInS),
+        false
+      )}`;
 export function renderMissionKpis(
-  kpis,
+  adminKpis,
+  employeeKpis,
+  displayEmployee,
   serviceLabel = "Amplitude",
   showInnerBreaksInsteadOfService = false
 ) {
+  const kpis = displayEmployee && employeeKpis ? employeeKpis : adminKpis;
   const { timers, startTime, endTime, innerLongBreaks } = kpis;
 
   const formattedKpis = [];
 
   let subText = null;
+  let diffInS = 0;
   if (showInnerBreaksInsteadOfService && innerLongBreaks.length > 0) {
     const innerLongBreak = innerLongBreaks[0];
     subText = formatRangeString(
@@ -144,23 +160,65 @@ export function renderMissionKpis(
     });
   } else {
     subText = formatRangeString(startTime, endTime);
+    if (
+      !displayEmployee &&
+      adminKpis?.timers?.total &&
+      employeeKpis?.timers?.total
+    ) {
+      diffInS = adminKpis.timers.total - employeeKpis.timers.total;
+    }
     formattedKpis.push({
       label: kpis.innerLongBreaks.length > 0 ? "Durée" : serviceLabel,
       value: formatTimer(timers ? timers.total : 0),
-      subText
+      subText,
+      diffText: diffSecondsToText(diffInS)
     });
   }
 
+  diffInS = 0;
+  if (
+    !displayEmployee &&
+    adminKpis?.timers?.totalWork &&
+    employeeKpis?.timers?.totalWork
+  ) {
+    diffInS = adminKpis.timers.totalWork - employeeKpis.timers.totalWork;
+  }
   formattedKpis.push({
     label: "Temps de travail",
     value: formatTimer(timers ? timers.totalWork : 0),
     subText,
-    hideSubText: true
+    hideSubText: true,
+    diffText: diffSecondsToText(diffInS)
   });
 
   return formattedKpis;
 }
 
+const getNbDistinctDays = (fromTime, untilTime, activities) => {
+  let civilDay = fromTime;
+  let counter = 0;
+  let activityIndex = 0;
+
+  while (civilDay < untilTime && activityIndex < activities.length) {
+    const nextDay = civilDay + DAY;
+    const activity = activities[activityIndex];
+
+    if (
+      activity.isMissionDeleted ||
+      (activity.endTime && activity.endTime < civilDay)
+    )
+      activityIndex++;
+    else if (
+      !activity.isMissionDeleted &&
+      activity.startTime < nextDay &&
+      civilDay < now()
+    ) {
+      counter++;
+      civilDay = nextDay;
+    } else civilDay = nextDay;
+  }
+  return counter;
+};
 export function splitByLongBreaksAndComputePeriodStats(
   activities,
   fromTime,
@@ -169,20 +227,13 @@ export function splitByLongBreaksAndComputePeriodStats(
 ) {
   sortActivities(activities);
 
-  let civilDay = fromTime;
-  let workedDays = 0;
-  let activityIndex = 0;
+  const [workActivities, offActivities] = partition(
+    activities,
+    activity => activity.type !== "off"
+  );
 
-  while (civilDay < untilTime && activityIndex < activities.length) {
-    const nextDay = civilDay + DAY;
-    const activity = activities[activityIndex];
-
-    if (activity.endTime && activity.endTime < civilDay) activityIndex++;
-    else if (activity.startTime < nextDay && civilDay < now()) {
-      workedDays++;
-      civilDay = nextDay;
-    } else civilDay = nextDay;
-  }
+  const workedDays = getNbDistinctDays(fromTime, untilTime, workActivities);
+  const offDays = getNbDistinctDays(fromTime, untilTime, offActivities);
 
   const {
     timers,
@@ -191,7 +242,11 @@ export function splitByLongBreaksAndComputePeriodStats(
     innerLongBreaks,
     activityGroups,
     filteredActivities
-  } = computeTimesAndDurationsFromActivities(activities, fromTime, untilTime);
+  } = computeTimesAndDurationsFromActivities(
+    workActivities,
+    fromTime,
+    untilTime
+  );
 
   const expendituresCount = {};
   if (missions)
@@ -209,6 +264,7 @@ export function splitByLongBreaksAndComputePeriodStats(
     endTime,
     innerLongBreaks,
     workedDays,
+    offDays,
     expendituresCount,
     filteredActivities,
     activityGroups
@@ -216,12 +272,17 @@ export function splitByLongBreaksAndComputePeriodStats(
 }
 
 export function renderPeriodKpis(
-  kpis,
+  adminKpis,
+  employeeKpis,
+  displayEmployee,
   showInnerBreaksInsteadOfService = false
 ) {
+  const kpis = displayEmployee && employeeKpis ? employeeKpis : adminKpis;
+
   const formattedKpis = [];
 
   let subText = null;
+  let diffInS = 0;
   if (showInnerBreaksInsteadOfService && kpis.innerLongBreaks.length > 0) {
     const innerLongBreak = kpis.innerLongBreaks[0];
     subText = formatRangeString(
@@ -236,30 +297,48 @@ export function renderPeriodKpis(
     });
   } else {
     subText = formatRangeString(kpis.startTime, kpis.endTime);
+    if (
+      !displayEmployee &&
+      employeeKpis?.timers?.total &&
+      adminKpis?.timers?.total
+    ) {
+      diffInS = adminKpis.timers.total - employeeKpis.timers.total;
+    }
     formattedKpis.push({
       name: "service",
       label: "Amplitude",
       value: formatTimer(kpis.timers ? kpis.timers.total : 0),
-      subText
+      subText,
+      diffText: diffSecondsToText(diffInS)
     });
   }
 
-  formattedKpis.push(
-    {
-      name: "workedDays",
-      label: "Jours travaillés",
-      value: kpis.workedDays,
-      subText,
-      hideSubText: true
-    },
-    {
-      name: "workTime",
-      label: "Temps de travail",
-      value: formatTimer(kpis.timers ? kpis.timers.totalWork : 0),
-      subText,
-      hideSubText: true
-    }
-  );
+  formattedKpis.push({
+    name: "workedDays",
+    label: "Jours travaillés",
+    value: kpis.workedDays,
+    subText,
+    hideSubText: true
+  });
+
+  diffInS = 0;
+  if (
+    !displayEmployee &&
+    adminKpis?.timers?.totalWork &&
+    employeeKpis?.timers?.totalWork
+  ) {
+    diffInS = adminKpis.timers.totalWork - employeeKpis.timers.totalWork;
+  }
+  const workTimeKpis = {
+    name: "workTime",
+    label: "Temps de travail",
+    value: formatTimer(kpis.timers ? kpis.timers.totalWork : 0),
+    subText,
+    hideSubText: true,
+    diffText: diffSecondsToText(diffInS)
+  };
+
+  formattedKpis.push(workTimeKpis);
   if (Object.keys(kpis.expendituresCount).length > 0)
     formattedKpis.push({
       name: "expenditures",
@@ -283,10 +362,15 @@ export function renderPeriodKpis(
                     fontWeight: "bold",
                     whiteSpace: "nowrap"
                   }}
+                  component="h2"
                 >
                   {EXPENDITURES[type].plural}
                 </Typography>
-                <Typography variant="h4" style={{ fontWeight: "bold" }}>
+                <Typography
+                  variant="h4"
+                  component="span"
+                  style={{ fontWeight: "bold" }}
+                >
                   {kpis.expendituresCount[type]}
                 </Typography>
               </Box>
@@ -295,5 +379,13 @@ export function renderPeriodKpis(
         </Grid>
       )
     });
+  if (kpis.offDays) {
+    formattedKpis.push({
+      name: "offDays",
+      label: "Jours congé ou absence",
+      value: kpis.offDays,
+      fullWidth: true
+    });
+  }
   return formattedKpis;
 }

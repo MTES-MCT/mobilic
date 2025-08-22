@@ -27,7 +27,8 @@ export function EmployeeFilter({
   users,
   setUsers,
   multiple = true,
-  handleSelect = null
+  handleSelect = null,
+  showOnlyUserIds = null
 }) {
   const classes = useStyles();
 
@@ -42,25 +43,37 @@ export function EmployeeFilter({
   };
 
   const selectedUsers = users.filter(user => user.selected);
+
+  const displayedUsers = React.useMemo(
+    () =>
+      showOnlyUserIds
+        ? users.filter(user => showOnlyUserIds.includes(user.id))
+        : users,
+    [showOnlyUserIds, users]
+  );
   return (
     <Autocomplete
       multiple={multiple}
       id="employee-filter"
-      options={orderBy(users, ["firstName", "lastName"], ["asc", "asc"])}
+      options={orderBy(
+        displayedUsers,
+        ["lastName", "firstName"],
+        ["asc", "asc"]
+      )}
       limitTags={1}
       size="small"
       disableCloseOnSelect
-      getOptionLabel={option => formatPersonName(option)}
+      getOptionLabel={option => formatPersonName(option, true)}
       renderOption={(props, option) => (
-        <li {...props}>
+        <li {...props} key={option.id}>
           {multiple && (
             <Checkbox
-              color="secondary"
+              color="primary"
               style={{ marginRight: 8 }}
               checked={option.selected || false}
             />
           )}
-          <span>{formatPersonName(option)}</span>
+          <span>{formatPersonName(option, true)}</span>
         </li>
       )}
       value={selectedUsers}

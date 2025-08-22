@@ -1,39 +1,28 @@
 import React from "react";
-import Container from "@mui/material/Container";
-import { Header } from "../common/Header";
-import { makeStyles } from "@mui/styles";
-import { Footer } from "./footer";
 import Link from "@mui/material/Link";
-
-const useStyles = makeStyles(theme => ({
-  container: {
-    padding: theme.spacing(4),
-    paddingBottom: theme.spacing(7),
-    margin: "auto",
-    textAlign: "left"
-  }
-}));
+import { usePageTitle } from "../common/UsePageTitle";
+import { FullPageComponent } from "./components/FullPageComponent";
 
 export default function Accessibility() {
-  return [
-    <Header key={1} />,
-    <AccessibilityDeclaration key={2} />,
-    <Footer key={3} />
-  ];
+  return (
+    <FullPageComponent>
+      <AccessibilityDeclaration />
+    </FullPageComponent>
+  );
 }
 
 function AccessibilityDeclaration() {
-  const classes = useStyles();
+  usePageTitle("Déclaration d'accessibilité - Mobilic");
 
   return (
-    <Container className={classes.container} maxWidth="lg">
+    <>
       <h1>Déclaration d’accessibilité</h1>
       <p>
         Établie le <span>27 mars 2023</span>.
       </p>
       <p>
         <span>
-          Ministère de la Transition écologique, chargé des Transports
+          Ministère de l’Aménagement du territoire et de la Décentralisation
         </span>{" "}
         s’engage à rendre son service accessible, conformément à l’article 47 de
         la loi n° 2005-102 du 11 février 2005.
@@ -68,15 +57,18 @@ function AccessibilityDeclaration() {
       <ul className="basic-information feedback h-card">
         <li>
           E-mail&nbsp;:{" "}
-          <Link href="mailto:mobilic@beta.gouv.fr">mobilic@beta.gouv.fr</Link>
+          <Link href="mailto:contact@mobilic.beta.gouv.fr">
+            contact@mobilic.beta.gouv.fr
+          </Link>
         </li>
 
         <li>
           Adresse&nbsp;:{" "}
           <span>
-            Ministère de la Transition écologique Direction générale des
-            infrastructures, des transports et des mobilités, Bureau du droit
-            social dans les transports routiers 1 place Carpeaux, 92800 Puteaux
+            Ministère de l’Aménagement du territoire et de la Décentralisation
+            Direction générale des infrastructures, des transports et des
+            mobilités, Bureau du droit social dans les transports routiers 1
+            place Carpeaux, 92800 Puteaux
           </span>
         </li>
       </ul>
@@ -123,6 +115,6 @@ function AccessibilityDeclaration() {
         </Link>
         .
       </p>
-    </Container>
+    </>
   );
 }

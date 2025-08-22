@@ -13,7 +13,6 @@ import { graphQLErrorMatchesCode } from "common/utils/errors";
 import Grid from "@mui/material/Grid";
 import { InfoItem } from "../home/InfoField";
 import { frenchFormatDateStringOrTimeStamp } from "common/utils/time";
-import Alert from "@mui/material/Alert";
 import { LoadingButton } from "common/components/LoadingButton";
 import React, { useMemo } from "react";
 import { makeStyles } from "@mui/styles";
@@ -29,9 +28,11 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ThirdPartyEmploymentAccess from "./ThirdPartyEmploymentAccess";
-import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
-import Box from "@mui/material/Box";
 import { HideEmail } from "../home/HideEmail";
+import { getNextHeadingComponent } from "common/utils/html";
+import { formatActivity } from "common/utils/businessTypes";
+import Notice from "./Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
@@ -46,18 +47,6 @@ const useStyles = makeStyles(theme => ({
   },
   employmentDetails: {
     display: "block"
-  },
-  copyAdminEmails: {
-    display: "flex",
-    alignItems: "center",
-    flexWrap: "wrap",
-    color: theme.palette.primary.main,
-    fontSize: "0.85em",
-    cursor: "pointer",
-    marginTop: theme.spacing(1)
-  },
-  copyAdminEmailsIcon: {
-    marginRight: theme.spacing(1)
   }
 }));
 
@@ -66,7 +55,8 @@ function EMPLOYMENT_STATUS_TO_TEXT_AND_COLOR(theme) {
     [EMPLOYMENT_STATUS.active]: ["Actif", theme.palette.success.main],
     [EMPLOYMENT_STATUS.pending]: ["À valider", theme.palette.warning.main],
     [EMPLOYMENT_STATUS.future]: ["À venir", theme.palette.warning.main],
-    [EMPLOYMENT_STATUS.ended]: ["Terminé", theme.palette.error.main]
+    [EMPLOYMENT_STATUS.ended]: ["Terminé", theme.palette.error.main],
+    [EMPLOYMENT_STATUS.ceased]: ["Cessée", theme.palette.error.main]
   };
 }
 
@@ -76,8 +66,11 @@ export function EmploymentInfoCard({
   hideRole = false,
   hideStatus = false,
   hideActions = false,
+  showAdminEmails = false,
   lightenIfEnded = true,
-  defaultOpen = false
+  defaultOpen = false,
+  hideBusiness = false,
+  headingComponent
 }) {
   const [open, setOpen] = React.useState(defaultOpen);
 
@@ -88,12 +81,28 @@ export function EmploymentInfoCard({
   );
 
   const emailsCurrentAdminsDisplay = useMemo(
-    () =>
-      employment?.company.currentAdmins?.map(admin => (
-        <div key={admin.email} style={{ overflowWrap: "anywhere" }}>
-          {admin.email}
-        </div>
-      )),
+    () => (
+      <ul
+        style={{
+          listStyleType: "none",
+          paddingInlineStart: "0px",
+          margin: "0px"
+        }}
+      >
+        {employment?.company.currentAdmins?.map(admin => (
+          <li
+            key={admin.email}
+            style={{
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              maxWidth: "80vw"
+            }}
+          >
+            {admin.email}
+          </li>
+        ))}
+      </ul>
+    ),
     [employment]
   );
 
@@ -147,7 +156,9 @@ export function EmploymentInfoCard({
       expanded={open}
       onChange={(event, open_) => setOpen(open_)}
       className={
-        status === EMPLOYMENT_STATUS.ended && lightenIfEnded
+        (status === EMPLOYMENT_STATUS.ended ||
+          status === EMPLOYMENT_STATUS.ceased) &&
+        lightenIfEnded
           ? classes.ended
           : ""
       }
@@ -160,14 +171,23 @@ export function EmploymentInfoCard({
           justifyContent="space-between"
           wrap="nowrap"
         >
-          <Grid item>
-            <Typography className={classes.companyName}>
+          <Grid item xs={8} sm={9}>
+            <Typography
+              className={classes.companyName}
+              component={headingComponent}
+            >
               {employment.company.legalName || employment.company.name}
             </Typography>
           </Grid>
           {!hideStatus && (
-            <Grid item>
-              <Typography style={{ color: statusColor, fontWeight: "bold" }}>
+            <Grid item xs={4} sm={3} pr={1}>
+              <Typography
+                style={{
+                  color: statusColor,
+                  fontWeight: "bold",
+                  textAlign: "right"
+                }}
+              >
                 {statusText}
               </Typography>
             </Grid>
@@ -176,22 +196,35 @@ export function EmploymentInfoCard({
       </AccordionSummary>
       <AccordionDetails className={classes.employmentDetails}>
         <Grid container wrap="wrap" spacing={spacing}>
-          <Grid item>
-            <InfoItem name="SIREN" value={employment.company.siren} />
+          <Grid item xs={6}>
+            <InfoItem
+              name="SIREN"
+              value={employment.company.siren}
+              titleProps={{
+                component: getNextHeadingComponent(headingComponent)
+              }}
+            />
           </Grid>
-          <Grid item>
+          <Grid item xs={6}>
             <InfoItem
               name="SIRETS"
               value={employment.company.sirets?.join(", ")}
+              titleProps={{
+                component: getNextHeadingComponent(headingComponent)
+              }}
             />
           </Grid>
-          <Grid item>
+          <Grid item xs={6}>
             <InfoItem
               name="Début rattachement"
               value={frenchFormatDateStringOrTimeStamp(employment.startDate)}
+              titleProps={{
+                component: getNextHeadingComponent(headingComponent)
+              }}
+              uppercaseTitle={false}
             />
           </Grid>
-          <Grid item>
+          <Grid item xs={6}>
             <InfoItem
               name="Fin rattachement"
               value={
@@ -199,15 +232,36 @@ export function EmploymentInfoCard({
                   ? frenchFormatDateStringOrTimeStamp(employment.endDate)
                   : ""
               }
+              titleProps={{
+                component: getNextHeadingComponent(headingComponent)
+              }}
+              uppercaseTitle={false}
             />
           </Grid>
-          {!!emailsCurrentAdminsDisplay && (
+          {!hideBusiness && !!employment.business && (
+            <Grid item xs={12}>
+              <InfoItem
+                name="Type d'activité"
+                value={formatActivity(employment.business)}
+                titleProps={{
+                  component: getNextHeadingComponent(headingComponent)
+                }}
+                uppercaseTitle={false}
+              />
+            </Grid>
+          )}
+          {!!showAdminEmails && !!emailsCurrentAdminsDisplay && (
             <Grid item>
               <InfoItem
                 name="Email(s) gestionnaire(s)"
                 value={emailsCurrentAdminsDisplay}
+                titleProps={{
+                  component: getNextHeadingComponent(headingComponent)
+                }}
+                uppercaseTitle={false}
               />
-              <Box
+              <Button
+                priority="tertiary"
                 onClick={() => {
                   navigator.clipboard
                     .writeText(emailsCurrentAdmins)
@@ -219,18 +273,13 @@ export function EmploymentInfoCard({
                       );
                     });
                 }}
-                className={classes.copyAdminEmails}
               >
-                <ContentCopyOutlined
-                  className={classes.copyAdminEmailsIcon}
-                  fontSize="small"
-                />
                 copier les emails
-              </Box>
+              </Button>
             </Grid>
           )}
           {!hideRole && (
-            <Grid item>
+            <Grid item xs={12}>
               <InfoItem
                 name="Rôle"
                 value={
@@ -238,6 +287,10 @@ export function EmploymentInfoCard({
                     ? EMPLOYMENT_ROLE.admin
                     : EMPLOYMENT_ROLE.employee
                 }
+                titleProps={{
+                  component: getNextHeadingComponent(headingComponent)
+                }}
+                uppercaseTitle={false}
               />
             </Grid>
           )}
@@ -251,23 +304,33 @@ export function EmploymentInfoCard({
           )}
           {!hideActions && (
             <Grid item xs={12}>
-              <HideEmail employment={employment} />
+              <HideEmail
+                employment={employment}
+                disabled={
+                  status === EMPLOYMENT_STATUS.ended ||
+                  status === EMPLOYMENT_STATUS.ceased
+                }
+              />
             </Grid>
           )}
         </Grid>
 
-        {!hideStatus && !hideActions && status === EMPLOYMENT_STATUS.ended && (
-          <Alert severity="warning">
-            L'entreprise a mis un terme à votre rattachement. Vous ne pouvez
-            plus saisir de temps de travail pour cette entreprise.
-          </Alert>
-        )}
+        {!hideStatus &&
+          !hideActions &&
+          (status === EMPLOYMENT_STATUS.ended ||
+            status === EMPLOYMENT_STATUS.ceased) && (
+            <Notice
+              type="warning"
+              description="L'entreprise a mis un terme à votre rattachement. Vous ne pouvez
+            plus saisir de temps de travail pour cette entreprise."
+            />
+          )}
         {!hideStatus && !hideActions && status === EMPLOYMENT_STATUS.pending && (
           <>
-            <Alert severity="info">
-              La validation du rattachement vous donnera le droit d'enregistrer
-              du temps de travail pour cette entreprise.
-            </Alert>
+            <Notice
+              description="La validation du rattachement vous donnera le droit d'enregistrer
+              du temps de travail pour cette entreprise."
+            />
             <Grid
               className={classes.buttonContainer}
               container
@@ -276,8 +339,6 @@ export function EmploymentInfoCard({
             >
               <Grid item>
                 <LoadingButton
-                  color="primary"
-                  variant="contained"
                   onClick={async () => await handleEmploymentValidation(true)}
                 >
                   Valider le rattachement
@@ -285,8 +346,7 @@ export function EmploymentInfoCard({
               </Grid>
               <Grid item>
                 <LoadingButton
-                  color="primary"
-                  variant="outlined"
+                  priority="secondary"
                   onClick={() =>
                     modals.open("confirmation", {
                       textButtons: true,

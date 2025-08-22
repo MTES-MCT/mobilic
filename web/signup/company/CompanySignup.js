@@ -18,8 +18,12 @@ import { SelectSirenStep } from "./SelectSirenStep";
 import { Steps } from "./Step";
 import { SelectSiretsStep } from "./SelectSiretsStep";
 import { OptInForSiretsSelectionStep } from "./OptInForSiretsSelectionStep";
+import { usePageTitle } from "../../common/UsePageTitle";
+import trackAds from "common/utils/trackAds";
+import { hasGoogleAdsConsent } from "common/utils/cookie";
 
 export function CompanySignup() {
+  usePageTitle("Inscription de l'entreprise - Mobilic");
   const api = useApi();
   const history = useHistory();
   const location = useLocation();
@@ -29,6 +33,9 @@ export function CompanySignup() {
   const [siren, setSiren] = React.useState("");
   const [sirenInfo, setSirenInfo] = React.useState(null);
   const [usualName, setUsualName] = React.useState("");
+  const [phoneNumber, setPhoneNumber] = React.useState("");
+  const [nbWorkers, setNbWorkers] = React.useState(0);
+  const [businessType, setBusinessType] = React.useState("");
   const [shouldSelectSirets, setShouldSelectSirets] = React.useState(false);
   const [facilities, setFacilities] = React.useState([]);
 
@@ -71,11 +78,19 @@ export function CompanySignup() {
 
   const handleCompanySignup = async e => {
     e.preventDefault();
+
+    if (process.env.REACT_APP_GOOGLE_ADS && hasGoogleAdsConsent()) {
+      trackAds.trackGoogleAds();
+    }
+
     setLoadingCompanySignup(true);
     await alerts.withApiErrorHandling(async () => {
       const payload = {
         siren: siren,
-        usualName: usualName.trim()
+        usualName: usualName.trim(),
+        phoneNumber,
+        businessType,
+        nbWorkers
       };
       const apiResponse = await api.graphQlMutate(
         COMPANY_SIGNUP_MUTATION,
@@ -98,6 +113,11 @@ export function CompanySignup() {
 
   const handleCompaniesSignup = async e => {
     e.preventDefault();
+
+    if (process.env.REACT_APP_GOOGLE_ADS && hasGoogleAdsConsent()) {
+      trackAds.trackGoogleAds();
+    }
+
     setLoadingCompanySignup(true);
     await alerts.withApiErrorHandling(async () => {
       const payload = {
@@ -107,7 +127,10 @@ export function CompanySignup() {
           .map(f => {
             return {
               siret: f.siret,
-              usualName: f.usualName
+              usualName: f.usualName,
+              phoneNumber: f.phoneNumber,
+              businessType: f.businessType,
+              nbWorkers: f.nbWorkers
             };
           })
       };
@@ -145,7 +168,7 @@ export function CompanySignup() {
       <Steps>
         <SelectSirenStep
           name="select-siren"
-          title="Quel est le SIREN de l'entreprise ?"
+          title="Quel est le numéro SIREN de l'entreprise ?"
           siren={siren}
           setSiren={setSiren}
           sirenInfo={sirenInfo}
@@ -170,7 +193,6 @@ export function CompanySignup() {
         {willRegisterSeveralSirets ? (
           <SubmitStep
             name="finalize"
-            title="Attestation d'habilitation"
             handleSubmit={handleCompaniesSignup}
             loading={loadingCompanySignup}
           />
@@ -180,6 +202,12 @@ export function CompanySignup() {
             title="Quel est le nom de l'entreprise ?"
             companyName={usualName}
             setCompanyName={setUsualName}
+            phoneNumber={phoneNumber}
+            setPhoneNumber={setPhoneNumber}
+            businessType={businessType}
+            setBusinessType={setBusinessType}
+            nbWorkers={nbWorkers}
+            setNbWorkers={setNbWorkers}
             handleSubmit={handleCompanySignup}
             loading={loadingCompanySignup}
           />

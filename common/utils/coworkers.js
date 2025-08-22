@@ -4,9 +4,11 @@ import mapValues from "lodash/mapValues";
 import values from "lodash/values";
 import omitBy from "lodash/omitBy";
 
-export function formatPersonName(coworker) {
+export function formatPersonName(coworker, lastNameFirst = false) {
   return coworker && coworker.firstName
-    ? `${coworker.firstName} ${coworker.lastName}`
+    ? lastNameFirst
+      ? `${coworker.lastName} ${coworker.firstName}`
+      : `${coworker.firstName} ${coworker.lastName}`
     : "";
 }
 

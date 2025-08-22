@@ -1,5 +1,5 @@
 import React from "react";
-import { Collapse, ListItemIcon, ListItemText, Alert } from "@mui/material";
+import { Collapse, ListItemIcon, ListItemText } from "@mui/material";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { Link } from "../../../common/LinkButton";
@@ -10,6 +10,7 @@ import { DISABLE_WARNING_MUTATION } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";
 import { useApi } from "common/utils/api";
 import Emoji from "../../../common/Emoji";
+import Notice from "../../../common/Notice";
 
 export function WarningModificationMission() {
   const store = useStoreSyncedWithLocalStorage();
@@ -45,46 +46,47 @@ export function WarningModificationMission() {
 
   return (
     <Collapse in={modificationAlertOpen}>
-      <Alert
-        key={0}
-        severity="info"
-        className={classes.modificationAlert}
+      <Notice
+        sx={{ marginBottom: 3 }}
         data-testid="warningAlert"
-      >
-        <List disablePadding>
-          <ListItem
-            disableGutters
-            dense
-            className={classes.modificationWarningItem}
-          >
-            <ListItemIcon className={classes.validationWarningIcon}>
-              <Emoji emoji="👉" ariaLabel="Information" />
-            </ListItemIcon>
-            <ListItemText primary="Les modifications sont enregistrées et apparaîtront en cas de contrôle." />
-          </ListItem>
-          <ListItem
-            disableGutters
-            dense
-            className={classes.modificationWarningItem}
-          >
-            <ListItemIcon className={classes.validationWarningIcon}>
-              <Emoji emoji="👉" ariaLabel="Information" />
-            </ListItemIcon>
-            <ListItemText primary="En cas de modification des saisies, le salarié recevra une notification." />
-          </ListItem>
-        </List>
-        <Link
-          className={classes.dismissModificationAlert}
-          to="/#"
-          data-testid="dismissMissionModificationWarningLink"
-          onClick={e => {
-            e.preventDefault();
-            handleDismissWarning();
-          }}
-        >
-          Ne plus afficher ce message
-        </Link>
-      </Alert>
+        description={
+          <>
+            <List disablePadding>
+              <ListItem
+                disableGutters
+                dense
+                className={classes.modificationWarningItem}
+              >
+                <ListItemIcon className={classes.validationWarningIcon}>
+                  <Emoji emoji="👉" ariaLabel="Information" />
+                </ListItemIcon>
+                <ListItemText primary="Les modifications sont enregistrées et apparaîtront en cas de contrôle." />
+              </ListItem>
+              <ListItem
+                disableGutters
+                dense
+                className={classes.modificationWarningItem}
+              >
+                <ListItemIcon className={classes.validationWarningIcon}>
+                  <Emoji emoji="👉" ariaLabel="Information" />
+                </ListItemIcon>
+                <ListItemText primary="En cas de modification des saisies, le salarié recevra une notification." />
+              </ListItem>
+            </List>
+            <Link
+              className={classes.dismissModificationAlert}
+              to="/#"
+              data-testid="dismissMissionModificationWarningLink"
+              onClick={e => {
+                e.preventDefault();
+                handleDismissWarning();
+              }}
+            >
+              Ne plus afficher ce message
+            </Link>
+          </>
+        }
+      />
     </Collapse>
   );
 }

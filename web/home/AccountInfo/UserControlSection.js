@@ -9,7 +9,8 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Skeleton from "@mui/material/Skeleton";
 import { prettyFormatDayHour } from "common/utils/time";
-import { Alert } from "@mui/material";
+import Notice from "../../common/Notice";
+import { FieldTitle } from "../../common/typography/FieldTitle";
 
 const useStyles = makeStyles(theme => ({
   section: {
@@ -18,15 +19,6 @@ const useStyles = makeStyles(theme => ({
   mainTitle: {
     marginBottom: theme.spacing(1),
     textAlign: "left"
-  },
-  alert: {
-    marginBottom: theme.spacing(2)
-  },
-  explanation: {
-    fontSize: "0.875rem"
-  },
-  controlHistory: {
-    color: theme.palette.grey[600]
   }
 }));
 
@@ -37,20 +29,23 @@ export function UserControlSection() {
   const [controlsDate, setControlsDate] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
-  React.useEffect(async () => {
-    setLoading(true);
-    const apiResponse = await api.graphQlQuery(USER_CONTROLS_QUERY, {
-      userId: currentUserId()
-    });
-    setControlsDate(apiResponse.data.user.controlsDate);
-    setLoading(false);
+  React.useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      const apiResponse = await api.graphQlQuery(USER_CONTROLS_QUERY, {
+        userId: currentUserId()
+      });
+      setControlsDate(apiResponse.data.user.controlsDate);
+      setLoading(false);
+    };
+    loadData();
   }, []);
 
   return (
     <Box my={6} mb={6} className={classes.section}>
       <Grid container>
         <Grid item xs={12}>
-          <Typography className={classes.mainTitle} variant="h5">
+          <Typography className={classes.mainTitle} variant="h5" component="h2">
             Mes contrôles en bord de route
           </Typography>
         </Grid>
@@ -60,19 +55,13 @@ export function UserControlSection() {
           <>
             {controlsDate.length > 0 && (
               <Stack direction="column">
-                <Alert severity="info" className={classes.alert}>
-                  <Typography className={classes.explanation}>
-                    Votre employeur est responsable en cas de contrôle en bord
-                    de route
-                  </Typography>
-                </Alert>
-                <Typography
-                  align="left"
-                  className={classes.controlHistory}
-                  variant="overline"
-                >
-                  HISTORIQUE DES CONTRÔLES
-                </Typography>
+                <Notice
+                  sx={{ marginBottom: 2 }}
+                  description="Votre employeur est responsable en cas de contrôle en bord
+                    de route"
+                  size="small"
+                />
+                <FieldTitle uppercaseTitle>Historique De Contrôles</FieldTitle>
                 <Typography align="left">
                   {controlsDate.map(prettyFormatDayHour).join(" ; ")}
                 </Typography>

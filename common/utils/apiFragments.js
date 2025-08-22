@@ -9,6 +9,8 @@ export const COMPANY_SETTINGS_FRAGMENT = gql`
       allowTransfers
       requireExpenditures
       requireMissionName
+      allowOtherTask
+      otherTaskLabel
     }
   }
 `;
@@ -23,6 +25,23 @@ export const FRAGMENT_LOCATION_FULL = gql`
     kilometerReading
   }
 `;
+
+export const FRAGMENT_ACTIVITY = gql`
+  fragment Activity on Activity {
+    id
+    type
+    startTime
+    endTime
+    lastUpdateTime
+    lastSubmitterId
+    user {
+      id
+      firstName
+      lastName
+    }
+    submitterId
+  }
+`;
 export const FULL_MISSION_FRAGMENT = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
@@ -30,10 +49,20 @@ export const FULL_MISSION_FRAGMENT = gql`
     id
     name
     submitterId
+    submitter {
+      firstName
+      lastName
+    }
+    isHoliday
+    deletedAt
+    deletedBy
+    isHoliday
     validations {
       submitterId
       receptionTime
       isAdmin
+      isAuto
+      justification
       userId
     }
     vehicle {
@@ -54,9 +83,10 @@ export const FULL_MISSION_FRAGMENT = gql`
       id
       name
       siren
+      legalName
       ...CompanySettings
     }
-    activities {
+    activities(includeDismissedActivities: false) {
       id
       type
       missionId
@@ -88,6 +118,7 @@ export const FULL_MISSION_FRAGMENT = gql`
     endLocation {
       ...FullLocation
     }
+    pastRegistrationJustification
   }
 `;
 
@@ -148,6 +179,11 @@ export const OBSERVED_INFRACTIONS_FRAGMENT = gql`
     type
     unit
     extra
+    business {
+      id
+      transportType
+      businessType
+    }
   }
 `;
 
@@ -180,6 +216,35 @@ export const FULL_TEAM_FRAGMENT = gql`
   }
 `;
 
+export const FULL_EMPLOYMENT_FRAGMENT = gql`
+  fragment FullEmploymentData on Employment {
+    id
+    startDate
+    endDate
+    isAcknowledged
+    email
+    hasAdminRights
+    latestInviteEmailTime
+    teamId
+    business {
+      transportType
+      businessType
+    }
+    companyId
+    company {
+      id
+      name
+      siren
+    }
+    user {
+      id
+      email
+      firstName
+      lastName
+    }
+  }
+`;
+
 export const CONTROL_BULLETIN_FRAGMENT = gql`
   fragment ControlBulletin on ControlBulletinFields {
     userBirthDate
@@ -198,6 +263,7 @@ export const CONTROL_BULLETIN_FRAGMENT = gql`
     licenseCopyNumber
     observation
     isVehicleImmobilized
+    businessType
   }
 `;
 
@@ -213,6 +279,7 @@ export const CONTROL_DATA_FRAGMENT = gql`
     userLastName
     controlBulletinCreationTime
     vehicleRegistrationNumber
+    isDayPageFilled
     note
     nbReportedInfractions
     controlBulletin {
@@ -228,5 +295,27 @@ export const CONTROLLER_USER_FRAGMENT = gql`
     lastName
     email
     grecoId
+  }
+`;
+
+export const USER_AGREEMENT = gql`
+  fragment UserAgreementData on UserAgreement {
+    hasAcceptedCgu
+    hasRejectedCgu
+    shouldAcceptCgu
+    isBlacklisted
+    answerDate
+    expiresAt
+    cguVersion
+  }
+`;
+
+export const NOTIFICATION_FRAGMENT = gql`
+  fragment NotificationData on Notification {
+    id
+    type
+    creationTime
+    read
+    data
   }
 `;

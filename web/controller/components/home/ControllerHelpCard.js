@@ -36,7 +36,7 @@ export function ControllerHelpCard({
         className={classNames(iconName, "fr-icon--lg", classes.icon)}
         aria-hidden="true"
       ></span>
-      <Stack>
+      <Stack width="100%">
         <h5>{title}</h5>
         <p>{description}</p>
       </Stack>

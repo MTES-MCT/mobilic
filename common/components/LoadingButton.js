@@ -1,9 +1,9 @@
 import React from "react";
 import omit from "lodash/omit";
-import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export function LoadingButton(props) {
   const [loading, setLoading] = React.useState(false);

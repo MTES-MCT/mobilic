@@ -1,21 +1,16 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
-import Alert from "@mui/material/Alert";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
+import { Stack } from "@mui/material";
+import Notice from "../common/Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { FieldTitle } from "../common/typography/FieldTitle";
+import { useTypographyStyles } from "../common/typography/TypographyStyles";
 
 const useStyles = makeStyles(theme => ({
-  fieldName: {
-    color: theme.palette.grey[600]
-  },
   fieldValue: {
-    fontWeight: props => (props.bold ? "bold" : 500),
-    whiteSpace: "inherit"
-  },
-  actionButton: {
-    fontSize: theme.typography.overline.fontSize,
-    marginLeft: theme.spacing(4)
+    fontWeight: props => (props.bold ? "bold" : 400)
   }
 }));
 
@@ -26,43 +21,52 @@ export function InfoItem({
   bold,
   actionTitle,
   action,
-  alertComponent
+  alertComponent,
+  titleProps = {},
+  uppercaseTitle = true,
+  valuePlaceholder
 }) {
   const classes = useStyles({ bold });
+  const typographyClasses = useTypographyStyles();
 
-  return [
-    <Grid key={1} container wrap="nowrap" spacing={0} alignItems="flex-start">
-      <Grid item>
-        <Typography
-          align="left"
-          className={classes.fieldName}
-          variant="overline"
-        >
-          {name}
-        </Typography>
-      </Grid>
-      {action && (
-        <Grid item>
-          <Button
-            size="small"
-            color="primary"
-            variant="contained"
-            onClick={action}
-            className={classes.actionButton}
+  const title = React.useMemo(
+    () => actionTitle || (value ? "Modifier" : "Ajouter")
+  );
+
+  return (
+    <>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        columnGap={1}
+      >
+        <Stack direction="column" sx={{ flexGrow: 1, maxWidth: "70%" }}>
+          <FieldTitle uppercaseTitle={uppercaseTitle} {...titleProps}>
+            {name}
+          </FieldTitle>
+          <Typography
+            noWrap
+            align="left"
+            className={value ? classes.fieldValue : typographyClasses.disabled}
           >
-            {actionTitle}
-          </Button>
-        </Grid>
-      )}
-    </Grid>,
-    <Typography key={2} noWrap align="left" className={classes.fieldValue}>
-      {value}
-    </Typography>,
-    info && (
-      <Alert key={3} severity="info">
-        {info}
-      </Alert>
-    ),
-    alertComponent
-  ];
+            {value || valuePlaceholder}
+          </Typography>
+        </Stack>
+        {action && (
+          <Grid item>
+            <Button
+              size="small"
+              priority={value ? "secondary" : "primary"}
+              onClick={action}
+            >
+              {title}
+            </Button>
+          </Grid>
+        )}
+      </Stack>
+      {info && <Notice description={info} />}
+      {alertComponent}
+    </>
+  );
 }

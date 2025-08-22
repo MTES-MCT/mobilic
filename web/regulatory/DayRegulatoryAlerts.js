@@ -5,7 +5,6 @@ import { GenericRegulatoryAlerts } from "./GenericRegulatoryAlerts";
 export function DayRegulatoryAlerts({
   userId,
   day,
-  prefetchedRegulationComputation,
   shouldDisplayInitialEmployeeVersion = false
 }) {
   return (
@@ -13,7 +12,6 @@ export function DayRegulatoryAlerts({
       userId={userId}
       day={day}
       shouldDisplayInitialEmployeeVersion={shouldDisplayInitialEmployeeVersion}
-      prefetchedRegulationComputation={prefetchedRegulationComputation}
       regulationCheckUnit={PERIOD_UNITS.DAY}
     />
   );

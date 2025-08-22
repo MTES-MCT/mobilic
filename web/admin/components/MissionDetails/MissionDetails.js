@@ -1,13 +1,13 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
 import {
   formatDateTime,
   formatTimeOfDay,
+  frenchFormatDateStringOrTimeStamp,
   getStartOfDay,
-  textualPrettyFormatDay
+  textualPrettyFormatDay,
+  unixTimestampToDate
 } from "common/utils/time";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../../store/store";
@@ -15,7 +15,6 @@ import { LoadingButton } from "common/components/LoadingButton";
 import { useModals } from "common/utils/modals";
 import List from "@mui/material/List";
 import { MISSION_QUERY } from "common/utils/apiQueries";
-import { Event } from "../../../common/Event";
 import { formatApiError } from "common/utils/errors";
 import { editUserExpenditures } from "common/utils/expenditures";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -24,8 +23,6 @@ import {
   missionHasAtLeastOneAdminValidation,
   missionsSelector
 } from "../../selectors/missionSelectors";
-import { MissionVehicleInfo } from "../MissionVehicleInfo";
-import { MissionLocationInfo } from "../MissionLocationInfo";
 import { MissionEmployeeCard } from "../MissionEmployeeCard";
 import ListItem from "@mui/material/ListItem";
 import { ADMIN_ACTIONS } from "../../store/reducers/root";
@@ -38,26 +35,32 @@ import {
   DEFAULT_LAST_ACTIVITY_TOO_LONG,
   missionCreatedByAdmin
 } from "common/utils/mission";
-import { Alert } from "@mui/material";
 import { WarningModificationMission } from "./WarningModificationMission";
 import { ACTIVITIES } from "common/utils/activities";
 import {
+  entryDeleted,
   entryToBeValidatedByAdmin,
   missionToValidationEntries
 } from "../../selectors/validationEntriesSelectors";
 import { partition } from "lodash/collection";
-import Button from "@mui/material/Button";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
   ADD_EMPLOYEE_IN_MISSION_PANEL,
   VALIDATE_MISSION_IN_MISSION_PANEL
 } from "common/utils/matomoTags";
+import { MissionDetailsVehicle } from "./MissionDetailsVehicle";
+import { MissionDetailsLocations } from "./MissionDetailsLocations";
+import { MissionDetailsObservations } from "./MissionDetailsObservations";
+import Notice from "../../../common/Notice";
+import CloseButton from "../../../common/CloseButton";
+import { PastMissionNotice } from "./PastMissionNotice";
 
 export function MissionDetails({
   missionId,
   day,
   handleClose,
-  setShouldRefreshActivityPanel
+  setShouldRefreshActivityPanel,
+  refreshData
 }) {
   const classes = useMissionDetailsStyles();
 
@@ -78,14 +81,14 @@ export function MissionDetails({
   const mission = useMissionWithStats(mission_);
 
   const [loading, setLoading] = React.useState(false);
-  const [globalFieldsEditable, setGlobalFieldsEditable] = React.useState(false);
   const [missionLoadError, setMissionLoadError] = React.useState(false);
-  const [
-    adminMayOverrideValidation,
-    setAdminMayOverrideValidation
-  ] = React.useState(false);
 
   const [usersToAdd, setUsersToAdd] = React.useState([]);
+
+  const [
+    overrideValidationJustification,
+    setOverrideValidationJustification
+  ] = React.useState("");
 
   const [
     entriesToValidateByAdmin,
@@ -95,10 +98,17 @@ export function MissionDetails({
     entriesToValidateByWorker,
     setEntriesToValidateByWorker
   ] = React.useState([]);
+  const [entriesDeleted, setEntriesDeleted] = React.useState([]);
   const [entriesValidatedByAdmin, setEntriesValidatedByAdmin] = React.useState(
     []
   );
   const [userIdsWithEntries, setUserIdsWithEntries] = React.useState(false);
+
+  const overrideValidation = () => {
+    modals.open("overrideValidation", {
+      updateJustification: setOverrideValidationJustification
+    });
+  };
 
   async function loadMission() {
     const alreadyFetchedMission = missionsSelector(adminStore)?.find(
@@ -124,16 +134,47 @@ export function MissionDetails({
       } catch (err) {
         setMissionLoadError(formatApiError(err));
       }
-      setLoading(false);
     }
+    setLoading(false);
   }
+
+  const isMissionDeleted = React.useMemo(() => mission?.isDeleted, [mission]);
+  const isMissionHoliday = React.useMemo(() => mission?.isHoliday, [mission]);
+
+  const adminMayOverrideValidation = React.useMemo(
+    () =>
+      mission &&
+      (mission.missionTooOld ||
+        mission.missionNotUpdatedForTooLong ||
+        missionCreatedByAdmin(mission, adminStore.employments)),
+    [mission]
+  );
+
+  const globalFieldsEditable = React.useMemo(
+    () =>
+      !isMissionHoliday &&
+      !isMissionDeleted &&
+      (overrideValidationJustification ||
+        (!missionHasAtLeastOneAdminValidation(mission) &&
+          (entriesToValidateByAdmin?.length > 0 ||
+            adminMayOverrideValidation))),
+    [
+      entriesToValidateByAdmin,
+      adminMayOverrideValidation,
+      overrideValidationJustification
+    ]
+  );
 
   const onValidate = async () => {
     setLoading(true);
     const usersToValidate = entriesToValidateByAdmin.map(
       workerEntryToValidate => workerEntryToValidate.user.id
     );
-    await missionActions.validateMission(usersToValidate);
+    await missionActions.validateMission(
+      usersToValidate,
+      overrideValidationJustification
+    );
+    setOverrideValidationJustification("");
     setLoading(false);
   };
 
@@ -142,31 +183,33 @@ export function MissionDetails({
   }, [missionId]);
 
   React.useEffect(() => {
-    const partitionedList = partition(workerEntries, workerEntry =>
+    const [deleted, notDeleted] = partition(workerEntries, workerEntry =>
+      entryDeleted(workerEntry)
+    );
+    setEntriesDeleted(deleted);
+    const [
+      toBeValidatedByAdmin,
+      notToBeValidatedByAdmin
+    ] = partition(notDeleted, workerEntry =>
       entryToBeValidatedByAdmin(
         workerEntry,
         adminStore.userId,
-        adminMayOverrideValidation
+        adminMayOverrideValidation,
+        overrideValidationJustification
       )
     );
-    setEntriesToValidateByAdmin(partitionedList[0]);
-    const partitionedNoRequiredActionList = partition(
-      partitionedList[1],
+    setEntriesToValidateByAdmin(toBeValidatedByAdmin);
+    const [validatedByAdmin, toValidateByWorker] = partition(
+      notToBeValidatedByAdmin,
       workerEntry => workerEntry.adminValidation
     );
-    setEntriesValidatedByAdmin(partitionedNoRequiredActionList[0]);
-    setEntriesToValidateByWorker(partitionedNoRequiredActionList[1]);
-  }, [workerEntries, adminMayOverrideValidation]);
-
-  React.useEffect(() => {
-    if (mission) {
-      setAdminMayOverrideValidation(
-        mission.missionTooOld ||
-          mission.missionNotUpdatedForTooLong ||
-          missionCreatedByAdmin(mission, adminStore.employments)
-      );
-    }
-  }, [mission]);
+    setEntriesValidatedByAdmin(validatedByAdmin);
+    setEntriesToValidateByWorker(toValidateByWorker);
+  }, [
+    workerEntries,
+    adminMayOverrideValidation,
+    overrideValidationJustification
+  ]);
 
   React.useEffect(() => {
     if (mission) {
@@ -188,13 +231,6 @@ export function MissionDetails({
     }
   }, [mission, usersToAdd]);
 
-  React.useEffect(() => {
-    setGlobalFieldsEditable(
-      !missionHasAtLeastOneAdminValidation(mission) &&
-        (entriesToValidateByAdmin?.length > 0 || adminMayOverrideValidation)
-    );
-  }, [entriesToValidateByAdmin, adminMayOverrideValidation]);
-
   if (loading) return <CircularProgress color="primary" />;
   if (missionLoadError)
     return <Typography color="error">{missionLoadError}</Typography>;
@@ -203,12 +239,12 @@ export function MissionDetails({
 
   const adminSettings = adminStore.settings;
 
-  const missionCompany = adminStore.companies.find(
-    c => c.id === mission.companyId
-  );
-  const showExpenditures = adminSettings.requireExpenditures;
+  const showExpenditures =
+    adminSettings.requireExpenditures && !mission.isHoliday;
   const showKilometerReading = adminSettings.requireKilometerData;
   const allowTransfers = adminSettings.allowTransfers;
+  const allowOtherTask = adminSettings.allowOtherTask;
+  const otherTaskLabel = adminSettings.otherTaskLabel;
   const allowSupportActivity = adminSettings.requireSupportActivity;
   const editableMissionName = adminSettings.requireMissionName;
 
@@ -240,22 +276,22 @@ export function MissionDetails({
                   ? newName => missionActions.changeName(newName)
                   : null
               }
+              missionPrefix={!isMissionHoliday}
             />
           </Grid>
           <Grid>
-            <IconButton
-              aria-label="Fermer"
-              className={classes.closeButton}
-              onClick={handleClose}
-            >
-              <CloseIcon />
-            </IconButton>
+            <CloseButton onClick={handleClose} />
           </Grid>
         </Grid>
         {mission.name && (mission.startTime || day) && (
-          <Typography variant="h6" className={classes.missionSubTitle}>
-            Du {textualPrettyFormatDay(mission.startTime || day)}
-            {doesMissionSpanOnMultipleDays ? (
+          <Typography
+            variant="h6"
+            component="span"
+            className={classes.missionSubTitle}
+          >
+            Du {textualPrettyFormatDay(mission.startTime || day)}{" "}
+            {doesMissionSpanOnMultipleDays &&
+            !(mission.isDeleted && !mission.isComplete) ? (
               <span>
                 {" "}
                 au {textualPrettyFormatDay(mission.endTimeOrNow)}{" "}
@@ -271,152 +307,65 @@ export function MissionDetails({
           </Typography>
         )}
       </Box>
-      {globalFieldsEditable && <WarningModificationMission />}
-      {globalFieldsEditable && mission.missionNotUpdatedForTooLong && (
-        <Alert severity="warning" className={classes.missionTooLongWarning}>
-          Vous pouvez modifier et valider cette mission car la dernière activité
-          de votre salarié dure depuis plus de{" "}
-          {DEFAULT_LAST_ACTIVITY_TOO_LONG / 3600} heures.
-        </Alert>
-      )}
-      <Box className="flex-row" pb={4} style={{ alignItems: "center" }}>
-        <Typography variant="h5" className={classes.vehicle}>
-          Véhicule :
-        </Typography>
-        <MissionVehicleInfo
-          vehicle={mission.vehicle}
-          editVehicle={
-            globalFieldsEditable ? missionActions.updateVehicle : null
+      {isMissionDeleted && (
+        <Notice
+          type="info"
+          description={
+            <>
+              Cette mission a été supprimée le{" "}
+              {frenchFormatDateStringOrTimeStamp(
+                unixTimestampToDate(mission?.deletedAt)
+              )}{" "}
+              par {mission?.deletedBy}.
+            </>
           }
-          vehicles={adminStore.vehicles.filter(
-            v => missionCompany && v.companyId === missionCompany.id
-          )}
+          sx={{ mb: 2 }}
         />
-      </Box>
-      <Grid container justifyContent="space-between" spacing={4}>
-        <Grid item xs={12} sm={6}>
-          <Typography variant="h5">Début</Typography>
-          <MissionLocationInfo
-            location={mission.startLocation}
-            time={
-              mission.startTime ? dateTimeFormatter(mission.startTime) : null
-            }
-            editLocation={
-              globalFieldsEditable
-                ? address =>
-                    missionActions.updateLocation(
-                      address,
-                      true,
-                      mission.startLocation?.kilometerReading
-                    )
-                : null
-            }
-            editKm={
-              globalFieldsEditable
-                ? km => missionActions.updateKilometerReading(km, true)
-                : null
-            }
-            showKm={showKilometerReading}
-            defaultAddresses={adminStore.knownAddresses.filter(
-              a => missionCompany && a.companyId === missionCompany.id
-            )}
-            maxKmReading={mission.endLocation?.kilometerReading}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <Typography variant="h5">Fin</Typography>
-          <MissionLocationInfo
-            location={mission.endLocation}
-            time={
-              mission.startTime ? (
-                <span>
-                  {dateTimeFormatter(mission.endTimeOrNow)}{" "}
-                  {mission.isComplete ? (
-                    ""
-                  ) : (
-                    <span className={classes.runningMissionText}>
-                      (en cours)
-                    </span>
-                  )}
-                </span>
-              ) : null
-            }
-            editLocation={
-              globalFieldsEditable
-                ? address =>
-                    missionActions.updateLocation(
-                      address,
-                      false,
-                      mission.endLocation?.kilometerReading
-                    )
-                : null
-            }
-            editKm={
-              globalFieldsEditable
-                ? km => missionActions.updateKilometerReading(km, false)
-                : null
-            }
-            showKm={showKilometerReading}
-            defaultAddresses={adminStore.knownAddresses.filter(
-              a => missionCompany && a.companyId === missionCompany.id
-            )}
-            minKmReading={mission.startLocation?.kilometerReading}
-          />
-        </Grid>
-      </Grid>
-      <Box
-        pb={4}
-        style={{ alignItems: "center" }}
-        className={classes.observationSection}
-      >
-        <Grid
-          container
-          spacing={2}
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Grid item>
-            <Typography variant="h5" className={classes.vehicle}>
-              Observations
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Button
-              aria-label="Ajouter une observation"
-              color="primary"
-              variant="outlined"
-              size="small"
-              className={classes.smallTextButton}
-              onClick={() => {
-                modals.open("commentInput", {
-                  handleContinue: missionActions.createComment
-                });
-              }}
-            >
-              Ajouter une observation
-            </Button>
-          </Grid>
-        </Grid>
-        {mission.comments.length > 0 ? (
-          <List className={classes.comments}>
-            {mission.comments.map(comment => (
-              <Event
-                key={comment.id}
-                text={comment.text}
-                time={comment.receptionTime}
-                submitter={comment.submitter}
-                submitterId={comment.submitterId}
-                withFullDate={true}
-                cancel={() => missionActions.deleteComment(comment)}
-              />
-            ))}
-          </List>
-        ) : (
-          <Typography className={classes.noCommentText}>
-            Aucune observation sur cette mission
-          </Typography>
-        )}
-      </Box>
+      )}
+      {mission.pastRegistrationJustification ? (
+        <PastMissionNotice
+          missionName={mission.name}
+          justification={mission.pastRegistrationJustification}
+          submitter={mission.submitter}
+          sx={{ mb: 2 }}
+        />
+      ) : (
+        globalFieldsEditable && <WarningModificationMission />
+      )}
+      {globalFieldsEditable && mission.missionNotUpdatedForTooLong && (
+        <Notice
+          type="warning"
+          description={
+            <>
+              Vous pouvez modifier et valider cette mission car la dernière
+              activité de votre salarié dure depuis plus de{" "}
+              {DEFAULT_LAST_ACTIVITY_TOO_LONG / 3600} heures.
+            </>
+          }
+          className={classes.missionTooLongWarning}
+        />
+      )}
+      {!isMissionHoliday && (
+        <MissionDetailsVehicle
+          mission={mission}
+          missionActions={missionActions}
+          isEditable={globalFieldsEditable}
+          titleProps={{ component: "h2" }}
+        />
+      )}
+      <MissionDetailsLocations
+        mission={mission}
+        missionActions={missionActions}
+        dateTimeFormatter={dateTimeFormatter}
+        isEditable={globalFieldsEditable}
+        showKilometerReading={showKilometerReading}
+        titleProps={{ component: "h2" }}
+      />
+      <MissionDetailsObservations
+        mission={mission}
+        missionActions={missionActions}
+        titleProps={{ component: "h2" }}
+      />
       {showKilometerReading &&
         mission.startLocation &&
         mission.startLocation.kilometerReading &&
@@ -424,7 +373,11 @@ export function MissionDetails({
         mission.endLocation.kilometerReading &&
         mission.endLocation.kilometerReading >=
           mission.startLocation.kilometerReading && (
-          <Typography variant="h5" className={classes.kilometers}>
+          <Typography
+            variant="h5"
+            component="span"
+            className={classes.kilometers}
+          >
             Distance parcourue :{" "}
             <span style={{ fontSize: "1rem", fontWeight: "normal" }}>
               {mission.endLocation.kilometerReading -
@@ -460,6 +413,8 @@ export function MissionDetails({
                 }
               : null
           }
+          actionProps={{ iconId: "fr-icon-add-line", iconPosition: "left" }}
+          titleProps={{ component: "h2" }}
         >
           <List>
             {entriesToValidateByAdmin.map(e => (
@@ -469,11 +424,13 @@ export function MissionDetails({
                   mission={mission}
                   user={e.user}
                   showExpenditures={showExpenditures}
+                  headingComponent="h3"
                   onCreateActivity={
                     entryToBeValidatedByAdmin(
                       e,
                       adminStore.userId,
-                      adminMayOverrideValidation
+                      adminMayOverrideValidation,
+                      overrideValidationJustification
                     ) || !e.activities
                       ? () =>
                           modals.open("activityRevision", {
@@ -486,6 +443,8 @@ export function MissionDetails({
                             adminMode: true,
                             allowTransfers,
                             allowSupportActivity,
+                            allowOtherTask,
+                            otherTaskLabel,
                             nullableEndTime: false,
                             defaultTime: mission.startTime || day,
                             forcedUser: e.user,
@@ -497,7 +456,8 @@ export function MissionDetails({
                     entryToBeValidatedByAdmin(
                       e,
                       adminStore.userId,
-                      adminMayOverrideValidation
+                      adminMayOverrideValidation,
+                      overrideValidationJustification
                     ) || !e.activities
                       ? async entry =>
                           modals.open("activityRevision", {
@@ -516,6 +476,8 @@ export function MissionDetails({
                             adminMode: true,
                             allowTransfers,
                             allowSupportActivity,
+                            allowOtherTask,
+                            otherTaskLabel,
                             nullableEndTime: false,
                             forcedUser: e.user,
                             displayWarningMessage: false,
@@ -523,6 +485,7 @@ export function MissionDetails({
                               await missionActions.cancelMission({
                                 user: e.user
                               });
+                              await refreshData();
                               handleClose();
                             }
                           })
@@ -532,7 +495,8 @@ export function MissionDetails({
                     entryToBeValidatedByAdmin(
                       e,
                       adminStore.userId,
-                      adminMayOverrideValidation
+                      adminMayOverrideValidation,
+                      overrideValidationJustification
                     ) || !e.activities
                       ? (newExps, oldExps) =>
                           editUserExpenditures(
@@ -559,18 +523,14 @@ export function MissionDetails({
           </List>
           {entriesToValidateByAdmin?.length > 0 && (
             <Box>
-              <Alert severity="info">
-                <Typography className={classes.validationWarningText}>
-                  Il ne vous sera plus possible de modifier les données après
+              <Notice
+                type="info"
+                description="Il ne vous sera plus possible de modifier les données après
                   validation, y compris les données globales de la mission
-                  (Lieux, Véhicules).
-                </Typography>
-              </Alert>
+                  (Lieux, Véhicules)."
+              />
               <LoadingButton
-                aria-label="Valider"
-                variant="contained"
-                color="primary"
-                size="small"
+                size="large"
                 className={classes.validationButton}
                 onClick={async e => {
                   e.stopPropagation();
@@ -586,12 +546,11 @@ export function MissionDetails({
       )}
       {entriesToValidateByWorker?.length > 0 && (
         <MissionDetailsSection key={6} title="Saisie(s) en cours">
-          <Alert severity="info">
-            <Typography className={classes.validationWarningText}>
-              Vous aurez accès à la validation de ces saisies lorsque le salarié
-              les aura validées.
-            </Typography>
-          </Alert>
+          <Notice
+            type="info"
+            description="Vous aurez accès à la validation de ces saisies lorsque le salarié
+              les aura validées."
+          />
           <List>
             {entriesToValidateByWorker.map(e => (
               <ListItem key={e.user.id} disableGutters>
@@ -619,6 +578,26 @@ export function MissionDetails({
                   showExpenditures={showExpenditures}
                   day={day}
                   displayIcon={false}
+                  overrideValidation={overrideValidation}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </MissionDetailsSection>
+      )}
+      {entriesDeleted?.length > 0 && (
+        <MissionDetailsSection key={8} title="Saisie(s) supprimée(s)">
+          <List>
+            {entriesDeleted.map(e => (
+              <ListItem key={e.user.id} disableGutters>
+                <MissionEmployeeCard
+                  className={classes.employeeCard}
+                  mission={mission}
+                  user={e.user}
+                  showExpenditures={showExpenditures}
+                  day={day}
+                  displayIcon={false}
+                  isDeleted={true}
                 />
               </ListItem>
             ))}

@@ -23,6 +23,7 @@ export function AdminStoreProvider({ children }) {
     companyId: undefined,
     employmentId: undefined,
     shouldSeeCertificateInfo: false,
+    shouldForceNbWorkerInfo: false,
     users: [],
     workDays: [],
     vehicles: [],

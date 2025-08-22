@@ -8,6 +8,7 @@ import { jsToUnixTimestamp, prettyFormatDay } from "common/utils/time";
 import { CERTIFICATION_CRITERIAS } from "./certifiationCriterias";
 import CertificationCriteriaSingleResult from "./CertificationCriteriaSingleResult";
 import { Link } from "../../../common/LinkButton";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   italicInfo: {
@@ -16,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   },
   caption: {
     textTransform: "uppercase",
-    color: theme.palette.grey[500]
+    color: fr.colors.decisions.text.mention.grey.default
   },
   successCriteriasTitle: {
     color: theme.palette.success.main,
@@ -68,7 +69,9 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
 
   return [
     <Box key={10} mt={4}>
-      <Typography variant="h4">Synthèse de l'obtention des critères</Typography>
+      <Typography variant="h4" component="h2">
+        Synthèse de l'obtention des critères
+      </Typography>
       {companyWithInfo.certificateCriterias && (
         <Typography mb={1} className={classes.italicInfo}>
           données calculées le {criteriaCalculationDate}

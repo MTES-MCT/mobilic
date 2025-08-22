@@ -9,23 +9,15 @@ import {
   formatKey
 } from "common/utils/addresses";
 import { captureSentryException } from "common/utils/sentry";
-import Button from "@mui/material/Button";
 import { makeStyles } from "@mui/styles";
-import { MyLocation } from "@mui/icons-material";
-import { Alert } from "@mui/material";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
+import Notice from "./Notice";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles(theme => ({
   geolocationButton: {
-    marginLeft: theme.spacing(3),
-    textTransform: "none"
-  },
-  geolocationAlert: {
-    marginLeft: theme.spacing(3),
-    marginRight: theme.spacing(3),
-    marginTop: theme.spacing(1),
-    fontSize: "0.75em"
+    marginLeft: theme.spacing(3)
   }
 }));
 
@@ -188,10 +180,10 @@ export function AddressField({
             {!loading ? (
               <>
                 <Button
-                  startIcon={<MyLocation />}
-                  variant="outlined"
+                  iconId="fr-icon-map-pin-2-line"
+                  iconPosition="left"
+                  priority="secondary"
                   className={classes.geolocationButton}
-                  disableElevation
                   onClick={e => {
                     setLoading(true);
                     askCurrentPosition();
@@ -199,9 +191,11 @@ export function AddressField({
                 >
                   Utiliser ma position actuelle
                 </Button>
-                <Alert severity="info" className={classes.geolocationAlert}>
-                  Vos déplacements ne seront pas géolocalisés
-                </Alert>
+                <Notice
+                  description="Vos déplacements ne seront pas géolocalisés"
+                  size="small"
+                  sx={{ marginTop: 1, marginX: 3 }}
+                />
               </>
             ) : (
               <CircularProgress

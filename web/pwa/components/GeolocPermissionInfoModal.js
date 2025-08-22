@@ -2,11 +2,10 @@ import React from "react";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { MainCtaButton } from "./MainCtaButton";
 import { LoadingButton } from "common/components/LoadingButton";
 import { makeStyles } from "@mui/styles";
 import GeolocModalBackground from "common/assets/images/geoloc-modal-background.svg";
-import { Alert, Dialog } from "@mui/material";
+import { Dialog } from "@mui/material";
 import Slide from "@mui/material/Slide";
 import { DISABLE_WARNING_MUTATION } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
@@ -16,6 +15,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { captureSentryException } from "common/utils/sentry";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import Emoji from "../../common/Emoji";
+import Notice from "../../common/Notice";
 
 export default function GeolocPermissionInfoModal({
   open,
@@ -56,16 +56,6 @@ export default function GeolocPermissionInfoModal({
       marginTop: theme.spacing(4),
       paddingRight: theme.spacing(3),
       paddingLeft: theme.spacing(3)
-    },
-    alertInfo: {
-      backgroundColor: "#709DFA",
-      margin: theme.spacing(3),
-      marginTop: "auto"
-    },
-    informationText: {
-      color: theme.palette.primary.contrastText,
-      fontStyle: "italic",
-      fontSize: "small"
     },
     actionButton: {
       alignItems: "center",
@@ -158,26 +148,23 @@ export default function GeolocPermissionInfoModal({
             service !
           </Typography>
         </Box>
-        <Alert
-          severity="info"
-          className={classes.alertInfo}
+        <Notice
+          description="Rassurez-vous, vos trajets ne seront pas géolocalisés et votre
+            accord sera toujours demandé !"
+          size="small"
+          sx={{ margin: 3, marginTop: "auto" }}
           data-testid="geoloc-modal-alert-info"
-        >
-          <Typography className={classes.informationText}>
-            Rassurez-vous, vos trajets ne seront pas géolocalisés et votre
-            accord sera toujours demandé !
-          </Typography>
-        </Alert>
+        />
         <Box
           className={classes.actionButton}
           data-testid="geoloc-modal-action-button"
         >
-          <MainCtaButton
+          <LoadingButton
             className={classes.ctaButton}
             onClick={acceptGeoLocation}
           >
             Partager ma position
-          </MainCtaButton>
+          </LoadingButton>
           <LoadingButton
             style={{ marginTop: 8 }}
             className={classes.subButton}

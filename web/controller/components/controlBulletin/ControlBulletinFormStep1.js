@@ -1,12 +1,15 @@
 import React, { useMemo } from "react";
 
 import Stack from "@mui/material/Stack";
-import { Select, TextInput } from "@dataesr/react-dsfr";
 import { COUNTRIES } from "../../utils/country";
 import { DEPARTMENTS } from "../../utils/departments";
 import { useApi } from "common/utils/api";
 import { CONTROL_LOCATION_QUERY } from "common/utils/apiQueries";
 import { DsfrAutocomplete } from "../utils/DsfrAutocomplete";
+import { MandatoryField } from "../../../common/MandatoryField";
+import { Input } from "../../../common/forms/Input";
+import { Select } from "../../../common/forms/Select";
+import { BirthDate } from "../../../common/forms/BirthDate";
 
 export function ControlBulletinFormStep1({
   handleEditControlBulletin,
@@ -17,22 +20,25 @@ export function ControlBulletinFormStep1({
 
   const api = useApi();
 
-  React.useEffect(async () => {
-    if (controlBulletin.locationDepartment) {
-      const departmentCode = DEPARTMENTS.find(
-        d => d.label === controlBulletin.locationDepartment
-      )?.code;
-      if (departmentCode) {
-        const apiResponse = await api.graphQlQuery(
-          CONTROL_LOCATION_QUERY,
-          {
-            department: departmentCode
-          },
-          { context: { nonPublicApi: true } }
-        );
-        setDepartmentLocations(apiResponse.data.controlLocation);
+  React.useEffect(() => {
+    const loadData = async () => {
+      if (controlBulletin.locationDepartment) {
+        const departmentCode = DEPARTMENTS.find(
+          d => d.label === controlBulletin.locationDepartment
+        )?.code;
+        if (departmentCode) {
+          const apiResponse = await api.graphQlQuery(
+            CONTROL_LOCATION_QUERY,
+            {
+              department: departmentCode
+            },
+            { context: { nonPublicApi: true } }
+          );
+          setDepartmentLocations(apiResponse.data.controlLocation);
+        }
       }
-    }
+    };
+    loadData();
   }, [controlBulletin.locationDepartment]);
 
   const controlLocationCommunes = useMemo(() => {
@@ -67,6 +73,7 @@ export function ControlBulletinFormStep1({
 
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
+      <MandatoryField />
       <DsfrAutocomplete
         field={controlBulletin.locationDepartment}
         fieldLabel="Département du contrôle"
@@ -100,48 +107,58 @@ export function ControlBulletinFormStep1({
           editControlBulletinField(newValue.id, "locationId");
         }}
       />
-      <TextInput
-        value={controlBulletin.userLastName || ""}
-        name="userLastName"
-        onChange={e => handleEditControlBulletin(e)}
+      <Input
+        nativeInputProps={{
+          value: controlBulletin.userLastName || "",
+          onChange: e => handleEditControlBulletin(e),
+          name: "userLastName"
+        }}
         label="Nom du salarié"
-        required
-        messageType={!controlBulletin.userLastName && showErrors ? "error" : ""}
-      />
-      <TextInput
-        value={controlBulletin.userFirstName || ""}
-        name="userFirstName"
-        onChange={e => handleEditControlBulletin(e)}
-        label="Prénom du salarié"
-        required
-        messageType={
-          !controlBulletin.userFirstName && showErrors ? "error" : ""
+        state={
+          !controlBulletin.userLastName && showErrors ? "error" : "default"
         }
-      />
-      <TextInput
-        value={controlBulletin.userBirthDate || ""}
-        name="userBirthDate"
-        onChange={e => handleEditControlBulletin(e)}
-        label="Date de naissance du salarié"
+        stateRelatedMessage="Veuillez compléter ce champ."
         required
-        type="date"
-        messageType={
-          !controlBulletin.userBirthDate && showErrors ? "error" : ""
+      />
+      <Input
+        nativeInputProps={{
+          value: controlBulletin.userFirstName || "",
+          onChange: e => handleEditControlBulletin(e),
+          name: "userFirstName"
+        }}
+        label="Prénom du salarié"
+        state={
+          !controlBulletin.userFirstName && showErrors ? "error" : "default"
+        }
+        stateRelatedMessage="Veuillez compléter ce champ."
+        required
+      />
+      <BirthDate
+        label="Date de naissance du salarié"
+        userBirthDate={controlBulletin.userBirthDate}
+        setUserBirthDate={newDateString =>
+          editControlBulletinField(newDateString, "userBirthDate")
         }
       />
       <Select
         label="Nationalité du salarié"
-        selected={controlBulletin.userNationality}
-        name="userNationality"
-        required
-        onChange={e => {
-          handleEditControlBulletin(e);
+        nativeSelectProps={{
+          onChange: e => handleEditControlBulletin(e),
+          value: controlBulletin.userNationality,
+          name: "userNationality"
         }}
-        options={COUNTRIES}
-        messageType={
-          !controlBulletin.userNationality && showErrors ? "error" : ""
+        state={
+          !controlBulletin.userNationality && showErrors ? "error" : "default"
         }
-      />
+        stateRelatedMessage="Veuillez compléter ce champ."
+        required
+      >
+        {COUNTRIES.map(option => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </Select>
     </Stack>
   );
 }

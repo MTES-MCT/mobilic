@@ -6,6 +6,7 @@ import { useModals } from "common/utils/modals";
 import { CONTROLLER_SAVE_REPORTED_INFRACTIONS } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import { getAlertsGroupedByDay } from "common/utils/regulation/groupAlertsByDay";
+import { isoFormatLocalDate, strToUnixTimestamp } from "common/utils/time";
 
 export const useReportInfractions = controlData => {
   const api = useApi();
@@ -50,9 +51,11 @@ export const useReportInfractions = controlData => {
             controlId: controlData?.id,
             reportedInfractions: observedInfractions
               .filter(infraction => infraction.isReported)
-              .map(({ date, sanction }) => ({
-                date,
-                sanction
+              .map(({ date, sanction, unit, type }) => ({
+                dateStr: isoFormatLocalDate(date),
+                sanction,
+                unit,
+                type
               }))
           },
           { context: { nonPublicApi: true } }
@@ -64,8 +67,14 @@ export const useReportInfractions = controlData => {
         setReportedInfractionsLastUpdateTime(
           newReportedInfractionsLastUpdateTime
         );
-        setObservedInfractions(newObservedInfractions);
-        controlData.observedInfractions = newObservedInfractions;
+        const newObservedInfractionsWithDates = newObservedInfractions.map(
+          o => ({
+            ...o,
+            date: o.date ? strToUnixTimestamp(o.date) : null
+          })
+        );
+        setObservedInfractions(newObservedInfractionsWithDates);
+        controlData.observedInfractions = newObservedInfractionsWithDates;
         if (showSuccessMessage) {
           alerts.success(
             observedInfractions.length === 1
@@ -118,6 +127,63 @@ export const useReportInfractions = controlData => {
     setHasModifiedInfractions(true);
   };
 
+  const onAddInfraction = (sanction, date) => {
+    let hasInsertedNewOne = false;
+    setObservedInfractions(currentObservedInfractions =>
+      currentObservedInfractions.flatMap(infraction => {
+        if (infraction.sanction !== sanction) {
+          return [infraction];
+        }
+        if (!infraction.date) {
+          return [{ ...infraction, date, isReported: true }];
+        }
+        if (!hasInsertedNewOne) {
+          hasInsertedNewOne = true;
+          return [
+            infraction,
+            {
+              ...infraction,
+              date,
+              isReported: true
+            }
+          ];
+        } else {
+          return [infraction];
+        }
+      })
+    );
+    setHasModifiedInfractions(true);
+  };
+
+  const onRemoveInfraction = (sanction, date) => {
+    const isOnlyOne =
+      observedInfractions.filter(infraction => infraction.sanction === sanction)
+        .length === 1;
+    setObservedInfractions(currentObservedInfractions =>
+      currentObservedInfractions.flatMap(infraction => {
+        if (infraction.sanction !== sanction) {
+          return [infraction];
+        }
+        if (isOnlyOne) {
+          return [
+            {
+              ...infraction,
+              date: null,
+              isReported: false
+            }
+          ];
+        } else {
+          if (infraction.date === date) {
+            return [];
+          } else {
+            return [infraction];
+          }
+        }
+      })
+    );
+    setHasModifiedInfractions(true);
+  };
+
   const checkedAlertsNumber = React.useMemo(
     () =>
       groupedAlerts
@@ -143,7 +209,7 @@ export const useReportInfractions = controlData => {
     [groupedAlerts]
   );
 
-  return [
+  return {
     reportedInfractionsLastUpdateTime,
     groupedAlerts,
     checkedAlertsNumber,
@@ -153,6 +219,8 @@ export const useReportInfractions = controlData => {
     hasModifiedInfractions,
     saveInfractions,
     cancelInfractions,
-    onUpdateInfraction
-  ];
+    onUpdateInfraction,
+    onAddInfraction,
+    onRemoveInfraction
+  };
 };

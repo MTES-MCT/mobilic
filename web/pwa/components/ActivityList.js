@@ -26,15 +26,12 @@ import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import { VerticalTimeline } from "common/components/VerticalTimeline";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import ToggleButton from "@mui/material/ToggleButton";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
+import { Description } from "../../common/typography/Description";
+import { SegmentedControl } from "@codegouvfr/react-dsfr/SegmentedControl";
+import { Box } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
-  infoText: {
-    color: theme.palette.grey[500],
-    fontStyle: "italic"
-  },
   longBreak: {
     color: theme.palette.success.main
   },
@@ -42,17 +39,6 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: props.color,
     color: theme.palette.primary.contrastText
   }),
-  toggleContainer: {
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2)
-  },
-  pieContainer: {
-    maxWidth: 300,
-    margin: "auto"
-  },
-  blurred: {
-    opacity: 0.3
-  },
   switch: {
     "& .MuiSwitch-thumb": {
       color: theme.palette.secondary.main
@@ -92,7 +78,11 @@ function ActivityItem({
         disableTypography
         primary={
           <Typography className={isLongBreak ? classes.longBreak : ""}>
-            {isLongBreak ? "Repos journalier" : ACTIVITIES[activity.type].label}
+            {isLongBreak
+              ? "Repos journalier"
+              : `${ACTIVITIES[activity.type].label}${
+                  activity.isMissionDeleted ? " (activité supprimée)" : ""
+                }`}
           </Typography>
         }
         secondary={
@@ -244,39 +234,54 @@ export function ActivityList({
 
   return (
     <Container ref={ref} maxWidth={false} disableGutters>
-      {canDisplayChart && (
-        <ToggleButtonGroup
-          className={classes.toggleContainer}
-          value={view}
-          exclusive
-          onChange={(e, newView) => {
-            if (newView) setView(newView);
-          }}
-          size="small"
-        >
-          <ToggleButton key="list" value="list">
-            Liste
-          </ToggleButton>
-          <ToggleButton key="timeline" value="timeline">
-            Frise
-          </ToggleButton>
-          <ToggleButton key="chart" value="chart">
-            Global
-          </ToggleButton>
-        </ToggleButtonGroup>
-      )}
       {hasActivitiesBeforeMinTime && (
-        <Typography variant="body2" className={classes.infoText}>
-          Les activités avant minuit le jour précédent ne sont pas inclues
-        </Typography>
+        <Box textAlign="left">
+          <Description>
+            Les activités avant minuit le jour précédent ne sont pas incluses.
+          </Description>
+        </Box>
+      )}
+      {canDisplayChart && (
+        <Box my={1} textAlign="left">
+          <SegmentedControl
+            legend="Options de visualisation"
+            small
+            classes={{
+              root: classes.switch
+            }}
+            hideLegend
+            segments={[
+              {
+                label: "Liste",
+                nativeInputProps: {
+                  onChange: () => setView("list"),
+                  checked: view === "list"
+                }
+              },
+              {
+                label: "Frise",
+                nativeInputProps: {
+                  onChange: () => setView("timeline"),
+                  checked: view === "timeline"
+                }
+              },
+              {
+                label: "Global",
+                nativeInputProps: {
+                  onChange: () => setView("chart"),
+                  checked: view === "chart"
+                }
+              }
+            ]}
+          />
+        </Box>
       )}
       {(view === "list" || !canDisplayChart) && (
         <List dense>
-          {augmentedAndSortedActivities.length === 0 && !disableEmptyMessage && (
-            <Typography variant="body2" className={classes.infoText}>
-              Pas d'activités sur cette journée
-            </Typography>
-          )}
+          {augmentedAndSortedActivities.length === 0 &&
+            !disableEmptyMessage && (
+              <Description>Pas d'activités sur cette journée</Description>
+            )}
           {augmentedAndSortedActivities.map((activity, index) => (
             <ActivityItem
               activity={activity}
@@ -308,9 +313,9 @@ export function ActivityList({
         />
       )}
       {hasActivitiesAfterMaxTime && (
-        <Typography variant="body2" className={classes.infoText}>
-          Les activités après minuit le jour suivant ne sont pas inclues
-        </Typography>
+        <Description>
+          Les activités après minuit le jour suivant ne sont pas incluses.
+        </Description>
       )}
     </Container>
   );

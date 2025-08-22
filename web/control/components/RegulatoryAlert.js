@@ -13,7 +13,8 @@ import {
 import { Link } from "../../common/LinkButton";
 import { ALERT_TYPES } from "common/utils/regulation/alertTypes";
 import Stack from "@mui/material/Stack";
-import { Checkbox } from "@dataesr/react-dsfr";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
+import { useInfractions } from "../../controller/utils/contextInfractions";
 
 const formatDate = timestamp => {
   const date = new Date(timestamp);
@@ -26,6 +27,7 @@ function formatAlertPeriod(alert, type) {
     return prettyFormatMonth(alert.month);
   }
   switch (type) {
+    case ALERT_TYPES.maximumWorkInCalendarWeek:
     case ALERT_TYPES.maximumWorkedDaysInWeek: {
       return textualPrettyFormatWeek(alert.week);
     }
@@ -33,7 +35,8 @@ function formatAlertPeriod(alert, type) {
     case ALERT_TYPES.minimumDailyRest:
     case ALERT_TYPES.minimumWorkDayBreak:
     case ALERT_TYPES.maximumWorkDayTime:
-    case ALERT_TYPES.noPaperLic: {
+    case ALERT_TYPES.noPaperLic:
+    case ALERT_TYPES.enoughBreak: {
       return textualPrettyFormatDay(alert.day);
     }
     default: {
@@ -42,7 +45,7 @@ function formatAlertPeriod(alert, type) {
   }
 }
 
-function formatAlertText(alert, type) {
+export function formatAlertText(alert, type) {
   switch (type) {
     case ALERT_TYPES.minimumDailyRest: {
       const maxBreakLengthInSeconds =
@@ -59,19 +62,41 @@ function formatAlertText(alert, type) {
     case ALERT_TYPES.maximumWorkedDaysInWeek: {
       const maxBreakLengthInSeconds = alert.extra.rest_duration_s;
       const tooManyDays = alert.extra.too_many_days;
+      const restDurationText = (
+        <>
+          Durée du repos hebdomadaire :{" "}
+          <b>{formatTimer(maxBreakLengthInSeconds)}</b>.
+        </>
+      );
+      const tooManyDaysText = (
+        <>La semaine ne comporte aucune journée non travaillée.</>
+      );
+      if (tooManyDays && !maxBreakLengthInSeconds) {
+        return (
+          <>
+            {tooManyDaysText}
+            <br />
+            Le repos hebdomadaire a été respecté.
+          </>
+        );
+      }
+      if (!tooManyDays && maxBreakLengthInSeconds) {
+        return (
+          <>
+            {restDurationText}
+            <br />
+            Le nombre maximal de jours de travail par semaine civile a été
+            respecté.
+          </>
+        );
+      }
+
       return (
-        <span>
-          {maxBreakLengthInSeconds && (
-            <>
-              Durée du repos hebdomadaire :{" "}
-              <b>{formatTimer(maxBreakLengthInSeconds)}</b>
-              <br />
-            </>
-          )}
-          {tooManyDays && (
-            <>La semaine ne comporte aucune journée non travaillée</>
-          )}
-        </span>
+        <>
+          {restDurationText}
+          <br />
+          {tooManyDaysText}
+        </>
       );
     }
     case ALERT_TYPES.maximumUninterruptedWorkTime: {
@@ -106,10 +131,65 @@ function formatAlertText(alert, type) {
         <span>
           Temps de travail total effectué entre le{" "}
           {formatDate(alert.extra.work_range_start)} et le{" "}
-          {formatDate(alert.extra.work_range_end)},{" "}
-          {nightWork ? "et comprenant du travail de nuit :" : ""}{" "}
+          {formatDate(alert.extra.work_range_end)}
+          {nightWork ? " et comprenant du travail de nuit" : ""}
+          {" : "}
           <b>{formatTimer(workTime)}</b>
         </span>
+      );
+    }
+    case ALERT_TYPES.maximumWorkInCalendarWeek: {
+      const {
+        work_duration_in_seconds,
+        work_range_start,
+        work_range_end
+      } = alert.extra;
+      return (
+        <span>
+          Temps de travail total effectué entre le{" "}
+          {formatDate(work_range_start)} et le {formatDate(work_range_end)} :{" "}
+          <b>{formatTimer(work_duration_in_seconds)}</b>
+          <b></b>
+        </span>
+      );
+    }
+    case ALERT_TYPES.enoughBreak: {
+      const {
+        not_enough_break,
+        too_much_uninterrupted_work_time
+      } = alert.extra;
+
+      let uninterruptedJsx = undefined;
+      if (too_much_uninterrupted_work_time) {
+        const uninterruptedWorkTime =
+          alert.extra.longest_uninterrupted_work_in_seconds;
+        uninterruptedJsx = (
+          <span>
+            Durée du temps de travail ininterrompu :{" "}
+            <b>{formatTimer(uninterruptedWorkTime)}</b>.{" "}
+          </span>
+        );
+      }
+
+      let breakJsx = "";
+      if (not_enough_break) {
+        const breakTimeInSeconds = alert.extra.total_break_time_in_seconds;
+        const workTimeInSeconds = alert.extra.work_range_in_seconds;
+        breakJsx = (
+          <span>
+            Durée du temps de pause :{" "}
+            <b>{formatMinutesFromSeconds(breakTimeInSeconds)}</b> pour une
+            amplitude journalière de <b>{formatTimer(workTimeInSeconds)}</b>{" "}
+            effectuée entre le {formatDate(alert.extra.work_range_start)} et le{" "}
+            {formatDate(alert.extra.work_range_end)}.
+          </span>
+        );
+      }
+      return (
+        <>
+          {uninterruptedJsx}
+          {breakJsx}
+        </>
       );
     }
     default:
@@ -123,29 +203,36 @@ export function RegulatoryAlert({
   sanction,
   isReportable,
   setPeriodOnFocus,
-  setTab,
-  isReportingInfractions,
-  onUpdateInfraction,
+  onChangeTab,
   readOnlyAlerts
 }) {
+  const { isReportingInfractions, onUpdateInfraction } = useInfractions();
   return (
     <Stack direction="row" spacing={2} alignItems="baseline" flexWrap="nowrap">
       {!readOnlyAlerts && isReportable && (
         <Checkbox
-          checked={alert.checked}
           disabled={!isReportingInfractions}
-          onChange={e => {
-            const alertDate = alert.day || alert.week || alert.month;
-            onUpdateInfraction(sanction, alertDate, e.target.checked);
-          }}
+          options={[
+            {
+              label: "",
+              nativeInputProps: {
+                name: "",
+                checked: alert.checked,
+                onChange: e => {
+                  const alertDate = alert.day || alert.week || alert.month;
+                  onUpdateInfraction(sanction, alertDate, e.target.checked);
+                }
+              }
+            }
+          ]}
         />
       )}
-      <div>
-        {setTab ? (
+      <div style={{ width: "100%" }}>
+        {onChangeTab ? (
           <Link
             onClick={e => {
               e.preventDefault();
-              setTab("history");
+              onChangeTab("history");
               if (setPeriodOnFocus) {
                 setPeriodOnFocus(
                   alert.day || alert.week || alert.month
@@ -156,6 +243,7 @@ export function RegulatoryAlert({
                 );
               }
             }}
+            to="/"
           >
             {formatAlertPeriod(alert, type)}
           </Link>

@@ -51,8 +51,8 @@ export const DEFINITIONS = {
     name: "Longue distance",
     content: (
       <span>
-        lorsque le salarié effectue au moins 6 découchés par mois (hors
-        déménagement) ou 40 découchés par an (pour le secteur du déménagement)
+        lorsque le salarié effectue au moins 6 découchers par mois (hors
+        déménagement) ou 40 découchers par an (pour le secteur du déménagement)
         (article{" "}
         <RegulationLegalArticleLink
           article={LEGAL_ARTICLES.longDistance}
@@ -66,7 +66,7 @@ export const DEFINITIONS = {
     name: "Semaine civile",
     content: (
       <span>
-        elle débute le lundi à 0 heure et se termine le dimanche à 24 heures.
+        elle débute le lundi à 0 heure et se termine le dimanche à 24 heures
         (article{" "}
         <RegulationLegalArticleLink
           article={LEGAL_ARTICLES.calendarWeek}

@@ -11,8 +11,10 @@ import { currentUserId } from "common/utils/cookie";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { ACTIVATE_EMAIL_MUTATION } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";
+import { usePageTitle } from "../common/UsePageTitle";
 
 export function ActivateEmail() {
+  usePageTitle("Confirmation Courriel - Mobilic");
   const location = useLocation();
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();

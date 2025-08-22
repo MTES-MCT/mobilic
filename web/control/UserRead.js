@@ -29,6 +29,7 @@ import { UserReadAlerts } from "./components/UserReadAlerts";
 import { getDaysBetweenTwoDates } from "common/utils/time";
 import { getRegulationComputationsAndAlertNumber } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
 import { getAlertsGroupedByDayFromRegulationComputationsByDay } from "common/utils/regulation/groupAlertsByDay";
+import { usePageTitle } from "../common/UsePageTitle";
 
 export function getTabs(alertNumber) {
   return [
@@ -61,6 +62,7 @@ export function getTabs(alertNumber) {
 }
 
 export function UserRead() {
+  usePageTitle("Historique - Mobilic");
   const location = useLocation();
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
@@ -143,15 +145,27 @@ export function UserRead() {
             birthDate: userPayload.birthDate,
             email: userPayload.email
           });
+
+          const resultMissions = userPayload.missions.edges.map(e => e.node);
+
+          const missionData = [];
+          resultMissions.forEach(mission => {
+            const isMissionDeleted = !!mission.deletedAt;
+            missionData.push({
+              ...mission,
+              ...parseMissionPayloadFromBackend(mission, userPayload.id),
+              isDeleted: isMissionDeleted,
+              allActivities: mission.activities.map(activity => ({
+                ...activity,
+                isMissionDeleted
+              }))
+            });
+          });
+
           const missions_ = augmentAndSortMissions(
-            userPayload.missions.edges.map(m => ({
-              ...m.node,
-              ...parseMissionPayloadFromBackend(m.node, userPayload.id),
-              allActivities: m.node.activities
-            })),
+            missionData,
             userPayload.id
           ).filter(m => m.activities.length > 0);
-
           setMissions(missions_);
 
           const userWorkingDays = new Set([]);
@@ -182,17 +196,20 @@ export function UserRead() {
     }
   }, [impersonatingUser]);
 
-  React.useEffect(async () => {
+  React.useEffect(() => {
     if (!userInfo || !userInfo.id) {
       return;
     }
-    const res = await getRegulationComputationsAndAlertNumber(
-      api,
-      userInfo.id,
-      new Date(tokenInfo.historyStartDay)
-    );
-    setRegulationComputationsByDay(res.regulationComputationsByDay);
-    setAlertNumber(res.alertNumber);
+    const loadData = async () => {
+      const res = await getRegulationComputationsAndAlertNumber(
+        api,
+        userInfo.id,
+        new Date(tokenInfo.historyStartDay)
+      );
+      setRegulationComputationsByDay(res.regulationComputationsByDay);
+      setAlertNumber(res.alertNumber);
+    };
+    loadData();
   }, [userInfo]);
 
   const groupedAlerts = React.useMemo(

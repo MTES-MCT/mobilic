@@ -12,8 +12,8 @@ import {
 import { now } from "common/utils/time";
 import WarningEndMissionModalContainer from "../components/WarningEndMissionModal/WarningEndMissionModalContainer";
 import { useModals } from "common/utils/modals";
-import Alert from "@mui/material/Alert";
 import { missionLastLessThanAMinute } from "common/utils/mission";
+import Notice from "../../common/Notice";
 
 export function CurrentActivity({
   latestActivity,
@@ -52,10 +52,11 @@ export function CurrentActivity({
       modals.open("confirmation", {
         textButtons: true,
         content: (
-          <Alert severity="warning">
-            La première activité ayant duré moins d'une minute, passer en pause
-            maintenant annulera votre mission en cours.
-          </Alert>
+          <Notice
+            type="warning"
+            description="La première activité ayant duré moins d'une minute, passer en pause
+            maintenant annulera votre mission en cours."
+          />
         ),
         title: "Confirmer la pause",
         handleConfirm: beginBreak
@@ -124,6 +125,7 @@ export function CurrentActivity({
       editActivityEvent={editActivityEvent}
       hideExpenditures
       hideValidations
+      hideHistory
       hideComments
       editVehicle={vehicle => editVehicle({ mission: currentMission, vehicle })}
       previousMissionEnd={previousMissionEnd}
@@ -151,6 +153,7 @@ export function CurrentActivity({
       }
       isMissionEnded={false}
       editKilometerReading={registerKilometerReading}
+      titleProps={{ component: "h2" }}
     />,
     <WarningEndMissionModalContainer
       key={4}

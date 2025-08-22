@@ -1,66 +1,112 @@
 import React from "react";
 
 import Stack from "@mui/material/Stack";
-import { TextInput } from "@dataesr/react-dsfr";
 import { Typography } from "@mui/material";
-import Alert from "@mui/material/Alert";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import { AlertGroup } from "../../../control/components/AlertGroup";
+import { AlertGroup } from "../../../control/components/Alerts/AlertGroup";
+import { Input } from "../../../common/forms/Input";
+import Notice from "../../../common/Notice";
+import { useInfractions } from "../../utils/contextInfractions";
+import { sanctionComparator } from "../../../control/utils/sanctionComparator";
+import { CONTROL_TYPES } from "../../utils/useReadControlData";
+import { useControl } from "../../utils/contextControl";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export function ControlBulletinFormStep3({
   handleEditControlBulletin,
   controlBulletin,
   grecoId,
   onUpdateGrecoId,
-  controlCanBeDownloaded,
-  groupedAlerts,
-  onUpdateInfraction
+  onModifyInfractions
 }) {
+  const {
+    groupedAlerts,
+    isReportingInfractions,
+    setIsReportingInfractions
+  } = useInfractions();
+  const { controlData, canDownloadBDC } = useControl();
+
+  const groupedAlertsToDisplay = React.useMemo(() => {
+    if (
+      controlData.controlType === CONTROL_TYPES.LIC_PAPIER.label &&
+      !isReportingInfractions
+    ) {
+      return (
+        groupedAlerts.filter(
+          group => group.alerts.filter(alert => alert.checked).length > 0
+        ) || []
+      );
+    } else {
+      return groupedAlerts;
+    }
+  }, [controlData, groupedAlerts, isReportingInfractions]);
+
+  React.useEffect(() => {
+    setIsReportingInfractions(false);
+  }, []);
+
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
-      <TextInput
-        value={grecoId}
-        name="grecoId"
-        onChange={e => onUpdateGrecoId(e.target.value)}
-        label="Votre identifiant de carte contrôleur"
+      <Input
+        nativeInputProps={{
+          value: grecoId,
+          name: "grecoId",
+          onChange: e => onUpdateGrecoId(e.target.value)
+        }}
+        label="Numéro de contrôleur"
+        hintText="Numéro présent sur votre carte contrôleur"
       />
-      <Typography variant="h5">Infractions retenues</Typography>
-      {groupedAlerts?.length > 0 ? (
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        sx={{ width: "100%" }}
+      >
+        <Typography>Infractions retenues</Typography>
+        {!isReportingInfractions &&
+          controlData.controlType !== CONTROL_TYPES.NO_LIC.label && (
+            <Button
+              priority="tertiary"
+              size="small"
+              onClick={() => {
+                onModifyInfractions();
+                setIsReportingInfractions(true);
+              }}
+            >
+              Modifier
+            </Button>
+          )}
+      </Stack>
+      {groupedAlertsToDisplay?.length > 0 ? (
         <List>
-          {groupedAlerts
-            .sort((alert1, alert2) =>
-              alert1.sanction.localeCompare(alert2.sanction)
-            )
-            .map(group => (
-              <ListItem key={`${group.type}_${group.sanction}`} disableGutters>
-                <AlertGroup
-                  {...group}
-                  isReportingInfractions={true}
-                  onUpdateInfraction={onUpdateInfraction}
-                  readOnlyAlerts={false}
-                />
-              </ListItem>
-            ))}
+          {groupedAlertsToDisplay.sort(sanctionComparator).map(group => (
+            <ListItem key={`${group.type}_${group.sanction}`} disableGutters>
+              <AlertGroup {...group} readOnlyAlerts={false} />
+            </ListItem>
+          ))}
         </List>
       ) : (
-        <Typography>
-          Il n'y a aucune alerte réglementaire sur la période
-        </Typography>
+        <Notice
+          sx={{ marginTop: 1, marginBottom: 3 }}
+          type="info"
+          description="Il n'y a aucune alerte réglementaire sur la période."
+        />
       )}
-      <TextInput
-        value={controlBulletin.observation || ""}
-        name="observation"
+      <Input
+        nativeTextAreaProps={{
+          value: controlBulletin.observation || "",
+          name: "observation",
+          onChange: e => handleEditControlBulletin(e)
+        }}
         label="Observations"
-        rows="3"
-        onChange={e => handleEditControlBulletin(e)}
-        textarea
+        textArea
       />
-      {!controlCanBeDownloaded && (
-        <Alert severity="warning">
-          Certains champs obligatoires doivent être renseignés pour permettre le
-          téléchargement du Bulletin de Contrôle.
-        </Alert>
+      {!canDownloadBDC && (
+        <Notice
+          type="warning"
+          description="Certains champs obligatoires doivent être renseignés pour permettre le
+          téléchargement du Bulletin de Contrôle."
+        />
       )}
     </Stack>
   );

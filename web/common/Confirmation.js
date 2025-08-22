@@ -1,16 +1,14 @@
 import React from "react";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
-import Dialog from "@mui/material/Dialog";
 import IconButton from "@mui/material/IconButton";
 import { LoadingButton } from "common/components/LoadingButton";
-import { CustomDialogActions, CustomDialogTitle } from "./CustomDialogTitle";
-import DialogContent from "@mui/material/DialogContent";
 import Typography from "@mui/material/Typography";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { useApi } from "common/utils/api";
 import { DISABLE_WARNING_MUTATION } from "common/utils/apiQueries";
+import Modal from "./Modal";
 
 export default function ConfirmationModal({
   title,
@@ -47,71 +45,75 @@ export default function ConfirmationModal({
   }
 
   return (
-    <Dialog onClose={handleClose} open={open} maxWidth={"md"}>
-      <CustomDialogTitle
-        title={title || "Confirmer"}
-        handleClose={handleClose}
-      />
-      {(content || disableWarningName) && (
-        <DialogContent>
-          {content}
-          {disableWarningName && (
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="secondary"
-                  checked={shouldDisableWarning}
-                  onChange={e => setShouldDisableWarning(e.target.checked)}
-                  size="small"
+    <Modal
+      size="sm"
+      open={open}
+      handleClose={handleClose}
+      title={title || "Confirmer"}
+      content={
+        <>
+          {(content || disableWarningName) && (
+            <>
+              {content}
+              {disableWarningName && (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      color="primary"
+                      checked={shouldDisableWarning}
+                      onChange={e => setShouldDisableWarning(e.target.checked)}
+                      size="small"
+                    />
+                  }
+                  label={
+                    <Typography variant="caption">
+                      Ne plus afficher ce message
+                    </Typography>
+                  }
                 />
-              }
-              label={
-                <Typography variant="caption">
-                  Ne plus afficher ce message
-                </Typography>
-              }
-            />
+              )}
+            </>
           )}
-        </DialogContent>
-      )}
-      <CustomDialogActions>
-        {cancelButtonLabel || textButtons ? (
-          <LoadingButton
-            aria-label="Confirmer"
-            color="primary"
-            onClick={handleClose}
-          >
-            {cancelButtonLabel || "Non"}
-          </LoadingButton>
-        ) : (
-          <IconButton aria-label="Confirmer" onClick={handleClose}>
-            <CloseIcon color="error" />
-          </IconButton>
-        )}
-        {confirmButtonLabel || textButtons ? (
-          <LoadingButton
-            aria-label="Annuler"
-            color="primary"
-            variant="contained"
-            onClick={async (...args) => {
-              await handleConfirmWithEventualWarningDisable(...args);
-              handleClose();
-            }}
-          >
-            {confirmButtonLabel || "Oui"}
-          </LoadingButton>
-        ) : (
-          <IconButton
-            aria-label="Annuler"
-            onClick={(...args) => {
-              handleConfirm(...args);
-              handleClose();
-            }}
-          >
-            <CheckIcon color="primary" />
-          </IconButton>
-        )}
-      </CustomDialogActions>
-    </Dialog>
+        </>
+      }
+      actions={
+        <>
+          {cancelButtonLabel || textButtons ? (
+            <LoadingButton
+              priority="secondary"
+              aria-label="Annuler"
+              onClick={handleClose}
+            >
+              {cancelButtonLabel || "Non"}
+            </LoadingButton>
+          ) : (
+            <IconButton aria-label="Confirmer" onClick={handleClose}>
+              <CloseIcon color="error" />
+            </IconButton>
+          )}
+          {confirmButtonLabel || textButtons ? (
+            <LoadingButton
+              aria-label="Confirmer"
+              onClick={async (...args) => {
+                await handleConfirmWithEventualWarningDisable(...args);
+                handleClose();
+              }}
+            >
+              {confirmButtonLabel || "Oui"}
+            </LoadingButton>
+          ) : (
+            <IconButton
+              aria-label="Annuler"
+              onClick={(...args) => {
+                handleConfirm(...args);
+                handleClose();
+              }}
+            >
+              <CheckIcon color="primary" />
+            </IconButton>
+          )}
+        </>
+      }
+    />
   );
 }

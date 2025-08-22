@@ -27,15 +27,16 @@ import ListItemText from "@mui/material/ListItemText";
 import { getVehicleName } from "common/utils/vehicles";
 import { PersonIcon } from "common/utils/icons";
 import { getStartOfDay, now } from "common/utils/time";
-import { MainCtaButton } from "./MainCtaButton";
 import Typography from "@mui/material/Typography";
 import { Event } from "../../common/Event";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import LocationEntry from "./LocationEntry";
-import Alert from "@mui/material/Alert";
 import { ContradictoryChanges } from "./ContradictoryChanges";
 import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
 import { DISMISSABLE_WARNINGS } from "../../admin/utils/dismissableWarnings";
+import Notice from "../../common/Notice";
+import { LoadingButton } from "common/components/LoadingButton";
+import { MissionValidations } from "./MissionValidations";
 
 const useStyles = makeStyles(theme => ({
   backgroundPaper: {
@@ -64,10 +65,6 @@ const useStyles = makeStyles(theme => ({
   },
   kilometerReading: {
     flexGrow: 0
-  },
-  teamModeAlert: {
-    marginTop: theme.spacing(1),
-    textAlign: "left"
   },
   kilometers: {
     paddingTop: theme.spacing(1),
@@ -124,7 +121,9 @@ export function MissionDetails({
   defaultTime = null,
   disableEmptyActivitiesPlaceHolder = false,
   forceDisplayEndLocation = false,
-  controlId = null
+  controlId = null,
+  titleProps = {},
+  hideHistory = false
 }) {
   const classes = useStyles();
   const modals = useModals();
@@ -159,9 +158,10 @@ export function MissionDetails({
     !mission.submittedBySomeoneElse;
 
   const allowSupportActivity =
-    !mission.company ||
-    !mission.company.settings ||
-    mission.company.settings.requireSupportActivity;
+    mission?.company?.settings?.requireSupportActivity || true;
+
+  const allowOtherTask = mission.company?.settings?.allowOtherTask || true;
+  const otherTaskLabel = mission.company?.settings?.otherTaskLabel || "";
 
   const teamAtMissionEnd = [
     actualUserId,
@@ -191,6 +191,7 @@ export function MissionDetails({
   );
 
   const disableActions =
+    mission.isDeleted ||
     mission.validation ||
     mission.adminValidation ||
     !currentlyEmployedInCompany;
@@ -215,10 +216,11 @@ export function MissionDetails({
         cancelButtonLabel: "Annuler",
         disableWarningName: DISMISSABLE_WARNINGS.EMPLOYEE_MISSION_VALIDATION,
         content: (
-          <Alert severity="warning">
-            Une fois la mission validée vous ne pourrez plus y apporter de
-            modifications.
-          </Alert>
+          <Notice
+            type="warning"
+            description="Une fois la mission validée vous ne pourrez plus y apporter de
+            modifications."
+          />
         ),
         handleConfirm: actualValidationFunc
       });
@@ -227,6 +229,17 @@ export function MissionDetails({
 
   return (
     <AlternateColors inverseColors={inverseColors}>
+      {!hideHistory && (
+        <MissionReviewSection title="Historique des validations">
+          {mission.validations && (
+            <MissionValidations
+              mission={mission}
+              validations={mission.validations}
+              userId={userId}
+            />
+          )}
+        </MissionReviewSection>
+      )}
       <MissionReviewSection
         title="Activités"
         editButtonLabel="Ajouter"
@@ -261,10 +274,13 @@ export function MissionDetails({
                   nullableEndTime: nullableEndTimeInEditActivity,
                   allowTeamMode: allowTeamActions,
                   allowSupportActivity,
+                  allowOtherTask,
+                  otherTaskLabel,
                   defaultTime: lastActivityTime || defaultTime
                 })
             : null
         }
+        titleProps={titleProps}
       >
         <ActivityList
           activities={userActivities}
@@ -301,38 +317,40 @@ export function MissionDetails({
               : null
           }
           editButtonLabel="Changer"
+          titleProps={titleProps}
         >
-          {hasTeamMates && [
-            changeTeam && (
-              <Alert
-                severity="info"
-                color="warning"
-                key={0}
-                className={classes.teamModeAlert}
-              >
-                {mission.submittedBySomeoneElse
-                  ? `${mission.submitter.firstName} a choisi d'enregistrer le temps de travail pour toute l'équipe.  Il est conseillé d'attendre la fin de mission avant d'effectuer des modifications pour continuer de bénéficier des saisies de ${mission.submitter.firstName}. En effet, si vous saisissez ou modifiez une mission en cours de journée, vous serez exclu de l'équipe et ne serez donc plus concerné par les temps enregistrés ensuite pas le chef d'équipe.`
-                  : `Vous avez choisi d'enregistrer le temps de travail pour toute l'équipe. Pensez à les en informer pour qu'ils continuent de bénéficier de vos saisies. En effet, s'ils saisissent ou modifient une activité en cours de journée, ils seront exclus de l'équipe et ne seront donc plus concernés par les temps que vous enregistrerez ensuite en tant que chef d'équipe.`}
-              </Alert>
-            ),
-            <List key={1} dense>
-              {map(teamMatesLatestStatuses, (tc, id) => (
-                <ListItem disableGutters key={id}>
-                  <ListItemIcon>
-                    <PersonIcon />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={
-                      actualCoworkers[tc.userId.toString()]
-                        ? actualCoworkers[tc.userId.toString()].firstName
-                        : "Inconnu"
-                    }
-                    secondary={formatLatestEnrollmentStatus(tc)}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          ]}
+          {hasTeamMates && (
+            <>
+              {changeTeam && (
+                <Notice
+                  type="warning"
+                  sx={{ marginTop: 1 }}
+                  description={
+                    mission.submittedBySomeoneElse
+                      ? `${mission.submitter.firstName} a choisi d'enregistrer le temps de travail pour toute l'équipe.  Il est conseillé d'attendre la fin de mission avant d'effectuer des modifications pour continuer de bénéficier des saisies de ${mission.submitter.firstName}. En effet, si vous saisissez ou modifiez une mission en cours de journée, vous serez exclu de l'équipe et ne serez donc plus concerné par les temps enregistrés ensuite pas le chef d'équipe.`
+                      : `Vous avez choisi d'enregistrer le temps de travail pour toute l'équipe. Pensez à les en informer pour qu'ils continuent de bénéficier de vos saisies. En effet, s'ils saisissent ou modifient une activité en cours de journée, ils seront exclus de l'équipe et ne seront donc plus concernés par les temps que vous enregistrerez ensuite en tant que chef d'équipe.`
+                  }
+                />
+              )}
+              <List dense>
+                {map(teamMatesLatestStatuses, (tc, id) => (
+                  <ListItem disableGutters key={id}>
+                    <ListItemIcon>
+                      <PersonIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={
+                        actualCoworkers[tc.userId.toString()]
+                          ? actualCoworkers[tc.userId.toString()].firstName
+                          : "Inconnu"
+                      }
+                      secondary={formatLatestEnrollmentStatus(tc)}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </>
+          )}
         </MissionReviewSection>
       ) : null}
       <MissionReviewSection
@@ -348,6 +366,7 @@ export function MissionDetails({
             : null
         }
         editButtonLabel="Modifier"
+        titleProps={titleProps}
       >
         {mission.vehicle && (
           <List dense>
@@ -366,7 +385,7 @@ export function MissionDetails({
           </List>
         )}
       </MissionReviewSection>
-      <MissionReviewSection title="Lieux">
+      <MissionReviewSection title="Lieux" titleProps={titleProps}>
         {(mission.startLocation || mission.endLocation) && (
           <List dense>
             <LocationEntry
@@ -447,6 +466,7 @@ export function MissionDetails({
                     })
                 : null
             }
+            titleProps={titleProps}
           >
             <Box className={`flex-row ${classes.expenditures}`}>
               {expenditureForPeriod &&
@@ -469,6 +489,7 @@ export function MissionDetails({
                   })
               : null
           }
+          titleProps={titleProps}
         >
           <List dense className={classes.commentList}>
             {mission.comments
@@ -494,7 +515,7 @@ export function MissionDetails({
           </List>
         </MissionReviewSection>
       )}
-      <MissionReviewSection title="Entreprise">
+      <MissionReviewSection title="Entreprise" titleProps={titleProps}>
         <List dense>
           <ListItem disableGutters>
             <ListItemText
@@ -514,20 +535,24 @@ export function MissionDetails({
       {!hideValidations &&
         validateMission &&
         !mission.adminValidation &&
-        !mission.validation && (
-          <MissionReviewSection title="Validation">
+        !mission.validation &&
+        !mission.isDeleted && (
+          <MissionReviewSection title="Validation" titleProps={titleProps}>
             <Box style={{ textAlign: "center" }} pt={2} pb={2}>
-              <MainCtaButton
+              <LoadingButton
                 style={{ textAlign: "center" }}
                 onClick={handleMissionValidation}
               >
                 {validationButtonName}
-              </MainCtaButton>
+              </LoadingButton>
             </Box>
           </MissionReviewSection>
         )}
       {!hideValidations &&
-        (!validateMission || mission.validation || mission.adminValidation) && (
+        (!validateMission ||
+          mission.isDeleted ||
+          mission.validation ||
+          mission.adminValidation) && (
           <MissionReviewSection>
             <ContradictoryChanges
               mission={mission}
@@ -535,6 +560,7 @@ export function MissionDetails({
               userId={actualUserId}
               cacheInStore={cacheContradictoryInfoInPwaStore}
               controlId={controlId}
+              titleProps={titleProps}
             />
           </MissionReviewSection>
         )}

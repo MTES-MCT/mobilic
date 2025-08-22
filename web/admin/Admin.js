@@ -13,7 +13,11 @@ import {
   loadCompanyDetails
 } from "./utils/loadCompaniesData";
 import { useApi } from "common/utils/api";
-import { AdminStoreProvider, useAdminStore } from "./store/store";
+import {
+  AdminStoreProvider,
+  useAdminStore,
+  useAdminCompanies
+} from "./store/store";
 import {
   LoadingScreenContextProvider,
   useLoadingScreen
@@ -22,12 +26,18 @@ import {
 import { Header } from "../common/Header";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthUp, useWidth } from "common/utils/useWidth";
-import { SideMenu } from "./components/SideMenu";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
 import { MissionDrawerContextProvider } from "./components/MissionDrawer";
 import CertificationCommunicationModal from "../pwa/components/CertificationCommunicationModal";
+import { shouldUpdateBusinessType } from "common/utils/updateBusinessType";
+import { shouldUpdateNbWorker } from "common/utils/updateNbWorker";
+import UpdateCompanyBusinessTypeModal from "./modals/UpdateCompanyBusinessTypeModal";
+import UpdateNbWorkerModal from "./modals/UpdateNbWorkerModal";
+import { Main } from "../common/semantics/Main";
+
+import { SideMenu } from "./components/SideMenu/SideMenu";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -49,9 +59,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function _Admin() {
+function AdminComponent() {
   const api = useApi();
   const adminStore = useAdminStore();
+  const [, company] = useAdminCompanies();
   const withLoadingScreen = useLoadingScreen();
   const { path } = useRouteMatch();
   const alerts = useSnackbarAlerts();
@@ -177,10 +188,18 @@ function _Admin() {
     if (!employment) {
       return;
     }
-    const { shouldSeeCertificateInfo, id } = employment;
+    const {
+      shouldSeeCertificateInfo,
+      shouldForceNbWorkerInfo,
+      id
+    } = employment;
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateShouldSeeCertificateInfo,
       payload: { shouldSeeCertificateInfo }
+    });
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateShouldForceNbWorkerInfo,
+      payload: { shouldForceNbWorkerInfo }
     });
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateEmploymentId,
@@ -193,61 +212,65 @@ function _Admin() {
   const shouldRefreshDataSetter = val => setShouldRefreshData({ value: val });
 
   const defaultView = views.find(view => view.isDefault);
-  return [
-    <Header key={0} />,
-    <MissionDrawerContextProvider
-      key={1}
-      width={width}
-      setShouldRefreshData={shouldRefreshDataSetter}
-    >
-      {companiesToAcceptCertificateCommunication?.length > 0 && (
-        <CertificationCommunicationModal
-          companies={companiesToAcceptCertificateCommunication}
-          onClose={() => setCompaniesToAcceptCertificateCommunication([])}
-        />
-      )}
-      <Container
-        key={1}
-        maxWidth={false}
-        disableGutters
-        className={classes.container}
+  return (
+    <>
+      {!!adminStore.business &&
+        !adminStore.business.businessType &&
+        shouldUpdateBusinessType() && <UpdateCompanyBusinessTypeModal />}
+      {!!company && shouldUpdateNbWorker(company) && <UpdateNbWorkerModal />}
+      <Header />
+      <MissionDrawerContextProvider
+        width={width}
+        setShouldRefreshData={shouldRefreshDataSetter}
+        refreshData={refreshData}
       >
-        {isMdUp && <SideMenu views={views} />}
-        <Container
-          className={`scrollable ${classes.panelContainer}`}
-          maxWidth={false}
-          ref={ref}
-        >
-          <Switch color="secondary">
-            {views.map(view => (
-              <Route
-                key={view.label}
-                path={view.path}
-                render={() => (
-                  <view.component
-                    containerRef={ref}
-                    setShouldRefreshData={val =>
-                      setShouldRefreshData(shouldRefreshDataSetter)
-                    }
-                  />
-                )}
-              />
-            ))}
-            {defaultView && (
-              <Redirect key="default" push from="*" to={defaultView.path} />
-            )}
-          </Switch>
-        </Container>
-      </Container>
-    </MissionDrawerContextProvider>
-  ];
+        {companiesToAcceptCertificateCommunication?.length > 0 && (
+          <CertificationCommunicationModal
+            companies={companiesToAcceptCertificateCommunication}
+            onClose={() => setCompaniesToAcceptCertificateCommunication([])}
+          />
+        )}
+        <Main maxWidth={false} className={classes.container} disableGutters>
+          {isMdUp && <SideMenu views={views} />}
+          <Container
+            className={`scrollable ${classes.panelContainer}`}
+            maxWidth={false}
+            ref={ref}
+          >
+            <Switch>
+              {views.map(view => (
+                <Route
+                  key={view.label}
+                  path={view.path}
+                  render={() => (
+                    <view.component
+                      containerRef={ref}
+                      setShouldRefreshData={val =>
+                        setShouldRefreshData(shouldRefreshDataSetter)
+                      }
+                    />
+                  )}
+                />
+              ))}
+              {defaultView && (
+                <Route
+                  path="*"
+                  render={() => <Redirect push to={defaultView.path} />}
+                />
+              )}
+            </Switch>
+          </Container>
+        </Main>
+      </MissionDrawerContextProvider>
+    </>
+  );
 }
 
 export default function Admin(props) {
   return (
     <LoadingScreenContextProvider>
       <AdminStoreProvider>
-        <_Admin {...props} />
+        <AdminComponent {...props} />
       </AdminStoreProvider>
     </LoadingScreenContextProvider>
   );

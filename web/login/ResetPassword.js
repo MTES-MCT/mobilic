@@ -10,7 +10,6 @@ import Box from "@mui/material/Box";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import jwt_decode from "jwt-decode";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import { useLoadingScreen } from "common/utils/loading";
 import { Header } from "../common/Header";
 import { useSnackbarAlerts } from "../common/Snackbar";
@@ -23,6 +22,9 @@ import { EmailField } from "../common/EmailField";
 import Emoji from "../common/Emoji";
 import { NewPasswordBlock } from "../common/NewPasswordBlock";
 import { getPasswordErrors } from "common/utils/passwords";
+import { usePageTitle } from "../common/UsePageTitle";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Main } from "../common/semantics/Main";
 
 const useStyles = makeStyles(theme => ({
   introText: {
@@ -37,6 +39,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function ResetPassword() {
+  usePageTitle("Réinitaliser Mot de Passe - Mobilic");
   const store = useStoreSyncedWithLocalStorage();
   const api = useApi();
   const location = useLocation();
@@ -46,8 +49,8 @@ export function ResetPassword() {
   const withLoadingScreen = useLoadingScreen();
 
   const [didSubmitForm, setDidSubmitForm] = React.useState(false);
-  const [password, setPassword] = React.useState(null);
-  const [passwordCopy, setPasswordCopy] = React.useState(null);
+  const [password, setPassword] = React.useState("");
+  const [passwordCopy, setPasswordCopy] = React.useState("");
 
   const [tokenError, setTokenError] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
@@ -117,94 +120,93 @@ export function ResetPassword() {
   return (
     <>
       <Header />
-      <PaperContainer>
-        {tokenError ? (
-          <Typography color="error">{tokenError}</Typography>
-        ) : (
-          <Container className="centered" maxWidth="sm">
-            {didSubmitForm ? (
-              <Grid
-                style={{ marginTop: 0 }}
-                container
-                spacing={10}
-                direction="column"
-                alignItems="center"
-              >
-                <Grid item xs={12}>
-                  <Typography className={classes.title} variant="h1">
-                    <Emoji emoji="🎉" ariaLabel="Succès" />
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography>
-                    Votre mot de passe a bien été réinitialisé !
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    onClick={() => {
-                      history.push("/home");
-                    }}
-                  >
-                    Aller dans mon espace
-                  </Button>
-                </Grid>
-              </Grid>
-            ) : (
-              <>
-                <PaperContainerTitle>
-                  Réinitialisation du mot de passe
-                </PaperContainerTitle>
-                <form
-                  className="vertical-form centered"
-                  autoComplete="off"
-                  onSubmit={handleSubmit}
+      <Main>
+        <PaperContainer>
+          {tokenError ? (
+            <Typography color="error">{tokenError}</Typography>
+          ) : (
+            <Container className="centered" maxWidth="sm">
+              {didSubmitForm ? (
+                <Grid
+                  style={{ marginTop: 0 }}
+                  container
+                  spacing={10}
+                  direction="column"
+                  alignItems="center"
                 >
-                  <NewPasswordBlock
-                    label="Veuillez choisir un nouveau mot de passe."
-                    password={password}
-                    setPassword={setPassword}
-                    passwordError={passwordError}
-                    passwordCopy={passwordCopy}
-                    setPasswordCopy={setPasswordCopy}
-                    passwordCopyError={passwordCopyError}
-                  />
-                  <Box my={4}>
-                    <LoadingButton
-                      aria-label="Valider"
-                      variant="contained"
-                      color="primary"
-                      type="submit"
-                      disabled={
-                        !token ||
-                        !password ||
-                        !passwordCopy ||
-                        !!passwordError ||
-                        !!passwordCopyError
-                      }
-                      loading={loading}
+                  <Grid item xs={12}>
+                    <Typography className={classes.title} variant="h1">
+                      <Emoji emoji="🎉" ariaLabel="Succès" />
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography>
+                      Votre mot de passe a bien été réinitialisé !
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Button
+                      onClick={() => {
+                        history.push("/home");
+                      }}
                     >
-                      Valider
-                    </LoadingButton>
-                  </Box>
-                </form>
-              </>
-            )}
-          </Container>
-        )}
-      </PaperContainer>
+                      Aller dans mon espace
+                    </Button>
+                  </Grid>
+                </Grid>
+              ) : (
+                <>
+                  <PaperContainerTitle>
+                    Réinitialisation du mot de passe
+                  </PaperContainerTitle>
+                  <form
+                    className="vertical-form centered"
+                    autoComplete="off"
+                    onSubmit={handleSubmit}
+                  >
+                    <NewPasswordBlock
+                      label="Veuillez choisir un nouveau mot de passe."
+                      password={password}
+                      setPassword={setPassword}
+                      passwordError={passwordError}
+                      passwordCopy={passwordCopy}
+                      setPasswordCopy={setPasswordCopy}
+                      passwordCopyError={passwordCopyError}
+                    />
+                    <Box my={4}>
+                      <LoadingButton
+                        type="submit"
+                        disabled={
+                          !token ||
+                          !password ||
+                          !passwordCopy ||
+                          !!passwordError ||
+                          !!passwordCopyError
+                        }
+                        loading={loading}
+                      >
+                        Valider
+                      </LoadingButton>
+                    </Box>
+                  </form>
+                </>
+              )}
+            </Container>
+          )}
+        </PaperContainer>
+      </Main>
     </>
   );
 }
 
 export function RequestResetPassword() {
+  usePageTitle("Réinitialiser Mot de Passe - Mobilic");
   const classes = useStyles();
   const api = useApi();
   const alerts = useSnackbarAlerts();
 
   const [email, setEmail] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
   const [didSubmitForm, setDidSubmitForm] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
@@ -231,54 +233,53 @@ export function RequestResetPassword() {
   return (
     <>
       <Header />
-      <PaperContainer>
-        <Container className="centered" maxWidth="sm">
-          {didSubmitForm ? (
-            <Typography className={classes.submitText}>
-              Si l'adresse email <strong>{email}</strong> correspond à un compte
-              Mobilic vous allez y recevoir un email pour réinitialiser votre
-              mot de passe.
-            </Typography>
-          ) : (
-            <>
-              <PaperContainerTitle>
-                Demande de réinitialisation du mot de passe
-              </PaperContainerTitle>
-              <form
-                className="vertical-form centered"
-                autoComplete="off"
-                onSubmit={handleSubmit}
-              >
-                <Typography className={classes.introText}>
-                  Pour réinitialiser votre mot de passe veuillez entrer
-                  l'adresse email avec laquelle vous vous êtes inscrit sur
-                  Mobilic.
-                </Typography>
-                <EmailField
-                  required
-                  fullWidth
-                  className="vertical-form-text-input"
-                  label="Adresse email de connexion"
-                  value={email}
-                  setValue={setEmail}
-                />
-                <Box my={4}>
-                  <LoadingButton
-                    aria-label="Valider"
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                    disabled={!email}
-                    loading={loading}
-                  >
-                    Valider
-                  </LoadingButton>
-                </Box>
-              </form>
-            </>
-          )}
-        </Container>
-      </PaperContainer>
+      <Main>
+        <PaperContainer>
+          <Container className="centered" maxWidth="sm">
+            {didSubmitForm ? (
+              <Typography className={classes.submitText}>
+                Si l'adresse email <strong>{email}</strong> correspond à un
+                compte Mobilic vous allez y recevoir un email pour réinitialiser
+                votre mot de passe.
+              </Typography>
+            ) : (
+              <>
+                <PaperContainerTitle>
+                  Demande de réinitialisation du mot de passe
+                </PaperContainerTitle>
+                <form
+                  className="vertical-form centered"
+                  autoComplete="off"
+                  onSubmit={handleSubmit}
+                >
+                  <Typography className={classes.introText}>
+                    Pour réinitialiser votre mot de passe veuillez entrer
+                    l'adresse email avec laquelle vous vous êtes inscrit sur
+                    Mobilic.
+                  </Typography>
+                  <EmailField
+                    required
+                    label="Adresse email de connexion"
+                    value={email}
+                    setValue={setEmail}
+                    error={emailError}
+                    setError={setEmailError}
+                  />
+                  <Box my={4}>
+                    <LoadingButton
+                      type="submit"
+                      disabled={!!emailError || !email}
+                      loading={loading}
+                    >
+                      Valider
+                    </LoadingButton>
+                  </Box>
+                </form>
+              </>
+            )}
+          </Container>
+        </PaperContainer>
+      </Main>
     </>
   );
 }

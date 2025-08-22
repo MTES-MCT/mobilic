@@ -6,11 +6,15 @@ import {
   CONTROL_BULLETIN_FRAGMENT,
   CONTROL_DATA_FRAGMENT,
   FRAGMENT_LOCATION_FULL,
-  FULL_MISSION_FRAGMENT,
   FULL_TEAM_FRAGMENT,
   REGULATION_COMPUTATIONS_FRAGMENT,
   OBSERVED_INFRACTIONS_FRAGMENT,
-  WORK_DAYS_DATA_FRAGMENT
+  WORK_DAYS_DATA_FRAGMENT,
+  FRAGMENT_ACTIVITY,
+  FULL_MISSION_FRAGMENT,
+  FULL_EMPLOYMENT_FRAGMENT,
+  USER_AGREEMENT,
+  NOTIFICATION_FRAGMENT
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
 
@@ -79,6 +83,8 @@ export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
       validations {
         id
         isAdmin
+        isAuto
+        justification
         userId
         receptionTime
         missionId
@@ -112,7 +118,7 @@ export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
   }
 `;
 
-export const LOGIN_MUTATION_STRING = `mutation login($email: String!, $password: String!) {
+export const LOGIN_MUTATION_STRING = `mutation login($email: Email!, $password: String!) {
   auth {
     login(email: $email, password: $password) {
       accessToken
@@ -126,15 +132,18 @@ export const LOGIN_MUTATION = gql`
 `;
 export const USER_SIGNUP_MUTATION = gql`
   mutation userSignUp(
-    $email: String!
+    $email: Email!
     $password: Password!
     $firstName: String!
     $lastName: String!
+    $gender: GenderEnum
     $inviteToken: String
     $subscribeToNewsletter: Boolean
     $isEmployee: Boolean
     $timezoneName: String
     $wayHeardOfMobilic: String
+    $phoneNumber: String
+    $acceptCgu: Boolean
   ) {
     signUp {
       user(
@@ -142,11 +151,14 @@ export const USER_SIGNUP_MUTATION = gql`
         password: $password
         firstName: $firstName
         lastName: $lastName
+        gender: $gender
         inviteToken: $inviteToken
         subscribeToNewsletter: $subscribeToNewsletter
         isEmployee: $isEmployee
         timezoneName: $timezoneName
         wayHeardOfMobilic: $wayHeardOfMobilic
+        phoneNumber: $phoneNumber
+        acceptCgu: $acceptCgu
       ) {
         accessToken
         refreshToken
@@ -156,7 +168,7 @@ export const USER_SIGNUP_MUTATION = gql`
 `;
 export const CONFIRM_FC_EMAIL_MUTATION = gql`
   mutation confirmFcEmail(
-    $email: String!
+    $email: Email!
     $password: Password
     $timezoneName: String
     $wayHeardOfMobilic: String
@@ -176,9 +188,21 @@ export const CONFIRM_FC_EMAIL_MUTATION = gql`
 `;
 export const COMPANY_SIGNUP_MUTATION = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
-  mutation companySignUp($siren: String!, $usualName: String!) {
+  mutation companySignUp(
+    $siren: String!
+    $usualName: String!
+    $phoneNumber: String
+    $businessType: String
+    $nbWorkers: Int
+  ) {
     signUp {
-      company(siren: $siren, usualName: $usualName) {
+      company(
+        siren: $siren
+        usualName: $usualName
+        phoneNumber: $phoneNumber
+        businessType: $businessType
+        nbWorkers: $nbWorkers
+      ) {
         employment {
           id
           startDate
@@ -305,6 +329,8 @@ export const CONTROLLER_READ_MISSION_DETAILS = gql`
         validations {
           id
           isAdmin
+          isAuto
+          justification
           userId
           receptionTime
           missionId
@@ -353,13 +379,33 @@ export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
         ...ObservedInfractions
       }
       reportedInfractionsLastUpdateTime
+      canTakePictures
+      pictures {
+        url
+      }
+      picturesExpiryDate
+      businessTypeDuringControl {
+        id
+        transportType
+        businessType
+      }
+    }
+  }
+`;
+
+export const CONTROLLER_READ_CONTROL_PICTURES = gql`
+  query readControlPictures($controlId: Int!) {
+    controlData(controlId: $controlId) {
+      pictures {
+        url
+      }
     }
   }
 `;
 
 export const CONTROLLER_READ_CONTROL_DATA = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
-  ${FRAGMENT_LOCATION_FULL}
+  ${FULL_MISSION_FRAGMENT}
   ${REGULATION_COMPUTATIONS_FRAGMENT}
   ${OBSERVED_INFRACTIONS_FRAGMENT}
   ${CONTROL_BULLETIN_FRAGMENT}
@@ -372,66 +418,7 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
         ...ControlBulletin
       }
       missions {
-        id
-        name
-        company {
-          id
-          name
-          siren
-          legalName
-          ...CompanySettings
-        }
-        validations {
-          submitterId
-          receptionTime
-          isAdmin
-          userId
-        }
-        vehicle {
-          id
-          name
-          registrationNumber
-        }
-        context
-        expenditures {
-          id
-          type
-          missionId
-          userId
-          spendingDate
-          receptionTime
-        }
-        activities {
-          id
-          type
-          missionId
-          startTime
-          endTime
-          userId
-          lastSubmitterId
-          user {
-            id
-            firstName
-            lastName
-          }
-        }
-        comments {
-          id
-          text
-          missionId
-          receptionTime
-          submitter {
-            id
-            firstName
-            lastName
-          }
-        }
-        startLocation {
-          ...FullLocation
-        }
-        endLocation {
-          ...FullLocation
-        }
+        ...FullMissionData
       }
       employments {
         id
@@ -439,6 +426,10 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
         isAcknowledged
         hasAdminRights
         endDate
+        business {
+          transportType
+          businessType
+        }
         company {
           id
           name
@@ -470,6 +461,11 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
         ...ObservedInfractions
       }
       reportedInfractionsLastUpdateTime
+      businessTypeDuringControl {
+        id
+        transportType
+        businessType
+      }
     }
   }
 `;
@@ -492,6 +488,7 @@ export const USER_READ_REGULATION_COMPUTATIONS_QUERY = gql`
 export const USER_READ_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
+  ${FULL_MISSION_FRAGMENT}
   query readUser {
     me {
       id
@@ -499,68 +496,10 @@ export const USER_READ_QUERY = gql`
       lastName
       birthDate
       email
-      missions {
+      missions(includeDeletedMissions: true) {
         edges {
           node {
-            id
-            name
-            company {
-              id
-              name
-              siren
-              ...CompanySettings
-            }
-            validations {
-              submitterId
-              receptionTime
-              isAdmin
-              userId
-            }
-            vehicle {
-              id
-              name
-              registrationNumber
-            }
-            context
-            expenditures {
-              id
-              type
-              missionId
-              userId
-              spendingDate
-              receptionTime
-            }
-            activities {
-              id
-              type
-              missionId
-              startTime
-              endTime
-              userId
-              lastSubmitterId
-              user {
-                id
-                firstName
-                lastName
-              }
-            }
-            comments {
-              id
-              text
-              missionId
-              receptionTime
-              submitter {
-                id
-                firstName
-                lastName
-              }
-            }
-            startLocation {
-              ...FullLocation
-            }
-            endLocation {
-              ...FullLocation
-            }
+            ...FullMissionData
           }
         }
       }
@@ -594,7 +533,11 @@ export const USER_MISSIONS_HISTORY_QUERY = gql`
   ${FULL_MISSION_FRAGMENT}
   query readUserMissionsHistory($fromTime: TimeStamp!, $untilTime: TimeStamp!) {
     me {
-      missions(fromTime: $fromTime, untilTime: $untilTime) {
+      missions(
+        fromTime: $fromTime
+        untilTime: $untilTime
+        includeDeletedMissions: true
+      ) {
         edges {
           node {
             ...FullMissionData
@@ -649,6 +592,8 @@ export const ADMIN_COMPANIES_LIST_QUERY = gql`
         id
         name
         siren
+        phoneNumber
+        nbWorkers
         isCertified
         acceptCertificationCommunication
       }
@@ -682,6 +627,7 @@ export const ALL_TEAMS_COMPANY_QUERY = gql`
 
 export const DELETE_TEAM_MUTATION = gql`
   ${FULL_TEAM_FRAGMENT}
+  ${FULL_EMPLOYMENT_FRAGMENT}
   mutation deleteTeam($teamId: Int!) {
     teams {
       deleteTeam(teamId: $teamId) {
@@ -689,26 +635,7 @@ export const DELETE_TEAM_MUTATION = gql`
           ...FullTeamData
         }
         employments {
-          id
-          startDate
-          endDate
-          isAcknowledged
-          email
-          hasAdminRights
-          latestInviteEmailTime
-          teamId
-          companyId
-          company {
-            id
-            name
-            siren
-          }
-          user {
-            id
-            email
-            firstName
-            lastName
-          }
+          ...FullEmploymentData
         }
       }
     }
@@ -716,6 +643,7 @@ export const DELETE_TEAM_MUTATION = gql`
 `;
 
 export const CREATE_TEAM_MUTATION = gql`
+  ${FULL_EMPLOYMENT_FRAGMENT}
   ${FULL_TEAM_FRAGMENT}
   mutation createTeam(
     $companyId: Int!
@@ -738,26 +666,7 @@ export const CREATE_TEAM_MUTATION = gql`
           ...FullTeamData
         }
         employments {
-          id
-          startDate
-          endDate
-          isAcknowledged
-          email
-          hasAdminRights
-          latestInviteEmailTime
-          teamId
-          companyId
-          company {
-            id
-            name
-            siren
-          }
-          user {
-            id
-            email
-            firstName
-            lastName
-          }
+          ...FullEmploymentData
         }
       }
     }
@@ -766,6 +675,7 @@ export const CREATE_TEAM_MUTATION = gql`
 
 export const UPDATE_TEAM_MUTATION = gql`
   ${FULL_TEAM_FRAGMENT}
+  ${FULL_EMPLOYMENT_FRAGMENT}
   mutation updateTeam(
     $teamId: Int!
     $name: String!
@@ -787,26 +697,7 @@ export const UPDATE_TEAM_MUTATION = gql`
           ...FullTeamData
         }
         employments {
-          id
-          startDate
-          endDate
-          isAcknowledged
-          email
-          hasAdminRights
-          latestInviteEmailTime
-          teamId
-          companyId
-          company {
-            id
-            name
-            siren
-          }
-          user {
-            id
-            email
-            firstName
-            lastName
-          }
+          ...FullEmploymentData
         }
       }
     }
@@ -817,6 +708,8 @@ export const ADMIN_COMPANIES_QUERY = gql`
   ${WORK_DAYS_DATA_FRAGMENT}
   ${COMPANY_SETTINGS_FRAGMENT}
   ${FRAGMENT_LOCATION_FULL}
+  ${FRAGMENT_ACTIVITY}
+  ${FULL_EMPLOYMENT_FRAGMENT}
   query adminCompanies(
     $id: Int!
     $activityAfter: Date
@@ -828,11 +721,19 @@ export const ADMIN_COMPANIES_QUERY = gql`
       adminedCompanies(companyIds: $companyIds) {
         id
         name
+        nbWorkers
         ...CompanySettings
+        business {
+          transportType
+          businessType
+        }
         users(fromDate: $activityAfter) {
           id
           firstName
           lastName
+        }
+        currentUsers {
+          id
         }
         teams {
           id
@@ -864,10 +765,17 @@ export const ADMIN_COMPANIES_QUERY = gql`
               id
               name
               submitterId
+              submitter {
+                firstName
+                lastName
+              }
+              isHoliday
               validations {
                 submitterId
                 receptionTime
                 isAdmin
+                isAuto
+                justification
                 userId
               }
               vehicle {
@@ -889,18 +797,59 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 ...FullLocation
               }
               activities {
+                ...Activity
+              }
+              comments {
                 id
-                type
-                startTime
-                endTime
-                lastUpdateTime
-                lastSubmitterId
-                user {
+                text
+                receptionTime
+                submitter {
                   id
                   firstName
                   lastName
                 }
+              }
+              pastRegistrationJustification
+            }
+          }
+        }
+        missionsDeleted {
+          edges {
+            node {
+              id
+              name
+              submitterId
+              deletedAt
+              deletedBy
+              isHoliday
+              validations {
                 submitterId
+                receptionTime
+                isAdmin
+                isAuto
+                justification
+                userId
+              }
+              vehicle {
+                id
+                name
+                registrationNumber
+              }
+              expenditures {
+                id
+                type
+                userId
+                receptionTime
+                spendingDate
+              }
+              startLocation {
+                ...FullLocation
+              }
+              endLocation {
+                ...FullLocation
+              }
+              activities(includeDismissedActivities: true) {
+                ...Activity
               }
               comments {
                 id
@@ -921,21 +870,9 @@ export const ADMIN_COMPANIES_QUERY = gql`
           alias
         }
         employments {
-          id
-          startDate
-          endDate
-          isAcknowledged
-          email
-          hasAdminRights
-          latestInviteEmailTime
-          teamId
+          ...FullEmploymentData
           shouldSeeCertificateInfo
-          user {
-            id
-            email
-            firstName
-            lastName
-          }
+          shouldForceNbWorkerInfo
         }
       }
     }
@@ -960,6 +897,21 @@ export const ADMIN_WORK_DAYS_QUERY = gql`
         }
         workDays(fromDate: $activityAfter, untilDate: $activityBefore) {
           ...WorkDayData
+        }
+      }
+    }
+  }
+`;
+
+export const ADMIN_USERS_SINCE_DATE = gql`
+  query adminCompanies($id: Int!, $activityAfter: Date, $companyIds: [Int]) {
+    user(id: $id) {
+      adminedCompanies(companyIds: $companyIds) {
+        id
+        users(fromDate: $activityAfter) {
+          id
+          firstName
+          lastName
         }
       }
     }
@@ -1004,7 +956,7 @@ export const REDEEM_INVITE_QUERY = gql`
   }
 `;
 export const CHANGE_EMAIL_MUTATION = gql`
-  mutation changeEmail($email: String!) {
+  mutation changeEmail($email: Email!) {
     account {
       changeEmail(email: $email) {
         email
@@ -1033,6 +985,16 @@ export const CHANGE_NAME_MUTATION = gql`
     }
   }
 `;
+export const CHANGE_PHONE_NUMBER_MUTATION = gql`
+  mutation changePhoneNumber($userId: Int!, $newPhoneNumber: String!) {
+    account {
+      changePhoneNumber(userId: $userId, newPhoneNumber: $newPhoneNumber) {
+        id
+        phoneNumber
+      }
+    }
+  }
+`;
 export const CHANGE_TIMEZONE_MUTATION = gql`
   mutation changeTimezone($timezoneName: String!) {
     account {
@@ -1042,8 +1004,17 @@ export const CHANGE_TIMEZONE_MUTATION = gql`
     }
   }
 `;
+export const CHANGE_GENDER_MUTATION = gql`
+  mutation changeGender($gender: GenderEnum!) {
+    account {
+      changeGender(gender: $gender) {
+        gender
+      }
+    }
+  }
+`;
 export const RESEND_ACTIVATION_EMAIL = gql`
-  mutation resendActivationEmail($email: String!) {
+  mutation resendActivationEmail($email: Email!) {
     account {
       resendActivationEmail(email: $email) {
         success
@@ -1070,7 +1041,7 @@ export const RESET_PASSWORD_CONNECTED_MUTATION = gql`
   }
 `;
 export const REQUEST_RESET_PASSWORD_MUTATION = gql`
-  mutation requestResetPassword($mail: String!) {
+  mutation requestResetPassword($mail: Email!) {
     account {
       requestResetPassword(mail: $mail) {
         success
@@ -1176,26 +1147,11 @@ export const CANCEL_EMPLOYMENT_MUTATION = gql`
 `;
 
 export const TERMINATE_EMPLOYMENT_MUTATION = gql`
+  ${FULL_EMPLOYMENT_FRAGMENT}
   mutation terminateEmployment($employmentId: Int!, $endDate: Date) {
     employments {
       terminateEmployment(employmentId: $employmentId, endDate: $endDate) {
-        id
-        startDate
-        endDate
-        isAcknowledged
-        email
-        hasAdminRights
-        company {
-          id
-          name
-          siren
-        }
-        user {
-          id
-          email
-          firstName
-          lastName
-        }
+        ...FullEmploymentData
       }
     }
   }
@@ -1213,6 +1169,7 @@ export const SEND_EMPLOYMENT_INVITE_REMINDER = gql`
 
 export const CHANGE_EMPLOYEE_ROLE = gql`
   ${FULL_TEAM_FRAGMENT}
+  ${FULL_EMPLOYMENT_FRAGMENT}
   mutation changeEmployeeRole($employmentId: Int!, $hasAdminRights: Boolean!) {
     employments {
       changeEmployeeRole(
@@ -1223,26 +1180,30 @@ export const CHANGE_EMPLOYEE_ROLE = gql`
           ...FullTeamData
         }
         employments {
-          id
-          startDate
-          endDate
-          isAcknowledged
-          email
-          hasAdminRights
-          latestInviteEmailTime
-          teamId
-          companyId
-          company {
-            id
-            name
-            siren
-          }
-          user {
-            id
-            email
-            firstName
-            lastName
-          }
+          ...FullEmploymentData
+        }
+      }
+    }
+  }
+`;
+
+export const CHANGE_EMPLOYEE_BUSINESS_TYPE = gql`
+  ${FULL_TEAM_FRAGMENT}
+  ${FULL_EMPLOYMENT_FRAGMENT}
+  mutation changeEmployeeBusinessType(
+    $employmentId: Int!
+    $businessType: String!
+  ) {
+    employments {
+      changeEmployeeBusinessType(
+        employmentId: $employmentId
+        businessType: $businessType
+      ) {
+        teams {
+          ...FullTeamData
+        }
+        employments {
+          ...FullEmploymentData
         }
       }
     }
@@ -1251,6 +1212,7 @@ export const CHANGE_EMPLOYEE_ROLE = gql`
 
 export const CHANGE_EMPLOYEE_TEAM = gql`
   ${FULL_TEAM_FRAGMENT}
+  ${FULL_EMPLOYMENT_FRAGMENT}
   mutation changeEmployeeTeam(
     $companyId: Int!
     $userId: Int
@@ -1268,26 +1230,7 @@ export const CHANGE_EMPLOYEE_TEAM = gql`
           ...FullTeamData
         }
         employments {
-          id
-          startDate
-          endDate
-          isAcknowledged
-          email
-          hasAdminRights
-          latestInviteEmailTime
-          teamId
-          companyId
-          company {
-            id
-            name
-            siren
-          }
-          user {
-            id
-            email
-            firstName
-            lastName
-          }
+          ...FullEmploymentData
         }
       }
     }
@@ -1295,7 +1238,7 @@ export const CHANGE_EMPLOYEE_TEAM = gql`
 `;
 
 export const BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION = gql`
-  mutation batchCreateWorkerEmployments($companyId: Int!, $mails: [String]!) {
+  mutation batchCreateWorkerEmployments($companyId: Int!, $mails: [Email]!) {
     employments {
       batchCreateWorkerEmployments(companyId: $companyId, mails: $mails) {
         id
@@ -1317,11 +1260,12 @@ export const BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION = gql`
 `;
 
 export const CREATE_EMPLOYMENT_MUTATION = gql`
+  ${FULL_EMPLOYMENT_FRAGMENT}
   mutation createEmployment(
     $userId: Int
     $companyId: Int!
     $hasAdminRights: Boolean
-    $mail: String
+    $mail: Email
     $teamId: Int
   ) {
     employments {
@@ -1332,24 +1276,7 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
         mail: $mail
         teamId: $teamId
       ) {
-        id
-        startDate
-        endDate
-        isAcknowledged
-        email
-        hasAdminRights
-        teamId
-        company {
-          id
-          name
-          siren
-        }
-        user {
-          id
-          email
-          firstName
-          lastName
-        }
+        ...FullEmploymentData
       }
     }
   }
@@ -1470,6 +1397,31 @@ export const BULK_ACTIVITY_QUERY = gql`
   }
 `;
 
+export const LOG_HOLIDAY_MUTATION = gql`
+  ${FULL_MISSION_FRAGMENT}
+  mutation logHoliday(
+    $companyId: Int!
+    $userId: Int
+    $startTime: TimeStamp!
+    $endTime: TimeStamp!
+    $title: String!
+    $comment: String
+  ) {
+    activities {
+      logHoliday(
+        companyId: $companyId
+        userId: $userId
+        startTime: $startTime
+        endTime: $endTime
+        title: $title
+        comment: $comment
+      ) {
+        ...FullMissionData
+      }
+    }
+  }
+`;
+
 export const CURRENT_MISSION_INFO = gql`
   query currentMissionInfo($id: Int!) {
     mission(id: $id) {
@@ -1492,6 +1444,7 @@ export const CREATE_MISSION_MUTATION = gql`
     $vehicleId: Int
     $vehicleRegistrationNumber: String
     $creationTime: TimeStamp
+    $pastRegistrationJustification: String
   ) {
     activities {
       createMission(
@@ -1501,6 +1454,7 @@ export const CREATE_MISSION_MUTATION = gql`
         vehicleId: $vehicleId
         vehicleRegistrationNumber: $vehicleRegistrationNumber
         creationTime: $creationTime
+        pastRegistrationJustification: $pastRegistrationJustification
       ) {
         id
         name
@@ -1528,6 +1482,7 @@ export const END_MISSION_MUTATION = gql`
     $missionId: Int!
     $userId: Int
     $creationTime: TimeStamp
+    $pastRegistrationJustification: String
   ) {
     activities {
       endMission(
@@ -1535,6 +1490,7 @@ export const END_MISSION_MUTATION = gql`
         missionId: $missionId
         userId: $userId
         creationTime: $creationTime
+        pastRegistrationJustification: $pastRegistrationJustification
       ) {
         id
         name
@@ -1701,6 +1657,7 @@ export const VALIDATE_MISSION_MUTATION = gql`
     $activityItems: [BulkActivityItem]
     $expendituresCancelIds: [Int]
     $expendituresInputs: [BulkExpenditureItem]
+    $justification: OverValidationJustificationEnum
   ) {
     activities {
       validateMission(
@@ -1710,6 +1667,7 @@ export const VALIDATE_MISSION_MUTATION = gql`
         activityItems: $activityItems
         expendituresCancelIds: $expendituresCancelIds
         expendituresInputs: $expendituresInputs
+        justification: $justification
       ) {
         ...FullMissionData
       }
@@ -1787,6 +1745,8 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
     $requireSupportActivity: Boolean
     $allowTransfers: Boolean
     $requireMissionName: Boolean
+    $allowOtherTask: Boolean
+    $otherTaskLabel: String
   ) {
     editCompanySettings(
       companyId: $companyId
@@ -1796,9 +1756,19 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
       requireSupportActivity: $requireSupportActivity
       allowTransfers: $allowTransfers
       requireMissionName: $requireMissionName
+      allowOtherTask: $allowOtherTask
+      otherTaskLabel: $otherTaskLabel
     ) {
       id
       ...CompanySettings
+    }
+  }
+`;
+
+export const INVITE_COMPANIES_MUTATION = gql`
+  mutation inviteCompanies($companyId: Int!, $emails: [Email]!) {
+    inviteCompanies(companyId: $companyId, emails: $emails) {
+      success
     }
   }
 `;
@@ -1948,6 +1918,7 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
   ${CONTROL_DATA_FRAGMENT}
   mutation controllerSaveControlBulletin(
     $controlId: Int
+    $type: String
     $userFirstName: String
     $userLastName: String
     $userBirthDate: Date
@@ -1969,9 +1940,12 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
     $licenseCopyNumber: String
     $isVehicleImmobilized: Boolean
     $observation: String
+    $businessType: String
+    $isDayPageFilled: Boolean
   ) {
     controllerSaveControlBulletin(
       controlId: $controlId
+      type: $type
       userFirstName: $userFirstName
       userLastName: $userLastName
       userNationality: $userNationality
@@ -1993,6 +1967,8 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
       licenseCopyNumber: $licenseCopyNumber
       isVehicleImmobilized: $isVehicleImmobilized
       observation: $observation
+      businessType: $businessType
+      isDayPageFilled: $isDayPageFilled
     ) {
       ...ControlData
       controlBulletin {
@@ -2118,13 +2094,25 @@ export const HTTP_QUERIES = {
     method: "POST",
     endpoint: "/controllers/download_control_report"
   },
-  controlC1BExport: {
+  controlXmlExport: {
+    method: "POST",
+    endpoint: "/controllers/download_control_xml"
+  },
+  controlC1bExport: {
+    method: "POST",
+    endpoint: "/controllers/download_control_c1b"
+  },
+  controlsC1bExport: {
     method: "POST",
     endpoint: "/controllers/generate_tachograph_files"
   },
   controlBDCExport: {
     method: "POST",
     endpoint: "/controllers/generate_control_bulletin"
+  },
+  controlPicturesGeneratePresignedUrls: {
+    method: "POST",
+    endpoint: "/controllers/control_pictures_generate_presigned_urls"
   },
   certificateSearch: {
     method: "POST",
@@ -2133,6 +2121,10 @@ export const HTTP_QUERIES = {
   downloadCertificate: {
     method: "POST",
     endpoint: "/companies/download_certificate"
+  },
+  downloadFullDataWhenCGUrefused: {
+    method: "POST",
+    endpoint: "/users/download_full_data_when_CGU_refused"
   }
 };
 
@@ -2245,6 +2237,14 @@ export const SNOOZE_CERTIFICATION_INFO = gql`
   }
 `;
 
+export const SNOOZE_NB_WORKER_INFO = gql`
+  mutation snoozeNbWorkerInfo($employmentId: Int!) {
+    snoozeNbWorkerInfo(employmentId: $employmentId) {
+      success
+    }
+  }
+`;
+
 export const UPDATE_HIDE_EMAIL_MUTATION = gql`
   mutation updateHideEmail($employmentId: Int!, $hideEmail: Boolean!) {
     employments {
@@ -2319,11 +2319,112 @@ export const CREATE_SURVEY_ACTION = gql`
   }
 `;
 
-export const UPDATE_COMPANY_NAME = gql`
-  mutation UpdateCompanyName($companyId: Int!, $newName: String!) {
-    updateCompanyName(companyId: $companyId, newName: $newName) {
+export const UPDATE_COMPANY_DETAILS = gql`
+  mutation UpdateCompanyDetails(
+    $companyId: Int!
+    $newName: String
+    $newPhoneNumber: String
+    $newNbWorkers: Int
+  ) {
+    updateCompanyDetails(
+      companyId: $companyId
+      newName: $newName
+      newPhoneNumber: $newPhoneNumber
+      newNbWorkers: $newNbWorkers
+    ) {
       id
       name
+      phoneNumber
+      nbWorkers
+      business {
+        businessType
+        transportType
+      }
+    }
+  }
+`;
+
+export const UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE = gql`
+  ${FULL_EMPLOYMENT_FRAGMENT}
+  mutation UpdateCompanyDetailsWithBusinessType(
+    $companyId: Int!
+    $newName: String
+    $newPhoneNumber: String
+    $newBusinessType: String
+    $applyBusinessTypeToEmployees: Boolean
+    $newNbWorkers: Int
+  ) {
+    updateCompanyDetails(
+      companyId: $companyId
+      newName: $newName
+      newPhoneNumber: $newPhoneNumber
+      newBusinessType: $newBusinessType
+      applyBusinessTypeToEmployees: $applyBusinessTypeToEmployees
+      newNbWorkers: $newNbWorkers
+    ) {
+      id
+      name
+      phoneNumber
+      nbWorkers
+      business {
+        businessType
+        transportType
+      }
+      employments {
+        ...FullEmploymentData
+      }
+    }
+  }
+`;
+
+export const USER_QUERY_ENOUGH_BREAK = gql`
+  query hasEnoughBreak($id: Int!) {
+    user(id: $id) {
+      id
+      hadEnoughBreakLastMission
+    }
+  }
+`;
+
+export const ACCEPT_CGU_MUTATION = gql`
+  ${USER_AGREEMENT}
+  mutation acceptCgu($userId: Int!, $cguVersion: String!) {
+    account {
+      acceptCgu(userId: $userId, cguVersion: $cguVersion) {
+        ...UserAgreementData
+      }
+    }
+  }
+`;
+
+export const REJECT_CGU_MUTATION = gql`
+  ${USER_AGREEMENT}
+  mutation rejectCgu($userId: Int!, $cguVersion: String!) {
+    account {
+      rejectCgu(userId: $userId, cguVersion: $cguVersion) {
+        ...UserAgreementData
+      }
+    }
+  }
+`;
+
+export const READ_NOTIFICATIONS_MUTATION = gql`
+  ${NOTIFICATION_FRAGMENT}
+  mutation markNotificationsAsRead($notificationIds: [Int!]!) {
+    account {
+      markNotificationsAsRead(notificationIds: $notificationIds) {
+        ...NotificationData
+      }
+    }
+  }
+`;
+export const NOTIFICATIONS_QUERY = gql`
+  ${NOTIFICATION_FRAGMENT}
+  query GetUserNotifications($id: Int!) {
+    user(id: $id) {
+      notifications {
+        ...NotificationData
+      }
     }
   }
 `;

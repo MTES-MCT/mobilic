@@ -50,7 +50,7 @@ export function AugmentedTableRowCellContent({
     <CellInnerComponent {...cellInnerComponentProps}>
       {column.boolean ? (
         <Checkbox
-          color="secondary"
+          color="primary"
           size="small"
           checked={cellData || false}
           disabled
@@ -85,6 +85,19 @@ export function AugmentedTableRow({
 
   return renderRowContainer({
     className: rowClassName,
+    ...(onRowClick && {
+      role: "button",
+      tabIndex: "0",
+      onKeyDown: event => {
+        if (
+          event.key === "Enter" &&
+          event.target.tagName !== "A" &&
+          event.target.tagName !== "BUTTON"
+        ) {
+          onRowClick(entry);
+        }
+      }
+    }),
     onClick: onRowClick,
     children: renderRow({
       entry,

@@ -16,21 +16,14 @@ import MenuIcon from "@mui/icons-material/Menu";
 import useTheme from "@mui/styles/useTheme";
 import { useIsWidthUp } from "common/utils/useWidth";
 import { makeStyles } from "@mui/styles";
-import Button from "@mui/material/Button";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
 import Drawer from "@mui/material/Drawer";
 import ListSubheader from "@mui/material/ListSubheader";
 import CloseIcon from "@mui/icons-material/Close";
 import Tooltip from "@mui/material/Tooltip";
-import { MainCtaButton } from "../pwa/components/MainCtaButton";
 import { Link, LinkButton } from "./LinkButton";
-import YoutubeIcon from "common/assets/images/youtube.png";
-import FacebookIcon from "common/assets/images/facebook.png";
-import LinkedInWhiteIcon from "common/assets/images/linkedin.svg";
-import YoutubeWhiteIcon from "common/assets/images/youtube-white.png";
-import TwitterIcon from "common/assets/images/twitter.svg";
-import TwitterWhiteIcon from "common/assets/images/twitter-white.svg";
 import Grid from "@mui/material/Grid";
 import { useAdminStore, useAdminCompanies } from "../admin/store/store";
 import {
@@ -42,60 +35,7 @@ import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
 import TextField from "common/utils/TextField";
 import { MenuItem } from "@mui/material";
 import { ControllerHeader } from "../controller/components/header/ControllerHeader";
-
-const SOCIAL_NETWORKS = [
-  {
-    name: "LinkedIn",
-    colorLogo: "/linkedin.png",
-    whiteLogo: LinkedInWhiteIcon,
-    link: "https://www.linkedin.com/company/mobilic-beta-gouv"
-  },
-  {
-    name: "YouTube",
-    colorLogo: YoutubeIcon,
-    whiteLogo: YoutubeWhiteIcon,
-    link: "https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg"
-  },
-  {
-    name: "Twitter",
-    colorLogo: TwitterIcon,
-    whiteLogo: TwitterWhiteIcon,
-    link: "https://twitter.com/Mobilic_gouv"
-  },
-  {
-    name: "Facebook",
-    colorLogo: FacebookIcon,
-    whiteLogo: FacebookIcon,
-    link: "https://www.facebook.com/Mobilic-115289304492481"
-  }
-];
-
-export function SocialNetworkPanel({
-  size = 18,
-  spacing = 1,
-  darkBackground = false
-}) {
-  return (
-    <Grid
-      container
-      spacing={spacing}
-      alignItems="center"
-      style={{ width: "auto" }}
-    >
-      {SOCIAL_NETWORKS.map(sn => (
-        <Grid item key={sn.name}>
-          <IconButton href={sn.link} size="small" target="_blank">
-            <img
-              height={size}
-              alt={sn.name}
-              src={darkBackground ? sn.whiteLogo : sn.colorLogo}
-            />
-          </IconButton>
-        </Grid>
-      ))}
-    </Grid>
-  );
-}
+import { LoadingButton } from "common/components/LoadingButton";
 
 const useStyles = makeStyles(theme => ({
   navItemButton: {
@@ -105,11 +45,6 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(2),
     maxWidth: 500
-  },
-  docButton: {
-    textTransform: "none",
-    borderRadius: 0,
-    fontSize: "1rem"
   },
   divider: {
     marginBottom: theme.spacing(1),
@@ -152,17 +87,27 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function HeaderContainer(props) {
+export const HeaderComponent = ({ children }) => {
   const theme = useTheme();
   return (
     <Box
       px={2}
+      component="header"
+      role="banner"
       className="header-container"
       style={{ backgroundColor: theme.palette.background.paper }}
     >
+      {children}
+    </Box>
+  );
+};
+
+function HeaderContainer(props) {
+  return (
+    <HeaderComponent>
       <Box py={1} {...props}></Box>
       <Divider className="full-width-divider hr-unstyled" />
-    </Box>
+    </HeaderComponent>
   );
 }
 
@@ -365,45 +310,32 @@ function DesktopHeader({ disableMenu }) {
   const companyName = company ? company.name : null;
   const routes = getAccessibleRoutes({ userInfo, companies });
 
-  const docLinks = () => [
-    <LinkButton
-      aria-label="Foire aux questions"
-      key={0}
-      href="https://faq.mobilic.beta.gouv.fr"
-      target="_blank"
-      rel="noopener noreferrer"
-      className={classes.docButton}
-    >
-      Foire aux questions
-    </LinkButton>,
-    <LinkButton
-      aria-label="Documentation"
-      key={1}
-      href="/resources/home"
-      target="_blank"
-      className={classes.docButton}
-    >
-      Documentation
-    </LinkButton>,
-    <LinkButton
-      aria-label="Partenaires"
-      key={2}
-      to="/partners"
-      className={classes.docButton}
-    >
-      Partenaires
-    </LinkButton>,
-    !userInfo?.id && (
-      <LinkButton
-        aria-label="Certificat"
-        key={3}
-        to="/certificate"
-        className={classes.docButton}
-      >
-        Certificat
-      </LinkButton>
-    )
-  ];
+  const docLinks = () => {
+    const style = { padding: "0.25rem 1rem" };
+    return (
+      <Box mr={4}>
+        <LinkButton
+          href="https://faq.mobilic.beta.gouv.fr"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={style}
+        >
+          Foire aux questions
+        </LinkButton>
+        <LinkButton href="/resources/home" target="_blank" style={style}>
+          Documentation
+        </LinkButton>
+        <LinkButton to="/partners" style={style}>
+          Partenaires et logiciels
+        </LinkButton>
+        {!userInfo?.id && (
+          <LinkButton to="/certificate" style={style}>
+            Certificat
+          </LinkButton>
+        )}
+      </Box>
+    );
+  };
 
   return (
     <Box className={`flex-row-space-between ${classes.desktopHeader}`}>
@@ -411,21 +343,6 @@ function DesktopHeader({ disableMenu }) {
       {store.userId() ? (
         <Box className="flex-row-center" style={{ overflowX: "hidden" }}>
           {!disableMenu && docLinks()}
-          {!disableMenu && (
-            <Divider
-              className={`hr-unstyled ${classes.divider}`}
-              orientation="vertical"
-              flexItem
-            />
-          )}
-          {!disableMenu && <SocialNetworkPanel />}
-          {!disableMenu && (
-            <Divider
-              className={`hr-unstyled ${classes.divider}`}
-              orientation="vertical"
-              flexItem
-            />
-          )}
           <Tooltip
             title={`${formatPersonName(userInfo)}${
               companyName ? " - " + companyName : ""
@@ -457,17 +374,6 @@ function DesktopHeader({ disableMenu }) {
         !disableMenu && (
           <Box className="flex-row-center">
             {docLinks()}
-            <Divider
-              className={`hr-unstyled ${classes.divider}`}
-              orientation="vertical"
-              flexItem
-            />
-            <SocialNetworkPanel />
-            <Divider
-              className={`hr-unstyled ${classes.divider}`}
-              orientation="vertical"
-              flexItem
-            />
             <Grid
               container
               style={{ width: "auto" }}
@@ -484,10 +390,8 @@ function DesktopHeader({ disableMenu }) {
                 )
                 .map(route => {
                   const ButtonComponent = route.mainCta
-                    ? MainCtaButton
-                    : props => (
-                        <Button variant="outlined" color="primary" {...props} />
-                      );
+                    ? LoadingButton
+                    : props => <Button priority="secondary" {...props} />;
                   return (
                     <Grid item key={route.path}>
                       <ButtonComponent

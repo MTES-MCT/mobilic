@@ -12,13 +12,9 @@ import {
   useStoreSyncedWithLocalStorage
 } from "common/store/store";
 import { ApiContextProvider, useApi } from "common/utils/api";
-import { theme } from "common/utils/theme";
+import { customOptions } from "common/utils/theme";
 import { MODAL_DICT } from "./modals";
-import {
-  ThemeProvider,
-  StyledEngineProvider,
-  CssBaseline
-} from "@mui/material";
+import { StyledEngineProvider, CssBaseline } from "@mui/material";
 import { loadUserData } from "common/utils/loadUserData";
 import frLocale from "date-fns/locale/fr";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -33,41 +29,44 @@ import {
   getFallbackRoute,
   isAccessible
 } from "./common/routes";
-import { ScrollToTop } from "common/utils/scroll";
 import { SnackbarProvider, useSnackbarAlerts } from "./common/Snackbar";
 import { EnvironmentHeader } from "./common/EnvironmentHeader";
 import { LiveChat } from "./common/LiveChat";
-import { currentControllerId, currentUserId } from "common/utils/cookie";
+import {
+  currentControllerId,
+  currentUserId,
+  hasGoogleAdsConsent
+} from "common/utils/cookie";
 import {
   MatomoProvider,
   createInstance,
   useMatomo
 } from "@datapunt/matomo-tracker-react";
+import { Crisp } from "crisp-sdk-web";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ErrorBoundary } from "./common/ErrorFallback";
 import { RegulationDrawerContextProvider } from "./landing/ResourcePage/RegulationDrawer";
-
-import "@gouvfr/dsfr/dist/dsfr.min.css"; // dsfr should be imported before custom styles
-import "@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-development/icons-development.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-communication/icons-communication.min.css";
-import "@gouvfr/dsfr/dist/utility/icons/icons-others/icons-others.min.css";
-import "@gouvfr/dsfr/dist/utility/colors/colors.min.css";
+import { isGoogleAdsInitiated, initGoogleAds } from "common/utils/trackAds";
+import { createMuiDsfrThemeProvider } from "@codegouvfr/react-dsfr/mui";
 import "./index.css";
 import "common/assets/styles/root.scss";
 import { loadControllerUserData } from "./controller/utils/loadControllerUserData";
 import { LocalizationProvider, frFR } from "@mui/x-date-pickers";
 import { shouldUpdatePassword } from "common/utils/updatePassword";
 import UpdatePasswordModal from "./pwa/components/UpdatePassword";
+import AcceptCguModal from "./pwa/modals/AcceptCguModal";
+import RejectedCguModal from "./pwa/modals/RejectedCguModals";
+import merge from "lodash/merge";
+import { useScroll } from "./common/hooks/useScroll";
+import { useIsAdmin } from "./common/hooks/useIsAdmin";
+import ChangeGenderModal from "./pwa/modals/ChangeGenderModal";
 
 const matomo = createInstance({
-  urlBase: "https://stats.data.gouv.fr",
-  siteId: 163,
-  userId: "UID76903202", // optional, default value: `undefined`.
-  trackerUrl: "https://stats.data.gouv.fr/piwik.php", // optional, default value: `${urlBase}matomo.php`
-  srcUrl: "https://stats.data.gouv.fr/piwik.js", // optional, default value: `${urlBase}matomo.js`,
+  urlBase: "https://stats.beta.gouv.fr",
+  siteId: 75,
+  // userId: 'UIDC2DH', // optional, default value: `undefined`.
+  // trackerUrl: 'https://LINK.TO.DOMAIN/tracking.php', // optional, default value: `${urlBase}matomo.php`
+  // srcUrl: 'https://LINK.TO.DOMAIN/tracking.js', // optional, default value: `${urlBase}matomo.js`
   disabled: !process.env.REACT_APP_MATOMO,
   heartBeat: {
     // optional, enabled by default
@@ -77,13 +76,19 @@ const matomo = createInstance({
   linkTracking: false // optional, default value: true
 });
 
+const { MuiDsfrThemeProvider } = createMuiDsfrThemeProvider({
+  augmentMuiTheme: ({ nonAugmentedMuiTheme, frColorTheme }) => ({
+    ...merge(nonAugmentedMuiTheme, customOptions)
+  })
+});
+
 export default function Root() {
   return (
     <MatomoProvider value={matomo}>
       <StoreSyncedWithLocalStorageProvider storage={localStorage}>
         <Router>
           <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={theme}>
+            <MuiDsfrThemeProvider>
               <CssBaseline />
               <ErrorBoundary>
                 <ApiContextProvider>
@@ -99,7 +104,6 @@ export default function Root() {
                       <LoadingScreenContextProvider>
                         <ModalProvider modalDict={MODAL_DICT}>
                           <RegulationDrawerContextProvider>
-                            <ScrollToTop />
                             <_Root />
                           </RegulationDrawerContextProvider>
                         </ModalProvider>
@@ -108,7 +112,7 @@ export default function Root() {
                   </LocalizationProvider>
                 </ApiContextProvider>
               </ErrorBoundary>
-            </ThemeProvider>
+            </MuiDsfrThemeProvider>
           </StyledEngineProvider>
         </Router>
       </StoreSyncedWithLocalStorageProvider>
@@ -121,6 +125,7 @@ function _Root() {
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
+  useScroll();
 
   const userId = store.userId();
   const controllerId = store.controllerId();
@@ -208,6 +213,13 @@ function _Root() {
 
   React.useEffect(() => {
     if (
+      process.env.REACT_APP_GOOGLE_ADS &&
+      !isGoogleAdsInitiated() &&
+      hasGoogleAdsConsent()
+    ) {
+      initGoogleAds();
+    }
+    if (
       !currentUserId() &&
       (location.pathname.startsWith("/app") ||
         location.pathname.startsWith("/home") ||
@@ -252,12 +264,18 @@ function _Root() {
   React.useEffect(() => {
     withLoadingScreen(
       async () => {
-        if (userId && store.userId()) await loadUserAndRoute();
+        if (userId && store.userId()) {
+          Crisp.session.setData({
+            mobilic_id: userId,
+            metabase_link:
+              "https://metabase.mobilic.beta.gouv.fr/dashboard/6?id=" + userId
+          });
+          await loadUserAndRoute();
+        }
       },
       { cacheKey: "loadUser" + userId },
       false
     );
-    return () => {};
   }, [userId]);
 
   React.useEffect(() => {
@@ -269,8 +287,23 @@ function _Root() {
       { cacheKey: "loadController" + controllerId },
       false
     );
-    return () => {};
   }, [controllerId]);
+
+  const [seeAgainCgu, setSeeAgainCgu] = React.useState(false);
+
+  const { isAdmin } = useIsAdmin();
+  const shouldSeeCguModal = React.useMemo(
+    () => userInfo?.userAgreementStatus?.shouldAcceptCgu || seeAgainCgu,
+    [userInfo?.userAgreementStatus?.shouldAcceptCgu, seeAgainCgu]
+  );
+  const shouldSeeHasRejectedCguModal = React.useMemo(
+    () => !seeAgainCgu && userInfo?.userAgreementStatus?.hasRejectedCgu,
+    [userInfo?.userAgreementStatus?.hasRejectedCgu, seeAgainCgu]
+  );
+  const shouldSeeGenderModal = React.useMemo(
+    () => !isAdmin && !userInfo.gender && userInfo.hasActivatedEmail,
+    [userInfo?.gender, userInfo?.hasActivatedEmail, isAdmin]
+  );
 
   const routes = getAccessibleRoutes({ userInfo, companies, controllerInfo });
 
@@ -280,19 +313,41 @@ function _Root() {
         process.env.REACT_APP_SENTRY_ENVIRONMENT === "sandbox") && (
         <EnvironmentHeader />
       )}
-      {process.env.REACT_APP_CRISP_WEBSITE_ID && !controllerId && <LiveChat />}
+      {process.env.REACT_APP_CRISP_AUTOLOAD !== "1" &&
+        process.env.REACT_APP_CRISP_WEBSITE_ID &&
+        !controllerId && <LiveChat />}
+      {store.userId() && shouldSeeCguModal && (
+        <AcceptCguModal
+          onAccept={() => setSeeAgainCgu(false)}
+          onReject={() => setSeeAgainCgu(false)}
+        />
+      )}
+      {store.userId() && shouldSeeHasRejectedCguModal && (
+        <RejectedCguModal
+          expiryDate={userInfo?.userAgreementStatus?.expiresAt}
+          onRevert={() => setSeeAgainCgu(true)}
+          userId={userId}
+        />
+      )}
+      <ChangeGenderModal
+        open={store.userId() && shouldSeeGenderModal}
+        buttonLabel="Valider"
+        title="Veuillez indiquer votre sexe pour continuer à utiliser Mobilic"
+        showExplanation
+      />
       {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
       <React.Suspense fallback={<CircularProgress color="primary" />}>
-        <Switch color="secondary">
+        <Switch>
           {routes.map(route => (
             <Route
               key={route.path}
               exact={route.exact || false}
               path={route.path}
-              component={route.component}
-            />
+            >
+              {route.component}
+            </Route>
           ))}
-          <Redirect key="default" from="*" to={fallbackRoute} />
+          <Route path="*" render={() => <Redirect to={fallbackRoute} />} />
         </Switch>
       </React.Suspense>
     </>

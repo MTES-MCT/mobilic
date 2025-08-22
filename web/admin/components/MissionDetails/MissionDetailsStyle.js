@@ -1,9 +1,6 @@
 import { makeStyles } from "@mui/styles";
 
 export const useMissionDetailsStyles = makeStyles(theme => ({
-  closeButton: {
-    padding: 0
-  },
   missionSubTitle: {
     fontWeight: 200,
     display: "block"
@@ -30,10 +27,6 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
   employeeCard: {
     width: "100%"
   },
-  noCommentText: {
-    fontStyle: "italic",
-    color: theme.palette.grey[500]
-  },
   validationButton: {
     marginTop: theme.spacing(4)
   },
@@ -43,13 +36,6 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
   runningMissionText: {
     color: theme.palette.warning.main,
     fontWeight: "bold"
-  },
-  validationWarningText: {
-    alignItems: "baseline",
-    fontStyle: "italic",
-    padding: 0,
-    fontSize: "0.875rem",
-    textAlign: "left"
   },
   missionTooLongWarning: {
     marginBottom: theme.spacing(3)

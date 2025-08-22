@@ -11,7 +11,9 @@ export const ALERT_TYPES = {
   minimumWorkDayBreak: "minimumWorkDayBreak",
   maximumUninterruptedWorkTime: "maximumUninterruptedWorkTime",
   maximumWorkedDaysInWeek: "maximumWorkedDaysInWeek",
-  noPaperLic: "noLic"
+  noPaperLic: "noLic",
+  maximumWorkInCalendarWeek: "maximumWorkInCalendarWeek",
+  enoughBreak: "enoughBreak"
 };
 
 export const ALERT_TYPE_PROPS_SIMPLER = {
@@ -39,5 +41,13 @@ export const ALERT_TYPE_PROPS_SIMPLER = {
     successMessage: () => "Repos hebdomadaire respecté",
     errorMessage: (_, label) => label,
     rule: REGULATION_RULES.weeklyRest
+  },
+  [ALERT_TYPES.maximumWorkInCalendarWeek]: {
+    successMessage: () => "Durée maximale de travail hebdomadaire respectée",
+    errorMessage: (_, label) => label,
+    rule: REGULATION_RULES.weeklyWork
+  },
+  [ALERT_TYPES.enoughBreak]: {
+    rule: REGULATION_RULES.dailyRest
   }
 };

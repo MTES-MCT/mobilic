@@ -7,18 +7,20 @@ import { useModals } from "common/utils/modals";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { makeStyles } from "@mui/styles";
 import Box from "@mui/material/Box";
-import { MainCtaButton } from "./MainCtaButton";
 import { now } from "common/utils/time";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ButtonBase from "@mui/material/ButtonBase";
+import { LoadingButton } from "common/components/LoadingButton";
+import { Stack } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   container: {
     backgroundColor: theme.palette.background.paper,
-    borderRadius: "24px",
     marginTop: theme.spacing(-3),
     marginBottom: theme.spacing(-3),
     zIndex: 1000,
-    flexShrink: 0
+    flexShrink: 0,
+    textAlign: "center"
   },
   gridItem: {
     maxWidth: 120
@@ -36,31 +38,26 @@ const useStyles = makeStyles(theme => ({
     cursor: props.disabled ? "inherit" : "pointer"
   }),
   cardContent: {
-    height: "100%",
-    width: "100%",
-    maxWidth: 90,
-    minHeight: 70,
-    maxHeight: 90,
+    width: "93px",
+    height: "86px",
     margin: "auto",
     padding: theme.spacing(0.5)
   },
   cardIcon: {
-    margin: theme.spacing(2),
-    flexGrow: 1,
-    flexShrink: 1,
-    width: "auto",
-    height: "auto"
+    width: "32px",
+    height: "32px"
   },
   cardText: props => ({
     width: "100%",
-    flexShrink: 0,
-    fontSize: "75%",
-    fontWeight: props.highlighted ? "bold" : "normal"
+    fontSize: "0.6875rem",
+    fontWeight: props.highlighted ? "bold" : 500,
+    marginTop: "0.25rem"
   })
 }));
 
 export function ActivitySwitchCard({
   label,
+  subLabel = "",
   renderIcon,
   colored,
   highlighted,
@@ -70,23 +67,38 @@ export function ActivitySwitchCard({
 }) {
   const classes = useStyles({ colored, highlighted, disabled, color });
   return (
-    <Card className={classes.card} onClick={!disabled ? onClick : null} raised>
-      <Box className={`${classes.cardContent} flex-column-space-between`}>
-        {renderIcon({
-          className: classes.cardIcon,
-          fontSize: "large"
-        })}
-        <Typography
-          align="center"
-          variant="body2"
-          className={classes.cardText}
-          noWrap
-          gutterBottom
+    <ButtonBase onClick={!disabled ? onClick : null}>
+      <Card className={classes.card} raised>
+        <Stack
+          direction="column"
+          className={classes.cardContent}
+          alignItems="center"
+          justifyContent="center"
         >
-          {label}
-        </Typography>
-      </Box>
-    </Card>
+          {renderIcon({
+            className: classes.cardIcon,
+            fontSize: "large"
+          })}
+          <Typography
+            align="center"
+            variant="body2"
+            className={classes.cardText}
+            noWrap
+          >
+            {label}
+          </Typography>
+          {subLabel && (
+            <Typography
+              fontSize="0.5rem"
+              lineHeight="0.7rem"
+              marginTop="0.15rem"
+            >
+              {subLabel}
+            </Typography>
+          )}
+        </Stack>
+      </Card>
+    </ButtonBase>
   );
 }
 
@@ -165,53 +177,63 @@ export function ActivitySwitch({
         direction="row"
         justifyContent="center"
         alignItems={"center"}
-        spacing={2}
+        spacing={1}
       >
-        {Object.values(SWITCH_ACTIVITIES).map(activity => {
-          const current =
-            latestActivity &&
-            (!latestActivity.endTime
-              ? activity.name === latestActivity.type ||
-                (activity === ACTIVITIES.drive &&
-                  latestActivity.type === ACTIVITIES.support.name)
-              : activity === ACTIVITIES.break);
-          return (
-            <Grid
-              item
-              className={classes.gridItem}
-              xs
-              key={activity.name}
-              style={{ marginBottom: current ? 16 : 0, lineHeight: 0 }}
-            >
-              <ArrowDropUpIcon
-                viewBox="0 8 24 8"
-                style={{
-                  color: activity.color,
-                  visibility: current ? "visible" : "hidden",
-                  width: 24,
-                  height: 8
-                }}
-              />
-              <ActivitySwitchCard
-                label={activity.label}
-                renderIcon={activity.renderIcon}
-                colored={current || !latestActivity}
-                highlighted={current}
-                onClick={handleActivitySwitch(activity.name)}
-                disabled={
-                  disableBreak && activity.name === ACTIVITIES.break.name
-                }
-                color={activity.color}
-              />
-            </Grid>
-          );
-        })}
+        {Object.values(SWITCH_ACTIVITIES)
+          .filter(
+            activity =>
+              company.settings.allowOtherTask ||
+              activity.name !== ACTIVITIES.work.name
+          )
+          .map(activity => {
+            const current =
+              latestActivity &&
+              (!latestActivity.endTime
+                ? activity.name === latestActivity.type ||
+                  (activity === ACTIVITIES.drive &&
+                    latestActivity.type === ACTIVITIES.support.name)
+                : activity === ACTIVITIES.break);
+            return (
+              <Grid
+                item
+                className={classes.gridItem}
+                xs
+                key={activity.name}
+                style={{ marginBottom: current ? 16 : 0, lineHeight: 0 }}
+              >
+                <ArrowDropUpIcon
+                  viewBox="0 8 24 8"
+                  style={{
+                    color: activity.color,
+                    visibility: current ? "visible" : "hidden",
+                    width: 24,
+                    height: 8
+                  }}
+                />
+                <ActivitySwitchCard
+                  label={activity.label}
+                  subLabel={
+                    activity.name === ACTIVITIES.work.name &&
+                    company.settings.otherTaskLabel
+                  }
+                  renderIcon={activity.renderIcon}
+                  colored={current || !latestActivity}
+                  highlighted={current}
+                  onClick={handleActivitySwitch(activity.name)}
+                  disabled={
+                    disableBreak && activity.name === ACTIVITIES.break.name
+                  }
+                  color={activity.color}
+                />
+              </Grid>
+            );
+          })}
       </Grid>
       {endMission && (
         <Box pt={6} pb={2}>
-          <MainCtaButton onClick={() => endMission(now())}>
+          <LoadingButton onClick={() => endMission(now())} size="large">
             Mission terminée
-          </MainCtaButton>
+          </LoadingButton>
         </Box>
       )}
     </Box>

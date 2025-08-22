@@ -5,9 +5,9 @@ import React from "react";
 import { ComputerImage } from "common/utils/icons";
 import Typography from "@mui/material/Typography";
 import { useIsWidthUp } from "common/utils/useWidth";
-import { LoadingButton } from "common/components/LoadingButton";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { ADMIN_LANDING_CONTACT } from "common/utils/matomoTags";
+import { LinkButton } from "../../../common/LinkButton";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -19,6 +19,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     fontSize: "2rem",
+    lineHeight: "2.5rem",
     fontWeight: "400",
     color: "black",
     paddingLeft: theme.spacing(4),
@@ -53,18 +54,19 @@ export function OutroGestionnaire() {
         <Stack direction="column" gap={4}>
           <Typography className={classes.title}>
             <b>Mobilic,</b> c'est une gestion administrative simplifiée et{" "}
-            <b>une entreprise conforme à la réglementation</b>
+            <b>
+              une&nbsp;entreprise&nbsp;conforme à&nbsp;la&nbsp;réglementation
+            </b>
           </Typography>
-          <LoadingButton
-            variant="outlined"
-            color="primary"
+          <LinkButton
             className={classes.button}
+            priority="secondary"
             aria-label="Nous contacter"
-            href="mailto:mobilic@beta.gouv.fr"
+            to="mailto:contact@mobilic.beta.gouv.fr"
             onClick={() => trackEvent(ADMIN_LANDING_CONTACT)}
           >
             J’ai une question pour l’équipe Mobilic
-          </LoadingButton>
+          </LinkButton>
         </Stack>
       </Stack>
     </Container>

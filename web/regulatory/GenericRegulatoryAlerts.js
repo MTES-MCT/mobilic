@@ -18,12 +18,11 @@ import {
   SubmitterType
 } from "common/utils/regulation/alertTypes";
 import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
-import { currentControllerId } from "common/utils/cookie";
+import { SectionTitle } from "../common/typography/SectionTitle";
 
 export function GenericRegulatoryAlerts({
   userId,
   day,
-  prefetchedRegulationComputation,
   regulationCheckUnit,
   shouldDisplayInitialEmployeeVersion = false
 }) {
@@ -35,11 +34,9 @@ export function GenericRegulatoryAlerts({
   const api = useApi();
   const alerts = useSnackbarAlerts();
 
-  React.useEffect(async () => {
-    setLoading(true);
-    if (currentControllerId()) {
-      setRegulationComputations(prefetchedRegulationComputation);
-    } else {
+  React.useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
       await alerts.withApiErrorHandling(async () => {
         const apiResponse = await api.graphQlQuery(
           USER_READ_REGULATION_COMPUTATIONS_QUERY,
@@ -69,17 +66,14 @@ export function GenericRegulatoryAlerts({
           }
         }
       });
-    }
-    setLoading(false);
-  }, [
-    day,
-    userId,
-    prefetchedRegulationComputation,
-    shouldDisplayInitialEmployeeVersion
-  ]);
+      setLoading(false);
+    };
+    loadData();
+  }, [day, userId, shouldDisplayInitialEmployeeVersion]);
 
   return (
     <>
+      <SectionTitle title="Seuils réglementaires" component="h2" />
       {loading && <Skeleton variant="rectangular" width="100%" height={300} />}
       {!loading && regulationComputations && (
         <>

@@ -9,16 +9,13 @@ import Container from "@mui/material/Container";
 import { ControllerControlBottomMenu } from "../../controller/components/menu/ControllerControlBottomMenu";
 import { currentControllerId } from "common/utils/cookie";
 import { useDownloadBDC } from "../../controller/utils/useDownloadBDC";
-import { canDownloadBDC } from "../../controller/utils/controlBulletin";
-import { Alert } from "@mui/material";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Notice from "../../common/Notice";
+import { scrollToId } from "../../common/hooks/useScroll";
 
-const useStyles = makeStyles(theme => ({
-  sectionBody: {
-    marginBottom: theme.spacing(6)
-  },
+export const controlTabsStyles = makeStyles(theme => ({
   middleTab: {
+    fontSize: "0.75rem",
     flexGrow: 1.5,
     opacity: 1,
     color: "rgb(255,255,255,0.5)",
@@ -27,6 +24,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   tab: {
+    fontSize: "0.75rem",
     opacity: 1,
     color: "rgb(255,255,255,0.5)",
     "&.Mui-selected": {
@@ -40,7 +38,6 @@ const useStyles = makeStyles(theme => ({
     display: "flex"
   },
   panelContainer: {
-    paddingTop: theme.spacing(3),
     margin: "auto",
     display: "flex",
     flexGrow: 1,
@@ -53,20 +50,24 @@ const useStyles = makeStyles(theme => ({
   linkInfractionTab: {
     textDecoration: "underline",
     cursor: "pointer"
+  },
+  boxContainer: {
+    width: "100%"
   }
 }));
 
 export function UserReadTabs({ tabs, restoreScroll, ...props }) {
   const [tab, setTab] = React.useState(tabs[0].name);
 
+  React.useEffect(() => scrollToId("control-header"), [tab]);
+
+  const onChangeTab = tabName => {
+    setTab(tabName);
+  };
+
   React.useEffect(() => {
     if (restoreScroll) restoreScroll();
   }, [tab]);
-
-  const reportInfractions = () => {
-    props.setIsReportingInfractions(true);
-    setTab(tabs[1].name);
-  };
 
   const showModifyInfractionsAlert = useMemo(() => {
     return (
@@ -76,16 +77,16 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
     );
   }, [props.totalAlertsNumber, props.reportedInfractionsLastUpdateTime, tab]);
 
-  const downloadBDC = useDownloadBDC(props.controlData?.id);
+  const downloadBDC = useDownloadBDC(props.controlId);
 
-  const classes = useStyles();
+  const classes = controlTabsStyles();
   return (
     <>
       <TabContext value={tab}>
         <AppBar enableColorOnDark position="static">
           <Tabs
             value={tab}
-            onChange={(e, t) => setTab(t)}
+            onChange={(e, t) => onChangeTab(t)}
             aria-label="user read tabs"
             centered
             variant="fullWidth"
@@ -106,22 +107,24 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
             ))}
           </Tabs>
         </AppBar>
-        <Box>
+        <Box className={classes.boxContainer}>
           {!!showModifyInfractionsAlert && (
-            <Alert severity="info">
-              <Typography>
-                Mobilic a relevé des infractions par défaut, vous pouvez
-                modifier la sélection au sein de{" "}
-                <span
-                  className={classes.linkInfractionTab}
-                  onClick={() => setTab(tabs[1].name)}
-                >
-                  l’onglet infractions
-                </span>
-              </Typography>
-            </Alert>
+            <Notice
+              description={
+                <>
+                  Mobilic a relevé des infractions par défaut, vous pouvez
+                  modifier la sélection au sein de{" "}
+                  <span
+                    className={classes.linkInfractionTab}
+                    onClick={() => onChangeTab(tabs[1].name)}
+                  >
+                    l’onglet infractions
+                  </span>
+                </>
+              }
+            />
           )}
-          <Container className={classes.panelContainer} key={2} disableGutters>
+          <Container className={classes.panelContainer} disableGutters>
             {tabs.map(t => (
               <TabPanel
                 value={t.name}
@@ -129,7 +132,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
                 className={`${classes.panel} ${tab !== t.name &&
                   classes.hiddenPanel}`}
               >
-                {<t.component {...props} setTab={setTab} />}
+                {<t.component {...props} onChangeTab={onChangeTab} />}
               </TabPanel>
             ))}
           </Container>
@@ -137,14 +140,8 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
       </TabContext>
       {!!currentControllerId() && !props.isReportingInfractions && (
         <ControllerControlBottomMenu
-          reportInfractions={reportInfractions}
-          disabledReportInfractions={(props.groupedAlerts?.length || 0) === 0}
-          updatedInfractions={!!props.reportedInfractionsLastUpdateTime}
           editBDC={props.openBulletinControl}
           downloadBDC={downloadBDC}
-          canDownloadBDC={canDownloadBDC(props.controlData)}
-          bdcAlreadyExisting={!!props.controlData.controlBulletinCreationTime}
-          totalAlertsNumber={props.totalAlertsNumber}
         />
       )}
     </>

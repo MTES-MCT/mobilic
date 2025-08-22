@@ -1,14 +1,14 @@
 import React from "react";
 
-export function Emphasis(props) {
+export function Emphasis({ whiteSpace, ...otherProps }) {
   return (
     <span
       style={{
         fontWeight: "bold",
-        whiteSpace: "nowrap",
+        whiteSpace: whiteSpace || "nowrap",
         backgroundColor: "#ffee66"
       }}
-      {...props}
+      {...otherProps}
     />
   );
 }
