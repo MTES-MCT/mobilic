@@ -34,12 +34,12 @@ import Stack from "@mui/material/Stack";
 import Notice from "../../common/Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Explanation } from "../../common/typography/Explanation";
-import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { readCookie, setCookie } from "common/utils/cookie";
 import BatchInviteModal from "../modals/BatchInviteModal";
 import { EmployeeProgressBar } from "../components/EmployeeProgressBar";
 import { useEmployeeProgress } from "../hooks/useEmployeeProgress";
 import { useAutoUpdateNbWorkers } from "../hooks/useAutoUpdateNbWorkers";
+import { InviteButtons } from "../components/InviteButtons";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -490,7 +490,7 @@ export function Employees({ company, containerRef }) {
     company,
     activeValidEmployments
   );
-  useAutoUpdateNbWorkers(company, validEmployments, adminStore);
+  useAutoUpdateNbWorkers(company, activeValidEmployments, adminStore);
 
   const isAddingEmployment =
     pendingEmploymentsTableRef.current &&
@@ -746,33 +746,28 @@ export function Employees({ company, containerRef }) {
               </Button>
             }
           </Typography>
-          {hidePendingEmployments && !employeeProgressData && (
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <Button
-                priority="secondary"
-                size="small"
-                onClick={() =>
-                  modals.open("batchInvite", {
-                    handleSubmit: inviteEmails
-                  })
-                }
-              >
-                Inviter une liste d'emails
-              </Button>
-              <Button
-                size="small"
-                onClick={() => {
-                  setHidePendingEmployments(false);
-                  pendingEmploymentsTableRef.current.newRow({
-                    hasAdminRights: EMPLOYMENT_ROLE.employee,
-                    teamId: NO_TEAM_ID
-                  });
-                }}
-              >
-                Inviter un nouveau salarié
-              </Button>
-            </Box>
-          )}
+          <InviteButtons
+            onBatchInvite={() =>
+              modals.open("batchInvite", {
+                handleSubmit: inviteEmails
+              })
+            }
+            onSingleInvite={() => {
+              if (canDisplayPendingEmployments) {
+                setHidePendingEmployments(false);
+              }
+              pendingEmploymentsTableRef.current.newRow({
+                hasAdminRights: EMPLOYMENT_ROLE.employee,
+                teamId: NO_TEAM_ID
+              });
+            }}
+            shouldShowBadge={
+              !hasMadeInvitations &&
+              !employeeProgressData?.shouldShowSingleInviteButton &&
+              employeeProgressData?.shouldShowBadge
+            }
+            employeeProgressData={employeeProgressData}
+          />
         </Box>
         <AugmentedTable
           columns={pendingEmploymentColumns}
@@ -832,57 +827,35 @@ export function Employees({ company, containerRef }) {
           }}
           customRowActions={customActionsPendingEmployment}
         />
-        <Typography variant="h4" component="h2">
-          Salariés ({validEmployments.length})
-        </Typography>
         <Box className={classes.title}>
-          <EmployeeProgressBar progressData={employeeProgressData} />
-          {employeeProgressData?.shouldShowSingleInviteButton ? (
-            <Button
-              size="small"
-              onClick={() =>
+          <Typography variant="h4" component="h2">
+            Salariés ({validEmployments.length})
+          </Typography>
+          {!canDisplayPendingEmployments && (
+            <InviteButtons
+              onBatchInvite={() =>
                 modals.open("batchInvite", {
                   handleSubmit: inviteEmails
                 })
               }
-            >
-              {employeeProgressData.shouldShowBadge && (
-                <Badge severity="new" small style={{ marginRight: "8px" }}>
-                  A Faire
-                </Badge>
-              )}
-              Inviter les salariés manquants
-            </Button>
-          ) : !canDisplayPendingEmployments ? (
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <Button
-                priority="secondary"
-                size="small"
-                onClick={() =>
-                  modals.open("batchInvite", {
-                    handleSubmit: inviteEmails
-                  })
-                }
-              >
-                Inviter une liste d'emails
-              </Button>
-              <Button
-                size="small"
-                onClick={() =>
-                  pendingEmploymentsTableRef.current.newRow({
-                    hasAdminRights: EMPLOYMENT_ROLE.employee
-                  })
-                }
-              >
-                {!hasMadeInvitations && !employeeProgressData && (
-                  <Badge severity="new" small style={{ marginRight: "8px" }}>
-                    A Faire
-                  </Badge>
-                )}
-                Inviter un nouveau salarié
-              </Button>
-            </Box>
-          ) : null}
+              onSingleInvite={() => {
+                setHidePendingEmployments(false);
+                pendingEmploymentsTableRef.current.newRow({
+                  hasAdminRights: EMPLOYMENT_ROLE.employee,
+                  teamId: NO_TEAM_ID
+                });
+              }}
+              shouldShowBadge={
+                !hasMadeInvitations &&
+                !employeeProgressData?.shouldShowSingleInviteButton &&
+                employeeProgressData?.shouldShowBadge
+              }
+              employeeProgressData={employeeProgressData}
+            />
+          )}
+        </Box>
+        <Box>
+          <EmployeeProgressBar progressData={employeeProgressData} />
         </Box>
 
         <Explanation>
