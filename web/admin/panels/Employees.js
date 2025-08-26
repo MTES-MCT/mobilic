@@ -56,9 +56,6 @@ const useStyles = makeStyles(theme => ({
   terminatedEmployment: {
     color: theme.palette.text.disabled
   },
-  displayNone: {
-    display: "none !important"
-  },
   hideButton: {
     marginLeft: theme.spacing(2)
   }
@@ -110,6 +107,7 @@ export function Employees({ company, containerRef }) {
   const [hidePendingEmployments, setHidePendingEmployments] = React.useState(
     true
   );
+  const [wantsToAddEmployment, setWantsToAddEmployment] = React.useState(false);
 
   const classes = useStyles();
 
@@ -498,7 +496,24 @@ export function Employees({ company, containerRef }) {
     pendingEmploymentsTableRef.current.isAddingRow();
 
   const canDisplayPendingEmployments =
-    isAddingEmployment || pendingEmployments.length > 0;
+    isAddingEmployment || pendingEmployments.length > 0 || wantsToAddEmployment;
+
+  // Effect to trigger newRow when wanting to add employment and ref becomes available
+  React.useEffect(() => {
+    if (wantsToAddEmployment && pendingEmploymentsTableRef.current) {
+      pendingEmploymentsTableRef.current.newRow({
+        hasAdminRights: EMPLOYMENT_ROLE.employee,
+        teamId: NO_TEAM_ID
+      });
+    }
+  }, [wantsToAddEmployment, canDisplayPendingEmployments]);
+
+  // Reset wantsToAddEmployment when isAddingEmployment becomes true
+  React.useEffect(() => {
+    if (isAddingEmployment && wantsToAddEmployment) {
+      setWantsToAddEmployment(false);
+    }
+  }, [isAddingEmployment, wantsToAddEmployment]);
 
   const customActionEditTeam = {
     name: "editTeam",
@@ -721,112 +736,106 @@ export function Employees({ company, containerRef }) {
         isNewAdmin={true}
       />
       <Stack direction="column" spacing={2}>
-        <Box
-          className={`${
-            canDisplayPendingEmployments ? "" : classes.displayNone
-          } ${classes.title}`}
-        >
-          <Typography variant="h4" component="h2">
-            Invitations en attente ({pendingEmployments.length}){" "}
-            {
-              <Button
-                disabled={isAddingEmployment}
-                className={classes.hideButton}
-                priority="tertiary"
-                size="small"
-                onClick={() => {
-                  setHidePendingEmployments(!hidePendingEmployments);
-                  setTimeout(
-                    validEmploymentsTableRef.current.updateScrollPosition,
-                    0
-                  );
-                }}
-              >
-                {hidePendingEmployments ? "Afficher" : "Masquer"}
-              </Button>
-            }
-          </Typography>
-          <InviteButtons
-            onBatchInvite={() =>
-              modals.open("batchInvite", {
-                handleSubmit: inviteEmails
-              })
-            }
-            onSingleInvite={() => {
-              if (canDisplayPendingEmployments) {
-                setHidePendingEmployments(false);
-              }
-              pendingEmploymentsTableRef.current.newRow({
-                hasAdminRights: EMPLOYMENT_ROLE.employee,
-                teamId: NO_TEAM_ID
-              });
-            }}
-            shouldShowBadge={
-              !hasMadeInvitations &&
-              !employeeProgressData?.shouldShowSingleInviteButton &&
-              employeeProgressData?.shouldShowBadge
-            }
-            employeeProgressData={employeeProgressData}
-          />
-        </Box>
-        <AugmentedTable
-          columns={pendingEmploymentColumns}
-          entries={pendingEmployments}
-          ref={pendingEmploymentsTableRef}
-          onScroll={updateValidListScrollPosition}
-          dense
-          className={`${
-            canDisplayPendingEmployments && !hidePendingEmployments
-              ? ""
-              : classes.displayNone
-          } ${classes.augmentedTable}`}
-          validateRow={({ idOrEmail, hasAdminRights }) =>
-            !!idOrEmail && !!hasAdminRights
-          }
-          forceParentUpdateOnRowAdd={() => setForceUpdate(value => !value)}
-          editActionsColumnMinWidth={180}
-          defaultSortBy={"creationDate"}
-          defaultSortType={"desc"}
-          virtualized
-          virtualizedRowHeight={45}
-          virtualizedMaxHeight={"100%"}
-          virtualizedAttachScrollTo={
-            canDisplayPendingEmployments ? containerRef.current : null
-          }
-          onRowAdd={async ({ idOrEmail, hasAdminRights, teamId }) => {
-            const payload = {
-              hasAdminRights: hasAdminRights === EMPLOYMENT_ROLE.admin,
-              companyId,
-              ...(teamId !== NO_TEAM_ID && { teamId })
-            };
-            if (/^\d+$/.test(idOrEmail)) {
-              payload.userId = parseInt(idOrEmail);
-            } else {
-              payload.mail = idOrEmail.toLowerCase();
-            }
-            try {
-              const apiResponse = await api.graphQlMutate(
-                CREATE_EMPLOYMENT_MUTATION,
-                payload
-              );
-              adminStore.dispatch({
-                type: ADMIN_ACTIONS.create,
-                payload: {
-                  items: [
-                    {
-                      ...apiResponse.data.employments.createEmployment,
-                      companyId
-                    }
-                  ],
-                  entity: "employments"
+        {canDisplayPendingEmployments && (
+          <>
+            <Box className={classes.title}>
+              <Typography variant="h4" component="h2">
+                Invitations en attente ({pendingEmployments.length}){" "}
+                {
+                  <Button
+                    disabled={isAddingEmployment}
+                    className={classes.hideButton}
+                    priority="tertiary"
+                    size="small"
+                    onClick={() => {
+                      setHidePendingEmployments(!hidePendingEmployments);
+                      setTimeout(
+                        validEmploymentsTableRef.current.updateScrollPosition,
+                        0
+                      );
+                    }}
+                  >
+                    {hidePendingEmployments ? "Afficher" : "Masquer"}
+                  </Button>
                 }
-              });
-            } catch (err) {
-              alerts.error(formatApiError(err), idOrEmail, 6000);
-            }
-          }}
-          customRowActions={customActionsPendingEmployment}
-        />
+              </Typography>
+              <InviteButtons
+                onBatchInvite={() =>
+                  modals.open("batchInvite", {
+                    handleSubmit: inviteEmails
+                  })
+                }
+                onSingleInvite={() => {
+                  setWantsToAddEmployment(true);
+                  setHidePendingEmployments(false);
+                }}
+                shouldShowBadge={
+                  !hasMadeInvitations &&
+                  !employeeProgressData?.shouldShowSingleInviteButton &&
+                  employeeProgressData?.shouldShowBadge
+                }
+                employeeProgressData={employeeProgressData}
+              />
+            </Box>
+            {!hidePendingEmployments && (
+              <AugmentedTable
+                columns={pendingEmploymentColumns}
+                entries={pendingEmployments}
+                ref={pendingEmploymentsTableRef}
+                onScroll={updateValidListScrollPosition}
+                dense
+                className={classes.augmentedTable}
+                validateRow={({ idOrEmail, hasAdminRights }) =>
+                  !!idOrEmail && !!hasAdminRights
+                }
+                forceParentUpdateOnRowAdd={() =>
+                  setForceUpdate(value => !value)
+                }
+                editActionsColumnMinWidth={180}
+                defaultSortBy={"creationDate"}
+                defaultSortType={"desc"}
+                virtualized
+                virtualizedRowHeight={45}
+                virtualizedMaxHeight={"100%"}
+                virtualizedAttachScrollTo={containerRef.current}
+                onRowAdd={async ({ idOrEmail, hasAdminRights, teamId }) => {
+                  const payload = {
+                    hasAdminRights: hasAdminRights === EMPLOYMENT_ROLE.admin,
+                    companyId,
+                    ...(teamId !== NO_TEAM_ID && { teamId })
+                  };
+                  if (/^\d+$/.test(idOrEmail)) {
+                    payload.userId = parseInt(idOrEmail);
+                  } else {
+                    payload.mail = idOrEmail.toLowerCase();
+                  }
+                  try {
+                    const apiResponse = await api.graphQlMutate(
+                      CREATE_EMPLOYMENT_MUTATION,
+                      payload
+                    );
+                    adminStore.dispatch({
+                      type: ADMIN_ACTIONS.create,
+                      payload: {
+                        items: [
+                          {
+                            ...apiResponse.data.employments.createEmployment,
+                            companyId
+                          }
+                        ],
+                        entity: "employments"
+                      }
+                    });
+                  } catch (err) {
+                    alerts.error(formatApiError(err), idOrEmail, 6000);
+                  }
+                }}
+                customRowActions={customActionsPendingEmployment}
+              />
+            )}
+          </>
+        )}
+
         <Box className={classes.title}>
           <Typography variant="h4" component="h2">
             Salariés ({validEmployments.length})
@@ -839,11 +848,8 @@ export function Employees({ company, containerRef }) {
                 })
               }
               onSingleInvite={() => {
+                setWantsToAddEmployment(true);
                 setHidePendingEmployments(false);
-                pendingEmploymentsTableRef.current.newRow({
-                  hasAdminRights: EMPLOYMENT_ROLE.employee,
-                  teamId: NO_TEAM_ID
-                });
               }}
               shouldShowBadge={
                 !hasMadeInvitations &&
