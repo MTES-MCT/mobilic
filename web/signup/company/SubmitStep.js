@@ -9,7 +9,11 @@ import { BusinessType } from "../../common/BusinessType";
 import { Section } from "../../common/Section";
 import { MandatoryField } from "../../common/MandatoryField";
 import { Input } from "../../common/forms/Input";
-import { NumericInput } from "../../common/forms/NumericInput";
+import {
+  NbWorkersInput,
+  MIN_NB_WORKERS,
+  MAX_NB_WORKERS
+} from "../../common/forms/NbWorkersInput";
 
 const useStyles = makeStyles(theme => ({
   verticalFormButton: {
@@ -17,8 +21,6 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export const MIN_NB_WORKERS = 1;
-export const MAX_NB_WORKERS = 5000;
 export function SubmitStep({
   handleSubmit,
   loading,
@@ -66,14 +68,9 @@ export function SubmitStep({
               setCurrentPhoneNumber={setPhoneNumber}
               label="Numéro de téléphone de l'entreprise"
             />
-            <NumericInput
+            <NbWorkersInput
               initialValue={nbWorkers}
               onChangeValue={setNbWorkers}
-              label="Nombre de salariés concernés par Mobilic"
-              hintText="Exemples : chauffeurs, accompagnateurs, ripeurs..."
-              required
-              min={MIN_NB_WORKERS}
-              max={MAX_NB_WORKERS}
             />
             <Section title="Veuillez indiquer votre type d'activité">
               <BusinessType

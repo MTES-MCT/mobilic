@@ -1,40 +1,25 @@
-import { clearCookie, readCookie, setCookie } from "./cookie";
-import { addDaysToDate } from "./time";
+import { createModalManager } from "./createModalManager";
 
-const UPDATE_TIME_COOKIE_NAME = "nextUpdatePasswordTime";
-
-export const shouldUpdatePassword = () => {
-  if (!checkUpdateTimeCookieExists()) {
-    return false;
-  }
-  const nextTime = new Date(readCookie(UPDATE_TIME_COOKIE_NAME)).getTime();
-  const nowTime = new Date().getTime();
-  return nowTime > nextTime;
-};
+const passwordManager = createModalManager({
+  cookieBaseName: "nextUpdatePasswordTime",
+  defaultDelayDays: 3,
+  isPerCompany: false,
+  businessCondition: () => true
+});
 
 export const onLogIn = shouldUpdatePassword => {
   if (!shouldUpdatePassword) {
-    clearUpdateTimeCookie();
+    passwordManager.clearUpdateTimeCookie();
   } else {
-    if (!checkUpdateTimeCookieExists()) {
-      initUpdateTimeCookie();
+    if (!passwordManager.checkUpdateTimeCookieExists()) {
+      passwordManager.initUpdateTimeCookie();
     }
   }
 };
 
-export const clearUpdateTimeCookie = () =>
-  clearCookie(UPDATE_TIME_COOKIE_NAME, true);
-
-export const checkUpdateTimeCookieExists = () =>
-  !!readCookie(UPDATE_TIME_COOKIE_NAME);
-
-export const initUpdateTimeCookie = () => setTime(new Date());
-
-export const snooze = () => {
-  if (!checkUpdateTimeCookieExists()) {
-    return;
-  }
-  setTime(addDaysToDate(new Date(), 3));
-};
-
-const setTime = newTime => setCookie(UPDATE_TIME_COOKIE_NAME, newTime, true);
+export const shouldUpdatePassword = passwordManager.shouldUpdate;
+export const snooze = passwordManager.snooze;
+export const clearUpdateTimeCookie = passwordManager.clearUpdateTimeCookie;
+export const checkUpdateTimeCookieExists =
+  passwordManager.checkUpdateTimeCookieExists;
+export const initUpdateTimeCookie = passwordManager.initUpdateTimeCookie;

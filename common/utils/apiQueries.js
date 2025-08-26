@@ -593,6 +593,7 @@ export const ADMIN_COMPANIES_LIST_QUERY = gql`
         name
         siren
         phoneNumber
+        nbWorkers
         isCertified
         acceptCertificationCommunication
       }
@@ -720,6 +721,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
       adminedCompanies(companyIds: $companyIds) {
         id
         name
+        nbWorkers
         ...CompanySettings
         business {
           transportType
@@ -870,6 +872,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
         employments {
           ...FullEmploymentData
           shouldSeeCertificateInfo
+          shouldForceNbWorkerInfo
         }
       }
     }
@@ -2234,6 +2237,14 @@ export const SNOOZE_CERTIFICATION_INFO = gql`
   }
 `;
 
+export const SNOOZE_NB_WORKER_INFO = gql`
+  mutation snoozeNbWorkerInfo($employmentId: Int!) {
+    snoozeNbWorkerInfo(employmentId: $employmentId) {
+      success
+    }
+  }
+`;
+
 export const UPDATE_HIDE_EMAIL_MUTATION = gql`
   mutation updateHideEmail($employmentId: Int!, $hideEmail: Boolean!) {
     employments {
@@ -2313,15 +2324,18 @@ export const UPDATE_COMPANY_DETAILS = gql`
     $companyId: Int!
     $newName: String
     $newPhoneNumber: String
+    $newNbWorkers: Int
   ) {
     updateCompanyDetails(
       companyId: $companyId
       newName: $newName
       newPhoneNumber: $newPhoneNumber
+      newNbWorkers: $newNbWorkers
     ) {
       id
       name
       phoneNumber
+      nbWorkers
       business {
         businessType
         transportType
@@ -2338,6 +2352,7 @@ export const UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE = gql`
     $newPhoneNumber: String
     $newBusinessType: String
     $applyBusinessTypeToEmployees: Boolean
+    $newNbWorkers: Int
   ) {
     updateCompanyDetails(
       companyId: $companyId
@@ -2345,10 +2360,12 @@ export const UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE = gql`
       newPhoneNumber: $newPhoneNumber
       newBusinessType: $newBusinessType
       applyBusinessTypeToEmployees: $applyBusinessTypeToEmployees
+      newNbWorkers: $newNbWorkers
     ) {
       id
       name
       phoneNumber
+      nbWorkers
       business {
         businessType
         transportType

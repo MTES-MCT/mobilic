@@ -9,6 +9,11 @@ import { useUpdateCompanyDetails } from "../../common/useUpdateCompanyDetails";
 import Modal from "../../common/Modal";
 import { MandatoryField } from "../../common/MandatoryField";
 import { Input } from "../../common/forms/Input";
+import {
+  NbWorkersInput,
+  MIN_NB_WORKERS,
+  MAX_NB_WORKERS
+} from "../../common/forms/NbWorkersInput";
 
 export default function UpdateCompanyDetailsModal({
   open,
@@ -24,7 +29,9 @@ export default function UpdateCompanyDetailsModal({
     setNewCompanyBusinessType,
     hasBusinessTypeChanged,
     updateCompanyDetails,
-    newCompanyBusinessType
+    newCompanyBusinessType,
+    newNbWorkers,
+    setNewNbWorkers
   } = useUpdateCompanyDetails(company, adminStore, handleClose);
 
   const [
@@ -35,21 +42,27 @@ export default function UpdateCompanyDetailsModal({
   const canSave = React.useMemo(
     () =>
       newCompanyName &&
+      newNbWorkers >= MIN_NB_WORKERS &&
+      newNbWorkers <= MAX_NB_WORKERS &&
       (newCompanyName !== company?.name ||
         newCompanyPhoneNumber !== company?.phoneNumber ||
+        newNbWorkers !== company?.nbWorkers ||
         (hasBusinessTypeChanged && !!newCompanyBusinessType)),
     [
       company?.phoneNumber,
       company?.name,
+      company?.nbWorkers,
       newCompanyName,
       newCompanyPhoneNumber,
+      newNbWorkers,
       hasBusinessTypeChanged,
       newCompanyBusinessType
     ]
   );
 
-  const handleSubmit = async () =>
+  const handleSubmit = async () => {
     await updateCompanyDetails(applyBusinessTypeToEmployees);
+  };
 
   return (
     <Modal
@@ -81,6 +94,10 @@ export default function UpdateCompanyDetailsModal({
               setNewCompanyPhoneNumber(newNumber)
             }
             label="Numéro de téléphone de l'entreprise"
+          />
+          <NbWorkersInput
+            initialValue={newNbWorkers}
+            onChangeValue={setNewNbWorkers}
           />
           {adminStore.business && (
             <>
