@@ -108,7 +108,7 @@ export function Employees({ company, containerRef }) {
   })[1];
 
   const [hidePendingEmployments, setHidePendingEmployments] = React.useState(
-    false
+    true
   );
 
   const classes = useStyles();
@@ -746,32 +746,33 @@ export function Employees({ company, containerRef }) {
               </Button>
             }
           </Typography>
-
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Button
-              priority="secondary"
-              size="small"
-              onClick={() =>
-                modals.open("batchInvite", {
-                  handleSubmit: inviteEmails
-                })
-              }
-            >
-              Inviter une liste d'emails
-            </Button>
-            <Button
-              size="small"
-              onClick={() => {
-                setHidePendingEmployments(false);
-                pendingEmploymentsTableRef.current.newRow({
-                  hasAdminRights: EMPLOYMENT_ROLE.employee,
-                  teamId: NO_TEAM_ID
-                });
-              }}
-            >
-              Inviter un nouveau salarié
-            </Button>
-          </Box>
+          {hidePendingEmployments && !employeeProgressData && (
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <Button
+                priority="secondary"
+                size="small"
+                onClick={() =>
+                  modals.open("batchInvite", {
+                    handleSubmit: inviteEmails
+                  })
+                }
+              >
+                Inviter une liste d'emails
+              </Button>
+              <Button
+                size="small"
+                onClick={() => {
+                  setHidePendingEmployments(false);
+                  pendingEmploymentsTableRef.current.newRow({
+                    hasAdminRights: EMPLOYMENT_ROLE.employee,
+                    teamId: NO_TEAM_ID
+                  });
+                }}
+              >
+                Inviter un nouveau salarié
+              </Button>
+            </Box>
+          )}
         </Box>
         <AugmentedTable
           columns={pendingEmploymentColumns}

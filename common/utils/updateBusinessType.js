@@ -1,14 +1,14 @@
-import { createUpdateTimeManager } from "./updateTimeManager";
+import { createModalManager } from "./createModalManager";
 
-const {
-  checkUpdateTimeCookieExists,
-  clearUpdateTimeCookie,
-  snooze,
-  shouldUpdate
-} = createUpdateTimeManager("nextUpdateBusinessTypeTime", 1);
+const businessTypeManager = createModalManager({
+  cookieBaseName: "nextUpdateBusinessTypeTime",
+  defaultDelayDays: 1,
+  isPerCompany: true,
+  businessCondition: () => true
+});
 
-export const shouldUpdateBusinessType = () => {
-  return shouldUpdate(true);
-};
-
-export { clearUpdateTimeCookie, checkUpdateTimeCookieExists, snooze };
+export const shouldUpdateBusinessType = businessTypeManager.shouldUpdate;
+export const snooze = businessTypeManager.snooze;
+export const clearUpdateTimeCookie = businessTypeManager.clearUpdateTimeCookie;
+export const checkUpdateTimeCookieExists =
+  businessTypeManager.checkUpdateTimeCookieExists;

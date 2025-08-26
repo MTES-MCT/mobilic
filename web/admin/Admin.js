@@ -216,7 +216,9 @@ function AdminComponent() {
     <>
       {!!adminStore.business &&
         !adminStore.business.businessType &&
-        shouldUpdateBusinessType() && <UpdateCompanyBusinessTypeModal />}
+        shouldUpdateBusinessType({
+          id: adminStore.companyId
+        }) && <UpdateCompanyBusinessTypeModal />}
       {!!company && shouldUpdateNbWorker(company) && <UpdateNbWorkerModal />}
       <Header />
       <MissionDrawerContextProvider

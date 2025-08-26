@@ -31,7 +31,7 @@ export default function UpdateNbWorkerModal() {
         },
         { context: { nonPublicApi: true } }
       );
-      snooze();
+      snooze(company);
       setIsOpen(false);
     } catch (err) {
       alerts.error(formatApiError(err), "", 6000);
@@ -43,7 +43,7 @@ export default function UpdateNbWorkerModal() {
     setNewNbWorkers,
     updateCompanyDetails
   } = useUpdateCompanyDetails(company, adminStore, () => {
-    clearUpdateTimeCookie();
+    clearUpdateTimeCookie(company);
     setIsOpen(false);
   });
 
