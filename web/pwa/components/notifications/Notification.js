@@ -54,7 +54,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export const Notification = ({ title, content, historyOnClick, read }) => {
-  console.log("Notification render:", { title: title?.substring(0, 20), read });
   const classes = useStyles({ read });
   return (
     <Stack direction="column" width="100%" p={2} className={classes.container}>

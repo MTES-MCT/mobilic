@@ -196,8 +196,7 @@ export const Notifications = ({ openHistory }) => {
   const unreadNotifs = useMemo(() => notifs.filter(n => !n.read), [notifs]);
 
   const title = useMemo(
-    () =>
-      unreadNotifs.length > 0 ? `${unreadNotifs.length} nouveaux messages` : "",
+    () => (unreadNotifs.length > 0 ? unreadNotifs.length : ""),
     [unreadNotifs.length]
   );
 
@@ -249,13 +248,11 @@ export const Notifications = ({ openHistory }) => {
           onClick={onExtendButtonClick}
           type="button"
           id={`${id}__toggle-btn`}
+          style={{
+            justifyContent: "flex-start"
+          }}
         >
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            width="100%"
-            pr={1}
-          >
+          <Stack direction="row" gap={1} alignItems="center" pl={1}>
             <span
               className={fr.cx(
                 "fr-btn--icon-left",
@@ -266,7 +263,7 @@ export const Notifications = ({ openHistory }) => {
               Informations
             </span>
             {title && (
-              <Badge noIcon severity="error" style={{ fontSize: "0.625rem" }}>
+              <Badge noIcon severity="error" style={{ fontSize: "0.650rem" }}>
                 {title}
               </Badge>
             )}
