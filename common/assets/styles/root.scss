@@ -526,6 +526,15 @@ video:not([href])[controls] {
   }
 }
 
+#fr-accordion-notifs__toggle-btn {
+  justify-content: flex-start !important;
+}
+#fr-accordion-notifs__toggle-btn::after {
+  margin-right: 0 !important;
+  margin-left: 0.5rem !important;
+  position: static !important;
+}
+
 #fr-accordion-notifs-collapse {
   padding-left: 0;
   padding-right: 0;
