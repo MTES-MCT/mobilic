@@ -41,7 +41,7 @@ export function FranceConnectCallback() {
             inviteToken: token,
             originalRedirectUri: callbackURL,
             authorizationCode: code,
-            create: !!create,
+            create: create,
             state
           },
           { context: { nonPublicApi: true } },
@@ -64,22 +64,52 @@ export function FranceConnectCallback() {
 
   React.useEffect(() => {
     const queryString = new URLSearchParams(window.location.search);
+
+    const error = queryString.get("error");
+    const errorDescription = queryString.get("error_description");
+
+    if (error) {
+      const errorMessage = `Erreur d'authentification FranceConnect: ${error}`;
+      const details = errorDescription ? ` - ${errorDescription}` : "";
+      setError(errorMessage + details);
+      return;
+    }
+
     const inviteToken = queryString.get("invite_token");
     const code = queryString.get("code");
-    const create = queryString.get("create");
+    const context = queryString.get("context");
+    let create = queryString.get("create") === "true";
     const state = queryString.get("state");
+
+    if (context === "signup") {
+      create = true;
+    } else if (context === "login") {
+      create = false;
+    } else if (!create && state) {
+      // eslint-disable-next-line
+      const stateData = JSON.parse(atob(state));
+      create = stateData.create === true;
+    }
+
+    // Clean v1/v2 parameters from URL
     const newQS = removeParamsFromQueryString(window.location.search, [
       "code",
       "state",
-      "iss"
+      "iss", // v1 parameter
+      "error", // v2 parameter
+      "error_description" // v2 parameter
     ]);
+
     const callBackUrl =
       window.location.origin +
       window.location.pathname +
       (newQS.length > 0 ? `?${newQS}` : "");
+
     if (code) {
       retrieveFranceConnectInfo(code, callBackUrl, inviteToken, create, state);
-    } else setError("Paramètres invalides");
+    } else if (!error) {
+      setError("Paramètres invalides");
+    }
   }, []);
 
   return error ? <Typography color="error">{error}</Typography> : null;
