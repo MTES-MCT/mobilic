@@ -4,6 +4,7 @@ export const MATOMO_CATEGORIES = {
   ADMIN_ACTIVITY_FILTER: "admin-activity-filter",
   ADMIN_EXPORT: "admin-export",
   ADMIN_LANDING_PAGE: "admin-landing-page",
+  ADMIN_EMPLOYEE_INVITATION: "admin-employee-invitation",
   HOME: "homepage"
 };
 
@@ -13,7 +14,12 @@ export const MATOMO_ACTIONS = {
   ADMIN_SUBSCRIBE: "admin-subscribe",
   ADMIN_WEBINARS: "admin-webinars",
   ADMIN_FAQ: "admin-faq",
-  ADMIN_CONTACT: "admin-contact-team"
+  ADMIN_CONTACT: "admin-contact-team",
+  INVITE_BATCH_MODAL_SUBMIT: "invite-batch-modal-submit",
+  INVITE_NEW_EMPLOYEE: "invite-new-employee",
+  INVITE_NEW_EMPLOYEE_SUBMIT: "invite-new-employee-submit",
+  INVITE_MISSING_EMPLOYEES: "invite-missing-employees",
+  INVITE_EMAIL_LIST: "invite-email-list"
 };
 
 export const EDIT_ACTIVITY_IN_MISSION_PANEL = {
@@ -208,4 +214,37 @@ export const ADMIN_CERTIFICATE_TAB_WITHOUT_BADGE = {
   category: MATOMO_CATEGORIES.ADMIN_NAVIGATION,
   action: "open-certificate-tab-without-badge",
   name: "Affichage de l'onglet Certificat sans le badge"
+};
+
+export const INVITE_EMAIL_LIST_CLICK = {
+  category: MATOMO_CATEGORIES.ADMIN_EMPLOYEE_INVITATION,
+  action: MATOMO_ACTIONS.INVITE_EMAIL_LIST,
+  name: "Clic sur 'Inviter une liste d'emails'"
+};
+
+export const INVITE_MISSING_EMPLOYEES_CLICK = missingEmployeesCount => ({
+  category: MATOMO_CATEGORIES.ADMIN_EMPLOYEE_INVITATION,
+  action: MATOMO_ACTIONS.INVITE_MISSING_EMPLOYEES,
+  name:
+    "Clic sur 'Inviter les salariés manquants' (nb employés manquants détectés)",
+  value: missingEmployeesCount
+});
+
+export const BATCH_INVITE_MODAL_SUBMIT = actualEmailsCount => ({
+  category: MATOMO_CATEGORIES.ADMIN_EMPLOYEE_INVITATION,
+  action: MATOMO_ACTIONS.INVITE_BATCH_MODAL_SUBMIT,
+  name: "Soumission invitation par lot (nb d'invitations envoyées)",
+  value: actualEmailsCount
+});
+
+export const INVITE_NEW_EMPLOYEE_CLICK = {
+  category: MATOMO_CATEGORIES.ADMIN_EMPLOYEE_INVITATION,
+  action: MATOMO_ACTIONS.INVITE_NEW_EMPLOYEE,
+  name: "Clic sur 'Inviter un nouveau salarié'"
+};
+
+export const INVITE_NEW_EMPLOYEE_SUBMIT = {
+  category: MATOMO_CATEGORIES.ADMIN_EMPLOYEE_INVITATION,
+  action: MATOMO_ACTIONS.INVITE_NEW_EMPLOYEE_SUBMIT,
+  name: "Soumission invitation nouveau salarié"
 };

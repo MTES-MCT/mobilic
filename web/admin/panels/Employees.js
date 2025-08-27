@@ -40,6 +40,13 @@ import { EmployeeProgressBar } from "../components/EmployeeProgressBar";
 import { useEmployeeProgress } from "../hooks/useEmployeeProgress";
 import { useAutoUpdateNbWorkers } from "../hooks/useAutoUpdateNbWorkers";
 import { InviteButtons } from "../components/InviteButtons";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+import {
+  INVITE_NEW_EMPLOYEE_SUBMIT,
+  INVITE_EMAIL_LIST_CLICK,
+  INVITE_MISSING_EMPLOYEES_CLICK,
+  INVITE_NEW_EMPLOYEE_CLICK
+} from "common/utils/matomoTags";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -71,6 +78,7 @@ const isUserOnlyAdminOfTeams = (teams, userId) => {
 
 export function Employees({ company, containerRef }) {
   const api = useApi();
+  const { trackEvent } = useMatomo();
   const adminStore = useAdminStore();
   const modals = useModals();
   const alerts = useSnackbarAlerts();
@@ -707,6 +715,23 @@ export function Employees({ company, containerRef }) {
     });
   };
 
+  const handleBatchInvite = (employeeCount = 0) => {
+    if (employeeCount > 0) {
+      trackEvent(INVITE_MISSING_EMPLOYEES_CLICK(employeeCount));
+    } else {
+      trackEvent(INVITE_EMAIL_LIST_CLICK);
+    }
+    modals.open("batchInvite", {
+      handleSubmit: inviteEmails
+    });
+  };
+
+  const handleSingleInvite = () => {
+    trackEvent(INVITE_NEW_EMPLOYEE_CLICK);
+    setWantsToAddEmployment(true);
+    setHidePendingEmployments(false);
+  };
+
   const dissmissedBatchInviteCompanyIds = React.useMemo(() => {
     setHasClosedInviteModal(false);
     const cookie = readCookie("dismissBatchInvite");
@@ -760,15 +785,8 @@ export function Employees({ company, containerRef }) {
                 }
               </Typography>
               <InviteButtons
-                onBatchInvite={() =>
-                  modals.open("batchInvite", {
-                    handleSubmit: inviteEmails
-                  })
-                }
-                onSingleInvite={() => {
-                  setWantsToAddEmployment(true);
-                  setHidePendingEmployments(false);
-                }}
+                onBatchInvite={handleBatchInvite}
+                onSingleInvite={handleSingleInvite}
                 shouldShowBadge={
                   !hasMadeInvitations &&
                   !employeeProgressData?.shouldShowSingleInviteButton &&
@@ -814,6 +832,7 @@ export function Employees({ company, containerRef }) {
                       CREATE_EMPLOYMENT_MUTATION,
                       payload
                     );
+                    trackEvent(INVITE_NEW_EMPLOYEE_SUBMIT);
                     adminStore.dispatch({
                       type: ADMIN_ACTIONS.create,
                       payload: {
@@ -842,15 +861,8 @@ export function Employees({ company, containerRef }) {
           </Typography>
           {!canDisplayPendingEmployments && (
             <InviteButtons
-              onBatchInvite={() =>
-                modals.open("batchInvite", {
-                  handleSubmit: inviteEmails
-                })
-              }
-              onSingleInvite={() => {
-                setWantsToAddEmployment(true);
-                setHidePendingEmployments(false);
-              }}
+              onBatchInvite={handleBatchInvite}
+              onSingleInvite={handleSingleInvite}
               shouldShowBadge={
                 !hasMadeInvitations &&
                 !employeeProgressData?.shouldShowSingleInviteButton &&

@@ -5,6 +5,8 @@ import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Input } from "../../common/forms/Input";
 import { validateCleanEmailString } from "common/utils/validation";
 import { TagsGroup } from "@codegouvfr/react-dsfr/TagsGroup";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { BATCH_INVITE_MODAL_SUBMIT } from "common/utils/matomoTags";
 
 const SEPARATORS_REGEX = /[,;\n ]/;
 const MAX_EMAILS = 100;
@@ -19,6 +21,7 @@ export default function BatchInviteModal({
   acceptButtonTitle = "",
   onClose
 }) {
+  const { trackEvent } = useMatomo();
   const [emails, setEmails] = React.useState([]);
   const [text, setText] = React.useState("");
   // use this variable to check if user has tried to validate input by pressing space for example
@@ -189,8 +192,11 @@ export default function BatchInviteModal({
                   setHasValidated(true);
                   return;
                 }
-                await handleSubmit([...new Set([...emails, text])]);
+                const finalEmails = [...new Set([...emails, text])];
+                trackEvent(BATCH_INVITE_MODAL_SUBMIT(finalEmails.length));
+                await handleSubmit(finalEmails);
               } else {
+                trackEvent(BATCH_INVITE_MODAL_SUBMIT(emails.length));
                 await handleSubmit(emails);
               }
               _handleClose();
