@@ -8,10 +8,10 @@ import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import {
-  getBadgeCdnUrl,
+  getMedalCdnUrl,
   generateEmbedCodes,
-  getCertificateLevelLabel
-} from "../../utils/certificateUtils";
+  getMedalDisplayLabel
+} from "../../utils/certificationConstants";
 
 export default function CertificateBadgeEmbedModal({
   open,
@@ -20,7 +20,7 @@ export default function CertificateBadgeEmbedModal({
 }) {
   const [copiedCode, setCopiedCode] = useState("");
 
-  const levelLabel = getCertificateLevelLabel(certificateLevel);
+  const levelLabel = getMedalDisplayLabel(certificateLevel);
 
   const embedCodes = useMemo(() => {
     if (!certificateLevel) return { iframe: "", script: "", image: "" };
@@ -28,7 +28,7 @@ export default function CertificateBadgeEmbedModal({
   }, [certificateLevel]);
 
   const badgePreviewUrl = useMemo(() => {
-    return getBadgeCdnUrl(certificateLevel);
+    return getMedalCdnUrl(certificateLevel);
   }, [certificateLevel]);
 
   const copyToClipboard = async code => {

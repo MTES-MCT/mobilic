@@ -3,14 +3,6 @@
  * Ensures consistency between backend (English) and frontend (French) naming
  */
 
-// TODO: After PR merge, uncomment these imports
-// import {
-//   CertificationBronze,
-//   CertificationArgent,
-//   CertificationOr,
-//   CertificationDiamant
-// } from "common/utils/icons";
-
 const MEDAL_LEVELS_CONFIG = {
   BRONZE: { frontend: "BRONZE", display: "Bronze", filename: "bronze" },
   SILVER: { frontend: "ARGENT", display: "Argent", filename: "argent" },
@@ -40,19 +32,9 @@ export const MEDAL_CDN_FILENAMES = Object.entries(MEDAL_LEVELS_CONFIG).reduce(
   {}
 );
 
+// TODO: Change back to @master after PR merge to master branch
 export const CDN_BASE_URL =
-  "https://cdn.jsdelivr.net/gh/MTES-MCT/mobilic@master/common/assets/images/certification/squared";
-
-// TODO: After PR merge, uncomment this mapping
-// export const MEDAL_BADGE_COMPONENTS = {
-//   BRONZE: CertificationBronze,
-//   ARGENT: CertificationArgent,
-//   OR: CertificationOr,
-//   DIAMANT: CertificationDiamant,
-//   SILVER: CertificationArgent,
-//   GOLD: CertificationOr,
-//   DIAMOND: CertificationDiamant
-// };
+  "https://cdn.jsdelivr.net/gh/MTES-MCT/mobilic@epic/certificate-rework/common/assets/images/certification/squared";
 
 /**
  * Internal utility to map a level to a specific mapping object
@@ -105,4 +87,29 @@ export function isValidMedalLevel(level) {
     BACKEND_MEDAL_LEVELS.includes(level) ||
     FRONTEND_MEDAL_LEVELS.includes(level)
   );
+}
+
+/**
+ * Generates embed codes for website integration (iframe, image, script)
+ * @param {string} level - Medal level (backend or frontend)
+ * @returns {Object} Object containing iframe, image, and script embed codes
+ */
+export function generateEmbedCodes(level) {
+  const badgeUrl = getMedalCdnUrl(level);
+  const levelLabel = getMedalDisplayLabel(level);
+
+  if (!badgeUrl) return { iframe: "", image: "", script: "" };
+
+  const altText = `Certificat Mobilic ${levelLabel || level}`;
+  const titleText = `Certificat Mobilic ${levelLabel || level}`;
+
+  return {
+    iframe: `<iframe src="${badgeUrl}" width="150" height="150" frameborder="0" style="border: none;" title="${titleText}"></iframe>`,
+
+    image: `<img src="${badgeUrl}" alt="${altText}" width="150" height="150" />`,
+
+    script: `<a href="https://mobilic.beta.gouv.fr" target="_blank" rel="noopener">
+  <img src="${badgeUrl}" alt="${altText}" width="150" height="150" />
+</a>`
+  };
 }
