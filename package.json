@@ -55,7 +55,7 @@
     "file-loader": "^4.3.0",
     "file-saver": "^2.0.5",
     "fs-extra": "^8.1.0",
-    "graphiql": "^2.0.9",
+    "graphiql": "^3.4.1",
     "graphql": "^15.0.0",
     "html-webpack-plugin": "^4.5.1",
     "http-proxy-middleware": "^1.0.5",
