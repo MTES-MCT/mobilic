@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import { useHistory } from "react-router-dom";
 import { FRANCE_CONNECT_LOGIN_MUTATION } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";
+import { FranceConnectErrorDisplay } from "../common/FranceConnectErrorDisplay";
 
 export function removeParamsFromQueryString(qs, params) {
   const qsWithoutQuestionMark = qs.startsWith("?") ? qs.slice(1) : qs;
@@ -25,6 +26,9 @@ export function FranceConnectCallback() {
   const history = useHistory();
 
   const [error, setError] = React.useState("");
+  const [franceConnectError, setFranceConnectError] = React.useState(null);
+  const [queryParams, setQueryParams] = React.useState(null);
+  const [noAccountError, setNoAccountError] = React.useState(false);
 
   async function retrieveFranceConnectInfo(
     code,
@@ -51,27 +55,30 @@ export function FranceConnectCallback() {
         if (create) history.push("/signup/user_login");
       } catch (err) {
         captureSentryException(err);
-        setError(
-          formatApiError(err, gqlError => {
-            if (graphQLErrorMatchesCode(gqlError, "AUTHENTICATION_ERROR")) {
-              return "Vous n'avez pas encore de compte sur Mobilic. Veuillez vous inscrire.";
-            }
-          })
-        );
+
+        if (
+          err.graphQLErrors?.some(e =>
+            graphQLErrorMatchesCode(e, "AUTHENTICATION_ERROR")
+          )
+        ) {
+          setNoAccountError(true);
+          return;
+        }
+
+        setError(formatApiError(err));
       }
     });
   }
 
   React.useEffect(() => {
     const queryString = new URLSearchParams(window.location.search);
+    setQueryParams(queryString);
 
     const error = queryString.get("error");
     const errorDescription = queryString.get("error_description");
 
     if (error) {
-      const errorMessage = `Erreur d'authentification FranceConnect: ${error}`;
-      const details = errorDescription ? ` - ${errorDescription}` : "";
-      setError(errorMessage + details);
+      setFranceConnectError({ errorCode: error, errorDescription });
       return;
     }
 
@@ -86,18 +93,16 @@ export function FranceConnectCallback() {
     } else if (context === "login") {
       create = false;
     } else if (!create && state) {
-      // eslint-disable-next-line
       const stateData = JSON.parse(atob(state));
       create = stateData.create === true;
     }
 
-    // Clean v1/v2 parameters from URL
     const newQS = removeParamsFromQueryString(window.location.search, [
       "code",
       "state",
-      "iss", // v1 parameter
-      "error", // v2 parameter
-      "error_description" // v2 parameter
+      "iss",
+      "error",
+      "error_description"
     ]);
 
     const callBackUrl =
@@ -111,6 +116,33 @@ export function FranceConnectCallback() {
       setError("Paramètres invalides");
     }
   }, []);
+
+  if (franceConnectError) {
+    return (
+      <FranceConnectErrorDisplay
+        errorCode={franceConnectError.errorCode}
+        errorDescription={franceConnectError.errorDescription}
+        queryParams={queryParams}
+      />
+    );
+  }
+
+  if (noAccountError && queryParams) {
+    return (
+      <FranceConnectErrorDisplay
+        errorCode="no_account"
+        errorDescription="Compte Mobilic requis pour continuer"
+        queryParams={queryParams}
+        onRedirect={() => {
+          const inviteToken = queryParams.get("invite_token");
+          const signupUrl = inviteToken
+            ? `/signup?invite_token=${inviteToken}`
+            : "/signup";
+          history.push(signupUrl);
+        }}
+      />
+    );
+  }
 
   return error ? <Typography color="error">{error}</Typography> : null;
 }
