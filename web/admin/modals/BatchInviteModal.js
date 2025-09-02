@@ -187,18 +187,18 @@ export default function BatchInviteModal({
           <LoadingButton
             disabled={emails.length === 0}
             onClick={async e => {
+              let finalEmails = emails;
+
               if (text) {
                 if (!validateCleanEmailString(text)) {
                   setHasValidated(true);
                   return;
                 }
-                const finalEmails = [...new Set([...emails, text])];
-                trackEvent(BATCH_INVITE_MODAL_SUBMIT(finalEmails.length));
-                await handleSubmit(finalEmails);
-              } else {
-                trackEvent(BATCH_INVITE_MODAL_SUBMIT(emails.length));
-                await handleSubmit(emails);
+                finalEmails = [...new Set([...emails, text])];
               }
+
+              trackEvent(BATCH_INVITE_MODAL_SUBMIT(finalEmails.length));
+              await handleSubmit(finalEmails);
               _handleClose();
             }}
           >
