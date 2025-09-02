@@ -14,7 +14,12 @@ export function InviteButtons({
 
   if (shouldShowSingleInviteButton) {
     return (
-      <Button size="small" onClick={onBatchInvite}>
+      <Button
+        size="small"
+        onClick={() =>
+          onBatchInvite(employeeProgressData?.missingEmployeesCount || 0)
+        }
+      >
         {employeeProgressData?.shouldShowBadge && (
           <Badge severity="new" small style={{ marginRight: "8px" }}>
             A Faire
