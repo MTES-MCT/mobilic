@@ -6,6 +6,7 @@ import { getFallbackRoute } from "./routes";
 import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
 import { loadUserData } from "common/utils/loadUserData";
+import { captureSentryException } from "common/utils/sentry";
 
 const ButtonGoHome = () => {
   const history = useHistory();
@@ -20,9 +21,7 @@ const ButtonGoHome = () => {
         try {
           await loadUserData(api, store);
         } catch (error) {
-          console.warn(
-            "Could not load user data, user might not be activated yet"
-          );
+          captureSentryException(error);
         }
       }
 
