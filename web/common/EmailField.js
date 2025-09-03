@@ -11,7 +11,7 @@ export function EmailField({
   error,
   setError,
   validate,
-  label = "Email",
+  label = "Email professionnel",
   required = false,
   showHint = false,
   ...props
