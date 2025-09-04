@@ -7,29 +7,38 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
-import {
-  getMedalCdnUrl,
-  generateEmbedCodes,
-  getMedalDisplayLabel
-} from "../../utils/certificationConstants";
+import { useCompanyCertification } from "../../../common/hooks/useCompanyCertification";
+
+function getEmbeddedCodes(companyBadgeUrl) {
+  if (!companyBadgeUrl) return { iframe: "", image: "", script: "" };
+
+  const altText = "Certificat Mobilic de l'entreprise";
+
+  return {
+    iframe: `<iframe src="${companyBadgeUrl}" width="150" height="150" frameborder="0" style="border: none;" title="${altText}"></iframe>`,
+
+    image: `<img src="${companyBadgeUrl}" alt="${altText}" width="150" height="150" />`,
+
+    html: `<a href="https://mobilic.beta.gouv.fr" target="_blank" rel="noopener">
+  <img src="${companyBadgeUrl}" alt="${altText}" width="150" height="150" />
+</a>`
+  };
+}
 
 export default function CertificateBadgeEmbedModal({
   open,
   onClose,
-  certificateLevel
+  companyWithInfo
 }) {
   const [copiedCode, setCopiedCode] = useState("");
 
-  const levelLabel = getMedalDisplayLabel(certificateLevel);
+  const { getCompanyBadgeUrl } = useCompanyCertification(
+    companyWithInfo.currentCompanyCertification
+  );
 
-  const embedCodes = useMemo(() => {
-    if (!certificateLevel) return { iframe: "", script: "", image: "" };
-    return generateEmbedCodes(certificateLevel);
-  }, [certificateLevel]);
+  const companyBadgeUrl = getCompanyBadgeUrl(companyWithInfo.id);
 
-  const badgePreviewUrl = useMemo(() => {
-    return getMedalCdnUrl(certificateLevel);
-  }, [certificateLevel]);
+  const embedCodes = getEmbeddedCodes(companyBadgeUrl);
 
   const copyToClipboard = async code => {
     try {
@@ -77,8 +86,8 @@ export default function CertificateBadgeEmbedModal({
       },
       {
         tabId: "script",
-        label: "JavaScript",
-        content: createCodeBlock(embedCodes.script, "html")
+        label: "Html",
+        content: createCodeBlock(embedCodes.html, "html")
       },
       {
         tabId: "image",
@@ -151,10 +160,10 @@ export default function CertificateBadgeEmbedModal({
                   justifyContent: "center"
                 }}
               >
-                {badgePreviewUrl ? (
+                {companyBadgeUrl ? (
                   <img
-                    src={badgePreviewUrl}
-                    alt={`Certificat Mobilic ${levelLabel || certificateLevel}`}
+                    src={companyBadgeUrl}
+                    alt={"Certificat Mobilic de l'entreprise"}
                     style={{
                       width: "250px",
                       height: "200px",
@@ -177,7 +186,7 @@ export default function CertificateBadgeEmbedModal({
                       maxWidth: "100%"
                     }}
                   >
-                    Badge Mobilic {levelLabel || certificateLevel}
+                    Badge Mobilic
                   </div>
                 )}
               </div>

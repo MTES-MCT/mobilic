@@ -1,6 +1,7 @@
 import React from "react";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { CertificationImage, getFrenchMedalLabel } from "../certification";
+import { API_HOST } from "common/utils/api";
 
 const REGULATION_CHECKS = [
   {
@@ -82,12 +83,16 @@ export const useCompanyCertification = companyCertification => {
     };
   });
 
+  const getCompanyBadgeUrl = companyId =>
+    `${window.location.origin}${API_HOST}/company-certification-badge/${companyId}`;
+
   return {
     medal,
     isCertified,
     frenchMedalLabel,
     TextBadge,
     CertificationImage: _CertificationImage,
-    compliancyReport
+    compliancyReport,
+    getCompanyBadgeUrl
   };
 };
