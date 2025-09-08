@@ -68,8 +68,10 @@ export const useCompanyCertification = companyCertification => {
     <CertificationImage medal={medal} {...props} />
   );
 
-  const alerts =
-    JSON.parse(companyCertification.certificateCriterias.info)?.alerts || [];
+  let alerts = [];
+  if (companyCertification.certificateCriterias?.info) {
+    alerts = JSON.parse(companyCertification.certificateCriterias.info).alerts;
+  }
   const compliancyReport = REGULATION_CHECKS.map(check => {
     const isAlertThere = alerts.find(
       a =>
