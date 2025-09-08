@@ -2268,6 +2268,7 @@ export const COMPANY_CERTIFICATION_COMMUNICATION_QUERY = gql`
         certificationMedal
         lastDayCertified
         startLastCertificationPeriod
+        badgeUrl
         certificateCriterias {
           compliancy
           adminChanges

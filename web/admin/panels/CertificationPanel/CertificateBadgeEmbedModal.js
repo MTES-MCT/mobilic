@@ -32,11 +32,9 @@ export default function CertificateBadgeEmbedModal({
 }) {
   const [copiedCode, setCopiedCode] = useState("");
 
-  const { getCompanyBadgeUrl } = useCompanyCertification(
+  const { companyBadgeUrl } = useCompanyCertification(
     companyWithInfo.currentCompanyCertification
   );
-
-  const companyBadgeUrl = getCompanyBadgeUrl(companyWithInfo.id);
 
   const embedCodes = getEmbeddedCodes(companyBadgeUrl);
 

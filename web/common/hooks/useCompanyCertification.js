@@ -83,8 +83,7 @@ export const useCompanyCertification = companyCertification => {
     };
   });
 
-  const getCompanyBadgeUrl = companyId =>
-    `${window.location.origin}${API_HOST}/company-certification-badge/${companyId}`;
+  const companyBadgeUrl = `${window.location.origin}${API_HOST}${companyCertification.badgeUrl}`;
 
   return {
     medal,
@@ -93,6 +92,6 @@ export const useCompanyCertification = companyCertification => {
     TextBadge,
     CertificationImage: _CertificationImage,
     compliancyReport,
-    getCompanyBadgeUrl
+    companyBadgeUrl
   };
 };
