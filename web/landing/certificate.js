@@ -18,6 +18,7 @@ import { Input } from "../common/forms/Input";
 import Notice from "../common/Notice";
 import { Main } from "../common/semantics/Main";
 import { CertificationImage } from "../common/certification";
+import { TextBadge } from "../common/hooks/useCompanyCertification";
 
 const useStyles = makeStyles(theme => ({
   explanation: {
@@ -144,11 +145,6 @@ export function Certificate() {
               />
             </Grid>
           </Grid>
-          {searchResults?.length > 1 && (
-            <Typography variant="h4">
-              Certains établissements de l'entreprise sont certifiés.
-            </Typography>
-          )}
           {searchResults?.length === 1 && (
             <Typography variant="h4">L'entreprise est certifiée.</Typography>
           )}
@@ -166,23 +162,35 @@ export function Certificate() {
           )}
           {searchResults?.length > 0 && (
             <Box sx={{ textAlign: "center" }}>
-              <Box maxWidth="150px" margin="auto">
-                <CertificationImage
-                  medal={searchResults[0].certification_level}
-                  className={classes.certificationImage}
-                  forcedSquare={true}
-                />
-              </Box>
+              {searchResults?.length === 0 && (
+                <Box maxWidth="150px" margin="auto">
+                  <CertificationImage
+                    medal={searchResults[0].certification_level}
+                    className={classes.certificationImage}
+                    forcedSquare={true}
+                  />
+                </Box>
+              )}
               <Table
                 fixedHeader
                 noCaption
                 tableID="certificationTable"
-                headers={["Nom", "SIREN", "SIRET", "Date de certification"]}
+                headers={[
+                  "Nom",
+                  "SIREN",
+                  "SIRET",
+                  "Date de certification",
+                  "Certification"
+                ]}
                 data={searchResults.map(r => [
                   r.company_name,
                   r.siren,
                   r.siret,
-                  r.certification_attribution_date
+                  r.certification_attribution_date,
+                  <TextBadge
+                    medal={r.certification_level}
+                    key={r.company_name}
+                  />
                 ])}
                 className={classes.resultTable}
               />

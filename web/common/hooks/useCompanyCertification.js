@@ -43,6 +43,19 @@ const REGULATION_CHECKS = [
     labelKo: "Durée du travail hebdomadaire non respectée"
   }
 ];
+export const TextBadge = ({ medal }) => {
+  const frenchMedalLabel = getFrenchMedalLabel(medal);
+  return (
+    <Badge
+      severity="new"
+      noIcon
+      small
+      style={{ color: "#716043", backgroundColor: "#FEF6E3" }}
+    >
+      Certifiée {frenchMedalLabel}
+    </Badge>
+  );
+};
 
 export const useCompanyCertification = companyCertification => {
   if (!companyCertification) {
@@ -52,18 +65,7 @@ export const useCompanyCertification = companyCertification => {
 
   const frenchMedalLabel = getFrenchMedalLabel(medal);
 
-  const TextBadge = () => {
-    return (
-      <Badge
-        severity="new"
-        noIcon
-        small
-        style={{ color: "#716043", backgroundColor: "#FEF6E3" }}
-      >
-        Certifiée {frenchMedalLabel}
-      </Badge>
-    );
-  };
+  const _TextBadge = () => <TextBadge medal={medal} />;
 
   const _CertificationImage = ({ ...props }) => (
     <CertificationImage medal={medal} {...props} />
@@ -92,7 +94,7 @@ export const useCompanyCertification = companyCertification => {
     medal,
     isCertified,
     frenchMedalLabel,
-    TextBadge,
+    TextBadge: _TextBadge,
     CertificationImage: _CertificationImage,
     compliancyReport,
     companyBadgeUrl
