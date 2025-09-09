@@ -110,23 +110,13 @@ export const renderBadge = (medal, isActive = false) => {
   }
 
   return (
-    <div
+    <BadgeComponent
       key={medal}
       style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flex: isActive ? "none" : 1,
-        minHeight: "96px"
+        height: isActive ? "124px" : "96px",
+        width: isActive ? "280px" : "246px",
+        flexShrink: 0
       }}
-    >
-      <BadgeComponent
-        style={{
-          width: "auto",
-          height: "auto",
-          maxWidth: "100%"
-        }}
-      />
-    </div>
+    />
   );
 };

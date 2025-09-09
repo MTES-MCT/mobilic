@@ -2,6 +2,10 @@ import React from "react";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useCompanyCertification } from "../../../common/hooks/useCompanyCertification";
 import { renderBadge } from "../../../common/certification";
+import { Stack, Typography } from "@mui/material";
+import { fr } from "@codegouvfr/react-dsfr";
+import { makeStyles } from "@mui/styles";
+import { ExternalLink } from "../../../common/ExternalLink";
 
 const CERTIFICATE_LEVELS = {
   BRONZE: { label: "Bronze" },
@@ -10,127 +14,71 @@ const CERTIFICATE_LEVELS = {
   DIAMOND: { label: "Diamant" }
 };
 
+const useStyles = makeStyles(theme => ({
+  text: {
+    color: fr.colors.decisions.background.flat.grey.default
+  },
+  container: {
+    backgroundColor: fr.colors.decisions.background.default.grey.hover,
+    paddingLeft: theme.spacing(5),
+    paddingRight: theme.spacing(5),
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4)
+  }
+}));
+
 export default function CertificateFriseBadges({
   companyWithInfo,
   onDownloadCertificate = null
 }) {
+  const classes = useStyles();
   const { medal, frenchMedalLabel, isCertified } = useCompanyCertification(
     companyWithInfo.currentCompanyCertification
   );
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignSelf: "stretch",
-        gap: "24px",
-        padding: "0px 0px 32px 0px",
-        backgroundColor: "#F6F6F6"
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignSelf: "stretch",
-          gap: "10px",
-          padding: "32px 40px 0px 40px"
-        }}
+    <Stack direction="column" className={classes.container} rowGap={3}>
+      <Stack
+        direction="row"
+        alignItems="flex-start"
+        justifyContent="space-between"
       >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "8px",
-            flex: 1
-          }}
-        >
-          <h1
-            style={{
-              fontFamily: "Marianne",
-              fontWeight: 700,
-              fontSize: "28px",
-              lineHeight: "1.29em",
-              color: "#161616",
-              margin: 0
-            }}
-          >
+        <Stack direction="column">
+          <Typography variant="h3" component="h1">
             Certificat
-          </h1>
-          <p
-            style={{
-              fontFamily: "Marianne",
-              fontWeight: 400,
-              fontSize: "16px",
-              lineHeight: "1.5em",
-              color: "#3A3A3A",
-              margin: 0
-            }}
-          >
+          </Typography>
+          <Typography className={classes.text}>
             {isCertified ? (
               <>
                 {companyWithInfo?.name || "Votre entreprise"} est certifiée{" "}
                 <b>{frenchMedalLabel}</b> sur Mobilic !
               </>
             ) : (
-              `Votre entreprise ${companyWithInfo?.name ||
-                ""} n'est pas encore certifiée.`
+              <>
+                Votre entreprise {companyWithInfo?.name || ""} n'est{" "}
+                <b>pas encore certifiée</b>.
+              </>
             )}
-          </p>
-        </div>
-
-        <div style={{ flex: "none" }}>
-          <Button
-            priority="secondary"
-            size="medium"
-            onClick={isCertified ? onDownloadCertificate : undefined}
-            disabled={!isCertified}
-          >
-            Afficher le certificat sur mon site internet
-          </Button>
-        </div>
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          alignSelf: "stretch",
-          gap: "8px",
-          padding: "0px 96px 0px 32px",
-          minHeight: "150px",
-          justifyContent: "stretch"
-        }}
-      >
-        {Object.keys(CERTIFICATE_LEVELS).map(m =>
-          renderBadge(medal, medal === m)
-        )}
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          padding: "0px 40px",
-          alignSelf: "stretch"
-        }}
-      >
-        <a
-          href="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            fontFamily: "Marianne",
-            fontWeight: 400,
-            fontSize: "14px",
-            lineHeight: "24px",
-            color: "#000091",
-            textDecoration: "underline",
-            cursor: "pointer"
-          }}
+          </Typography>
+        </Stack>
+        <Button
+          priority="secondary"
+          size="small"
+          onClick={isCertified ? onDownloadCertificate : undefined}
+          disabled={!isCertified}
         >
-          Qu'est-ce que le certificat Mobilic ?
-        </a>
-      </div>
-    </div>
+          Afficher le certificat sur mon site internet
+        </Button>
+      </Stack>
+
+      <Stack direction="row" alignItems="center" gap={1}>
+        {Object.keys(CERTIFICATE_LEVELS).map(m => renderBadge(m, medal === m))}
+      </Stack>
+      <ExternalLink
+        url="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/comment-obtenir-le-certificat-mobilic/"
+        text="Qu'est-ce que le certificat Mobilic ?"
+        withIcon
+      />
+    </Stack>
   );
 }
