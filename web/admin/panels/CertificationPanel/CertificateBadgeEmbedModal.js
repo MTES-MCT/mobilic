@@ -8,6 +8,7 @@ import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useCompanyCertification } from "../../../common/hooks/useCompanyCertification";
+import { useSnackbarAlerts } from "../../../common/Snackbar";
 
 function getEmbeddedCodes(companyBadgeUrl) {
   if (!companyBadgeUrl) return { iframe: "", image: "", script: "" };
@@ -30,6 +31,7 @@ export default function CertificateBadgeEmbedModal({
   onClose,
   companyWithInfo
 }) {
+  const alerts = useSnackbarAlerts();
   const [copiedCode, setCopiedCode] = useState("");
 
   const { companyBadgeUrl } = useCompanyCertification(
@@ -44,7 +46,7 @@ export default function CertificateBadgeEmbedModal({
       setCopiedCode(code);
       setTimeout(() => setCopiedCode(""), 2000);
     } catch (err) {
-      console.error("Erreur lors de la copie :", err);
+      alerts.error("Erreur lors de la copie", null, 2000);
     }
   };
 
@@ -140,25 +142,27 @@ export default function CertificateBadgeEmbedModal({
             <Tabs tabs={tabsData} />
           </div>
 
-          <div className={cx(fr.cx("fr-mb-4w"))}>
-            <h3 className={cx(fr.cx("fr-h6", "fr-mb-2w"))}>Aperçu du badge</h3>
-            <div
-              style={{
-                border: "1px solid #ddd",
-                padding: "24px",
-                borderRadius: "4px",
-                backgroundColor: "#f9f9f9",
-                textAlign: "center"
-              }}
-            >
+          {companyBadgeUrl && (
+            <div className={cx(fr.cx("fr-mb-4w"))}>
+              <h3 className={cx(fr.cx("fr-h6", "fr-mb-2w"))}>
+                Aperçu du badge
+              </h3>
               <div
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center"
+                  border: "1px solid #ddd",
+                  padding: "24px",
+                  borderRadius: "4px",
+                  backgroundColor: "#f9f9f9",
+                  textAlign: "center"
                 }}
               >
-                {companyBadgeUrl ? (
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
                   <img
                     src={companyBadgeUrl}
                     alt={"Certificat Mobilic de l'entreprise"}
@@ -169,27 +173,10 @@ export default function CertificateBadgeEmbedModal({
                       objectFit: "contain"
                     }}
                   />
-                ) : (
-                  <div
-                    style={{
-                      width: "250px",
-                      height: "200px",
-                      backgroundColor: "#fff",
-                      border: "1px solid #ccc",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: "4px",
-                      fontSize: "16px",
-                      maxWidth: "100%"
-                    }}
-                  >
-                    Badge Mobilic
-                  </div>
-                )}
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className={cx(fr.cx("fr-btns-group", "fr-btns-group--right"))}>
             <Button priority="secondary" onClick={onClose}>
