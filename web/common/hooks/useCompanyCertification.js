@@ -71,7 +71,8 @@ export const useCompanyCertification = companyCertification => {
 
   let alerts = [];
   if (companyCertification.certificateCriterias?.info) {
-    alerts = JSON.parse(companyCertification.certificateCriterias.info).alerts;
+    alerts =
+      JSON.parse(companyCertification.certificateCriterias.info)?.alerts || [];
   }
   const compliancyReport = REGULATION_CHECKS.map(check => {
     const isAlertThere = alerts.find(
