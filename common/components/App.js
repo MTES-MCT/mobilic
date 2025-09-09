@@ -1,3 +1,4 @@
+import { connect } from "react-redux";
 import React from "react";
 import values from "lodash/values";
 import { sortEvents } from "common/utils/events";
@@ -24,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function _App({ ScreenComponent, loadUser }) {
+function AppComponent({ ScreenComponent, loadUser }) {
   const { path } = useRouteMatch();
   const history = useHistory();
 
@@ -156,9 +157,15 @@ function _App({ ScreenComponent, loadUser }) {
 function App(props) {
   return (
     <ActionsContextProvider>
-      <_App {...props} />
+      <AppComponent {...props} />
     </ActionsContextProvider>
   );
 }
 
-export default App;
+const mapStateToProps = _state => ({});
+
+const mapDispatchToProps = dispatch => ({
+  loadUser: () => dispatch({ type: "LOAD_USER" })
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

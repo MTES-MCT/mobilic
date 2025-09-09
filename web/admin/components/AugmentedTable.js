@@ -757,7 +757,9 @@ const VirtualizedTableComponent = React.forwardRef(
     },
     ref
   ) => {
-    let actualRef = ref || React.useRef();
+    const actualRef = React.useRef();
+    
+    let actualRefToUse = ref || actualRef;
 
     const minTableWidth = columns.reduce((acc, col) => {
       return (
@@ -767,7 +769,7 @@ const VirtualizedTableComponent = React.forwardRef(
     const actualHeight = Math.max(height, minHeight);
     return (
       <Table
-        ref={actualRef}
+        ref={actualRefToUse}
         autoHeight={autoHeight}
         className={`table ${classes.table}`}
         width={Math.max(width, minTableWidth)}

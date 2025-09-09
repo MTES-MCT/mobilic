@@ -24,6 +24,10 @@ export default [
             ['@babel/preset-env', { targets: 'defaults' }],
             ['@babel/preset-react', { runtime: 'automatic' }],
           ],
+          // Avoid babel-preset-react-app which requires NODE_ENV
+          parserOpts: {
+            plugins: ['jsx', 'flow', 'doExpressions', 'objectRestSpread']
+          }
         },
       },
       globals: {
@@ -60,11 +64,11 @@ export default [
         'destructuredArrayIgnorePattern': '^(_|k|r)'
       }],
       
-      // Disable problematic new rules
+      // New ES2022 rules - more lenient for now
       'no-unsafe-optional-chaining': 'warn',
       'no-constant-binary-expression': 'warn',
 
-      // React rules (from old config)
+      // React rules
       'react/jsx-uses-react': 'error',
       'react/jsx-uses-vars': 'error',
       'react/jsx-filename-extension': [
@@ -79,18 +83,18 @@ export default [
       'react/jsx-fragments': ['error', 'syntax'],
       'react/jsx-no-comment-textnodes': 'error',
 
-      // React Hooks rules
+      // React Hooks rules - strict
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'off',
 
-      // Import rules (from old config)
+      // Import rules
       'import/no-duplicates': 'error',
       'import/no-named-as-default': 'error',
       'import/no-named-as-default-member': 'error',
       'import/no-mutable-exports': 'error',
       'import/first': 'error',
 
-      // Custom rules (from old config)
+      // Custom rules
       'no-restricted-imports': [
         'error',
         {

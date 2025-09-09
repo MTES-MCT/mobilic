@@ -109,7 +109,7 @@
     "build-analyze": "INLINE_RUNTIME_CHUNK=false node scripts/build.js --analyze",
     "build-with-nginx": "yarn build && scripts/start_nginx.sh",
     "test": "node scripts/test.js --passWithNoTests",
-    "lint": "NODE_ENV=development eslint --ext .js,.jsx ./",
+    "lint": "NODE_ENV=development eslint --config eslint.config.mjs --ext .js,.jsx ./",
     "postinstall": "react-dsfr copy-static-assets",
     "predev": "react-dsfr update-icons",
     "prebuild": "react-dsfr update-icons"
@@ -140,8 +140,8 @@
     "*.{html,json,md,mdx,css,yaml}": [
       "prettier --write"
     ],
-    "*.{js,ts,tsx}": [
-      "eslint --fix"
+    "*.{js,ts,tsx,mjs}": [
+      "./scripts/lint-fix.sh"
     ]
   },
   "devDependencies": {
