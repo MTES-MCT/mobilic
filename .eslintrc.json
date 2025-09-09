@@ -1,5 +1,5 @@
 {
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "env": {
     "browser": true,
     "es6": true
@@ -16,9 +16,19 @@
     }
   },
   "parserOptions": {
-    "ecmaVersion": 8,
+    "ecmaVersion": 2022,
     "ecmaFeatures": {
       "jsx": true
+    },
+    "requireConfigFile": false,
+    "babelOptions": {
+      "presets": [
+        ["@babel/preset-env", { "targets": "defaults" }],
+        ["@babel/preset-react", { "runtime": "automatic" }]
+      ],
+      "parserOpts": {
+        "plugins": ["jsx", "flow", "doExpressions", "objectRestSpread"]
+      }
     }
   },
   "extends": [
