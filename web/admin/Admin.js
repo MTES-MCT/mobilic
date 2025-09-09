@@ -58,7 +58,7 @@ const filterAcceptCertificationCompanies = companies =>
     company => company.acceptCertificationCommunication === null
   );
 
-function _Admin() {
+function InternalAdmin() {
   const api = useApi();
   const adminStore = useAdminStore();
   const withLoadingScreen = useLoadingScreen();
@@ -255,7 +255,7 @@ export default function Admin(props) {
   return (
     <LoadingScreenContextProvider>
       <AdminStoreProvider>
-        <_Admin {...props} />
+        <InternalAdmin {...props} />
       </AdminStoreProvider>
     </LoadingScreenContextProvider>
   );
