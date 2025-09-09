@@ -132,10 +132,7 @@ export default function CertificationPanel() {
       <CertificateBadgeEmbedModal
         open={badgeModalOpen}
         onClose={() => setBadgeModalOpen(false)}
-        companyId={companyWithInfo?.id}
-        certificateLevel={
-          companyWithInfo?.currentCompanyCertification?.certificationMedal
-        }
+        companyWithInfo={companyWithInfo}
       />
     </Box>
   );

@@ -2114,10 +2114,6 @@ export const HTTP_QUERIES = {
     method: "POST",
     endpoint: "/companies/public_company_certification"
   },
-  downloadCertificate: {
-    method: "POST",
-    endpoint: "/companies/download_certificate"
-  },
   downloadFullDataWhenCGUrefused: {
     method: "POST",
     endpoint: "/users/download_full_data_when_CGU_refused"
@@ -2272,6 +2268,7 @@ export const COMPANY_CERTIFICATION_COMMUNICATION_QUERY = gql`
         certificationMedal
         lastDayCertified
         startLastCertificationPeriod
+        badgeUrl
         certificateCriterias {
           compliancy
           adminChanges
