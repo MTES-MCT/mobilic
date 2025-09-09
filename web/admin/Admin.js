@@ -53,6 +53,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const filterAcceptCertificationCompanies = companies =>
+  companies?.filter(
+    company => company.acceptCertificationCommunication === null
+  );
+
 function _Admin() {
   const api = useApi();
   const adminStore = useAdminStore();
@@ -101,12 +106,8 @@ function _Admin() {
                 type: ADMIN_ACTIONS.updateCompanyId,
                 payload: { companyId: companyId }
               });
-              // Note: filtrage des entreprises certifiées désactivé temporairement
-              // car certificationMedal n'est plus disponible dans ADMIN_COMPANIES_LIST_QUERY
               setCompaniesToAcceptCertificateCommunication(
-                companies?.filter(
-                  company => company.acceptCertificationCommunication === null
-                )
+                filterAcceptCertificationCompanies(companies)
               );
             },
             "load-companies-list",
