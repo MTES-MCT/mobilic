@@ -104,7 +104,7 @@ export default function Root() {
                       <LoadingScreenContextProvider>
                         <ModalProvider modalDict={MODAL_DICT}>
                           <RegulationDrawerContextProvider>
-                            <_Root />
+                            <RootComponent />
                           </RegulationDrawerContextProvider>
                         </ModalProvider>
                       </LoadingScreenContextProvider>
@@ -120,7 +120,7 @@ export default function Root() {
   );
 }
 
-function _Root() {
+function RootComponent() {
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
@@ -316,6 +316,7 @@ function _Root() {
       {process.env.REACT_APP_CRISP_AUTOLOAD !== "1" &&
         process.env.REACT_APP_CRISP_WEBSITE_ID &&
         !controllerId && <LiveChat />}
+      <LiveChat />
       {store.userId() && shouldSeeCguModal && (
         <AcceptCguModal
           onAccept={() => setSeeAgainCgu(false)}
@@ -330,7 +331,7 @@ function _Root() {
         />
       )}
       <ChangeGenderModal
-        open={store.userId() && shouldSeeGenderModal}
+        open={!!(store.userId() && shouldSeeGenderModal)}
         buttonLabel="Valider"
         title="Veuillez indiquer votre sexe pour continuer à utiliser Mobilic"
         showExplanation

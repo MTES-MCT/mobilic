@@ -418,7 +418,7 @@ function DesktopHeader({ disableMenu }) {
   );
 }
 
-function _Header({ disableMenu }) {
+function Header({ disableMenu }) {
   const store = useStoreSyncedWithLocalStorage();
   const controllerId = store.controllerId();
   const isMdUp = useIsWidthUp("md");
@@ -435,4 +435,4 @@ function _Header({ disableMenu }) {
   );
 }
 
-export const Header = _Header;
+export default Header;
