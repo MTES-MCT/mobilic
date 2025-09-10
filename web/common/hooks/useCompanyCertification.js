@@ -97,6 +97,10 @@ export const useCompanyCertification = companyCertification => {
     TextBadge: _TextBadge,
     CertificationImage: _CertificationImage,
     compliancyReport,
-    companyBadgeUrl
+    companyBadgeUrl,
+    logInRealTime:
+      companyCertification.certificateCriterias?.logInRealTime || 0,
+    adminChanges: companyCertification.certificateCriterias?.adminChanges || 1,
+    compliancy: companyCertification.certificateCriterias?.compliancy || 0
   };
 };

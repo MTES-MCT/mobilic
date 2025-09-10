@@ -10,6 +10,7 @@ import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import Notice from "../../../common/Notice";
 import { useCertificationInfo } from "../../utils/certificationInfo";
 import CertificateBadgeEmbedModal from "./CertificateBadgeEmbedModal";
+import { Stack } from "@mui/material";
 
 export default function CertificationPanel() {
   const { companyWithInfo, loadingInfo } = useCertificationInfo();
@@ -73,62 +74,44 @@ export default function CertificationPanel() {
 
         {companyWithInfo && (
           <div className={cx(fr.cx("fr-container", "fr-mt-4w"))}>
-            <div className={cx(fr.cx("fr-mb-4w"))}>
+            <>
               {!isCertified && (
-                <h2 className={cx(fr.cx("fr-h2", "fr-mb-5w"))}>
+                <Typography component="h2" variant="h5">
                   Les critères de certification
-                </h2>
+                </Typography>
               )}
               {isCertified && (
-                <div
-                  style={{
-                    margin: "0 0 20px 0"
-                  }}
-                >
-                  <h2 className={cx(fr.cx("fr-h2", "fr-mb-2w"))}>
+                <Stack direction="column" gap={1}>
+                  <Typography component="h2" variant="h5">
                     Votre niveau de certification
-                  </h2>
-                  <p
-                    style={{
-                      fontFamily: "Marianne",
-                      fontWeight: 400,
-                      fontSize: "16px",
-                      lineHeight: "24px",
-                      color: "#161616",
-                      margin: "0"
-                    }}
-                  >
+                  </Typography>
+                  <Typography>
                     au 1er{" "}
                     {new Date().toLocaleDateString("fr-FR", {
                       month: "long",
                       year: "numeric"
                     })}
-                  </p>
-                </div>
+                  </Typography>
+                </Stack>
               )}
               <CertificateCriteriaTable companyWithInfo={companyWithInfo} />
-            </div>
-
-            {!loadingInfo && companyWithInfo && !companyWithInfo.hasNoActivity && (
-              <div className={cx(fr.cx("fr-mt-6w"))}>
+            </>
+            {!loadingInfo &&
+              companyWithInfo &&
+              !companyWithInfo.hasNoActivity && (
                 <RegulatoryThresholdsPanel companyWithInfo={companyWithInfo} />
-              </div>
-            )}
-
-            <div className={cx(fr.cx("fr-mt-3w"))}>
-              <Notice
-                type="warning"
-                description="Attention, le certificat Mobilic n'est en aucun cas un gage de respect total de la réglementation par l'entreprise. Il n'atteste que de la bonne utilisation de l'outil de suivi du temps de travail."
-                isFullWidth={true}
-                sx={{
-                  textAlign: "justify"
-                }}
-              />
-            </div>
+              )}
+            <Notice
+              type="warning"
+              description="Attention, le certificat Mobilic n'est en aucun cas un gage de respect total de la réglementation par l'entreprise. Il n'atteste que de la bonne utilisation de l'outil de suivi du temps de travail."
+              isFullWidth={true}
+              sx={{
+                textAlign: "justify"
+              }}
+            />
           </div>
         )}
       </Box>
-
       <CertificateBadgeEmbedModal
         open={badgeModalOpen}
         onClose={() => setBadgeModalOpen(false)}

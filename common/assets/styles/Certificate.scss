@@ -1,0 +1,100 @@
+table.certificate {
+    border: 1px solid var(--border-contrast-grey);
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border-contrast-grey);
+        color: #3A3A3A;
+    }
+
+    th {
+        background-color: var(--background-default-grey-hover);
+        font-size: 0.875rem;
+
+        &.base {
+            text-align: left;
+        }
+
+        span.header-badge {
+            background-color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            line-height: 1.25rem;
+            font-size: 0.75rem;
+        }
+
+        &.your-score {
+            background-color: #3965EA;
+            color: #F4F8FF;
+        }
+        &.active {
+            &.bronze {
+                background-color: #E9A866;
+                color: #855D48;
+                span.header-badge {
+                    background-color: #FBF5F2;
+                }
+            }
+            &.silver {
+                background-color: #DBDBDB;
+                span.header-badge {
+                    background-color: #F6F6F6;
+                }
+            }
+            &.gold {
+                color: #66673D;
+                background-color: #FACE3D;
+                span.header-badge {
+                    background-color: #FEF7DA;
+                }
+            }
+            &.diamond {
+                color: #006A6F;
+                background-color: #CAEDF0;
+                span.header-badge {
+                    background-color: #E5FBFD;
+                }
+            }
+        }
+    }
+
+    td.definition {
+        width: 240px;
+        min-height: 72px;
+        font-size: 0.875rem,
+    }
+
+    td.value {
+        min-width: 130px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+
+        &.active {
+            &.bronze {
+                background-color: #F7EBE5;
+            }
+            &.silver {
+                background-color: #EEEEEE;
+            }
+            &.gold {
+                background-color: #FEF7DA;
+            }
+            &.diamond {
+                background-color: #E5FBFD;
+            }
+        }
+        &.my-score {
+            background-color: #DAE9FF;
+        }
+
+        span.suffix {
+            font-weight: 400;
+            margin-left: 6px;
+            font-size: 0.875rem;
+        }
+    }
+}
