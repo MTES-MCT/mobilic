@@ -77,13 +77,18 @@ export default function CertificationPanel() {
 
         {companyWithInfo && (
           <Stack direction="column" mt={6} rowGap={6} ml={16} mb={6}>
+            {!isCertified && (
+              <CertificationAdvices medal={medal} isCertified={isCertified} />
+            )}
             <CertificateCriteriaTable companyWithInfo={companyWithInfo} />
             {!loadingInfo &&
               companyWithInfo &&
               !companyWithInfo.hasNoActivity && (
                 <RegulatoryThresholdsPanel companyWithInfo={companyWithInfo} />
               )}
-            <CertificationAdvices medal={medal} isCertified={isCertified} />
+            {isCertified && (
+              <CertificationAdvices medal={medal} isCertified={isCertified} />
+            )}
             <Notice
               type="warning"
               description="Attention, le certificat Mobilic n'est en aucun cas un gage de respect total de la réglementation par l'entreprise. Il n'atteste que de la bonne utilisation de l'outil de suivi du temps de travail."
