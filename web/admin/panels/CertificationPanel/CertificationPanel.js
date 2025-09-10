@@ -52,7 +52,7 @@ export default function CertificationPanel() {
         onDownloadCertificate={handleDownloadCertificate}
       />
 
-      <Box sx={{ p: 1 }}>
+      <Box sx={{ p: 1 }} maxWidth="1200px">
         {noCertificateText && (
           <div className={cx(fr.cx("fr-container"))}>
             <div
@@ -76,7 +76,7 @@ export default function CertificationPanel() {
         )}
 
         {companyWithInfo && (
-          <Stack direction="column" mt={6} rowGap={6} ml={16}>
+          <Stack direction="column" mt={6} rowGap={6} ml={16} mb={6}>
             <CertificateCriteriaTable companyWithInfo={companyWithInfo} />
             {!loadingInfo &&
               companyWithInfo &&
