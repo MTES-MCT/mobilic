@@ -23,7 +23,8 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(5),
     paddingRight: theme.spacing(5),
     paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4)
+    paddingBottom: theme.spacing(4),
+    borderBottom: "1px solid #DDDDDD"
   }
 }));
 

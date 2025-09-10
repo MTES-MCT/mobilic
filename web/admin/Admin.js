@@ -46,10 +46,10 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexDirection: "column",
     overflowX: "hidden",
-    marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1)
+    paddingRight: theme.spacing(1),
+    paddingLeft: 0,
+    borderLeft: "1px solid #DDDDDD"
   }
 }));
 
