@@ -48,7 +48,7 @@ const ITEMS_NOT_CERTIFIED = (
     <li>
       L'équipe Mobilic est disponible en visioconférence pour plus de conseils :{" "}
       <ExternalLink
-        url="mailto:contact@mobilic.beta.gouv.fr"
+        url="https://calendly.com/kelly-heau-mobilic/30min?month=2025-06"
         text="prendre rendez-vous"
       />
       .
