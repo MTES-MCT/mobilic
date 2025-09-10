@@ -10,13 +10,16 @@ import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import Notice from "../../../common/Notice";
 import { useCertificationInfo } from "../../utils/certificationInfo";
 import CertificateBadgeEmbedModal from "./CertificateBadgeEmbedModal";
+import { useCompanyCertification } from "../../../common/hooks/useCompanyCertification";
+import { CertificationAdvices } from "./CertificationAdvices";
 import { Stack } from "@mui/material";
 
 export default function CertificationPanel() {
   const { companyWithInfo, loadingInfo } = useCertificationInfo();
   const [badgeModalOpen, setBadgeModalOpen] = useState(false);
-
-  const isCertified = companyWithInfo?.currentCompanyCertification?.isCertified;
+  const { isCertified, medal } = useCompanyCertification(
+    companyWithInfo.currentCompanyCertification
+  );
 
   const noCertificateText = useMemo(() => {
     if (loadingInfo) {
@@ -73,34 +76,14 @@ export default function CertificationPanel() {
         )}
 
         {companyWithInfo && (
-          <div className={cx(fr.cx("fr-container", "fr-mt-4w"))}>
-            <>
-              {!isCertified && (
-                <Typography component="h2" variant="h5">
-                  Les critères de certification
-                </Typography>
-              )}
-              {isCertified && (
-                <Stack direction="column" gap={1}>
-                  <Typography component="h2" variant="h5">
-                    Votre niveau de certification
-                  </Typography>
-                  <Typography>
-                    au 1er{" "}
-                    {new Date().toLocaleDateString("fr-FR", {
-                      month: "long",
-                      year: "numeric"
-                    })}
-                  </Typography>
-                </Stack>
-              )}
-              <CertificateCriteriaTable companyWithInfo={companyWithInfo} />
-            </>
+          <Stack direction="column" mt={6} rowGap={6} ml={16}>
+            <CertificateCriteriaTable companyWithInfo={companyWithInfo} />
             {!loadingInfo &&
               companyWithInfo &&
               !companyWithInfo.hasNoActivity && (
                 <RegulatoryThresholdsPanel companyWithInfo={companyWithInfo} />
               )}
+            <CertificationAdvices medal={medal} isCertified={isCertified} />
             <Notice
               type="warning"
               description="Attention, le certificat Mobilic n'est en aucun cas un gage de respect total de la réglementation par l'entreprise. Il n'atteste que de la bonne utilisation de l'outil de suivi du temps de travail."
@@ -109,7 +92,7 @@ export default function CertificationPanel() {
                 textAlign: "justify"
               }}
             />
-          </div>
+          </Stack>
         )}
       </Box>
       <CertificateBadgeEmbedModal

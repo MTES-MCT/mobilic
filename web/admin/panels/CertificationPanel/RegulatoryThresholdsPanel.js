@@ -3,6 +3,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import RegulatoryThresholdsGrid from "./RegulatoryThresholdsGrid";
 import { useCompanyCertification } from "../../../common/hooks/useCompanyCertification";
+import { Typography } from "@mui/material";
 
 export default function RegulatoryThresholdsPanel({
   companyWithInfo,
@@ -18,12 +19,10 @@ export default function RegulatoryThresholdsPanel({
         <NoRegulatoryDataMessage />
       ) : (
         <>
-          <h3 className={cx(fr.cx("fr-h3", "fr-mb-6w"))}>
+          <Typography component="h2" variant="h5" mb={2}>
             Respect des seuils réglementaires
-          </h3>
-          <div className={cx(fr.cx("fr-grid-row", "fr-grid-row--gutters"))}>
-            <RegulatoryThresholdsGrid compliancyReport={compliancyReport} />
-          </div>
+          </Typography>
+          <RegulatoryThresholdsGrid compliancyReport={compliancyReport} />
         </>
       )}
     </div>
