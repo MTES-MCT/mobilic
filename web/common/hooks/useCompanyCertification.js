@@ -2,6 +2,7 @@ import React from "react";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { CertificationImage, getFrenchMedalLabel } from "../certification";
 import { API_HOST } from "common/utils/api";
+import classNames from "classnames";
 
 const REGULATION_CHECKS = [
   {
@@ -43,16 +44,23 @@ const REGULATION_CHECKS = [
     labelKo: "Durée du travail hebdomadaire non respectée"
   }
 ];
-export const TextBadge = ({ medal }) => {
+export const TextBadge = ({
+  medal,
+  displayIsCertified = false,
+  isWhiteBackground = false
+}) => {
   const frenchMedalLabel = getFrenchMedalLabel(medal);
   return (
     <Badge
       severity="new"
       noIcon
       small
-      style={{ color: "#716043", backgroundColor: "#FEF6E3" }}
+      className={classNames(medal.toLowerCase(), {
+        "white-background": isWhiteBackground
+      })}
     >
-      Certifiée {frenchMedalLabel}
+      {displayIsCertified ? "Certifiée " : ""}
+      {frenchMedalLabel}
     </Badge>
   );
 };
@@ -65,7 +73,9 @@ export const useCompanyCertification = companyCertification => {
 
   const frenchMedalLabel = getFrenchMedalLabel(medal);
 
-  const _TextBadge = () => <TextBadge medal={medal} />;
+  const _TextBadge = () => (
+    <TextBadge medal={medal} displayIsCertified={true} />
+  );
 
   const _CertificationImage = ({ ...props }) => (
     <CertificationImage medal={medal} {...props} />

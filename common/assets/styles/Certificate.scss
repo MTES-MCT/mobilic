@@ -17,15 +17,6 @@ table.certificate {
             text-align: left;
         }
 
-        span.header-badge {
-            background-color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            line-height: 1.25rem;
-            font-size: 0.75rem;
-        }
-
         &.your-score {
             background-color: #3965EA;
             color: #F4F8FF;
@@ -34,29 +25,17 @@ table.certificate {
             &.bronze {
                 background-color: #E9A866;
                 color: #855D48;
-                span.header-badge {
-                    background-color: #FBF5F2;
-                }
             }
             &.silver {
                 background-color: #DBDBDB;
-                span.header-badge {
-                    background-color: #F6F6F6;
-                }
             }
             &.gold {
                 color: #66673D;
                 background-color: #FACE3D;
-                span.header-badge {
-                    background-color: #FEF7DA;
-                }
             }
             &.diamond {
                 color: #006A6F;
                 background-color: #CAEDF0;
-                span.header-badge {
-                    background-color: #E5FBFD;
-                }
             }
         }
     }
@@ -96,5 +75,28 @@ table.certificate {
             margin-left: 6px;
             font-size: 0.875rem;
         }
+    }
+}
+
+p.fr-badge {
+    &.bronze {
+        color: #855D48;
+        background-color: #FBF5F2;
+    }
+    &.silver {
+        color: #3A3A3A;
+        background-color: #F6F6F6;
+    }
+    &.gold {
+        color: #66673D;
+        background-color: #FEF7DA;
+    }
+    &.diamond {
+        color: #006A6F;
+        background-color: #E5FBFD;
+    }
+    &.white-background {
+        background-color: white;
+        color: #3A3A3A;
     }
 }

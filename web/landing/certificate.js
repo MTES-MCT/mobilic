@@ -34,11 +34,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(3),
     height: "150px"
-  },
-  resultTable: {
-    [theme.breakpoints.up("md")]: {
-      // marginLeft: "12rem"
-    }
   }
 }));
 
@@ -183,9 +178,9 @@ export function Certificate() {
                     <TextBadge
                       medal={r.certification_level}
                       key={r.company_name}
+                      displayIsCertified={true}
                     />
                   ])}
-                  className={classes.resultTable}
                 />
               </Box>
             )}

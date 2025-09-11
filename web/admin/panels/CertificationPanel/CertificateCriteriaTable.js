@@ -1,8 +1,10 @@
 import React from "react";
 import { Stack, Typography } from "@mui/material";
-import { useCompanyCertification } from "../../../common/hooks/useCompanyCertification";
+import {
+  TextBadge,
+  useCompanyCertification
+} from "../../../common/hooks/useCompanyCertification";
 import classNames from "classnames";
-import { getFrenchMedalLabel } from "../../../common/certification";
 
 const MEDALS = ["BRONZE", "SILVER", "GOLD", "DIAMOND"];
 
@@ -29,14 +31,15 @@ export default function CertificateCriteriaTable({ companyWithInfo = {} }) {
   } = useCompanyCertification(companyWithInfo.currentCompanyCertification);
 
   const renderHeader = m => {
+    const isActive = m === medal;
     return (
       <th
         className={classNames(m.toLowerCase(), {
-          active: m === medal
+          active: isActive
         })}
         key={m}
       >
-        <span className="header-badge">{getFrenchMedalLabel(m)}</span>
+        <TextBadge medal={m} isWhiteBackground={!isActive} />
       </th>
     );
   };
