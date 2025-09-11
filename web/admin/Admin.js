@@ -26,7 +26,6 @@ import { useSnackbarAlerts } from "../common/Snackbar";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
 import { MissionDrawerContextProvider } from "./components/MissionDrawer";
-import CertificationCommunicationModal from "../pwa/components/CertificationCommunicationModal";
 import { shouldUpdateBusinessType } from "common/utils/updateBusinessType";
 import UpdateCompanyBusinessTypeModal from "./modals/UpdateCompanyBusinessTypeModal";
 import { Main } from "../common/semantics/Main";
@@ -53,11 +52,6 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const filterAcceptCertificationCompanies = companies =>
-  companies?.filter(
-    company => company.acceptCertificationCommunication === null
-  );
-
 function InternalAdmin() {
   const api = useApi();
   const adminStore = useAdminStore();
@@ -69,10 +63,6 @@ function InternalAdmin() {
   const [shouldRefreshData, setShouldRefreshData] = React.useState({
     value: true
   });
-  const [
-    companiesToAcceptCertificateCommunication,
-    setCompaniesToAcceptCertificateCommunication
-  ] = React.useState([]);
 
   const location = useLocation();
   const width = useWidth();
@@ -106,9 +96,6 @@ function InternalAdmin() {
                 type: ADMIN_ACTIONS.updateCompanyId,
                 payload: { companyId: companyId }
               });
-              setCompaniesToAcceptCertificateCommunication(
-                filterAcceptCertificationCompanies(companies)
-              );
             },
             "load-companies-list",
             null,
@@ -209,12 +196,6 @@ function InternalAdmin() {
         setShouldRefreshData={shouldRefreshDataSetter}
         refreshData={refreshData}
       >
-        {companiesToAcceptCertificateCommunication?.length > 0 && (
-          <CertificationCommunicationModal
-            companies={companiesToAcceptCertificateCommunication}
-            onClose={() => setCompaniesToAcceptCertificateCommunication([])}
-          />
-        )}
         <Main maxWidth={false} className={classes.container} disableGutters>
           {isMdUp && <SideMenu views={views} />}
           <Container

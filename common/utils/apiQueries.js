@@ -593,7 +593,6 @@ export const ADMIN_COMPANIES_LIST_QUERY = gql`
         name
         siren
         phoneNumber
-        acceptCertificationCommunication
       }
     }
   }
@@ -2207,20 +2206,6 @@ export const THIRD_PARTY_CLIENT_EMPLOYMENT_ACCEPT = gql`
   }
 `;
 
-export const EDIT_COMPANIES_COMMUNICATION_SETTING = gql`
-  mutation editCompanyCommunicationSetting(
-    $companyIds: [Int]!
-    $acceptCertificationCommunication: Boolean!
-  ) {
-    editCompanyCommunicationSetting(
-      companyIds: $companyIds
-      acceptCertificationCommunication: $acceptCertificationCommunication
-    ) {
-      success
-    }
-  }
-`;
-
 export const SNOOZE_CERTIFICATION_INFO = gql`
   mutation snoozeCertificateInfo($employmentId: Int!) {
     snoozeCertificateInfo(employmentId: $employmentId) {
@@ -2262,7 +2247,6 @@ export const COMPANY_CERTIFICATION_COMMUNICATION_QUERY = gql`
       id
       name
       hasNoActivity
-      acceptCertificationCommunication
       currentCompanyCertification {
         isCertified
         certificationMedal
