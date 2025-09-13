@@ -141,9 +141,8 @@ export function Certificate() {
                   entreprise.
                 </Typography>
                 <Typography>
-                  Il est possible qu'elle ne soit pas utilisatrice de Mobilic,
-                  qu'elle ne soit pas certifiée ou qu'elle n'ait pas consenti à
-                  partager l'information.
+                  Il est possible qu'elle ne soit pas inscrite sur Mobilic ou
+                  qu'elle ne soit pas certifiée.
                 </Typography>
               </>
             )}
