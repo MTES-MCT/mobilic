@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   certificationImage: {
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(3),
-    height: "150px"
+    height: "248px"
   }
 }));
 
@@ -149,7 +149,7 @@ export function Certificate() {
             {searchResults?.length > 0 && (
               <Box sx={{ textAlign: "center" }}>
                 {searchResults?.length === 1 && (
-                  <Box maxWidth="150px" margin="auto">
+                  <Box maxWidth="296px" margin="auto">
                     <CertificationImage
                       medal={searchResults[0].certification_level}
                       className={classes.certificationImage}
