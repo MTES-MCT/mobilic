@@ -38,12 +38,15 @@ import { useIsWidthDown } from "common/utils/useWidth";
 import { FieldTitle } from "./typography/FieldTitle";
 import { ExternalLink } from "./ExternalLink";
 import { useCompanyCertification } from "./hooks/useCompanyCertification";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   companyName: {
-    fontWeight: "bold",
+    fontWeight: 500,
+    color: fr.colors.decisions.text.actionHigh.blueFrance.default,
     overflowWrap: "anywhere",
-    flexGrow: 1
+    flexGrow: 1,
+    textTransform: "uppercase"
   },
   buttonContainer: {
     padding: theme.spacing(2)
@@ -215,7 +218,8 @@ export function EmploymentInfoCard({
                 style={{
                   color: statusColor,
                   fontWeight: "bold",
-                  textAlign: "right"
+                  textAlign: "right",
+                  fontSize: "0.875rem"
                 }}
               >
                 {statusText}
