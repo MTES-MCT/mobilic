@@ -10,6 +10,7 @@ import { Section } from "../../common/Section";
 import { MandatoryField } from "../../common/MandatoryField";
 import { Input } from "../../common/forms/Input";
 import { NumericInput } from "../../common/forms/NumericInput";
+import { Box } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   verticalFormButton: {
@@ -84,14 +85,16 @@ export function SubmitStep({
             </Section>
           </Stack>
         )}
-        <Section title="Attestation d'habilitation">
-          <CheckboxField
-            checked={claimedRights}
-            onChange={() => setClaimedRights(!claimedRights)}
-            label="J'atteste être habilité(e) à administrer l'entreprise"
-            required
-          />
-        </Section>
+        <Box mt={4}>
+          <Section title="Attestation d'habilitation">
+            <CheckboxField
+              checked={claimedRights}
+              onChange={() => setClaimedRights(!claimedRights)}
+              label="J'atteste être habilité(e) à administrer l'entreprise"
+              required
+            />
+          </Section>
+        </Box>
         <LoadingButton
           aria-label="Terminer inscription"
           className={classes.verticalFormButton}
