@@ -76,7 +76,13 @@ export default function CertificationPanel() {
         )}
 
         {companyWithInfo && (
-          <Stack direction="column" mt={6} rowGap={6} ml={16} mb={6}>
+          <Stack
+            direction="column"
+            mt={6}
+            rowGap={6}
+            ml={{ xs: 2, lg: 4, xl: 16 }}
+            mb={6}
+          >
             {!isCertified && (
               <CertificationAdvices medal={medal} isCertified={isCertified} />
             )}
