@@ -9,6 +9,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useCompanyCertification } from "../../../common/hooks/useCompanyCertification";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
+import { Box } from "@mui/material";
 
 function getEmbeddedCodes(companyBadgeUrl) {
   if (!companyBadgeUrl) return { iframe: "", image: "", script: "" };
@@ -103,20 +104,24 @@ export default function CertificateBadgeEmbedModal({
       open={open}
       handleClose={onClose}
       title="Valorisez votre certificat Mobilic sur votre site internet"
-      centerTitle={true}
       content={
-        <div className={cx(fr.cx("fr-p-4w"))}>
+        <Box>
           <div className={cx(fr.cx("fr-mb-4w"))}>
             <p className={cx(fr.cx("fr-mb-3w"))}>
               Intégrez ce certificat sur votre site internet et mettez en
-              évident votre engagement pour le respect de la réglementation
+              évidence votre engagement pour le respect de la réglementation
               sociale auprès de vos salariés, vos clients ou vos donneurs
               d'ordre.
+            </p>
+            <p>
+              Une fois intégré sur votre site, le certificat se mettra
+              automatiquement à jour en cas de perte ou de changement de niveau
+              de certification.
             </p>
 
             <Alert
               severity="info"
-              title="Documentation complète disponible"
+              title="Notice d'intégration"
               description={
                 <span>
                   Consultez notre{" "}
@@ -183,7 +188,7 @@ export default function CertificateBadgeEmbedModal({
               Fermer
             </Button>
           </div>
-        </div>
+        </Box>
       }
     />
   );
