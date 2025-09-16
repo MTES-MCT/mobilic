@@ -1,14 +1,16 @@
 import React from "react";
 import RegulatoryThresholdItem from "./RegulatoryThresholdItem";
 import { certificateStyles } from "./CertificationAdvices";
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 
 export default function RegulatoryThresholdsGrid({ compliancyReport }) {
   const classes = certificateStyles();
   return (
     <Grid container spacing={4}>
       <Grid item xs={6}>
-        <p className={classes.subtitle}>Seuils journaliers</p>
+        <Typography className={classes.subtitle} mb={3}>
+          Seuils journaliers
+        </Typography>
         {compliancyReport
           .filter(compliancyItem => compliancyItem.period === "day")
           .map((compliancyItem, index) => (
@@ -19,7 +21,9 @@ export default function RegulatoryThresholdsGrid({ compliancyReport }) {
           ))}
       </Grid>
       <Grid item xs={6}>
-        <p className={classes.subtitle}>Seuils hebdomadaires</p>
+        <Typography className={classes.subtitle} mb={3}>
+          Seuils hebdomadaires
+        </Typography>
         {compliancyReport
           .filter(compliancyItem => compliancyItem.period === "week")
           .map((compliancyItem, index) => (

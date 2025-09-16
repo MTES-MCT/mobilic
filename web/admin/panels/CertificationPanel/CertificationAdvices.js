@@ -5,8 +5,7 @@ import { ExternalLink } from "../../../common/ExternalLink";
 
 export const certificateStyles = makeStyles(theme => ({
   subtitle: {
-    fontWeight: "bold",
-    margin: 0
+    fontWeight: "bold"
   },
   list: {
     paddingLeft: theme.spacing(3),
@@ -120,7 +119,9 @@ export function CertificationAdvices({ medal, isCertified }) {
           ? "Comment passer au niveau suivant ?"
           : "Comment obtenir le premier niveau ?"}
       </Typography>
-      <p className={classes.subtitle}>{getSubtitle(medal, isCertified)}</p>
+      <Typography className={classes.subtitle} mb={0}>
+        {getSubtitle(medal, isCertified)}
+      </Typography>
       <ul className={classes.list}>
         {!isCertified ? ITEMS_NOT_CERTIFIED : ITEMS_MEDALS[medal]}
       </ul>
