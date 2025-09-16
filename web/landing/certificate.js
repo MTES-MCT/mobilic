@@ -140,7 +140,7 @@ export function Certificate() {
                   Nous n'avons pas trouvé de certification pour cette
                   entreprise.
                 </Typography>
-                <Typography>
+                <Typography textAlign="center">
                   Il est possible qu'elle ne soit pas inscrite sur Mobilic ou
                   qu'elle ne soit pas certifiée.
                 </Typography>
