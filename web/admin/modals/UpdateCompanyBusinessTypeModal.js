@@ -16,7 +16,7 @@ export default function UpdateCompanyBusinessTypeModal() {
 
   const [isOpen, setIsOpen] = React.useState(true);
   const handleClose = () => {
-    snooze();
+    snooze({ id: adminStore.companyId });
     setIsOpen(false);
   };
   const {
@@ -31,7 +31,7 @@ export default function UpdateCompanyBusinessTypeModal() {
 
   const handleSubmit = async () => {
     await updateCompanyDetails(true);
-    clearUpdateTimeCookie();
+    clearUpdateTimeCookie({ id: adminStore.companyId });
   };
 
   return (

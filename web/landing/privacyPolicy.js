@@ -11,12 +11,36 @@ import { FullPageComponent } from "./components/FullPageComponent";
 const dataCustodyHeaders = ["Catégorie de données", "Durée de conservation"];
 const dataCustody = [
   [
-    "Données relatives aux salariés",
-    "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998"
+    "Données d’état civil, de coordonnées, identifiant FranceConnect des personnels roulants et des gestionnaires",
+    "Les données sont conservées pendant 3 ans, conformément à l’article 4 de l’arrêté du 6 mars 2025"
   ],
   [
-    "Données relatives aux gestionnaires",
-    "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998"
+    "Données d’état civil, de coordonnées, identifiant ProConnect des agents de contrôle",
+    "Les données sont conservées jusqu’à la désinscription du contrôleur ou un an à compter du dernier contact"
+  ],
+  [
+    "Données des entreprises (SIRET, raison sociale)",
+    "Les données sont conservées pendant 3 ans, conformément à l’article 4 de l’arrêté du 6 mars 2025"
+  ],
+  [
+    "Données relatives au temps de travail et de repos des salariés",
+    "Les données sont conservées pendant 3 ans, conformément à l’article 4 de l’arrêté du 6 mars 2025"
+  ],
+  [
+    "Données relatives au contrôle",
+    <>
+      Les données sont conservées :
+      <ul>
+        <li>un an en cas d’absence d’infraction</li>
+        <li>
+          trois ans en cas d’infraction donnant lieu à une amende forfaitaire
+        </li>
+        <li>
+          cinq ans en cas d’établissement d’un procès-verbal à compter du
+          dernier acte de procédure
+        </li>
+      </ul>
+    </>
   ],
   [
     "Données relatives au temps de travail et de repos des salariés",
@@ -35,11 +59,12 @@ const dataCustody = [
 const scalingoLink =
   "https://scalingo.com/fr/contrat-gestion-traitements-donnees-personnelles";
 const ovhLink = "https://us.ovhcloud.com/legal/data-processing-agreement/";
+const scalewayLink =
+  "https://www-uploads.scaleway.com/DPA_2024_ENG_b0abb5cc26.pdf";
 const crispLink =
   "https://help.crisp.chat/en/article/how-to-sign-my-gdpr-data-processing-agreement-dpa-1wfmngo/";
 const sentryLink = "https://sentry.io/legal/dpa/";
 const metabaseLink = "https://www.metabase.com/license/hosting";
-const googleLink = "https://cloud.google.com/terms/data-processing-addendum";
 const mailjetLink = "https://www.mailjet.com/fr/legal/dpa/";
 const brevoLink = "https://www.brevo.com/legal/termsofuse/#annex";
 const livestormLink = "https://livestorm.co/fr/rgpd";
@@ -66,6 +91,13 @@ const dataInfra = [
     <ExternalLink url={ovhLink} title="Garantie OVH" />
   ],
   [
+    "Scaleway",
+    "Hébergement de photographies des documents",
+    "France",
+    // eslint-disable-next-line react/jsx-key
+    <ExternalLink url={scalewayLink} title="Garantie Scaleway" />
+  ],
+  [
     "Crisp",
     "Support / Chat",
     "France",
@@ -85,13 +117,6 @@ const dataInfra = [
     "France",
     // eslint-disable-next-line react/jsx-key
     <ExternalLink url={metabaseLink} title="Garantie Metabase" />
-  ],
-  [
-    "Google",
-    "Publicité",
-    "États-Unis",
-    // eslint-disable-next-line react/jsx-key
-    <ExternalLink url={googleLink} title="Garantie Google" />
   ],
   [
     "Mailjet",
@@ -134,13 +159,15 @@ function PrivacyPolicyContent() {
         <Box>
           <h2>Qui est responsable de Mobilic&nbsp;?</h2>
           <p>
-            Mobilic, développé au sein de la Fabrique Numérique du ministère de
-            l’Aménagement du territoire et de la Décentralisation, est sous la
-            responsabilité de la Direction générale des infrastructures, des
-            transports et des mobilités (DGITM). Elle s&lsquo;engage à assurer
-            un traitement de ces données conforme au RGPD et à la loi n°7817 du
-            6 janvier 1978 relative à l'informatique, aux fichiers et aux
-            libertés.
+            Mobilic, développé au sein de la Fabrique numérique du Ministère de
+            la transition écologique, est sous la responsabilité de la Direction
+            générale des infrastructures, des transports et des mobilités
+            (DGITM), sous-direction du droit social des transports.
+          </p>
+          <p>
+            Elle s’engage à assurer un traitement de ces données conforme au
+            RGPD et à la loi n°7817 du 6 janvier 1978 relative à l'informatique,
+            aux fichiers et aux libertés.
           </p>
           <p>
             Mobilic est un service public numérique qui permet le suivi du temps
@@ -152,31 +179,13 @@ function PrivacyPolicyContent() {
           <h2>
             Pourquoi traitons-nous des données à caractère personnel&nbsp;?
           </h2>
-          <p>Mobilic traite des données à caractère personnel pour&nbsp;:</p>
-          <ul>
-            <li>
-              Lutter contre le travail illégal par un enregistrement certifié
-              des temps de travail des personnels roulants de transports
-              routiers n&lsquo;entrant pas dans le champ d&lsquo;application du
-              règlement (CE) n°561/2006&nbsp;;
-            </li>
-            <li>
-              Enregistrer et assurer le suivi du temps de travail des personnels
-              roulants conformément aux obligations énoncées aux articles
-              R.3312-19 et R.3312-58 du code des transports&nbsp;;
-            </li>
-            <li>
-              Contrôler le respect des seuils en matière de durée du travail et
-              de repos et sanctionner les éventuels dépassements&nbsp;;
-            </li>
-            <li>
-              Permettre la mise en place d&lsquo;une API pour assurer la gestion
-              administrative et financière des entreprises, la réception des
-              données par les agents habilités conformément à l&lsquo;article
-              L3315- 1 du code des transports et l&lsquo;interfaçage avec les
-              logiciels tiers de logistiques.
-            </li>
-          </ul>
+          <p>
+            Mobilic traite des données à caractère personnel en tant que moyen
+            de lutter contre le travail dissimulé par un enregistrement certifié
+            des temps de travail des personnels roulants de transports routiers
+            dont le véhicule n’est pas soumis à un dispositif d’enregistrement
+            automatique par tachygraphe.
+          </p>
         </Box>
         <Box>
           <h2>
@@ -185,8 +194,12 @@ function PrivacyPolicyContent() {
           </h2>
           <ul>
             <li>
-              <b>Données d'état civil, de coordonnées</b> (des personnels
-              roulants et gestionnaires)&nbsp;;
+              <b>
+                Données d’état civil, de coordonnées, identifiant FranceConnect,
+                identifiant ProConnect
+              </b>{" "}
+              (des personnels roulants, des gestionnaires et des agents de
+              contrôle)&nbsp;;
             </li>
             <li>
               <b>Données des entreprises</b> (SIRET, raison sociale)&nbsp;;
@@ -195,8 +208,25 @@ function PrivacyPolicyContent() {
               <b>
                 Données relatives au temps de travail et de repos des salariés
               </b>
-              &nbsp;: lieu de prise et de fin de service, temps
-              d&lsquo;activité.
+              &nbsp;: lieu de prise et de fin de service, date et heure du début
+              et fin des différentes tâches (temps de conduite, temps de travail
+              autres que la conduite, temps de pause et de repos), numéro
+              d’immatriculation, les relevés kilométriques en début et fin de
+              service des véhicules utilisés ; les coordonnées GPS ; les notes
+              de frais ; les indisponibilités&nbsp;;
+            </li>
+            <li>
+              <b>Données relatives au contrôle</b>&nbsp;: désignation de
+              l’opération de contrôle (numéro du bulletin de contrôle, date et
+              heure du contrôle), nationalité du personnel roulant ;
+              identification du véhicule (plaque d’immatriculation et poids) ;
+              immobilisation du véhicule ; nature des infractions ; photographie
+              des documents devant se trouver à bord des véhicules de transport
+              routier de marchandises ou de voyageurs&nbsp;;
+            </li>
+            <li>
+              <b>Les cookies</b> d’authentification, d’interconnexion avec les
+              services gouvernementaux, de mesure d’audience et d’infrastructure
             </li>
           </ul>
         </Box>
@@ -224,19 +254,25 @@ function PrivacyPolicyContent() {
             avoir accès aux données&nbsp;:
           </p>
           <ul>
-            <li>Les membres habilités de l&lsquo;équipe Mobilic&nbsp;;</li>
             <li>
-              Les chefs d&lsquo;entreprise et les personnels habilités de ces
-              entreprises&nbsp;;
+              les agents de contrôle mentionnés à l’article L.3315-1 du code des
+              transports, à l’occasion de contrôles en bord de route, de
+              contrôles en entreprise ou suite à une demande expresse adressée à
+              l’entreprise&nbsp;;
             </li>
             <li>
-              Les agents mentionnés à l&lsquo;article L.3315-1 du code des
-              transports dans les conditions prévues aux articles R.3312-19 et
-              R.3312-58 du code des transports&nbsp;;
+              les agents de contrôle mentionnés à l’article L.8271-1-2 du code
+              du travail dans la limite de leurs compétences respectives en
+              matière de lutte contre travail illégal&nbsp;;
             </li>
             <li>
-              Les personnels habilités des sous-traitants de l&lsquo;équipe
-              Mobilic.
+              les chefs d’entreprise ou leurs représentants assurant le suivi du
+              temps de travail&nbsp;;
+            </li>
+            <li>
+              les agents de la direction générale des infrastructures, des
+              transports et des mobilités habilités à des fins de maintenance de
+              l’application
             </li>
           </ul>
         </Box>
@@ -262,7 +298,7 @@ function PrivacyPolicyContent() {
             <li>
               Mesures restrictives d&lsquo;accès aux données à caractère
               personnel&nbsp;: accès aux données par les agents habilités dans
-              les conditions réglementaires prévues.
+              les conditions réglementaires prévues
             </li>
           </ul>
         </Box>
@@ -271,12 +307,12 @@ function PrivacyPolicyContent() {
             Qui nous aide à traiter vos données à caractère personnel&nbsp;?
           </h2>
           <p>
-            Certaines données sont envoyées à d'autres acteurs, appelés
-            "sous-traitants", pour qu'ils nous aident à les manipuler.
-            Conformément à l&lsquo;article 28 du RGPD, nous nous assurons
-            qu&lsquo;ils respectent strictement leurs obligations en matière de
-            protection des données et qu&lsquo;ils apportent des garanties
-            suffisantes en matière de sécurité des données.
+            Certaines des données sont envoyées à d’autres acteurs, appelés
+            “sous-traitants”, pour qu’ils nous aident à les manipuler.
+            Conformément à l’article 28 du RGPD, nous nous assurons qu’ils
+            respectent strictement leurs obligations en matière de protection
+            des données et qu’ils apportent des garanties suffisantes en matière
+            de sécurité des données.
           </p>
           <Table headers={dataInfraHeaders} data={dataInfra} />
         </Box>
@@ -394,7 +430,7 @@ function PrivacyPolicyContent() {
           </p>
           <p>
             Toutefois, votre consentement est nécessaire et se matérialise par
-            un bandeau cookies s&lsquo;agissant de Crisp et Google Ads.
+            un bandeau cookies s&lsquo;agissant de Crisp.
           </p>
           <p>
             Pour aller plus loin, vous pouvez consulter les fiches proposées par

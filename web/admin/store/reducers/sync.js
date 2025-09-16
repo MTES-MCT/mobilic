@@ -19,6 +19,16 @@ export function updateShouldSeeCertificateInfoReducer(
   };
 }
 
+export function updateShouldForceNbWorkerInfoReducer(
+  state,
+  { shouldForceNbWorkerInfo }
+) {
+  return {
+    ...state,
+    shouldForceNbWorkerInfo
+  };
+}
+
 export function updateEmploymentIdReducer(state, { employmentId }) {
   return {
     ...state,
@@ -33,20 +43,53 @@ export function updateCompaniesListReducer(state, { companiesPayload }) {
       id: c.id,
       name: c.name,
       siren: c.siren,
-      phoneNumber: c.phoneNumber
+      phoneNumber: c.phoneNumber,
+      nbWorkers: c.nbWorkers
     }))
   };
 }
 
 export function updateCompanyNameAndPhoneNumberReducer(state, action) {
-  const { companyId, companyName, companyPhoneNumber } = action;
+  const {
+    companyId,
+    companyName,
+    companyPhoneNumber,
+    companyNbWorkers
+  } = action;
 
   const updatedCompanies = state.companies.map(({ id, ...rest }) => {
     if (id !== companyId) {
       return { id, ...rest };
     }
 
-    return { id, ...rest, name: companyName, phoneNumber: companyPhoneNumber };
+    return {
+      id,
+      ...rest,
+      name: companyName,
+      phoneNumber: companyPhoneNumber,
+      ...(companyNbWorkers !== undefined && { nbWorkers: companyNbWorkers })
+    };
+  });
+
+  return {
+    ...state,
+    companies: updatedCompanies
+  };
+}
+
+export function updateCompanyNbWorkerSnoozeReducer(state, action) {
+  const { companyId, snoozeNbWorkerDate } = action;
+
+  const updatedCompanies = state.companies.map(({ id, ...rest }) => {
+    if (id !== companyId) {
+      return { id, ...rest };
+    }
+
+    return {
+      id,
+      ...rest,
+      snoozeNbWorkerDate
+    };
   });
 
   return {

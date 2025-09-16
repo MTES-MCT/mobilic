@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
     right: "24px",
     bottom: "20px",
     backgroundColor: "#1972F5",
-    zIndex: 98,
+    zIndex: 650,
     width: "60px",
     height: "60px",
     cursor: "pointer",
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.contrastText,
     height: "20px",
     width: "20px",
-    zIndex: 99
+    zIndex: 649
   },
   closeIcon: {
     fontSize: "1rem"
