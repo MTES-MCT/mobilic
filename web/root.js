@@ -183,14 +183,28 @@ function _Root() {
     if (!document.hidden && !isInOauthFlow) {
       await loadUserData(api, store, alerts);
     }
+    const isFranceConnectRedirection = sessionStorage.getItem("fcRedirection");
+    if (isFranceConnectRedirection) {
+      sessionStorage.removeItem("fcRedirection");
+      return;
+    }
+
     if (!isSigningUp && !isInOauthFlow) {
       // Routing priority :
       // 1) if there is a next URL (after login) redirect to this one
       // 2) if current URL is accessible keep it
       // 3) redirect to fallback
       const nextLocation = queryString.get("next");
-      if (nextLocation) history.replace(nextLocation, location.state);
-      else if (
+
+      const isFranceConnectCallback = location.pathname.includes(
+        "/france_connect_callback"
+      );
+      const shouldIgnoreNext =
+        isFranceConnectCallback && nextLocation?.includes("/signup/user_login");
+
+      if (nextLocation && !shouldIgnoreNext) {
+        history.replace(nextLocation, location.state);
+      } else if (
         loadedLocation &&
         isAccessible(loadedLocation, {
           userInfo: store.userInfo(),
