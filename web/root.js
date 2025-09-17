@@ -200,9 +200,7 @@ function _Root() {
         "/france_connect_callback"
       );
       const shouldIgnoreNext =
-        isFranceConnectCallback &&
-        nextLocation &&
-        nextLocation.includes("/signup/user_login");
+        isFranceConnectCallback && nextLocation?.includes("/signup/user_login");
 
       if (nextLocation && !shouldIgnoreNext) {
         history.replace(nextLocation, location.state);

@@ -10,6 +10,6 @@ export class AdminDetector {
     const context = payload.context;
     const nextUrl = payload.next;
 
-    return context === "signup" && nextUrl && nextUrl.includes("admin=true");
+    return context === "signup" && nextUrl?.includes("admin=true");
   }
 }
