@@ -9,6 +9,9 @@ import { useHistory } from "react-router-dom";
 import { FRANCE_CONNECT_LOGIN_MUTATION } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";
 import { FranceConnectErrorDisplay } from "../common/FranceConnectErrorDisplay";
+import { NavigationService } from "common/utils/navigationService";
+import { JWTDecoder } from "common/utils/jwtDecoder";
+import { AdminDetector } from "common/utils/adminDetector";
 
 export function removeParamsFromQueryString(qs, params) {
   const qsWithoutQuestionMark = qs.startsWith("?") ? qs.slice(1) : qs;
@@ -24,11 +27,16 @@ export function FranceConnectCallback() {
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
   const history = useHistory();
+  const navigationService = new NavigationService(history);
 
   const [error, setError] = React.useState("");
   const [franceConnectError, setFranceConnectError] = React.useState(null);
   const [queryParams, setQueryParams] = React.useState(null);
   const [noAccountError, setNoAccountError] = React.useState(false);
+  const [
+    userAlreadyRegisteredError,
+    setUserAlreadyRegisteredError
+  ] = React.useState(false);
 
   async function retrieveFranceConnectInfo(
     code,
@@ -52,7 +60,13 @@ export function FranceConnectCallback() {
           true
         );
         await store.updateUserIdAndInfo();
-        if (create) history.push("/signup/user_login");
+
+        const isAdmin = AdminDetector.isAdminSignup(state);
+        const context = create ? "signup" : "login";
+        const userType = isAdmin ? "admin" : "employee";
+
+        window.history.replaceState({}, "", window.location.pathname);
+        navigationService.handleFranceConnectRedirection(context, userType);
       } catch (err) {
         captureSentryException(err);
 
@@ -62,6 +76,15 @@ export function FranceConnectCallback() {
           )
         ) {
           setNoAccountError(true);
+          return;
+        }
+
+        if (
+          err.graphQLErrors?.some(e =>
+            graphQLErrorMatchesCode(e, "FC_USER_ALREADY_REGISTERED")
+          )
+        ) {
+          setUserAlreadyRegisteredError(true);
           return;
         }
 
@@ -93,8 +116,7 @@ export function FranceConnectCallback() {
     } else if (context === "login") {
       create = false;
     } else if (!create && state) {
-      const stateData = JSON.parse(atob(state));
-      create = stateData.create === true;
+      create = JWTDecoder.getCreateFlag(state);
     }
 
     const newQS = removeParamsFromQueryString(window.location.search, [
@@ -133,9 +155,19 @@ export function FranceConnectCallback() {
           const inviteToken = queryParams.get("invite_token");
           const signupUrl = inviteToken
             ? `/signup?invite_token=${inviteToken}`
-            : "/signup";
+            : "/signup/role_selection";
           history.push(signupUrl);
         }}
+      />
+    );
+  }
+
+  if (userAlreadyRegisteredError && queryParams) {
+    return (
+      <FranceConnectErrorDisplay
+        errorCode="user_already_registered"
+        errorDescription="Utilisateur déjà inscrit sur Mobilic"
+        queryParams={queryParams}
       />
     );
   }

@@ -54,6 +54,12 @@ export const FRANCE_CONNECT_ERROR_MESSAGES = {
       "Vous n'avez pas encore de compte Mobilic. Cliquez sur le bouton ci-dessous pour vous inscrire.",
     type: "info"
   },
+  user_already_registered: {
+    title: "Compte existant",
+    message:
+      "Vous avez déjà un compte Mobilic. Cliquez sur le bouton ci-dessous pour vous connecter.",
+    type: "info"
+  },
   default: {
     title: "Erreur FranceConnect",
     message: "Une erreur est survenue lors de la connexion FranceConnect.",
@@ -85,12 +91,10 @@ export function getFranceConnectRedirectRoute(queryParams, errorCode) {
   const context = queryParams.get("context");
   const inviteToken = queryParams.get("invite_token");
 
-  if (
-    context === "signup" ||
-    queryParams.get("create") === "true" ||
-    errorCode === "no_account"
-  ) {
-    return inviteToken ? `/signup?invite_token=${inviteToken}` : "/signup";
+  if (context === "signup" || queryParams.get("create") === "true") {
+    return inviteToken
+      ? `/signup?invite_token=${inviteToken}`
+      : "/signup/role_selection";
   }
 
   switch (errorCode) {
@@ -100,7 +104,14 @@ export function getFranceConnectRedirectRoute(queryParams, errorCode) {
     case "consent_required":
       return "/login";
     case "no_account":
-      return inviteToken ? `/signup?invite_token=${inviteToken}` : "/signup";
+      if (context === "signup") {
+        return inviteToken
+          ? `/signup?invite_token=${inviteToken}`
+          : "/signup/role_selection";
+      }
+      return "/login";
+    case "user_already_registered":
+      return "/login";
     default:
       return next || "/login";
   }
@@ -126,6 +137,8 @@ export function getRedirectDelay(errorCode) {
     case "access_denied":
       return 2000;
     case "no_account":
+      return 4000;
+    case "user_already_registered":
       return 4000;
     case "server_error":
     case "temporarily_unavailable":
