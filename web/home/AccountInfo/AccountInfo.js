@@ -12,7 +12,6 @@ import Grid from "@mui/material/Grid";
 import { InfoItem } from "../InfoField";
 import { useApi } from "common/utils/api";
 import { useModals } from "common/utils/modals";
-import Divider from "@mui/material/Divider";
 import {
   PaperContainer,
   PaperContainerTitle
@@ -41,6 +40,7 @@ import {
   EMPLOYMENT_STATUS,
   getEmploymentsStatus
 } from "common/utils/employments";
+import { Stack } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   innerContainer: {
@@ -114,208 +114,209 @@ export default function Home() {
             className={`centered ${classes.innerContainer}`}
             maxWidth="sm"
           >
-            <PaperContainerTitle component="h1">
+            <PaperContainerTitle component="h1" variant="h2">
               Mes informations
             </PaperContainerTitle>
-            <Section title="Moi" component="h2">
-              <Grid container wrap="wrap" spacing={4}>
-                <Grid item xs={12}>
-                  <InfoItem
-                    name="Identifiant"
-                    value={userInfo.id}
-                    info={
-                      !hasEmployment
-                        ? "Cet identifiant est à communiquer à votre employeur afin qu'il vous rattache à l'entreprise"
-                        : ""
-                    }
-                    uppercaseTitle={false}
-                  />
-                </Grid>
-                <Grid item xs={12} zeroMinWidth>
-                  <InfoItem
-                    name="Nom"
-                    value={formatPersonName(userInfo)}
-                    action={() =>
-                      modals.open("changeName", {
-                        firstName: userInfo.firstName,
-                        lastName: userInfo.lastName,
-                        handleSubmit: async ({ firstName, lastName }) => {
-                          if (
-                            firstName !== userInfo.firstName ||
-                            lastName !== userInfo.lastName
-                          ) {
-                            const apiResponse = await api.graphQlMutate(
-                              CHANGE_NAME_MUTATION,
-                              {
-                                userId: currentUserId(),
-                                newFirstName: firstName,
-                                newLastName: lastName
-                              },
-                              { context: { nonPublicApi: true } }
-                            );
-                            await store.setUserInfo({
-                              ...store.userInfo(),
-                              ...apiResponse.data.account.changeName
-                            });
-                            await broadCastChannel.postMessage("update");
-                          }
-                        }
-                      })
-                    }
-                    uppercaseTitle={false}
-                  />
-                </Grid>
-                {userInfo.birthDate && (
-                  <Grid item xs={12} zeroMinWidth>
+            <Stack direction="column" rowGap={4}>
+              <Section title="Moi" component="h2">
+                <Grid container wrap="wrap" spacing={4}>
+                  <Grid item xs={12}>
                     <InfoItem
-                      name="Date de naissance"
-                      value={frenchFormatDateStringOrTimeStamp(
-                        userInfo.birthDate
-                      )}
+                      name="Identifiant"
+                      value={userInfo.id}
+                      info={
+                        !hasEmployment
+                          ? "Cet identifiant est à communiquer à votre employeur afin qu'il vous rattache à l'entreprise"
+                          : ""
+                      }
                       uppercaseTitle={false}
                     />
                   </Grid>
-                )}
-                <Grid item xs={12} zeroMinWidth>
-                  <InfoItem
-                    data-testid="emailInfoItem"
-                    name="Adresse email"
-                    value={userInfo.email}
-                    action={() =>
-                      modals.open("changeEmail", {
-                        handleSubmit: async email => {
-                          const apiResponse = await api.graphQlMutate(
-                            CHANGE_EMAIL_MUTATION,
-                            { email },
-                            { context: { nonPublicApi: true } }
-                          );
-                          await store.setUserInfo({
-                            ...store.userInfo(),
-                            ...apiResponse.data.account.changeEmail
-                          });
-                          await broadCastChannel.postMessage("update");
-                        }
-                      })
-                    }
-                    alertComponent={
-                      isActive || !userInfo.email ? null : (
-                        <AlertEmailNotActivated
-                          email={userInfo.email}
-                          data-testid="alertEmailNotActivated"
-                        />
-                      )
-                    }
-                    uppercaseTitle={false}
-                  />
-                </Grid>
-                <Grid item xs={12} zeroMinWidth>
-                  <InfoItem
-                    data-testid="genderInfoItem"
-                    name="Sexe"
-                    value={
-                      GENDERS.find(g => g.value === userInfo.gender)?.label
-                    }
-                    valuePlaceholder="Sexe non renseigné"
-                    action={() =>
-                      modals.open("changeGender", {
-                        currentGender: userInfo.gender
-                      })
-                    }
-                    uppercaseTitle={false}
-                  />
-                </Grid>
-                <Grid item xs={12} zeroMinWidth>
-                  <InfoItem
-                    data-testid="timezoneInfoItem"
-                    name="Fuseau horaire"
-                    value={getTimezonePrettyName(userInfo.timezoneName)}
-                    action={() =>
-                      modals.open("changeTimezone", {
-                        defaultValue: getTimezone(userInfo.timezoneName),
-                        handleSubmit: async timezone => {
-                          const apiResponse = await api.graphQlMutate(
-                            CHANGE_TIMEZONE_MUTATION,
-                            { timezoneName: timezone.name },
-                            { context: { nonPublicApi: true } }
-                          );
-                          await store.setUserInfo({
-                            ...store.userInfo(),
-                            timezoneName:
-                              apiResponse.data.account.changeTimezone
-                                .timezoneName
-                          });
-                          await broadCastChannel.postMessage("update");
-                        }
-                      })
-                    }
-                    uppercaseTitle={false}
-                  />
-                </Grid>
-                <Grid item xs={12} zeroMinWidth>
-                  <InfoItem
-                    name="Numéro de téléphone"
-                    value={displayPhoneNumber}
-                    valuePlaceholder="Aucun numéro renseigné"
-                    action={() =>
-                      modals.open("changePhoneNumber", {
-                        phoneNumber: userInfo.phoneNumber,
-                        handleSubmit: async ({ newPhoneNumber }) => {
-                          if (newPhoneNumber !== userInfo.phoneNumber) {
+                  <Grid item xs={12} zeroMinWidth>
+                    <InfoItem
+                      name="Nom"
+                      value={formatPersonName(userInfo)}
+                      action={() =>
+                        modals.open("changeName", {
+                          firstName: userInfo.firstName,
+                          lastName: userInfo.lastName,
+                          handleSubmit: async ({ firstName, lastName }) => {
+                            if (
+                              firstName !== userInfo.firstName ||
+                              lastName !== userInfo.lastName
+                            ) {
+                              const apiResponse = await api.graphQlMutate(
+                                CHANGE_NAME_MUTATION,
+                                {
+                                  userId: currentUserId(),
+                                  newFirstName: firstName,
+                                  newLastName: lastName
+                                },
+                                { context: { nonPublicApi: true } }
+                              );
+                              await store.setUserInfo({
+                                ...store.userInfo(),
+                                ...apiResponse.data.account.changeName
+                              });
+                              await broadCastChannel.postMessage("update");
+                            }
+                          }
+                        })
+                      }
+                      uppercaseTitle={false}
+                    />
+                  </Grid>
+                  {userInfo.birthDate && (
+                    <Grid item xs={12} zeroMinWidth>
+                      <InfoItem
+                        name="Date de naissance"
+                        value={frenchFormatDateStringOrTimeStamp(
+                          userInfo.birthDate
+                        )}
+                        uppercaseTitle={false}
+                      />
+                    </Grid>
+                  )}
+                  <Grid item xs={12} zeroMinWidth>
+                    <InfoItem
+                      data-testid="emailInfoItem"
+                      name="Adresse email"
+                      value={userInfo.email}
+                      action={() =>
+                        modals.open("changeEmail", {
+                          handleSubmit: async email => {
                             const apiResponse = await api.graphQlMutate(
-                              CHANGE_PHONE_NUMBER_MUTATION,
-                              {
-                                userId: currentUserId(),
-                                newPhoneNumber: newPhoneNumber
-                              },
+                              CHANGE_EMAIL_MUTATION,
+                              { email },
                               { context: { nonPublicApi: true } }
                             );
                             await store.setUserInfo({
                               ...store.userInfo(),
-                              ...apiResponse.data.account.changePhoneNumber
+                              ...apiResponse.data.account.changeEmail
                             });
                             await broadCastChannel.postMessage("update");
                           }
-                        }
-                      })
-                    }
-                    uppercaseTitle={false}
-                  />
-                </Grid>
-              </Grid>
-            </Section>
-            {isActive && (
-              <>
-                <Divider className="hr-unstyled" />
-                <Section
-                  component="h2"
-                  title={
-                    employments.length > 1
-                      ? "Mes entreprises"
-                      : "Mon entreprise"
-                  }
-                >
-                  {hasEmployment && (
-                    <Grid container spacing={2} direction="column">
-                      {employments.map(e => (
-                        <Grid item xs={12} key={e.id}>
-                          <EmploymentInfoCard
-                            employment={e}
-                            key={e.id}
-                            defaultOpen={
-                              employments.length === 1 || !e.isAcknowledged
-                            }
+                        })
+                      }
+                      alertComponent={
+                        isActive || !userInfo.email ? null : (
+                          <AlertEmailNotActivated
+                            email={userInfo.email}
+                            data-testid="alertEmailNotActivated"
                           />
-                        </Grid>
-                      ))}
-                    </Grid>
-                  )}
-                  {!hasActiveEmployments && <NoEmploymentAlert />}
-                  <BecomeAdmin mt={2} hasEmployments={hasEmployment} />
-                </Section>
-                <OAuthTokenSection />
-                <UserControlSection />
-              </>
-            )}
+                        )
+                      }
+                      uppercaseTitle={false}
+                    />
+                  </Grid>
+                  <Grid item xs={12} zeroMinWidth>
+                    <InfoItem
+                      data-testid="genderInfoItem"
+                      name="Sexe"
+                      value={
+                        GENDERS.find(g => g.value === userInfo.gender)?.label
+                      }
+                      valuePlaceholder="Sexe non renseigné"
+                      action={() =>
+                        modals.open("changeGender", {
+                          currentGender: userInfo.gender
+                        })
+                      }
+                      uppercaseTitle={false}
+                    />
+                  </Grid>
+                  <Grid item xs={12} zeroMinWidth>
+                    <InfoItem
+                      data-testid="timezoneInfoItem"
+                      name="Fuseau horaire"
+                      value={getTimezonePrettyName(userInfo.timezoneName)}
+                      action={() =>
+                        modals.open("changeTimezone", {
+                          defaultValue: getTimezone(userInfo.timezoneName),
+                          handleSubmit: async timezone => {
+                            const apiResponse = await api.graphQlMutate(
+                              CHANGE_TIMEZONE_MUTATION,
+                              { timezoneName: timezone.name },
+                              { context: { nonPublicApi: true } }
+                            );
+                            await store.setUserInfo({
+                              ...store.userInfo(),
+                              timezoneName:
+                                apiResponse.data.account.changeTimezone
+                                  .timezoneName
+                            });
+                            await broadCastChannel.postMessage("update");
+                          }
+                        })
+                      }
+                      uppercaseTitle={false}
+                    />
+                  </Grid>
+                  <Grid item xs={12} zeroMinWidth>
+                    <InfoItem
+                      name="Numéro de téléphone"
+                      value={displayPhoneNumber}
+                      valuePlaceholder="Aucun numéro renseigné"
+                      action={() =>
+                        modals.open("changePhoneNumber", {
+                          phoneNumber: userInfo.phoneNumber,
+                          handleSubmit: async ({ newPhoneNumber }) => {
+                            if (newPhoneNumber !== userInfo.phoneNumber) {
+                              const apiResponse = await api.graphQlMutate(
+                                CHANGE_PHONE_NUMBER_MUTATION,
+                                {
+                                  userId: currentUserId(),
+                                  newPhoneNumber: newPhoneNumber
+                                },
+                                { context: { nonPublicApi: true } }
+                              );
+                              await store.setUserInfo({
+                                ...store.userInfo(),
+                                ...apiResponse.data.account.changePhoneNumber
+                              });
+                              await broadCastChannel.postMessage("update");
+                            }
+                          }
+                        })
+                      }
+                      uppercaseTitle={false}
+                    />
+                  </Grid>
+                </Grid>
+              </Section>
+              {isActive && (
+                <>
+                  <Section
+                    component="h2"
+                    title={
+                      employments.length > 1
+                        ? "Mes entreprises"
+                        : "Mon entreprise"
+                    }
+                  >
+                    {hasEmployment && (
+                      <Grid container spacing={2} direction="column">
+                        {employments.map(e => (
+                          <Grid item xs={12} key={e.id}>
+                            <EmploymentInfoCard
+                              employment={e}
+                              key={e.id}
+                              defaultOpen={
+                                employments.length === 1 || !e.isAcknowledged
+                              }
+                            />
+                          </Grid>
+                        ))}
+                      </Grid>
+                    )}
+                    {!hasActiveEmployments && <NoEmploymentAlert />}
+                    <BecomeAdmin mt={2} hasEmployments={hasEmployment} />
+                  </Section>
+                  <OAuthTokenSection />
+                  <UserControlSection />
+                </>
+              )}
+            </Stack>
           </Container>
         </PaperContainer>
       </Main>

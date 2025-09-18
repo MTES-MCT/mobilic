@@ -26,7 +26,6 @@ import _SupplyChainVillageImage from "../assets/images/press-logos/supply_chain_
 import _VirImage from "../assets/images/testimonials-logos/vir.jpg";
 import _AlexisDemenagementImage from "../assets/images/testimonials-logos/alexis_plus.jpg";
 import _BretagneMaceDemenagementImage from "../assets/images/testimonials-logos/bretagne_mace_demenagement.jpg";
-import _CertificationImage from "../assets/images/certification.svg";
 import _ComputerImage from "../assets/images/computer.png";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 
@@ -230,8 +229,4 @@ export function ComputerImage(props) {
 
 export function MobilicQrCode(props) {
   return <img alt="Mobilic" src={_MobilicQrCode} {...props} />;
-}
-
-export function CertificationImage(props) {
-  return <img alt="Certificat" src={_CertificationImage} {...props} />;
 }

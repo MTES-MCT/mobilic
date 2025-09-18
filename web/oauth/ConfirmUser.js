@@ -46,7 +46,7 @@ export function ConfirmUser({ clientName, redirectUri }) {
         <Typography className={classes.title} variant="h3">
           Choisir un compte
         </Typography>
-        <Section last>
+        <Section>
           <List className={classes.list}>
             <ListItem
               button

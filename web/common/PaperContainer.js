@@ -20,7 +20,10 @@ const useStyles = makeStyles(theme => ({
   title: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
-    textAlign: "center"
+    textAlign: "center",
+    [theme.breakpoints.down("md")]: {
+      textAlign: "left"
+    }
   },
   paper: {
     [theme.breakpoints.down("lg")]: {

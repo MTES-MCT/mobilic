@@ -14,6 +14,7 @@ import {
   MIN_NB_WORKERS,
   MAX_NB_WORKERS
 } from "../../common/forms/NbWorkersInput";
+import { Box } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   verticalFormButton: {
@@ -81,14 +82,16 @@ export function SubmitStep({
             </Section>
           </Stack>
         )}
-        <Section title="Attestation d'habilitation">
-          <CheckboxField
-            checked={claimedRights}
-            onChange={() => setClaimedRights(!claimedRights)}
-            label="J'atteste être habilité(e) à administrer l'entreprise"
-            required
-          />
-        </Section>
+        <Box mt={4}>
+          <Section title="Attestation d'habilitation">
+            <CheckboxField
+              checked={claimedRights}
+              onChange={() => setClaimedRights(!claimedRights)}
+              label="J'atteste être habilité(e) à administrer l'entreprise"
+              required
+            />
+          </Section>
+        </Box>
         <LoadingButton
           aria-label="Terminer inscription"
           className={classes.verticalFormButton}

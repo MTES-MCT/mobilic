@@ -1,19 +1,8 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
-import { useAdminCompanies, useAdminStore } from "../store/store";
-import {
-  useCertificationInfo,
-  useShouldDisplayBadge
-} from "../utils/certificationInfo";
-import { useMatomo } from "@datapunt/matomo-tracker-react";
-import {
-  ADMIN_CERTIFICATE_TAB_WITH_BADGE,
-  ADMIN_CERTIFICATE_TAB_WITHOUT_BADGE
-} from "common/utils/matomoTags";
-import { getCertificateBadge } from "../../common/routes";
-import Badge from "@mui/material/Badge";
+import { useAdminCompanies } from "../store/store";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Employees } from "./Employees";
@@ -24,10 +13,6 @@ import KnownAddressAdmin from "./KnownAddresses";
 import SettingAdmin from "./Settings";
 import CompanyApiPanel from "./CompanyApiPanel";
 import CompanyTeamsPanel from "./CompanyTeamsPanel";
-import CertificationPanel from "./CertificationPanel/CertificationPanel";
-import { useApi } from "common/utils/api";
-import { SNOOZE_CERTIFICATION_INFO } from "common/utils/apiQueries";
-import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { usePageTitle } from "../../common/UsePageTitle";
 import CompanyDetails from "../../home/CompanyDetails";
 import Stack from "@mui/material/Stack";
@@ -74,11 +59,6 @@ export const usePanelStyles = makeStyles(theme => ({
   },
   toggleButton: {
     minWidth: theme.spacing(13)
-  },
-  customBadge: {
-    "& .MuiBadge-badge": {
-      right: theme.spacing(-0.6)
-    }
   }
 }));
 
@@ -109,14 +89,6 @@ const COMPANY_SUB_PANELS = [
     component: props => <CompanyTeamsPanel {...props} />
   },
   {
-    label: "Certificat",
-    view: "certificat",
-    component: props => <CertificationPanel {...props} />,
-    onClick: async action => {
-      await action();
-    }
-  },
-  {
     label: "API",
     view: "api",
     component: props => <CompanyApiPanel {...props} />
@@ -125,31 +97,8 @@ const COMPANY_SUB_PANELS = [
 
 function SubNavigationToggle({ view, setView }) {
   usePageTitle("Entreprise(s) - Mobilic");
-  const api = useApi();
-  const adminStore = useAdminStore();
   const classes = usePanelStyles();
   const history = useHistory();
-  const { trackEvent } = useMatomo();
-  const { companyWithInfo } = useCertificationInfo();
-  const shouldDisplayBadge = useShouldDisplayBadge();
-  const certificateBadge = useMemo(() => {
-    if (!shouldDisplayBadge) {
-      return null;
-    }
-    return getCertificateBadge(companyWithInfo);
-  }, [companyWithInfo, shouldDisplayBadge]);
-
-  const snoozeCertificationInfo = async () => {
-    await api.graphQlMutate(
-      SNOOZE_CERTIFICATION_INFO,
-      { employmentId: adminStore.employmentId },
-      { context: { nonPublicApi: true } }
-    );
-    adminStore.dispatch({
-      type: ADMIN_ACTIONS.updateShouldSeeCertificateInfo,
-      payload: { shouldSeeCertificateInfo: false }
-    });
-  };
 
   return (
     <Stack direction="row">
@@ -166,32 +115,8 @@ function SubNavigationToggle({ view, setView }) {
           <ToggleButton
             value={panelInfos.view}
             className={classes.toggleButton}
-            onClick={
-              panelInfos.onClick
-                ? () => {
-                    if (shouldDisplayBadge) {
-                      panelInfos.onClick(() => {
-                        snoozeCertificationInfo();
-                        trackEvent(ADMIN_CERTIFICATE_TAB_WITH_BADGE);
-                      });
-                    } else {
-                      trackEvent(ADMIN_CERTIFICATE_TAB_WITHOUT_BADGE);
-                    }
-                  }
-                : null
-            }
           >
-            {panelInfos.view === "certificat" ? (
-              <Badge
-                invisible={!certificateBadge}
-                {...certificateBadge}
-                className={classes.customBadge}
-              >
-                {panelInfos.label}
-              </Badge>
-            ) : (
-              panelInfos.label
-            )}
+            {panelInfos.label}
           </ToggleButton>
         </ToggleButtonGroup>
       ))}

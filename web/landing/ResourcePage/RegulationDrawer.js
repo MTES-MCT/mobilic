@@ -9,6 +9,7 @@ import { makeStyles } from "@mui/styles";
 import Box from "@mui/material/Box";
 import { RegulationArticlesBlock } from "./RegulationLegalArticle";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
+import { Stack } from "@mui/material";
 
 export const useStyles = makeStyles(theme => ({
   container: {
@@ -123,31 +124,33 @@ export const RegulationDrawerContextProvider = ({ children }) => {
                 <Typography variant="h3">{rule.name}</Typography>
               </Grid>
             </Grid>
-            <Section className={classes.details}>
-              {displayComputationDetails && rule.computation && (
-                <RegulationBlock rule={rule} />
+            <Stack direction="column" rowGap={4}>
+              <Section>
+                {displayComputationDetails && rule.computation && (
+                  <RegulationBlock rule={rule} />
+                )}
+                <Box>{rule.details}</Box>
+              </Section>
+              {rule.definitions && rule.definitions.length > 0 && (
+                <Section className={classes.definitions} title="Définitions">
+                  <ul className={classes.definitionList}>
+                    {rule.definitions.map((def, index) => (
+                      <li key={index} className={classes.definition}>
+                        <span className="bold">{def.name}</span> : {def.content}
+                      </li>
+                    ))}
+                  </ul>
+                </Section>
               )}
-              <Box>{rule.details}</Box>
-            </Section>
-            {rule.definitions && rule.definitions.length > 0 && (
-              <Section className={classes.definitions} title="Définitions">
-                <ul className={classes.definitionList}>
-                  {rule.definitions.map((def, index) => (
-                    <li key={index} className={classes.definition}>
-                      <span className="bold">{def.name}</span> : {def.content}
-                    </li>
-                  ))}
-                </ul>
-              </Section>
-            )}
-            {rule.articles && (
-              <Section title="Réglementation">
-                <RegulationArticlesBlock
-                  className={classes.definitionList}
-                  articles={rule.articles}
-                />
-              </Section>
-            )}
+              {rule.articles && (
+                <Section title="Réglementation">
+                  <RegulationArticlesBlock
+                    className={classes.definitionList}
+                    articles={rule.articles}
+                  />
+                </Section>
+              )}
+            </Stack>
           </Container>
         )}
       </SwipeableDrawer>

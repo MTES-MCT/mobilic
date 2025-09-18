@@ -5,10 +5,11 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import { jsToUnixTimestamp, prettyFormatDay } from "common/utils/time";
-import { CERTIFICATION_CRITERIAS } from "./certifiationCriterias";
+import { CERTIFICATION_CRITERIAS } from "./certificationCriterias";
 import CertificationCriteriaSingleResult from "./CertificationCriteriaSingleResult";
 import { Link } from "../../../common/LinkButton";
 import { fr } from "@codegouvfr/react-dsfr";
+import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 
 const useStyles = makeStyles(theme => ({
   italicInfo: {
@@ -39,10 +40,15 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
   const [infoCriterias, setInfoCriterias] = React.useState([]);
   const classes = useStyles();
   const criteriaCalculationDate = useMemo(() => {
-    if (companyWithInfo.certificateCriterias?.creationTime) {
+    if (
+      companyWithInfo.currentCompanyCertification?.certificateCriterias
+        ?.creationTime
+    ) {
       return prettyFormatDay(
         jsToUnixTimestamp(
-          new Date(companyWithInfo.certificateCriterias?.creationTime).getTime()
+          new Date(
+            companyWithInfo.currentCompanyCertification.certificateCriterias?.creationTime
+          ).getTime()
         ),
         true
       );
@@ -54,9 +60,11 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
     const criteriasKO = [];
     const criteriasINFO = [];
     Object.entries(CERTIFICATION_CRITERIAS).forEach(([key, value]) => {
-      if (!companyWithInfo.certificateCriterias) {
+      if (!companyWithInfo.currentCompanyCertification?.certificateCriterias) {
         criteriasINFO.push(value);
-      } else if (companyWithInfo.certificateCriterias[key]) {
+      } else if (
+        companyWithInfo.currentCompanyCertification.certificateCriterias[key]
+      ) {
         criteriasOK.push(value);
       } else {
         criteriasKO.push(value);
@@ -69,42 +77,46 @@ export default function CertificationCriteriaGlobalResult({ companyWithInfo }) {
 
   return [
     <Box key={10} mt={4}>
-      <Typography variant="h4" component="h2">
+      <h3 className={cx(fr.cx("fr-h3", "fr-mb-4w"))}>
         Synthèse de l'obtention des critères
-      </Typography>
-      {companyWithInfo.certificateCriterias && (
+      </h3>
+      {companyWithInfo.currentCompanyCertification?.certificateCriterias && (
         <Typography mb={1} className={classes.italicInfo}>
           données calculées le {criteriaCalculationDate}
         </Typography>
       )}
     </Box>,
-    companyWithInfo.isCertified && failureCriterias.length === 0 && (
-      <Typography key={20} mt={2}>
-        Votre entreprise remplit tous les critères nécessaires à l'obtention du
-        certificat mentionnés ci-dessous.
-      </Typography>
-    ),
-    companyWithInfo.isCertified && failureCriterias.length > 0 && (
-      <Typography key={30} mt={2}>
-        <b>
-          Attention, votre entreprise ne remplit plus l’ensemble des critères
-          nécessaires au renouvellement de votre certificat. Ces critères sont
-          mentionnés ci-dessous.
-        </b>
-      </Typography>
-    ),
-    !companyWithInfo.isCertified && !companyWithInfo.lastDayCertified && (
-      <Typography key={40} mt={2}>
-        Pour obtenir le certificat, votre entreprise doit remplir tous les
-        critères mentionnés ci-dessous.
-      </Typography>
-    ),
-    !companyWithInfo.isCertified && companyWithInfo.lastDayCertified && (
-      <Typography key={42} mt={2}>
-        Pour obtenir à nouveau le certificat, votre entreprise doit remplir tous
-        les critères mentionnés ci-dessous.
-      </Typography>
-    ),
+    companyWithInfo.currentCompanyCertification?.isCertified &&
+      failureCriterias.length === 0 && (
+        <Typography key={20} mt={2}>
+          Votre entreprise remplit tous les critères nécessaires à l'obtention
+          du certificat mentionnés ci-dessous.
+        </Typography>
+      ),
+    companyWithInfo.currentCompanyCertification?.isCertified &&
+      failureCriterias.length > 0 && (
+        <Typography key={30} mt={2}>
+          <b>
+            Attention, votre entreprise ne remplit plus l’ensemble des critères
+            nécessaires au renouvellement de votre certificat. Ces critères sont
+            mentionnés ci-dessous.
+          </b>
+        </Typography>
+      ),
+    !companyWithInfo.currentCompanyCertification?.isCertified &&
+      !companyWithInfo.currentCompanyCertification?.lastDayCertified && (
+        <Typography key={40} mt={2}>
+          Pour obtenir le certificat, votre entreprise doit remplir tous les
+          critères mentionnés ci-dessous.
+        </Typography>
+      ),
+    !companyWithInfo.currentCompanyCertification?.isCertified &&
+      companyWithInfo.currentCompanyCertification?.lastDayCertified && (
+        <Typography key={42} mt={2}>
+          Pour obtenir à nouveau le certificat, votre entreprise doit remplir
+          tous les critères mentionnés ci-dessous.
+        </Typography>
+      ),
     <Typography key={45} mb={3}>
       Le calcul des critères est mis à jour automatiquement à chaque début de
       mois.

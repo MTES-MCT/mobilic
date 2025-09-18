@@ -80,7 +80,7 @@ export function ControlDisplayPicturesDrawer({
             <li key={picture.url}>
               <img
                 src={picture.url}
-                alt={`Photo ${index + 1}`}
+                alt={`Document contrôle ${index + 1}`}
                 style={{ width: "100%", height: "auto" }}
               />
             </li>

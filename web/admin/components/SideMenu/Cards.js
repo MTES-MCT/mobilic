@@ -8,7 +8,7 @@ import { JoinWebinarsCard } from "./JoinWebinarsCard";
 
 export function Cards() {
   return (
-    <Stack ml={2} rowGap={2}>
+    <Stack mx={2} rowGap={2}>
       <JoinWebinarsCard />
       <InviteCompaniesCard />
     </Stack>
