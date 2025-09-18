@@ -80,7 +80,7 @@ export default function CertificationPanel() {
             direction="column"
             mt={6}
             rowGap={6}
-            ml={{ xs: 2, lg: 4, xl: 16 }}
+            mx={{ xs: 2, lg: 3, xl: 16 }}
             mb={6}
           >
             {!isCertified && (

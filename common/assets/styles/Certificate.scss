@@ -2,6 +2,7 @@ table.certificate {
     border: 1px solid var(--border-contrast-grey);
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 
     th, td {
         padding: 16px 20px;
@@ -15,6 +16,8 @@ table.certificate {
 
         &.base {
             text-align: left;
+            width: 220px;
+            box-sizing: border-box;
         }
 
         &.your-score {
@@ -41,7 +44,6 @@ table.certificate {
     }
 
     td.definition {
-        width: 240px;
         min-height: 72px;
         font-size: 0.875rem,
     }
