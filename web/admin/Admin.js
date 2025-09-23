@@ -30,7 +30,6 @@ import { useSnackbarAlerts } from "../common/Snackbar";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
 import { MissionDrawerContextProvider } from "./components/MissionDrawer";
-import CertificationCommunicationModal from "../pwa/components/CertificationCommunicationModal";
 import { shouldUpdateBusinessType } from "common/utils/updateBusinessType";
 import { shouldUpdateNbWorker } from "common/utils/updateNbWorker";
 import UpdateCompanyBusinessTypeModal from "./modals/UpdateCompanyBusinessTypeModal";
@@ -52,14 +51,14 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexDirection: "column",
     overflowX: "hidden",
-    marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1)
+    paddingRight: theme.spacing(1),
+    paddingLeft: 0,
+    borderLeft: "1px solid #DDDDDD"
   }
 }));
 
-function AdminComponent() {
+function InternalAdmin() {
   const api = useApi();
   const adminStore = useAdminStore();
   const [, company] = useAdminCompanies();
@@ -71,10 +70,6 @@ function AdminComponent() {
   const [shouldRefreshData, setShouldRefreshData] = React.useState({
     value: true
   });
-  const [
-    companiesToAcceptCertificateCommunication,
-    setCompaniesToAcceptCertificateCommunication
-  ] = React.useState([]);
 
   const location = useLocation();
   const width = useWidth();
@@ -108,13 +103,6 @@ function AdminComponent() {
                 type: ADMIN_ACTIONS.updateCompanyId,
                 payload: { companyId: companyId }
               });
-              setCompaniesToAcceptCertificateCommunication(
-                companies?.filter(
-                  company =>
-                    !!company.isCertified &&
-                    company.acceptCertificationCommunication === null
-                )
-              );
             },
             "load-companies-list",
             null,
@@ -226,12 +214,6 @@ function AdminComponent() {
         setShouldRefreshData={shouldRefreshDataSetter}
         refreshData={refreshData}
       >
-        {companiesToAcceptCertificateCommunication?.length > 0 && (
-          <CertificationCommunicationModal
-            companies={companiesToAcceptCertificateCommunication}
-            onClose={() => setCompaniesToAcceptCertificateCommunication([])}
-          />
-        )}
         <Main maxWidth={false} className={classes.container} disableGutters>
           {isMdUp && <SideMenu views={views} />}
           <Container
@@ -272,7 +254,7 @@ export default function Admin(props) {
   return (
     <LoadingScreenContextProvider>
       <AdminStoreProvider>
-        <AdminComponent {...props} />
+        <InternalAdmin {...props} />
       </AdminStoreProvider>
     </LoadingScreenContextProvider>
   );

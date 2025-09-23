@@ -130,6 +130,10 @@ const USER_QUERY = gql`
           hasNoActiveAdmins
           hasCeasedActivity
           ...CompanySettings
+          currentCompanyCertification {
+            isCertified
+            certificationMedal
+          }
         }
       }
       userAgreementStatus {
