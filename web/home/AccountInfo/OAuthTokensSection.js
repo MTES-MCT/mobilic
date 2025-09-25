@@ -7,7 +7,6 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import { currentUserId } from "common/utils/cookie";
-import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { OAuthTokenCard } from "./OAuthTokenCard";
 import Skeleton from "@mui/material/Skeleton";
@@ -16,11 +15,9 @@ import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import Notice from "../../common/Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Section } from "../../common/Section";
 
 const useStyles = makeStyles(theme => ({
-  section: {
-    width: "100%"
-  },
   mainTitle: {
     marginBottom: theme.spacing(3),
     textAlign: "left"
@@ -108,10 +105,10 @@ export function OAuthTokenSection() {
   };
 
   return (
-    <Box my={6} mb={6} className={classes.section}>
+    <Section>
       <Grid container>
         <Grid item xs={6}>
-          <Typography className={classes.mainTitle} variant="h5" component="h2">
+          <Typography className={classes.mainTitle} variant="h4" component="h2">
             Mon API Mobilic
           </Typography>
         </Grid>
@@ -207,6 +204,6 @@ export function OAuthTokenSection() {
           </>
         )}
       </Grid>
-    </Box>
+    </Section>
   );
 }

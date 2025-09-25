@@ -594,8 +594,6 @@ export const ADMIN_COMPANIES_LIST_QUERY = gql`
         siren
         phoneNumber
         nbWorkers
-        isCertified
-        acceptCertificationCommunication
       }
     }
   }
@@ -2118,10 +2116,6 @@ export const HTTP_QUERIES = {
     method: "POST",
     endpoint: "/companies/public_company_certification"
   },
-  downloadCertificate: {
-    method: "POST",
-    endpoint: "/companies/download_certificate"
-  },
   downloadFullDataWhenCGUrefused: {
     method: "POST",
     endpoint: "/users/download_full_data_when_CGU_refused"
@@ -2215,28 +2209,6 @@ export const THIRD_PARTY_CLIENT_EMPLOYMENT_ACCEPT = gql`
   }
 `;
 
-export const EDIT_COMPANIES_COMMUNICATION_SETTING = gql`
-  mutation editCompanyCommunicationSetting(
-    $companyIds: [Int]!
-    $acceptCertificationCommunication: Boolean!
-  ) {
-    editCompanyCommunicationSetting(
-      companyIds: $companyIds
-      acceptCertificationCommunication: $acceptCertificationCommunication
-    ) {
-      success
-    }
-  }
-`;
-
-export const SNOOZE_CERTIFICATION_INFO = gql`
-  mutation snoozeCertificateInfo($employmentId: Int!) {
-    snoozeCertificateInfo(employmentId: $employmentId) {
-      success
-    }
-  }
-`;
-
 export const SNOOZE_NB_WORKER_INFO = gql`
   mutation snoozeNbWorkerInfo($employmentId: Int!) {
     snoozeNbWorkerInfo(employmentId: $employmentId) {
@@ -2277,18 +2249,44 @@ export const COMPANY_CERTIFICATION_COMMUNICATION_QUERY = gql`
     company(id: $companyId) {
       id
       name
-      isCertified
       hasNoActivity
-      acceptCertificationCommunication
-      lastDayCertified
-      startLastCertificationPeriod
-      certificateCriterias {
-        creationTime
-        beActive
-        beCompliant
-        notTooManyChanges
-        validateRegularly
-        logInRealTime
+      currentCompanyCertification {
+        isCertified
+        certificationMedal
+        lastDayCertified
+        startLastCertificationPeriod
+        badgeUrl
+        certificateCriterias {
+          compliancy
+          adminChanges
+          logInRealTime
+          attributionDate
+          expirationDate
+          info
+        }
+      }
+    }
+  }
+`;
+
+export const COMPANY_REGULATORY_SCORE_QUERY = gql`
+  query companyRegulatoryScore(
+    $companyId: Int!
+    $fromDate: Date
+    $toDate: Date
+  ) {
+    company(id: $companyId) {
+      id
+      companyRegulatoryScore(fromDate: $fromDate, toDate: $toDate) {
+        compliant
+        total
+        details {
+          type
+          totalAlerts
+          significantAlerts
+          compliant
+          complianceRate
+        }
       }
     }
   }

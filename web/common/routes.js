@@ -546,12 +546,19 @@ export function getCertificateBadge(companyWithCertificationInfo) {
   let color = null;
   if (companyWithCertificationInfo.hasNoActivity) {
     color = "error";
-  } else if (!companyWithCertificationInfo.certificateCriterias?.creationTime) {
+  } else if (
+    !companyWithCertificationInfo.currentCompanyCertification
+      ?.certificateCriterias?.creationTime
+  ) {
     return null;
-  } else if (!companyWithCertificationInfo.isCertified) {
+  } else if (
+    !companyWithCertificationInfo.currentCompanyCertification?.isCertified
+  ) {
     color = "error";
   } else {
-    const currentCriterias = companyWithCertificationInfo.certificateCriterias;
+    const currentCriterias =
+      companyWithCertificationInfo.currentCompanyCertification
+        .certificateCriterias;
     if (
       !currentCriterias.beActive ||
       !currentCriterias.beCompliant ||

@@ -17,10 +17,10 @@ export const Section = React.forwardRef((props, ref) => {
   const classes = useStyles();
 
   return (
-    <Box ref={ref} my={6} mb={props.last ? 0 : 6} className={classes.section}>
+    <Box ref={ref} className={classes.section}>
       <Typography
         className={classes.sectionTitle}
-        variant="h5"
+        variant="h4"
         component={props.component}
       >
         {props.title}
