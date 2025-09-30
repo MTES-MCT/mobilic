@@ -5,6 +5,7 @@ import {
   useCompanyCertification
 } from "../../../common/hooks/useCompanyCertification";
 import classNames from "classnames";
+import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
 
 const MEDALS = ["BRONZE", "SILVER", "GOLD", "DIAMOND"];
 
@@ -23,6 +24,7 @@ const CRITERIA_LABELS = {
 
 export default function CertificateCriteriaTable({ companyWithInfo = {} }) {
   const {
+    hasData,
     medal,
     logInRealTime,
     adminChanges,
@@ -61,8 +63,14 @@ export default function CertificateCriteriaTable({ companyWithInfo = {} }) {
 
   const renderScoreCell = (value, suffix = "%") => (
     <td className={classNames("my-score", "value")}>
-      {value}
-      <span className="suffix">{suffix}</span>
+      {hasData ? (
+        <>
+          {value}
+          <span className="suffix">{suffix}</span>
+        </>
+      ) : (
+        "-"
+      )}
     </td>
   );
 
@@ -93,7 +101,27 @@ export default function CertificateCriteriaTable({ companyWithInfo = {} }) {
           <tr>
             <th className="base">Critères</th>
             {MEDALS.map(m => renderHeader(m))}
-            <th className="your-score">Votre score</th>
+            <th className="your-score">
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center"
+                }}
+              >
+                Votre score
+                {!hasData && (
+                  <Tooltip
+                    title="Le calcul de votre score n'a pas été réalisé car votre entreprise a enregistré moins de 12 missions dans le mois précédent"
+                    kind="hover"
+                  >
+                    <i
+                      className="fr-icon-question-line fr-icon--md"
+                      style={{ color: "white" }}
+                    />
+                  </Tooltip>
+                )}
+              </span>
+            </th>
           </tr>
         </thead>
 
