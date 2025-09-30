@@ -67,8 +67,13 @@ export const TextBadge = ({
 
 export const useCompanyCertification = companyCertification => {
   if (!companyCertification) {
-    return {};
+    return { hasData: false };
   }
+
+  const hasCertificationData = Boolean(
+    companyCertification.certificateCriterias
+  );
+
   const { certificationMedal: medal, isCertified } = companyCertification;
 
   const frenchMedalLabel = getFrenchMedalLabel(medal);
@@ -101,6 +106,7 @@ export const useCompanyCertification = companyCertification => {
   const companyBadgeUrl = `${window.location.origin}${API_HOST}${companyCertification.badgeUrl}`;
 
   return {
+    hasData: hasCertificationData,
     medal,
     isCertified,
     frenchMedalLabel,
@@ -109,8 +115,9 @@ export const useCompanyCertification = companyCertification => {
     compliancyReport,
     companyBadgeUrl,
     logInRealTime:
-      companyCertification.certificateCriterias?.logInRealTime || 0,
-    adminChanges: companyCertification.certificateCriterias?.adminChanges || 1,
-    compliancy: companyCertification.certificateCriterias?.compliancy || 0
+      companyCertification.certificateCriterias?.logInRealTime || null,
+    adminChanges:
+      companyCertification.certificateCriterias?.adminChanges || null,
+    compliancy: companyCertification.certificateCriterias?.compliancy || null
   };
 };
