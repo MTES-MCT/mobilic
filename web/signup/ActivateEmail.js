@@ -12,6 +12,7 @@ import { useSnackbarAlerts } from "../common/Snackbar";
 import { ACTIVATE_EMAIL_MUTATION } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";
 import { usePageTitle } from "../common/UsePageTitle";
+import { getFallbackRoute } from "../common/routes";
 
 export function ActivateEmail() {
   usePageTitle("Confirmation Courriel - Mobilic");
@@ -66,6 +67,15 @@ export function ActivateEmail() {
                   ...apiResponse.data.signUp.activateEmail
                 });
               }
+
+              const userInfo = store.userInfo();
+              const companies = store.companies();
+              const fallbackRoute = getFallbackRoute({
+                userInfo,
+                companies,
+                controllerInfo: null
+              });
+              history.push(fallbackRoute);
             },
             "activate-link",
             gqlError => {

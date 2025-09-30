@@ -31,7 +31,8 @@ export default function Modal({
   content,
   actions,
   zIndex = 2000,
-  size = "md"
+  size = "md",
+  centerTitle = false
 }) {
   const classes = useStyles();
 
@@ -61,7 +62,11 @@ export default function Modal({
           {!!handleClose && closeButton}
         </div>
         <div className={fr.cx("fr-modal__content")}>
-          <h1 id="dialog-title" className={fr.cx("fr-modal__title")}>
+          <h1
+            id="dialog-title"
+            className={fr.cx("fr-modal__title")}
+            style={centerTitle ? { textAlign: "center" } : {}}
+          >
             {title}
           </h1>
           {content}

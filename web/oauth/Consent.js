@@ -74,7 +74,7 @@ export function Consent({ clientName, redirectUri }) {
             {actualClientName} souhaite accéder à votre compte Mobilic
           </Typography>
           <Typography>{store.userInfo().email}</Typography>
-          <Section last>
+          <Section>
             <Grid
               className="centered"
               container

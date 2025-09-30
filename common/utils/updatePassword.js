@@ -1,13 +1,17 @@
 import { createModalManager } from "./createModalManager";
 
+let serverShouldUpdatePassword = false;
+
 const passwordManager = createModalManager({
   cookieBaseName: "nextUpdatePasswordTime",
   defaultDelayDays: 3,
   isPerCompany: false,
-  businessCondition: () => true
+  businessCondition: () => serverShouldUpdatePassword
 });
 
 export const onLogIn = shouldUpdatePassword => {
+  serverShouldUpdatePassword = shouldUpdatePassword;
+
   if (!shouldUpdatePassword) {
     passwordManager.clearUpdateTimeCookie();
   } else {

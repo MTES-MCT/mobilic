@@ -28,6 +28,7 @@ import { getClientTimezone } from "common/utils/timezones";
 import { WayHeardOfMobilic } from "../common/WayHeardOfMobilic";
 import { getPasswordErrors } from "common/utils/passwords";
 import { PasswordInput } from "../common/forms/PasswordInput";
+import { Stack } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   text: {
@@ -157,95 +158,101 @@ export function EmailSelection() {
         autoComplete="off"
         onSubmit={handleSubmit}
       >
-        <Section title="1. Adresse email">
-          <Typography align="justify" className={classes.text}>
-            <span className="bold">{userInfo.firstName}</span>, veuillez{" "}
-            {origEmail ? (
-              <>
-                confirmer votre adresse email{" "}
-                <span className="bold">{userInfo.email}</span>
-              </>
-            ) : (
-              "renseigner votre adresse email"
-            )}
-          </Typography>
-          <Typography align="justify" className={classes.text}>
-            Par défaut Mobilic se servira de cette adresse comme point de
-            contact uniquement pour vous communiquer des informations
-            indispensables au bon fonctionnement du service.
-          </Typography>
-          <EmailField
-            required
-            label="Adresse e-mail"
-            value={email}
-            setValue={setEmail}
-            validate
-            error={!!emailError}
-            setError={setEmailError}
-            showHint
-          />
-          {!isAdmin && (
-            <CheckboxField
-              checked={subscribeToNewsletter}
-              onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}
-              label="En cochant cette case, j'accepte que mon adresse e-mail soit utilisée pour m'envoyer la lettre d'information Mobilic et pour me contacter en cas de besoin d'assistance technique."
-            />
-          )}
-          {isAdmin && (
-            <CheckboxField
-              checked={!subscribeToNewsletter}
-              onChange={() => setSubscribeToNewsletter(!subscribeToNewsletter)}
-              label="Je m’oppose à ce que mon adresse e-mail soit utilisée pour recevoir la lettre d'information, les informations sur les nouvelles fonctionnalités et les dates de formation gestionnaire."
-            />
-          )}
-        </Section>
-        <Section title="2. Mot de passe (facultatif)">
-          <Typography align="justify" className={classes.text}>
-            Vous pouvez également choisir un mot de passe de connexion si vous
-            le souhaitez. Cela vous permettra de vous connecter de manière
-            directe en plus de la connexion via FranceConnect.
-          </Typography>
-          <Typography align="justify" className={classes.text}>
-            Le nom d'utilisateur associé sera l'adresse email renseignée
-            ci-dessus.
-          </Typography>
-          <CheckboxField
-            checked={choosePassword}
-            onChange={() => {
-              if (choosePassword) setPassword("");
-              setChoosePassword(!choosePassword);
-            }}
-            label="Choisir un mot de passe"
-          />
-          {choosePassword && (
-            <PasswordInput
-              label="Choisissez un mot de passe"
-              nativeInputProps={{
-                autoComplete: "current-password",
-                value: password,
-                onChange: e => setPassword(e.target.value)
-              }}
-              displayMessages
+        <Stack direction="column" rowGap={4}>
+          <Section title="1. Adresse email">
+            <Typography align="justify" className={classes.text}>
+              <span className="bold">{userInfo.firstName}</span>, veuillez{" "}
+              {origEmail ? (
+                <>
+                  confirmer votre adresse email{" "}
+                  <span className="bold">{userInfo.email}</span>
+                </>
+              ) : (
+                "renseigner votre adresse email"
+              )}
+            </Typography>
+            <Typography align="justify" className={classes.text}>
+              Par défaut Mobilic se servira de cette adresse comme point de
+              contact uniquement pour vous communiquer des informations
+              indispensables au bon fonctionnement du service.
+            </Typography>
+            <EmailField
               required
+              label="Adresse e-mail"
+              value={email}
+              setValue={setEmail}
+              validate
+              error={!!emailError}
+              setError={setEmailError}
+              showHint
             />
-          )}
-        </Section>
-        <Section title="3. Fuseau horaire">
-          <Typography align="justify" className={classes.text}>
-            Modifiez votre fuseau horaire si besoin.
-          </Typography>
-          <TimezoneSelect
-            currentTimezone={selectedTimezone}
-            setTimezone={setSelectedTimezone}
-          />
-        </Section>
-        {isAdmin && (
-          <Section title="4. Informations complémentaires">
-            <WayHeardOfMobilic
-              setWayHeardOfMobilicValue={setWayHeardOfMobilic}
+            {!isAdmin && (
+              <CheckboxField
+                checked={subscribeToNewsletter}
+                onChange={() =>
+                  setSubscribeToNewsletter(!subscribeToNewsletter)
+                }
+                label="En cochant cette case, j'accepte que mon adresse e-mail soit utilisée pour m'envoyer la lettre d'information Mobilic et pour me contacter en cas de besoin d'assistance technique."
+              />
+            )}
+            {isAdmin && (
+              <CheckboxField
+                checked={!subscribeToNewsletter}
+                onChange={() =>
+                  setSubscribeToNewsletter(!subscribeToNewsletter)
+                }
+                label="Je m’oppose à ce que mon adresse e-mail soit utilisée pour recevoir la lettre d'information, les informations sur les nouvelles fonctionnalités et les dates de formation gestionnaire."
+              />
+            )}
+          </Section>
+          <Section title="2. Mot de passe (facultatif)">
+            <Typography align="justify" className={classes.text}>
+              Vous pouvez également choisir un mot de passe de connexion si vous
+              le souhaitez. Cela vous permettra de vous connecter de manière
+              directe en plus de la connexion via FranceConnect.
+            </Typography>
+            <Typography align="justify" className={classes.text}>
+              Le nom d'utilisateur associé sera l'adresse email renseignée
+              ci-dessus.
+            </Typography>
+            <CheckboxField
+              checked={choosePassword}
+              onChange={() => {
+                if (choosePassword) setPassword("");
+                setChoosePassword(!choosePassword);
+              }}
+              label="Choisir un mot de passe"
+            />
+            {choosePassword && (
+              <PasswordInput
+                label="Choisissez un mot de passe"
+                nativeInputProps={{
+                  autoComplete: "current-password",
+                  value: password,
+                  onChange: e => setPassword(e.target.value)
+                }}
+                displayMessages
+                required
+              />
+            )}
+          </Section>
+          <Section title="3. Fuseau horaire">
+            <Typography align="justify" className={classes.text}>
+              Modifiez votre fuseau horaire si besoin.
+            </Typography>
+            <TimezoneSelect
+              currentTimezone={selectedTimezone}
+              setTimezone={setSelectedTimezone}
             />
           </Section>
-        )}
+          {isAdmin && (
+            <Section title="4. Informations complémentaires">
+              <WayHeardOfMobilic
+                setWayHeardOfMobilicValue={setWayHeardOfMobilic}
+              />
+            </Section>
+          )}
+        </Stack>
         <Box my={4}>
           <LoadingButton
             type="submit"

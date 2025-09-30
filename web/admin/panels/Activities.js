@@ -79,7 +79,8 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     height: "100%",
-    flexGrow: 1
+    flexGrow: 1,
+    border: "none"
   },
   workTimeTable: {
     overflowY: "hidden",
