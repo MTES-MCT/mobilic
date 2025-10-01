@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
-import { QrReader } from "react-qr-reader";
+import { Scanner } from "@yudiel/react-qr-scanner";
 import Grid from "@mui/material/Grid";
 import useTheme from "@mui/styles/useTheme";
 import { useHistory } from "react-router-dom";
@@ -119,7 +119,7 @@ export function ControllerScanQRCode() {
             type: CONTROL_TYPES.MOBILIC.label
           }
         });
-      } catch (err) {
+      } catch (_) {
         history.push(CONTROLLER_ROUTE_PREFIX + "/scan_error");
       }
     });
@@ -148,17 +148,18 @@ export function ControllerScanQRCode() {
         >
           <Grid item xs={12} md={8} lg={4}>
             <div className={"camera-box"}>
-              <QrReader
+              <Scanner
                 constraints={{ facingMode: "environment", aspectRatio: 1 }}
-                videoContainerStyle={{
+                containerStyle={{
                   borderRadius: theme.spacing(2),
                   zIndex: -1
                 }}
-                onResult={(result, error) => {
-                  if (result && result?.text) {
-                    onScanQRCode(result?.text);
+                onDecode={(result) => {
+                  if (result) {
+                    onScanQRCode(result);
                   }
-
+                }}
+                onError={(error) => {
                   if (error) {
                     if (isPermissionDeniedOnSafari(error)) {
                       displayCameraDeniedAlert();
