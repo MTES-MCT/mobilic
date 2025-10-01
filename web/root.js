@@ -43,7 +43,6 @@ import {
   useMatomo
 } from "@datapunt/matomo-tracker-react";
 import { Crisp } from "crisp-sdk-web";
-import CircularProgress from "@mui/material/CircularProgress";
 import { ErrorBoundary } from "./common/ErrorFallback";
 import { RegulationDrawerContextProvider } from "./landing/ResourcePage/RegulationDrawer";
 import { isGoogleAdsInitiated, initGoogleAds } from "common/utils/trackAds";
@@ -351,20 +350,18 @@ function RootComponent() {
         showExplanation
       />
       {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
-      <React.Suspense fallback={<CircularProgress color="primary" />}>
-        <Switch>
-          {routes.map(route => (
-            <Route
-              key={route.path}
-              exact={route.exact || false}
-              path={route.path}
-            >
-              {route.component}
-            </Route>
-          ))}
-          <Route path="*" render={() => <Redirect to={fallbackRoute} />} />
-        </Switch>
-      </React.Suspense>
+      <Switch>
+        {routes.map(route => (
+          <Route
+            key={route.path}
+            exact={route.exact || false}
+            path={route.path}
+          >
+            {route.component}
+          </Route>
+        ))}
+        <Route path="*" render={() => <Redirect to={fallbackRoute} />} />
+      </Switch>
     </>
   );
 }

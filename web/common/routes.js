@@ -21,6 +21,8 @@ import { RegulationPage } from "../landing/ResourcePage/RegulationPage";
 import { ResourcePage } from "../landing/ResourcePage/ResourcePage";
 import Accessibility from "../landing/accessibility";
 import { Certificate } from "../landing/certificate";
+// Import normal pour Navigation (pas de lazy loading pour éviter les problèmes Redux)
+import Navigation from "../pwa/utils/navigation";
 import { LandingGestionnaire } from "../landing/gestionnaire/LandingGestionnaire";
 import LegalNotices from "../landing/legalNotices";
 import { Partners } from "../landing/partners";
@@ -92,9 +94,20 @@ export const CERTIFICATE_ROUTE = {
 
 export const CONTROLLER_ROUTE_PREFIX = "/controller";
 
+// React.lazy avec React Fast Refresh fonctionnel
 const Admin = React.lazy(() => import("../admin/Admin"));
-const Navigation = React.lazy(() => import("../pwa/utils/navigation"));
 const OAuth = React.lazy(() => import("../oauth/root"));
+
+// Wrapper pour encapsuler chaque composant lazy avec son propre Suspense
+function withSuspense(Component) {
+  return function SuspenseWrapper(props) {
+    return (
+      <React.Suspense fallback={<div>Chargement...</div>}>
+        <Component {...props} />
+      </React.Suspense>
+    );
+  };
+}
 
 export const ROUTES = [
   {
@@ -136,7 +149,7 @@ export const ROUTES = [
       userInfo?.hasActivatedEmail &&
       userInfo?.id &&
       companies?.some(c => c.admin),
-    component: <Admin />,
+    component: withSuspense(Admin),
     subRoutes: [
       {
         path: "/company",
@@ -250,7 +263,7 @@ export const ROUTES = [
     path: "/oauth/authorize",
     label: "OAuth",
     accessible: () => true,
-    component: <OAuth />,
+    component: withSuspense(OAuth),
     menuItemFilter: () => false
   },
   {

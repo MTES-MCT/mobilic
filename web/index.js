@@ -1,3 +1,4 @@
+// Polyfills OBLIGATOIRES en premier
 import "core-js";
 import * as serviceWorker from "./serviceWorker";
 import React from "react";
@@ -7,6 +8,13 @@ import { initSentry } from "common/utils/sentry";
 import { Crisp } from "crisp-sdk-web";
 import { startReactDsfr } from "@codegouvfr/react-dsfr/spa";
 import { Link } from "react-router-dom";
+
+if (typeof global === 'undefined') {
+  window.global = window;
+}
+if (typeof process === 'undefined') {
+  window.process = { env: {}, browser: true };
+}
 
 startReactDsfr({
   defaultColorScheme: "light",
