@@ -58,7 +58,7 @@
     "graphiql": "^2.0.9",
     "graphql": "^15.0.0",
     "html-webpack-plugin": "^4.5.1",
-    "http-proxy-middleware": "^1.0.5",
+    "http-proxy-middleware": "^2.0.9",
     "husky": "^4.2.5",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.0.0",
