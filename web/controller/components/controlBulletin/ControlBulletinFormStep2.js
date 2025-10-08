@@ -8,38 +8,74 @@ import { Input } from "../../../common/forms/Input";
 import { Select } from "../../../common/forms/Select";
 import { RadioButtons } from "../../../common/forms/RadioButtons";
 import { CompanyControlData } from "../forms/CompanyControlData";
+import {
+  formatLicenseNumber,
+  validateLicenseFormat,
+  getLicensePlaceholder,
+  getLicenseExample
+} from "../../utils/licenseFormatter";
+
+function LicenseInput({ value, name, onChange, label, showErrors }) {
+  const isInvalid = value && !validateLicenseFormat(value);
+  const placeholder = getLicensePlaceholder();
+  const example = getLicenseExample();
+
+  return (
+    <Input
+      nativeInputProps={{
+        value,
+        name,
+        onChange,
+        placeholder,
+        inputMode: "text",
+        pattern: "[0-9/]*",
+        maxLength: 15
+      }}
+      label={label}
+      hint={`Format : ${placeholder} (ex: ${example})`}
+      state={isInvalid && showErrors ? "error" : "default"}
+      stateRelatedMessage={isInvalid ? "Format: aaaa/xx/xxxxxxx" : ""}
+    />
+  );
+}
 
 export function ControlBulletinFormStep2({
   handleEditControlBulletin,
   controlBulletin,
   showErrors
 }) {
-  const setSiren = value => {
+  const [prevLicenseNumber, setPrevLicenseNumber] = React.useState("");
+  const [prevLicenseCopyNumber, setPrevLicenseCopyNumber] = React.useState("");
+
+  const createFieldSetter = fieldName => value => {
     handleEditControlBulletin({
-      target: {
-        name: "siren",
-        value
-      }
+      target: { name: fieldName, value }
     });
   };
 
-  const setCompanyName = value => {
+  const setSiren = createFieldSetter("siren");
+  const setCompanyName = createFieldSetter("companyName");
+  const setCompanyAddress = createFieldSetter("companyAddress");
+
+  const createLicenseHandler = (fieldName, prevValue, setPrevValue) => e => {
+    const formattedValue = formatLicenseNumber(e.target.value, prevValue);
+    setPrevValue(formattedValue);
     handleEditControlBulletin({
-      target: {
-        name: "companyName",
-        value
-      }
+      target: { name: fieldName, value: formattedValue }
     });
   };
 
-  const setCompanyAddress = value => {
-    handleEditControlBulletin({
-      target: {
-        name: "companyAddress",
-        value
-      }
-    });
-  };
+  const handleLicenseNumberChange = createLicenseHandler(
+    "licenseNumber",
+    prevLicenseNumber,
+    setPrevLicenseNumber
+  );
+
+  const handleLicenseCopyNumberChange = createLicenseHandler(
+    "licenseCopyNumber",
+    prevLicenseCopyNumber,
+    setPrevLicenseCopyNumber
+  );
 
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
@@ -148,25 +184,19 @@ export function ControlBulletinFormStep2({
         }}
         label="Nature de la marchandise"
       />
-      <Input
-        nativeInputProps={{
-          value: controlBulletin.licenseNumber || "",
-          name: "licenseNumber",
-          onChange: e => handleEditControlBulletin(e),
-          type: "number",
-          inputMode: "numeric"
-        }}
+      <LicenseInput
+        value={controlBulletin.licenseNumber || ""}
+        name="licenseNumber"
+        onChange={handleLicenseNumberChange}
         label="N° de la licence"
+        showErrors={showErrors}
       />
-      <Input
-        nativeInputProps={{
-          value: controlBulletin.licenseCopyNumber || "",
-          name: "licenseCopyNumber",
-          onChange: e => handleEditControlBulletin(e),
-          type: "number",
-          inputMode: "numeric"
-        }}
+      <LicenseInput
+        value={controlBulletin.licenseCopyNumber || ""}
+        name="licenseCopyNumber"
+        onChange={handleLicenseCopyNumberChange}
         label="N° de copie conforme de la licence"
+        showErrors={showErrors}
       />
       <Checkbox
         legend=""
