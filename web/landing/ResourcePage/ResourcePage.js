@@ -50,9 +50,9 @@ export const RESOURCES_DOCUMENT = {
   },
   brochure: {
     slideshare:
-      "https://www.slideshare.net/slideshow/embed_code/key/8hjPh7eM8CXire/",
+      "https://www.slideshare.net/slideshow/embed_code/key/cK7t047QZRs3QH",
     download:
-      "https://drive.google.com/uc?id=1u9RbbyMNEVEMuBZUP0CjjnN4QBqn4Esj&export=download"
+      "https://drive.google.com/uc?id=1tdO2GjJqai5sFjc22rVQdrut03evepa5&export=download"
   }
 };
 
