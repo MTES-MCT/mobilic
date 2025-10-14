@@ -6,6 +6,7 @@ const LICENSE_FORMAT = {
   DEPT_END_POS: 7,
   SEPARATOR: "/",
   PATTERN: /^\d{4}\/\d{2}\/\d{7}$/,
+  HTML_PATTERN: String.raw`\d{4}/\d{2}/\d{7}`,
   PLACEHOLDER: "aaaa/xx/xxxxxxx",
   EXAMPLE: "2023/84/0002112"
 };
@@ -16,12 +17,12 @@ const MAX_DIGITS =
   LICENSE_FORMAT.NUMBER_LENGTH;
 
 export function formatLicenseNumber(value, previousValue = "") {
-  let cleanValue = value.replace(/[^\d/]/g, "");
+  let cleanValue = value.replaceAll(/[^\d/]/g, "");
 
   const isDeleting = value.length < previousValue.length;
   if (isDeleting) return cleanValue;
 
-  cleanValue = cleanValue.replace(/\//g, "").substring(0, MAX_DIGITS);
+  cleanValue = cleanValue.replaceAll("/", "").substring(0, MAX_DIGITS);
 
   if (cleanValue.length > LICENSE_FORMAT.YEAR_END_POS) {
     cleanValue =
@@ -64,4 +65,8 @@ export function getLicensePlaceholder() {
 
 export function getLicenseExample() {
   return LICENSE_FORMAT.EXAMPLE;
+}
+
+export function getLicensePattern() {
+  return LICENSE_FORMAT.HTML_PATTERN;
 }

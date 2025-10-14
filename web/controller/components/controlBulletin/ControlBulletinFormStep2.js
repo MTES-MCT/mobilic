@@ -8,36 +8,8 @@ import { Input } from "../../../common/forms/Input";
 import { Select } from "../../../common/forms/Select";
 import { RadioButtons } from "../../../common/forms/RadioButtons";
 import { CompanyControlData } from "../forms/CompanyControlData";
-import {
-  formatLicenseNumber,
-  validateLicenseFormat,
-  getLicensePlaceholder,
-  getLicenseExample
-} from "../../utils/licenseFormatter";
-
-function LicenseInput({ value, name, onChange, label, showErrors }) {
-  const isInvalid = value && !validateLicenseFormat(value);
-  const placeholder = getLicensePlaceholder();
-  const example = getLicenseExample();
-
-  return (
-    <Input
-      nativeInputProps={{
-        value,
-        name,
-        onChange,
-        placeholder,
-        inputMode: "text",
-        pattern: "[0-9/]*",
-        maxLength: 15
-      }}
-      label={label}
-      hint={`Format : ${placeholder} (ex: ${example})`}
-      state={isInvalid && showErrors ? "error" : "default"}
-      stateRelatedMessage={isInvalid ? "Format: aaaa/xx/xxxxxxx" : ""}
-    />
-  );
-}
+import { formatLicenseNumber } from "../../utils/licenseFormatter";
+import { LicenseInput } from "./LicenseInput";
 
 export function ControlBulletinFormStep2({
   handleEditControlBulletin,
