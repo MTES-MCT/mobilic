@@ -24,7 +24,8 @@ export function InfoItem({
   alertComponent,
   titleProps = {},
   uppercaseTitle = true,
-  valuePlaceholder
+  valuePlaceholder,
+  maxWidth = "70%"
 }) {
   const classes = useStyles({ bold });
   const typographyClasses = useTypographyStyles();
@@ -41,7 +42,7 @@ export function InfoItem({
         justifyContent="space-between"
         columnGap={1}
       >
-        <Stack direction="column" sx={{ flexGrow: 1, maxWidth: "70%" }}>
+        <Stack direction="column" sx={{ flexGrow: 1, maxWidth }}>
           <FieldTitle uppercaseTitle={uppercaseTitle} {...titleProps}>
             {name}
           </FieldTitle>
