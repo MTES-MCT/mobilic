@@ -46,7 +46,7 @@ export function ControllerControlHeader({ controlDate, onCloseDrawer }) {
       <Box className={classes.linkHomeDesktopLine}>
         <Button
           onClick={onCloseDrawer}
-          priority="secondary"
+          priority="tertiary"
           iconPosition="right"
           iconId="fr-icon-close-line"
           size="small"
