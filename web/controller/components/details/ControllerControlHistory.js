@@ -21,7 +21,7 @@ export function ControllerControlHistory({ controlTime, tokenInfo }) {
             new Date(tokenInfo.historyStartDay).getTime() / 1000,
             true
           )}{" "}
-          au {formatDay(tokenInfo.creationTime, true)}
+          au {formatDay(tokenInfo.controlTime, true)}
         </Description>
       </>
       <InfoItem

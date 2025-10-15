@@ -37,7 +37,8 @@ export function ControllerControlDetails({
   const legacyTokenInfo = {
     creationDay: new Date(unixToJSTimestamp(controlData.qrCodeGenerationTime)),
     historyStartDay: controlData.historyStartDate,
-    creationTime: controlData.creationTime
+    creationTime: controlData.creationTime,
+    controlTime: controlData.controlTime
   };
 
   const _onClose = () => {
@@ -112,7 +113,7 @@ export function ControllerControlDetails({
   return (
     <>
       <ControllerControlHeader
-        controlDate={legacyTokenInfo?.creationTime}
+        controlDate={legacyTokenInfo?.controlTime}
         onCloseDrawer={_onClose}
       />
       <UserReadTabs
