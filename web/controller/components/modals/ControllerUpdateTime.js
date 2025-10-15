@@ -57,7 +57,7 @@ export default function ControllerUpdateTimeModal({
   return (
     <Modal
       size="md"
-      title={`Modifier la date et l’heure du contrôle #${controlData.controlId}`}
+      title={`Modifier la date et l’heure du contrôle #${controlData.id}`}
       open={open}
       handleClose={handleClose}
       content={
