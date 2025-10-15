@@ -9,6 +9,7 @@ import { ControllerControlExportMenu } from "./ControllerControlExportMenu";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useControl } from "../../utils/contextControl";
 import { ControllerControlBackButton } from "../utils/ControllerControlBackButton";
+import { Stack } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   desktopHeaderContainer: {
@@ -53,9 +54,15 @@ export function ControllerControlHeader({ controlDate, onCloseDrawer }) {
         Contrôle #{controlId}
       </Typography>
       <Box className={classes.subHeaderSection}>
-        <Typography>
-          Date et heure du contrôle : <b>{prettyFormatDayHour(controlDate)}</b>
-        </Typography>
+        <Stack direction="row" alignItems="center" columnGap={2}>
+          <Typography>
+            Date et heure du contrôle :{" "}
+            <b>{prettyFormatDayHour(controlDate)}</b>
+          </Typography>
+          <Button size="small" priority="tertiary">
+            Modifier
+          </Button>
+        </Stack>
         <ControllerControlExportMenu />
       </Box>
     </Container>
