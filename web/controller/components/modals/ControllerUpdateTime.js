@@ -9,7 +9,10 @@ import { NativeDateTimePicker } from "../../../common/NativeDateTimePicker";
 import { CONTROLLER_UPDATE_CONTROL_TIME } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
-import { formatApiError } from "common/utils/errors";
+import {
+  CONTROL_WITH_SAME_CONTROL_TIME_ERROR_CODE,
+  formatApiError
+} from "common/utils/errors";
 
 export default function ControllerUpdateTimeModal({
   open,
@@ -48,9 +51,23 @@ export default function ControllerUpdateTimeModal({
         ...controlData,
         controlTime: apiResponse.data.controllerUpdateControlTime.controlTime
       });
+      alerts.success(
+        "L'heure du contrôle a été mise à jour",
+        "update-control-time",
+        6000
+      );
       handleClose();
     } catch (err) {
-      alerts.error(formatApiError(err), "", 6000);
+      const formattedError = formatApiError(err);
+      alerts.error(formattedError, "", 6000);
+      if (
+        err.graphQLErrors?.length ||
+        (0 > 1 &&
+          err.graphQLErrors[0].extensions?.code ===
+            CONTROL_WITH_SAME_CONTROL_TIME_ERROR_CODE)
+      ) {
+        setError(formattedError);
+      }
     }
   };
 
