@@ -17,7 +17,6 @@ export function ControlBulletinFormStep2({
   showErrors
 }) {
   const [prevLicenseNumber, setPrevLicenseNumber] = React.useState("");
-  const [prevLicenseCopyNumber, setPrevLicenseCopyNumber] = React.useState("");
 
   const createFieldSetter = fieldName => value => {
     handleEditControlBulletin({
@@ -29,25 +28,16 @@ export function ControlBulletinFormStep2({
   const setCompanyName = createFieldSetter("companyName");
   const setCompanyAddress = createFieldSetter("companyAddress");
 
-  const createLicenseHandler = (fieldName, prevValue, setPrevValue) => e => {
-    const formattedValue = formatLicenseNumber(e.target.value, prevValue);
-    setPrevValue(formattedValue);
+  const handleLicenseNumberChange = e => {
+    const formattedValue = formatLicenseNumber(
+      e.target.value,
+      prevLicenseNumber
+    );
+    setPrevLicenseNumber(formattedValue);
     handleEditControlBulletin({
-      target: { name: fieldName, value: formattedValue }
+      target: { name: "licenseNumber", value: formattedValue }
     });
   };
-
-  const handleLicenseNumberChange = createLicenseHandler(
-    "licenseNumber",
-    prevLicenseNumber,
-    setPrevLicenseNumber
-  );
-
-  const handleLicenseCopyNumberChange = createLicenseHandler(
-    "licenseCopyNumber",
-    prevLicenseCopyNumber,
-    setPrevLicenseCopyNumber
-  );
 
   return (
     <Stack direction="column" p={2} sx={{ width: "100%" }}>
@@ -163,12 +153,15 @@ export function ControlBulletinFormStep2({
         label="N° de la licence"
         showErrors={showErrors}
       />
-      <LicenseInput
-        value={controlBulletin.licenseCopyNumber || ""}
-        name="licenseCopyNumber"
-        onChange={handleLicenseCopyNumberChange}
+      <Input
+        nativeInputProps={{
+          value: controlBulletin.licenseCopyNumber || "",
+          name: "licenseCopyNumber",
+          onChange: e => handleEditControlBulletin(e),
+          type: "number",
+          inputMode: "numeric"
+        }}
         label="N° de copie conforme de la licence"
-        showErrors={showErrors}
       />
       <Checkbox
         legend=""
