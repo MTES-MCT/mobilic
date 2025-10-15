@@ -26,11 +26,6 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: "none",
     paddingRight: "none",
     paddingBottom: theme.spacing(1),
-    [theme.breakpoints.up("md")]: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(2),
-      paddingBottom: "none"
-    },
     mobileHeaderContainer: {
       marginBottom: theme.spacing(2)
     }
