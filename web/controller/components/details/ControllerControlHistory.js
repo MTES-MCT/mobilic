@@ -8,7 +8,11 @@ import { Box, Stack } from "@mui/material";
 const controlHistoryDepth =
   process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH || 28;
 
-export function ControllerControlHistory({ controlTime, tokenInfo }) {
+export function ControllerControlHistory({
+  controlTime,
+  tokenInfo,
+  updateControlTime
+}) {
   return (
     <Stack rowGap={1}>
       <>
@@ -21,7 +25,7 @@ export function ControllerControlHistory({ controlTime, tokenInfo }) {
             new Date(tokenInfo.historyStartDay).getTime() / 1000,
             true
           )}{" "}
-          au {formatDay(tokenInfo.controlTime, true)}
+          au {formatDay(tokenInfo.creationTime, true)}
         </Description>
       </>
       <Box maxWidth="300px">
@@ -32,7 +36,7 @@ export function ControllerControlHistory({ controlTime, tokenInfo }) {
           titleProps={{
             component: "h3"
           }}
-          action={() => console.log("click")}
+          action={updateControlTime}
         />
       </Box>
     </Stack>

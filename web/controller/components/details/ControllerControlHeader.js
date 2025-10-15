@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
 
 export function ControllerControlHeader({ controlDate, onCloseDrawer }) {
   const classes = useStyles();
-  const { controlId } = useControl();
+  const { controlId, updateControlTime } = useControl();
   const isOnDesktop = useIsWidthUp("md");
   return isOnDesktop ? (
     <Container className={classes.desktopHeaderContainer} id="control-header">
@@ -59,7 +59,7 @@ export function ControllerControlHeader({ controlDate, onCloseDrawer }) {
             Date et heure du contrôle :{" "}
             <b>{prettyFormatDayHour(controlDate)}</b>
           </Typography>
-          <Button size="small" priority="tertiary">
+          <Button size="small" priority="tertiary" onClick={updateControlTime}>
             Modifier
           </Button>
         </Stack>
