@@ -1,7 +1,12 @@
 import React from "react";
 import { LoadingButton } from "common/components/LoadingButton";
 
-import { now, sameMinute, truncateMinute } from "common/utils/time";
+import {
+  getStartOfDay,
+  now,
+  sameMinute,
+  truncateMinute
+} from "common/utils/time";
 import _ from "lodash";
 import Modal from "../../../common/Modal";
 import Notice from "../../../common/Notice";
@@ -30,10 +35,20 @@ export default function ControllerUpdateTimeModal({
     [newTime, controlData.controlTime, error]
   );
 
+  const minDateTime = React.useMemo(
+    () => getStartOfDay(controlData.qrCodeGenerationTime),
+    [controlData.qrCodeGenerationTime]
+  );
+
   React.useEffect(() => {
     setError("");
     if (newTime && newTime > now()) {
       setError("L'heure ne peut pas être dans le futur.");
+    }
+    if (newTime && minDateTime && newTime < minDateTime) {
+      setError(
+        "Le contrôle ne peut pas être enregistré à une date antérieure à sa réalisation."
+      );
     }
   }, [newTime]);
 
@@ -97,7 +112,7 @@ export default function ControllerUpdateTimeModal({
             label="Date et heure"
             value={newTime}
             setValue={_.flow([truncateMinute, setNewTime])}
-            // minDateTime={previousMissionEnd}
+            minDateTime={minDateTime}
             maxDateTime={now()}
             fullWidth
             required
