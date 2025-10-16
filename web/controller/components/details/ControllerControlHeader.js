@@ -9,6 +9,7 @@ import { ControllerControlExportMenu } from "./ControllerControlExportMenu";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useControl } from "../../utils/contextControl";
 import { ControllerControlBackButton } from "../utils/ControllerControlBackButton";
+import { Stack } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   desktopHeaderContainer: {
@@ -26,11 +27,6 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: "none",
     paddingRight: "none",
     paddingBottom: theme.spacing(1),
-    [theme.breakpoints.up("md")]: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(2),
-      paddingBottom: "none"
-    },
     mobileHeaderContainer: {
       marginBottom: theme.spacing(2)
     }
@@ -39,14 +35,14 @@ const useStyles = makeStyles(theme => ({
 
 export function ControllerControlHeader({ controlDate, onCloseDrawer }) {
   const classes = useStyles();
-  const { controlId } = useControl();
+  const { controlId, updateControlTime } = useControl();
   const isOnDesktop = useIsWidthUp("md");
   return isOnDesktop ? (
     <Container className={classes.desktopHeaderContainer} id="control-header">
       <Box className={classes.linkHomeDesktopLine}>
         <Button
           onClick={onCloseDrawer}
-          priority="secondary"
+          priority="tertiary"
           iconPosition="right"
           iconId="fr-icon-close-line"
           size="small"
@@ -58,9 +54,15 @@ export function ControllerControlHeader({ controlDate, onCloseDrawer }) {
         Contrôle #{controlId}
       </Typography>
       <Box className={classes.subHeaderSection}>
-        <Typography>
-          Date et heure du contrôle : <b>{prettyFormatDayHour(controlDate)}</b>
-        </Typography>
+        <Stack direction="row" alignItems="center" columnGap={2}>
+          <Typography>
+            Date et heure du contrôle :{" "}
+            <b>{prettyFormatDayHour(controlDate)}</b>
+          </Typography>
+          <Button size="small" priority="tertiary" onClick={updateControlTime}>
+            Modifier
+          </Button>
+        </Stack>
         <ControllerControlExportMenu />
       </Box>
     </Container>
