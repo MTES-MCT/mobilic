@@ -91,7 +91,8 @@ export const HeaderComponent = ({ children }) => {
   const theme = useTheme();
   return (
     <Box
-      px={2}
+      pl={2}
+      pr={1}
       component="header"
       role="banner"
       className="header-container"
@@ -105,7 +106,7 @@ export const HeaderComponent = ({ children }) => {
 function HeaderContainer(props) {
   return (
     <HeaderComponent>
-      <Box py={1} {...props}></Box>
+      <Box pt={1} {...props}></Box>
       <Divider className="full-width-divider hr-unstyled" />
     </HeaderComponent>
   );
@@ -272,24 +273,20 @@ function MobileHeader({ disableMenu }) {
   const [openNavDrawer, setOpenNavDrawer] = React.useState(false);
 
   return (
-    <Box className="flex-row-space-between">
-      <Logos leaveSpaceForMenu={!disableMenu} />
+    <Box className="flex-row" justifyContent="space-between">
+      <Logos leaveSpaceForMenu={!disableMenu} isMobile />
       <HeaderCompaniesDropdown />
-      {!disableMenu && [
-        <IconButton
-          aria-label="Menu"
-          key={0}
-          edge="end"
-          onClick={() => setOpenNavDrawer(!openNavDrawer)}
-        >
-          <MenuIcon />
-        </IconButton>,
-        <NavigationMenu
-          key={1}
-          open={openNavDrawer}
-          setOpen={setOpenNavDrawer}
-        />
-      ]}
+      {!disableMenu && (
+        <>
+          <Button
+            iconId="fr-icon-menu-fill"
+            onClick={() => setOpenNavDrawer(!openNavDrawer)}
+            priority="tertiary"
+            title="Menu"
+          />
+          <NavigationMenu open={openNavDrawer} setOpen={setOpenNavDrawer} />
+        </>
+      )}
     </Box>
   );
 }
