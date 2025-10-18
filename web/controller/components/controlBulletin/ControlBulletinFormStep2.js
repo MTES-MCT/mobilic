@@ -8,36 +8,34 @@ import { Input } from "../../../common/forms/Input";
 import { Select } from "../../../common/forms/Select";
 import { RadioButtons } from "../../../common/forms/RadioButtons";
 import { CompanyControlData } from "../forms/CompanyControlData";
+import { formatLicenseNumber } from "../../utils/licenseFormatter";
+import { LicenseInput } from "./LicenseInput";
 
 export function ControlBulletinFormStep2({
   handleEditControlBulletin,
   controlBulletin,
   showErrors
 }) {
-  const setSiren = value => {
+  const [prevLicenseNumber, setPrevLicenseNumber] = React.useState("");
+
+  const createFieldSetter = fieldName => value => {
     handleEditControlBulletin({
-      target: {
-        name: "siren",
-        value
-      }
+      target: { name: fieldName, value }
     });
   };
 
-  const setCompanyName = value => {
-    handleEditControlBulletin({
-      target: {
-        name: "companyName",
-        value
-      }
-    });
-  };
+  const setSiren = createFieldSetter("siren");
+  const setCompanyName = createFieldSetter("companyName");
+  const setCompanyAddress = createFieldSetter("companyAddress");
 
-  const setCompanyAddress = value => {
+  const handleLicenseNumberChange = e => {
+    const formattedValue = formatLicenseNumber(
+      e.target.value,
+      prevLicenseNumber
+    );
+    setPrevLicenseNumber(formattedValue);
     handleEditControlBulletin({
-      target: {
-        name: "companyAddress",
-        value
-      }
+      target: { name: "licenseNumber", value: formattedValue }
     });
   };
 
@@ -148,15 +146,12 @@ export function ControlBulletinFormStep2({
         }}
         label="Nature de la marchandise"
       />
-      <Input
-        nativeInputProps={{
-          value: controlBulletin.licenseNumber || "",
-          name: "licenseNumber",
-          onChange: e => handleEditControlBulletin(e),
-          type: "number",
-          inputMode: "numeric"
-        }}
+      <LicenseInput
+        value={controlBulletin.licenseNumber || ""}
+        name="licenseNumber"
+        onChange={handleLicenseNumberChange}
         label="N° de la licence"
+        showErrors={showErrors}
       />
       <Input
         nativeInputProps={{
