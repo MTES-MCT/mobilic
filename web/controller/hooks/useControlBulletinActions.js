@@ -29,7 +29,6 @@ export function useControlBulletinActions({
   );
   const [isLoading, setIsLoading] = React.useState(false);
 
-  // Synchroniser l'état avec les données du contrôle
   React.useEffect(() => {
     if (controlData?.deliveredByHand !== undefined) {
       setHandDelivered(controlData.deliveredByHand);
