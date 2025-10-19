@@ -79,6 +79,7 @@ export function ControlBulletinFormStep1({
         fieldLabel="Département du contrôle"
         options={DEPARTMENTS}
         showErrors={showErrors}
+        searchByCodeAndLabel={true}
         onChange={(_, newValue) => {
           editControlBulletinField(newValue.label, "locationDepartment");
           editControlBulletinField("", "locationCommune");

@@ -53,7 +53,11 @@ export function ControllerControlNoLicDrawer({
         controlDate={controlData.creationTime}
         onCloseDrawer={() => closeControl()}
       />
-      <ControllerControlNoLic editBDC={editBDC} takePictures={takePictures} />
+      <ControllerControlNoLic
+        editBDC={editBDC}
+        takePictures={takePictures}
+        controlData={controlData}
+      />
     </ControlDrawer>
   );
 }

@@ -75,7 +75,7 @@ export function ControllerControlBulletin({
 
   React.useEffect(() => {
     setControlBulletin(initControlBulletinFromControlData());
-  }, []);
+  }, [controlData]);
 
   React.useEffect(() => {
     setMustConfirmBeforeClosing(fieldUpdated);
