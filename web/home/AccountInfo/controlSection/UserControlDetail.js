@@ -1,13 +1,13 @@
 import React from "react";
 import { Card, CardContent, Typography, Box, Stack } from "@mui/material";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import { textualPrettyFormatDayHour } from "../utils/time";
-import { useDownloadBDC } from "../../web/controller/utils/useDownloadBDC";
+import { textualPrettyFormatDayHour } from "common/utils/time";
+import { useDownloadBDC } from "../../controller/utils/useDownloadBDC";
 import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
 import classNames from "classnames";
-import { Description } from "../../web/common/typography/Description";
-import { ControllerControlBackButton } from "../../web/controller/components/utils/ControllerControlBackButton";
+import { Description } from "../../common/typography/Description";
+import { ControllerControlBackButton } from "../../controller/components/utils/ControllerControlBackButton";
 
 const useStyles = makeStyles(theme => ({
   card: {
