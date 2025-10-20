@@ -436,6 +436,9 @@ export function History({
               onClick={() => {
                 modals.open("userReadQRCode");
               }}
+              iconPosition="right"
+              iconId="fr-icon-qr-code-fill"
+              size="sm"
             >
               Accès contrôleurs
             </Button>
