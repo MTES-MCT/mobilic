@@ -15,6 +15,13 @@ const useStyles = makeStyles(theme => ({
   },
   primaryText: {
     color: theme.palette.primary.contrastText
+  },
+  controlButton: {
+    color: theme.palette.primary.contrastText,
+    boxShadow: `inset 0 0 0 1px ${theme.palette.primary.contrastText}`,
+    "&:hover": {
+      color: theme.palette.primary.main
+    }
   }
 }));
 
@@ -77,8 +84,9 @@ export function CurrentActivityOverview({
             size="sm"
             iconPosition="right"
             iconId="fr-icon-qr-code-fill"
+            className={classes.controlButton}
           >
-            toto
+            Accès contrôleurs
           </Button>
         </Box>
         <Stack direction="column" textAlign="center" rowGap={2}>
