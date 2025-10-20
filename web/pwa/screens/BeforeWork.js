@@ -1,6 +1,5 @@
 import React from "react";
 import Container from "@mui/material/Container";
-import { PlaceHolder } from "../../common/PlaceHolder";
 import Typography from "@mui/material/Typography";
 import { useModals } from "common/utils/modals";
 import Box from "@mui/material/Box";
@@ -34,6 +33,8 @@ import { useEnoughBreak } from "../../common/useEnoughBreak";
 import Stack from "@mui/material/Stack";
 import { Notifications } from "../components/notifications/Notifications";
 import { Header } from "../../common/Header";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
@@ -81,24 +82,29 @@ const useStyles = makeStyles(theme => ({
   ellipsis: {
     color: theme.palette.grey[600]
   },
-  ctaButton: {
-    backgroundColor: theme.palette.background.paper,
-    color: theme.palette.primary.main,
-    "&:hover": {
-      "--hover-tint": theme.palette.background.default,
-      color: theme.palette.primary.main
-    },
-    marginTop: theme.spacing(2)
-  },
   subButton: {
     color: theme.palette.primary.contrastText,
     "&:hover": {
       color: theme.palette.primary.main
     }
   },
-  promiseText: {
-    color: theme.palette.primary.contrastText,
-    fontStyle: "italic"
+  startButton: {
+    backgroundColor: "white",
+    color: fr.colors.decisions.text.actionHigh.blueFrance.default,
+    "&:hover": {
+      color: "white"
+    },
+    paddingLeft: theme.spacing(6),
+    paddingRight: theme.spacing(6)
+  },
+  histoButton: {
+    marginTop: theme.spacing(2),
+    color: "white",
+    "&:hover": {
+      color: fr.colors.decisions.text.actionHigh.blueFrance.default
+    },
+    textDecoration: "underline",
+    textUnderlineOffset: "6px"
   }
 }));
 
@@ -215,34 +221,26 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   return (
     <Container maxWidth={false} className={classes.outer} disableGutters>
       <Header forceMobile />
-      <PlaceHolder style={{ textAlign: "center" }}>
-        <img alt="mobilic-logo-text" src={LogoWithText} width={150} />
-      </PlaceHolder>
-      <Box mt={2} className="cta-container" mb={8}>
-        <Typography className={classes.promiseText}>
-          Le suivi de votre temps de travail
-        </Typography>
-        <Typography className={`${classes.promiseText} bold`}>
-          Fiable, facile et rapide !
-        </Typography>
-        {process.env.REACT_APP_ENOUGH_BREAK_BANNER === "1" &&
-          !hasEnoughBreak && <WarningBreaks />}
-        <Stack direction="column" spacing={1} alignItems="center">
-          <LoadingButton
-            className={classes.ctaButton}
+      <Stack
+        direction="column"
+        alignItems="center"
+        height="100%"
+        pb={10}
+        justifyContent="space-between"
+      >
+        <Box flexGrow={1} pt={10}>
+          <img alt="mobilic-logo-text" src={LogoWithText} width={117} />
+        </Box>
+        <Stack direction="column" rowGap={2} alignItems="center">
+          {process.env.REACT_APP_ENOUGH_BREAK_BANNER === "1" &&
+            !hasEnoughBreak && <WarningBreaks />}
+          <Button
+            size="large"
             onClick={onEnterNewMissionFunnel}
+            className={classes.startButton}
           >
             Commencer une mission
-          </LoadingButton>
-          <LoadingButton
-            className={classes.subButton}
-            onClick={() => {
-              openHistory();
-            }}
-            priority="tertiary no outline"
-          >
-            Voir mon historique
-          </LoadingButton>
+          </Button>
           <LoadingButton
             className={classes.subButton}
             onClick={() => {
@@ -254,8 +252,19 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
           >
             Renseigner une indisponibilité
           </LoadingButton>
+          <Button
+            onClick={() => {
+              openHistory();
+            }}
+            priority="tertiary no outline"
+            iconId="fr-icon-arrow-right-line"
+            iconPosition="right"
+            className={classes.histoButton}
+          >
+            Voir mon historique
+          </Button>
         </Stack>
-      </Box>
+      </Stack>
       {nonValidatedMissions.length > 0 && (
         <Box className={classes.missionsToValidateList}>
           <List
