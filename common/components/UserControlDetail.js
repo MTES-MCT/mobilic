@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, Typography, Box, Stack } from "@mui/material";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import { formatDateTime } from "../utils/time";
+import { textualPrettyFormatDayHour } from "../utils/time";
 import { useDownloadBDC } from "../../web/controller/utils/useDownloadBDC";
 import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
@@ -78,7 +78,7 @@ export default function UserControlDetail({ control, onClose }) {
               variant="body1"
               sx={{ fontWeight: "bold", fontSize: "1.1rem" }}
             >
-              {formatDateTime(control.creationTime)}
+              {textualPrettyFormatDayHour(control.creationTime, true)}
             </Typography>
           </Box>
 
