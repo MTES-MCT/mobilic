@@ -86,19 +86,27 @@ export function ControllerScanQRCode() {
   }, []);
 
   const getNewTokenFromOldQRCode = scannedCode => {
-    if (
-      scannedCode.startsWith(`${window.location.origin}/control/user-history`)
-    ) {
-      const queryString = new URLSearchParams(scannedCode);
-      return queryString.get("controlToken");
-    } else {
+    try {
+      if (
+        scannedCode.startsWith(`${window.location.origin}/control/user-history`)
+      ) {
+        const url = new URL(scannedCode);
+        return url.searchParams.get("controlToken") || scannedCode;
+      } else {
+        return scannedCode;
+      }
+    } catch (error) {
+      console.error('Error parsing QR code:', error);
       return scannedCode;
     }
   };
 
-  const onScanQRCode = async scannedCode => {
+  const onScanQRCode = async scannedResult => {
     withLoadingScreen(async () => {
       try {
+        const scannedCode = Array.isArray(scannedResult) 
+          ? scannedResult[0]?.rawValue 
+          : scannedResult;
         const tokenToSend = getNewTokenFromOldQRCode(scannedCode);
         const apiResponse = await api.graphQlMutate(
           CONTROLLER_SCAN_CODE,
