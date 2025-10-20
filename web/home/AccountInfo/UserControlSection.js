@@ -4,10 +4,7 @@ import { currentUserId } from "common/utils/cookie";
 import Grid from "@mui/material/Grid";
 import Notice from "../../common/Notice";
 import { Section } from "../../common/Section";
-import {
-  Box,
-  SwipeableDrawer
-} from "@mui/material";
+import { Box, SwipeableDrawer } from "@mui/material";
 import UserControlDetail from "./controlSection/UserControlDetail";
 import UserControlsList from "./controlSection/UserControlsList";
 
@@ -23,30 +20,23 @@ export function UserControlSection() {
   return (
     <Section title="Mes contrôles en bord de route">
       <Grid container>
-        <Box
-          display="flex"
-          flexDirection="column"
-          width="100%"
-          mb={2}
-          gap={2}
-        >
+        <Box display="flex" flexDirection="column" width="100%" mb={2} gap={2}>
           <Typography variant="body2" color="textSecondary">
             Retrouvez vos précédents bulletins de contrôle qui vous ont été
-            remis en version numérique. Un bulletin de contrôle peut servir
-            de justificatif en cas de contrôle dans la période d'échéance.
+            remis en version numérique. Un bulletin de contrôle peut servir de
+            justificatif en cas de contrôle dans la période d'échéance.
           </Typography>
           <Notice
-            description="Votre employeur est responsable en cas de contrôle en bord
-              de route"
+            description="Votre employeur est responsable en cas de contrôle en bord de route"
             size="small"
             type="warning"
           />
         </Box>
 
         <Grid item xs={12}>
-          <UserControlsList 
-            userId={currentUserId()} 
-            onControlClick={handleControlClick} 
+          <UserControlsList
+            userId={currentUserId()}
+            onControlClick={handleControlClick}
           />
         </Grid>
       </Grid>

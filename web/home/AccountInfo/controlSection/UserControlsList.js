@@ -13,10 +13,10 @@ import {
   CircularProgress,
   Alert
 } from "@mui/material";
-import { formatDateTime } from "../../../common/utils/time";
-import { useUserControls } from "../../../common/utils/useUserControls";
-import { useDownloadBDC } from "../../controller/utils/useDownloadBDC";
-import { useSnackbarAlerts } from "../../common/Snackbar";
+import { formatDateTime } from "../../../../common/utils/time";
+import { useUserControls } from "../../../../common/utils/useUserControls";
+import { useDownloadBDC } from "../../../controller/utils/useDownloadBDC";
+import { useSnackbarAlerts } from "../../../common/Snackbar";
 
 export default function UserControlsList({ userId, onControlClick }) {
   const { userControls, loading, error } = useUserControls(userId);
