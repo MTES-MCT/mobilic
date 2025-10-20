@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Stack } from "@mui/material";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   overview: {
@@ -32,6 +33,7 @@ export function CurrentActivityOverview({
 }) {
   const [_now, setNow] = React.useState(now());
   const classes = useStyles();
+  const modals = useModals();
 
   const store = useStoreSyncedWithLocalStorage();
   const latestActivitySwitchExactTime =
@@ -85,6 +87,9 @@ export function CurrentActivityOverview({
             iconPosition="right"
             iconId="fr-icon-qr-code-fill"
             className={classes.controlButton}
+            onClick={() => {
+              modals.open("userReadQRCode");
+            }}
           >
             Accès contrôleurs
           </Button>
