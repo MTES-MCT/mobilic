@@ -4,16 +4,10 @@ import { ACTIVITIES, getActivityStartTimeToUse } from "common/utils/activities";
 import { formatTimer, formatTimerWithSeconds, now } from "common/utils/time";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
-import { AccountButton } from "./AccountButton";
 import Box from "@mui/material/Box";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 
 const useStyles = makeStyles(theme => ({
-  accountButtonContainer: {
-    width: "100%",
-    textAlign: "left",
-    paddingBottom: theme.spacing(5)
-  },
   overview: {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText
@@ -85,25 +79,28 @@ export function CurrentActivityOverview({
     missionOverviewText + `depuis ${formatTimer(_now - currentDayStart)}`;
 
   return (
-    <Box p={2} pb={5} className={classes.overview}>
-      <Box className={classes.accountButtonContainer}>
-        <AccountButton darkBackground />
+    <>
+      <Box p={2} pb={5} className={classes.overview}>
+        <Container
+          className={classes.textContainer}
+          disableGutters
+          maxWidth={false}
+        >
+          <Typography className="hidden" variant="h2" component="h1">
+            Vous êtes en accompagnement depuis 00h 00m00
+          </Typography>
+          <Typography
+            className={classes.primaryText}
+            variant="h2"
+            component="h1"
+          >
+            {activityOverviewText}
+          </Typography>
+          <Typography className={classes.secondaryText}>
+            {missionOverviewText}
+          </Typography>
+        </Container>
       </Box>
-      <Container
-        className={classes.textContainer}
-        disableGutters
-        maxWidth={false}
-      >
-        <Typography className="hidden" variant="h2" component="h1">
-          Vous êtes en accompagnement depuis 00h 00m00
-        </Typography>
-        <Typography className={classes.primaryText} variant="h2" component="h1">
-          {activityOverviewText}
-        </Typography>
-        <Typography className={classes.secondaryText}>
-          {missionOverviewText}
-        </Typography>
-      </Container>
-    </Box>
+    </>
   );
 }

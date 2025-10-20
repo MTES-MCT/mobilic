@@ -102,6 +102,12 @@
   overflow: hidden;
 }
 
+.fit-container-divider {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
 .vertical-form {
   width: 100% !important;
   padding-bottom: 24px;
@@ -133,6 +139,10 @@
   position: sticky;
   top: 0;
   z-index: 1000;
+
+  &.fit-container {
+    width: 100%;
+  }
 }
 
 .form-field-title {

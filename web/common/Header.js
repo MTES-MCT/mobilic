@@ -36,6 +36,7 @@ import TextField from "common/utils/TextField";
 import { MenuItem } from "@mui/material";
 import { ControllerHeader } from "../controller/components/header/ControllerHeader";
 import { LoadingButton } from "common/components/LoadingButton";
+import classNames from "classnames";
 
 const useStyles = makeStyles(theme => ({
   navItemButton: {
@@ -87,7 +88,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export const HeaderComponent = ({ children }) => {
+export const HeaderComponent = ({ fitContainer, children }) => {
   const theme = useTheme();
   return (
     <Box
@@ -95,7 +96,10 @@ export const HeaderComponent = ({ children }) => {
       pr={1}
       component="header"
       role="banner"
-      className="header-container"
+      className={classNames(
+        "header-container",
+        fitContainer ? "fit-container" : ""
+      )}
       style={{ backgroundColor: theme.palette.background.paper }}
     >
       {children}
@@ -103,11 +107,16 @@ export const HeaderComponent = ({ children }) => {
   );
 };
 
-function HeaderContainer(props) {
+function HeaderContainer({ fitContainer, ...props }) {
   return (
-    <HeaderComponent>
+    <HeaderComponent fitContainer={fitContainer}>
       <Box pt={1} {...props}></Box>
-      <Divider className="full-width-divider hr-unstyled" />
+      <Divider
+        className={classNames(
+          "hr-unstyled",
+          fitContainer ? "fit-container-divider" : "full-width-divider"
+        )}
+      />
     </HeaderComponent>
   );
 }
@@ -415,15 +424,15 @@ function DesktopHeader({ disableMenu }) {
   );
 }
 
-function _Header({ disableMenu }) {
+function _Header({ disableMenu, forceMobile = false }) {
   const store = useStoreSyncedWithLocalStorage();
   const controllerId = store.controllerId();
   const isMdUp = useIsWidthUp("md");
   return controllerId ? (
     <ControllerHeader />
   ) : (
-    <HeaderContainer>
-      {isMdUp ? (
+    <HeaderContainer fitContainer={forceMobile}>
+      {isMdUp && !forceMobile ? (
         <DesktopHeader disableMenu={disableMenu} />
       ) : (
         <MobileHeader disableMenu={disableMenu} />

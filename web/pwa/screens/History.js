@@ -52,7 +52,6 @@ import { usePageTitle } from "../../common/UsePageTitle";
 
 import { DEFAULT_MONTH_RANGE_HISTORY } from "common/utils/mission";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import { AccountButton } from "../components/AccountButton";
 import { Day } from "../components/history/Day";
 import { Mission } from "../components/history/Mission";
 import { Month } from "../components/history/Month";
@@ -65,6 +64,7 @@ import { LogHolidayButton } from "../../common/LogHolidayButton";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { fr } from "@codegouvfr/react-dsfr";
 import { getDayChip } from "../components/history/Chips";
+import { Header } from "../../common/Header";
 
 const tabs = {
   mission: {
@@ -254,10 +254,6 @@ export function History({
     }
   };
 
-  const onBackButtonClick = location.state
-    ? () => history.push(location.state.previousPagePath)
-    : null;
-
   /* MANAGE FILTER PERIOD */
 
   const [startPeriodFilter, setStartPeriodFilter] = React.useState(
@@ -428,7 +424,7 @@ export function History({
     >
       {!isInControl && (
         <>
-          <AccountButton p={2} onBackButtonClick={onBackButtonClick} />
+          <Header forceMobile />
           <Box className={classes.accessControlContainer}>
             <Button
               priority="secondary"

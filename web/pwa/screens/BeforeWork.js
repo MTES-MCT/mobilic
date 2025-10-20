@@ -4,7 +4,6 @@ import { PlaceHolder } from "../../common/PlaceHolder";
 import Typography from "@mui/material/Typography";
 import { useModals } from "common/utils/modals";
 import Box from "@mui/material/Box";
-import { AccountButton } from "../components/AccountButton";
 import { makeStyles } from "@mui/styles";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import List from "@mui/material/List";
@@ -34,6 +33,7 @@ import { WarningBreaks } from "../components/WarningBreaks";
 import { useEnoughBreak } from "../../common/useEnoughBreak";
 import Stack from "@mui/material/Stack";
 import { Notifications } from "../components/notifications/Notifications";
+import { Header } from "../../common/Header";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
@@ -45,12 +45,6 @@ const useStyles = makeStyles(theme => ({
     background: `url(${BackgroundImage}) 50%`,
     backgroundSize: "cover",
     position: "relative"
-  },
-  accountButton: {
-    alignSelf: "flex-end",
-    position: "absolute",
-    top: "0",
-    right: "0"
   },
   missionsToValidateList: {
     backgroundColor: theme.palette.background.paper,
@@ -220,7 +214,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
 
   return (
     <Container maxWidth={false} className={classes.outer} disableGutters>
-      <AccountButton p={2} className={classes.accountButton} darkBackground />
+      <Header forceMobile />
       <PlaceHolder style={{ textAlign: "center" }}>
         <img alt="mobilic-logo-text" src={LogoWithText} width={150} />
       </PlaceHolder>
@@ -324,10 +318,7 @@ function MissionItem({ mission, openHistory }) {
   const classes = useStyles();
 
   return (
-    <ListItem
-      button
-      onClick={() => openHistory(mission.id, { previousPagePath: "/app" })}
-    >
+    <ListItem button onClick={() => openHistory(mission.id)}>
       <ListItemAvatar>
         <Avatar variant="rounded" className={classes.missionDay}>
           <Typography style={{ textTransform: "uppercase" }}>
