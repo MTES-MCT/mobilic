@@ -1,29 +1,19 @@
 import React from "react";
-import Container from "@mui/material/Container";
 import { ACTIVITIES, getActivityStartTimeToUse } from "common/utils/activities";
 import { formatTimer, formatTimerWithSeconds, now } from "common/utils/time";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Stack } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   overview: {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText
   },
-  secondaryText: {
-    paddingTop: theme.spacing(1)
-  },
-  textContainer: {
-    position: "relative",
-    textAlign: "center"
-  },
   primaryText: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
     color: theme.palette.primary.contrastText
   }
 }));
@@ -81,25 +71,26 @@ export function CurrentActivityOverview({
   return (
     <>
       <Box p={2} pb={5} className={classes.overview}>
-        <Container
-          className={classes.textContainer}
-          disableGutters
-          maxWidth={false}
-        >
-          <Typography className="hidden" variant="h2" component="h1">
-            Vous êtes en accompagnement depuis 00h 00m00
-          </Typography>
+        <Box display="flex" justifyContent="flex-end" mb={4}>
+          <Button
+            priority="secondary"
+            size="sm"
+            iconPosition="right"
+            iconId="fr-icon-qr-code-fill"
+          >
+            toto
+          </Button>
+        </Box>
+        <Stack direction="column" textAlign="center" rowGap={2}>
           <Typography
             className={classes.primaryText}
-            variant="h2"
+            variant="h4"
             component="h1"
           >
             {activityOverviewText}
           </Typography>
-          <Typography className={classes.secondaryText}>
-            {missionOverviewText}
-          </Typography>
-        </Container>
+          <Typography>{missionOverviewText}</Typography>
+        </Stack>
       </Box>
     </>
   );
