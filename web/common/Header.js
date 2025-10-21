@@ -31,12 +31,13 @@ import {
 import { TextWithBadge } from "./TextWithBadge";
 import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
 import TextField from "common/utils/TextField";
-import { MenuItem } from "@mui/material";
+import { MenuItem, Stack } from "@mui/material";
 import { ControllerHeader } from "../controller/components/header/ControllerHeader";
 import { LoadingButton } from "common/components/LoadingButton";
 import classNames from "classnames";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Navigation } from "./Navigation";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   navItemButton: {
@@ -195,6 +196,8 @@ export function NavigationMenu({ open, setOpen }) {
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
   const companies = store.companies();
+  const modals = useModals();
+  const history = useHistory();
 
   const routes = getAccessibleRoutes({ userInfo, companies });
 
@@ -204,6 +207,35 @@ export function NavigationMenu({ open, setOpen }) {
 
   return (
     <Navigation open={open} setOpen={setOpen}>
+      <Stack direction="column" rowGap={1} mb={2}>
+        <Button
+          priority="tertiary no outline"
+          iconPosition="left"
+          iconId="fr-icon-add-line"
+          onClick={() => history.push("/app")}
+        >
+          Nouvelle mission
+        </Button>
+        <Button
+          priority="tertiary no outline"
+          iconPosition="left"
+          iconId="fr-icon-time-line"
+          onClick={() => history.push("/app/history")}
+        >
+          Mes missions passées
+        </Button>
+        <Button
+          priority="tertiary no outline"
+          iconPosition="left"
+          iconId="fr-icon-qr-code-line"
+          onClick={() => {
+            modals.open("userReadQRCode");
+          }}
+        >
+          Accès contrôleur
+        </Button>
+      </Stack>
+      <Divider className="hr-unstyled" />
       <List dense>
         {routes
           .filter(
