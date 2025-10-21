@@ -19,7 +19,6 @@ import { makeStyles } from "@mui/styles";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
-import Drawer from "@mui/material/Drawer";
 import ListSubheader from "@mui/material/ListSubheader";
 import Tooltip from "@mui/material/Tooltip";
 import { Link, LinkButton } from "./LinkButton";
@@ -37,6 +36,7 @@ import { ControllerHeader } from "../controller/components/header/ControllerHead
 import { LoadingButton } from "common/components/LoadingButton";
 import classNames from "classnames";
 import { fr } from "@codegouvfr/react-dsfr";
+import { Navigation } from "./Navigation";
 
 const useStyles = makeStyles(theme => ({
   navItemButton: {
@@ -75,13 +75,6 @@ const useStyles = makeStyles(theme => ({
   },
   subRoute: {
     fontWeight: 500
-  },
-  closeNavButton: {
-    display: "flex",
-    justifyContent: "flex-end"
-  },
-  navDrawer: {
-    minWidth: 200
   },
   userName: {
     maxWidth: 500
@@ -203,8 +196,6 @@ export function NavigationMenu({ open, setOpen }) {
   const userInfo = store.userInfo();
   const companies = store.companies();
 
-  const classes = useStyles();
-
   const routes = getAccessibleRoutes({ userInfo, companies });
 
   if (!userInfo?.id) {
@@ -212,22 +203,7 @@ export function NavigationMenu({ open, setOpen }) {
   }
 
   return (
-    <Drawer
-      anchor="right"
-      open={open}
-      onClose={() => setOpen(false)}
-      PaperProps={{ className: classes.navDrawer }}
-    >
-      <Box className={classes.closeNavButton} pt={2} mr={2} mb={4}>
-        <button
-          className={fr.cx("fr-btn--close", "fr-btn")}
-          type="button"
-          onClick={() => setOpen(false)}
-          title="Fermer la fenêtre modale"
-        >
-          Fermer
-        </button>
-      </Box>
+    <Navigation open={open} setOpen={setOpen}>
       <List dense>
         {routes
           .filter(
@@ -243,7 +219,7 @@ export function NavigationMenu({ open, setOpen }) {
             />
           ))}
       </List>
-    </Drawer>
+    </Navigation>
   );
 }
 
