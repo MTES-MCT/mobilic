@@ -65,6 +65,7 @@ import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { fr } from "@codegouvfr/react-dsfr";
 import { getDayChip } from "../components/history/Chips";
 import { Header } from "../../common/Header";
+import { Stack } from "@mui/material";
 
 const tabs = {
   mission: {
@@ -147,11 +148,6 @@ const useStyles = makeStyles(theme => ({
   generateAccessButton: {
     margin: theme.spacing(2),
     alignSelf: "flex-start"
-  },
-  accessControlContainer: {
-    display: "flex",
-    justifyContent: "flex-start",
-    alignItems: "center"
   },
   tab: {
     textTransform: "none",
@@ -425,17 +421,29 @@ export function History({
       {!isInControl && (
         <>
           <Header forceMobile />
-          <Box className={classes.accessControlContainer}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            ml={2}
+          >
+            <Typography component="h1" variant="h3">
+              Historique
+            </Typography>
             <Button
               priority="secondary"
               className={cx(classes.generateAccessButton, "error")}
               onClick={() => {
                 modals.open("userReadQRCode");
               }}
+              iconPosition="right"
+              iconId="fr-icon-qr-code-fill"
+              size="sm"
             >
               Accès contrôleurs
             </Button>
-          </Box>
+          </Stack>
+
           <Grid
             container
             direction="row"
