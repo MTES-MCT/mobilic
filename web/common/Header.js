@@ -21,7 +21,6 @@ import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
 import Drawer from "@mui/material/Drawer";
 import ListSubheader from "@mui/material/ListSubheader";
-import CloseIcon from "@mui/icons-material/Close";
 import Tooltip from "@mui/material/Tooltip";
 import { Link, LinkButton } from "./LinkButton";
 import Grid from "@mui/material/Grid";
@@ -37,6 +36,7 @@ import { MenuItem } from "@mui/material";
 import { ControllerHeader } from "../controller/components/header/ControllerHeader";
 import { LoadingButton } from "common/components/LoadingButton";
 import classNames from "classnames";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   navItemButton: {
@@ -57,21 +57,24 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
     paddingLeft: theme.spacing(4),
     paddingRight: theme.spacing(6),
-    paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
     display: "block",
     "&:hover": {
       color: theme.palette.primary.main,
       backgroundColor: theme.palette.background.default
     },
-    fontWeight: "bold"
+    fontWeight: 500
   },
   selectedNavListItem: {
     background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.main} 5px, ${theme.palette.background.default} 5px, ${theme.palette.background.default})`
   },
   nestedListSubheader: {
-    fontSize: "1rem",
-    fontStyle: "italic"
+    fontSize: "0.875rem",
+    color: fr.colors.decisions.text.mention.grey.default,
+    fontWeight: 400
+  },
+  subRoute: {
+    fontWeight: 500
   },
   closeNavButton: {
     display: "flex",
@@ -215,16 +218,16 @@ export function NavigationMenu({ open, setOpen }) {
       onClose={() => setOpen(false)}
       PaperProps={{ className: classes.navDrawer }}
     >
-      <Box className={classes.closeNavButton} pt={2}>
-        <IconButton
-          aria-label="Fermer"
+      <Box className={classes.closeNavButton} pt={2} mr={2} mb={4}>
+        <button
+          className={fr.cx("fr-btn--close", "fr-btn")}
+          type="button"
           onClick={() => setOpen(false)}
-          className={classes.closeNavButton}
+          title="Fermer la fenêtre modale"
         >
-          <CloseIcon />
-        </IconButton>
+          Fermer
+        </button>
       </Box>
-      <Divider className="hr-unstyled" />
       <List dense>
         {routes
           .filter(
