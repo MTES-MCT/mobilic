@@ -99,6 +99,7 @@ export function CurrentActivityOverview({
             className={classes.primaryText}
             variant="h4"
             component="h1"
+            ariaLive="off"
           >
             {activityOverviewText}
           </Typography>
