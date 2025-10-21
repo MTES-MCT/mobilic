@@ -19,9 +19,7 @@ import { makeStyles } from "@mui/styles";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
-import Drawer from "@mui/material/Drawer";
 import ListSubheader from "@mui/material/ListSubheader";
-import CloseIcon from "@mui/icons-material/Close";
 import Tooltip from "@mui/material/Tooltip";
 import { Link, LinkButton } from "./LinkButton";
 import Grid from "@mui/material/Grid";
@@ -33,9 +31,13 @@ import {
 import { TextWithBadge } from "./TextWithBadge";
 import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
 import TextField from "common/utils/TextField";
-import { MenuItem } from "@mui/material";
+import { MenuItem, Stack } from "@mui/material";
 import { ControllerHeader } from "../controller/components/header/ControllerHeader";
 import { LoadingButton } from "common/components/LoadingButton";
+import classNames from "classnames";
+import { fr } from "@codegouvfr/react-dsfr";
+import { Navigation } from "./Navigation";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   navItemButton: {
@@ -56,28 +58,24 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
     paddingLeft: theme.spacing(4),
     paddingRight: theme.spacing(6),
-    paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
     display: "block",
     "&:hover": {
       color: theme.palette.primary.main,
       backgroundColor: theme.palette.background.default
     },
-    fontWeight: "bold"
+    fontWeight: 500
   },
   selectedNavListItem: {
     background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.main} 5px, ${theme.palette.background.default} 5px, ${theme.palette.background.default})`
   },
   nestedListSubheader: {
-    fontSize: "1rem",
-    fontStyle: "italic"
+    fontSize: "0.875rem",
+    color: fr.colors.decisions.text.mention.grey.default,
+    fontWeight: 400
   },
-  closeNavButton: {
-    display: "flex",
-    justifyContent: "flex-end"
-  },
-  navDrawer: {
-    minWidth: 200
+  subRoute: {
+    fontWeight: 500
   },
   userName: {
     maxWidth: 500
@@ -87,14 +85,18 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export const HeaderComponent = ({ children }) => {
+export const HeaderComponent = ({ fitContainer, children }) => {
   const theme = useTheme();
   return (
     <Box
-      px={2}
+      pl={2}
+      pr={1}
       component="header"
       role="banner"
-      className="header-container"
+      className={classNames(
+        "header-container",
+        fitContainer ? "fit-container" : ""
+      )}
       style={{ backgroundColor: theme.palette.background.paper }}
     >
       {children}
@@ -102,11 +104,16 @@ export const HeaderComponent = ({ children }) => {
   );
 };
 
-function HeaderContainer(props) {
+function HeaderContainer({ fitContainer, ...props }) {
   return (
-    <HeaderComponent>
-      <Box py={1} {...props}></Box>
-      <Divider className="full-width-divider hr-unstyled" />
+    <HeaderComponent fitContainer={fitContainer}>
+      <Box pt={1} {...props}></Box>
+      <Divider
+        className={classNames(
+          "hr-unstyled",
+          fitContainer ? "fit-container-divider" : "full-width-divider"
+        )}
+      />
     </HeaderComponent>
   );
 }
@@ -189,8 +196,8 @@ export function NavigationMenu({ open, setOpen }) {
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
   const companies = store.companies();
-
-  const classes = useStyles();
+  const modals = useModals();
+  const history = useHistory();
 
   const routes = getAccessibleRoutes({ userInfo, companies });
 
@@ -199,21 +206,35 @@ export function NavigationMenu({ open, setOpen }) {
   }
 
   return (
-    <Drawer
-      anchor="right"
-      open={open}
-      onClose={() => setOpen(false)}
-      PaperProps={{ className: classes.navDrawer }}
-    >
-      <Box className={classes.closeNavButton} pt={2}>
-        <IconButton
-          aria-label="Fermer"
-          onClick={() => setOpen(false)}
-          className={classes.closeNavButton}
+    <Navigation open={open} setOpen={setOpen}>
+      <Stack direction="column" rowGap={1} mb={2}>
+        <Button
+          priority="tertiary no outline"
+          iconPosition="left"
+          iconId="fr-icon-add-line"
+          onClick={() => history.push("/app")}
         >
-          <CloseIcon />
-        </IconButton>
-      </Box>
+          Nouvelle mission
+        </Button>
+        <Button
+          priority="tertiary no outline"
+          iconPosition="left"
+          iconId="fr-icon-time-line"
+          onClick={() => history.push("/app/history")}
+        >
+          Mes missions passées
+        </Button>
+        <Button
+          priority="tertiary no outline"
+          iconPosition="left"
+          iconId="fr-icon-qr-code-line"
+          onClick={() => {
+            modals.open("userReadQRCode");
+          }}
+        >
+          Accès contrôleur
+        </Button>
+      </Stack>
       <Divider className="hr-unstyled" />
       <List dense>
         {routes
@@ -230,7 +251,7 @@ export function NavigationMenu({ open, setOpen }) {
             />
           ))}
       </List>
-    </Drawer>
+    </Navigation>
   );
 }
 
@@ -272,24 +293,20 @@ function MobileHeader({ disableMenu }) {
   const [openNavDrawer, setOpenNavDrawer] = React.useState(false);
 
   return (
-    <Box className="flex-row-space-between">
-      <Logos leaveSpaceForMenu={!disableMenu} />
+    <Box className="flex-row" justifyContent="space-between">
+      <Logos leaveSpaceForMenu={!disableMenu} isMobile />
       <HeaderCompaniesDropdown />
-      {!disableMenu && [
-        <IconButton
-          aria-label="Menu"
-          key={0}
-          edge="end"
-          onClick={() => setOpenNavDrawer(!openNavDrawer)}
-        >
-          <MenuIcon />
-        </IconButton>,
-        <NavigationMenu
-          key={1}
-          open={openNavDrawer}
-          setOpen={setOpenNavDrawer}
-        />
-      ]}
+      {!disableMenu && (
+        <>
+          <Button
+            iconId="fr-icon-menu-fill"
+            onClick={() => setOpenNavDrawer(!openNavDrawer)}
+            priority="tertiary"
+            title="Menu"
+          />
+          <NavigationMenu open={openNavDrawer} setOpen={setOpenNavDrawer} />
+        </>
+      )}
     </Box>
   );
 }
@@ -418,15 +435,15 @@ function DesktopHeader({ disableMenu }) {
   );
 }
 
-function _Header({ disableMenu }) {
+function _Header({ disableMenu, forceMobile = false }) {
   const store = useStoreSyncedWithLocalStorage();
   const controllerId = store.controllerId();
   const isMdUp = useIsWidthUp("md");
   return controllerId ? (
     <ControllerHeader />
   ) : (
-    <HeaderContainer>
-      {isMdUp ? (
+    <HeaderContainer fitContainer={forceMobile}>
+      {isMdUp && !forceMobile ? (
         <DesktopHeader disableMenu={disableMenu} />
       ) : (
         <MobileHeader disableMenu={disableMenu} />

@@ -1,36 +1,28 @@
 import React from "react";
-import Container from "@mui/material/Container";
 import { ACTIVITIES, getActivityStartTimeToUse } from "common/utils/activities";
 import { formatTimer, formatTimerWithSeconds, now } from "common/utils/time";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
-import { AccountButton } from "./AccountButton";
 import Box from "@mui/material/Box";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Stack } from "@mui/material";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
-  accountButtonContainer: {
-    width: "100%",
-    textAlign: "left",
-    paddingBottom: theme.spacing(5)
-  },
   overview: {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText
   },
-  secondaryText: {
-    paddingTop: theme.spacing(1)
-  },
-  textContainer: {
-    position: "relative",
-    textAlign: "center"
-  },
   primaryText: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
     color: theme.palette.primary.contrastText
+  },
+  controlButton: {
+    color: theme.palette.primary.contrastText,
+    boxShadow: `inset 0 0 0 1px ${theme.palette.primary.contrastText}`,
+    "&:hover": {
+      color: theme.palette.primary.main
+    }
   }
 }));
 
@@ -41,6 +33,7 @@ export function CurrentActivityOverview({
 }) {
   const [_now, setNow] = React.useState(now());
   const classes = useStyles();
+  const modals = useModals();
 
   const store = useStoreSyncedWithLocalStorage();
   const latestActivitySwitchExactTime =
@@ -85,25 +78,34 @@ export function CurrentActivityOverview({
     missionOverviewText + `depuis ${formatTimer(_now - currentDayStart)}`;
 
   return (
-    <Box p={2} pb={5} className={classes.overview}>
-      <Box className={classes.accountButtonContainer}>
-        <AccountButton darkBackground />
+    <>
+      <Box p={2} pb={5} className={classes.overview}>
+        <Box display="flex" justifyContent="flex-end" mb={4}>
+          <Button
+            priority="secondary"
+            size="sm"
+            iconPosition="right"
+            iconId="fr-icon-qr-code-fill"
+            className={classes.controlButton}
+            onClick={() => {
+              modals.open("userReadQRCode");
+            }}
+          >
+            Accès contrôleurs
+          </Button>
+        </Box>
+        <Stack direction="column" textAlign="center" rowGap={2}>
+          <Typography
+            className={classes.primaryText}
+            variant="h4"
+            component="h1"
+            ariaLive="off"
+          >
+            {activityOverviewText}
+          </Typography>
+          <Typography>{missionOverviewText}</Typography>
+        </Stack>
       </Box>
-      <Container
-        className={classes.textContainer}
-        disableGutters
-        maxWidth={false}
-      >
-        <Typography className="hidden" variant="h2" component="h1">
-          Vous êtes en accompagnement depuis 00h 00m00
-        </Typography>
-        <Typography className={classes.primaryText} variant="h2" component="h1">
-          {activityOverviewText}
-        </Typography>
-        <Typography className={classes.secondaryText}>
-          {missionOverviewText}
-        </Typography>
-      </Container>
-    </Box>
+    </>
   );
 }
