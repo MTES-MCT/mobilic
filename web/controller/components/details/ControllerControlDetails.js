@@ -109,6 +109,10 @@ export function ControllerControlDetails({
     [employments]
   );
 
+  const companySiren = React.useMemo(() => {
+    return controlData?.controlBulletin?.siren || null;
+  }, [controlData]);
+
   return (
     <>
       <ControllerControlHeader
@@ -131,7 +135,9 @@ export function ControllerControlDetails({
         allowC1BExport={false}
         controlId={controlData.id}
         companyName={controlData.companyName}
+        companySiren={companySiren}
         vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
+        controlData={controlData}
         openBulletinControl={() => setIsEditingBC(true)}
         reportedInfractionsLastUpdateTime={reportedInfractionsLastUpdateTime}
         isReportingInfractions={isReportingInfractions}
