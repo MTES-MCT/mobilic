@@ -163,7 +163,7 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies }) {
             />
           ))}
       </List>
-      <Divider className="hr-unstyled" />
+      <Divider className="hr-unstyled" sx={{ marginBottom: 2 }} />
     </>
   ) : (
     <ListItem key={route.path || route.label} disableGutters>
