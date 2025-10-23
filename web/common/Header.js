@@ -199,6 +199,7 @@ export function NavigationMenu({ open, setOpen }) {
   const companies = store.companies();
   const modals = useModals();
   const history = useHistory();
+  const location = useLocation();
 
   const routes = getAccessibleRoutes({ userInfo, companies });
 
@@ -217,7 +218,11 @@ export function NavigationMenu({ open, setOpen }) {
               priority="tertiary no outline"
               iconPosition="left"
               iconId="fr-icon-add-line"
-              onClick={() => history.push("/app")}
+              onClick={
+                location.pathname === "/app"
+                  ? () => setOpen(false)
+                  : () => history.push("/app")
+              }
             >
               {displayCurrentMission ? "Mission en cours" : "Nouvelle mission"}
             </Button>
@@ -225,7 +230,11 @@ export function NavigationMenu({ open, setOpen }) {
               priority="tertiary no outline"
               iconPosition="left"
               iconId="fr-icon-time-line"
-              onClick={() => history.push("/app/history")}
+              onClick={
+                location.pathname === "/app/history"
+                  ? () => setOpen(false)
+                  : () => history.push("/app/history")
+              }
             >
               Mes missions passées
             </Button>
