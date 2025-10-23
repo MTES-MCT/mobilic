@@ -207,35 +207,39 @@ export function NavigationMenu({ open, setOpen }) {
 
   return (
     <Navigation open={open} setOpen={setOpen}>
-      <Stack direction="column" rowGap={1} mb={2}>
-        <Button
-          priority="tertiary no outline"
-          iconPosition="left"
-          iconId="fr-icon-add-line"
-          onClick={() => history.push("/app")}
-        >
-          Nouvelle mission
-        </Button>
-        <Button
-          priority="tertiary no outline"
-          iconPosition="left"
-          iconId="fr-icon-time-line"
-          onClick={() => history.push("/app/history")}
-        >
-          Mes missions passées
-        </Button>
-        <Button
-          priority="tertiary no outline"
-          iconPosition="left"
-          iconId="fr-icon-qr-code-line"
-          onClick={() => {
-            modals.open("userReadQRCode");
-          }}
-        >
-          Accès contrôleur
-        </Button>
-      </Stack>
-      <Divider className="hr-unstyled" />
+      {userInfo?.hasActivatedEmail && userInfo?.id && (
+        <>
+          <Stack direction="column" rowGap={1} mb={2}>
+            <Button
+              priority="tertiary no outline"
+              iconPosition="left"
+              iconId="fr-icon-add-line"
+              onClick={() => history.push("/app")}
+            >
+              Nouvelle mission
+            </Button>
+            <Button
+              priority="tertiary no outline"
+              iconPosition="left"
+              iconId="fr-icon-time-line"
+              onClick={() => history.push("/app/history")}
+            >
+              Mes missions passées
+            </Button>
+            <Button
+              priority="tertiary no outline"
+              iconPosition="left"
+              iconId="fr-icon-qr-code-line"
+              onClick={() => {
+                modals.open("userReadQRCode");
+              }}
+            >
+              Accès contrôleur
+            </Button>
+          </Stack>
+          <Divider className="hr-unstyled" />
+        </>
+      )}
       <List dense>
         {routes
           .filter(
