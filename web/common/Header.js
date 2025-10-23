@@ -38,6 +38,7 @@ import classNames from "classnames";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Navigation } from "./Navigation";
 import { useModals } from "common/utils/modals";
+import { useStoreMissions } from "./hooks/useStoreMissions";
 
 const useStyles = makeStyles(theme => ({
   navItemButton: {
@@ -205,6 +206,8 @@ export function NavigationMenu({ open, setOpen }) {
     routes.push(CERTIFICATE_ROUTE);
   }
 
+  const { displayCurrentMission } = useStoreMissions();
+
   return (
     <Navigation open={open} setOpen={setOpen}>
       {userInfo?.hasActivatedEmail && userInfo?.id && (
@@ -216,7 +219,7 @@ export function NavigationMenu({ open, setOpen }) {
               iconId="fr-icon-add-line"
               onClick={() => history.push("/app")}
             >
-              Nouvelle mission
+              {displayCurrentMission ? "Mission en cours" : "Nouvelle mission"}
             </Button>
             <Button
               priority="tertiary no outline"
