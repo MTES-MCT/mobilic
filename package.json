@@ -89,7 +89,7 @@
     "react-qr-reader": "^3.0.0-beta-1",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.3.3",
-    "react-syntax-highlighter": "^15.6.1",
+    "react-syntax-highlighter": "^16.0.0",
     "react-virtualized": "^9.22.2",
     "react-world-flags": "^1.6.0",
     "recharts": "^2.1.5",
