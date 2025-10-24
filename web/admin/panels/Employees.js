@@ -303,19 +303,10 @@ export function Employees({ company, containerRef }) {
 
   pendingEmploymentColumns.push({
     label: "",
-    name: "remindEmployee",
-    minWidth: 100,
-    baseWidth: 100,
-    format: () => (
-      <Button
-        priority="tertiary no outline"
-        size="small"
-        iconPosition="left"
-        iconId="fr-icon-arrow-go-forward-fill"
-      >
-        Relancer
-      </Button>
-    )
+    name: "remindButton",
+    minWidth: 140,
+    baseWidth: 140,
+    format: remindButton => remindButton
   });
 
   const validEmploymentColumns = [
@@ -440,7 +431,22 @@ export function Employees({ company, containerRef }) {
           teamId: e.teamId,
           employmentId: e.id,
           userId: e.user?.id,
-          companyId: e.company?.id
+          companyId: e.company?.id,
+          remindButton: (
+            <Button
+              priority="tertiary no outline"
+              size="small"
+              iconPosition="left"
+              iconId="fr-icon-arrow-go-forward-fill"
+              onClick={async () => {
+                await alerts.withApiErrorHandling(async () =>
+                  sendInvitationReminder(e.id)
+                );
+              }}
+            >
+              Relancer
+            </Button>
+          )
         })),
     [companyEmployments]
   );
@@ -549,15 +555,6 @@ export function Employees({ company, containerRef }) {
       return [];
     }
     const customActions = [
-      {
-        name: "reminder",
-        label: "Relancer l'invitation",
-        action: async empl => {
-          await alerts.withApiErrorHandling(async () =>
-            sendInvitationReminder(empl.id)
-          );
-        }
-      },
       {
         name: "delete",
         label: "Annuler l'invitation",
