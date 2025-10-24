@@ -13,6 +13,7 @@ import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
 import {
+  DAY,
   frenchFormatDateStringOrTimeStamp,
   isoFormatLocalDate,
   now
@@ -74,6 +75,11 @@ const isUserOnlyAdminOfTeams = (teams, userId) => {
       team => team.adminUsers?.length === 1 && team.adminUsers[0].id === userId
     )
     .map(team => team.name);
+};
+
+const isLessThanOneDayAgo = ts => {
+  const nbSecondsElapsed = now() - ts;
+  return nbSecondsElapsed <= DAY;
 };
 
 export function Employees({ company, containerRef }) {
@@ -434,6 +440,10 @@ export function Employees({ company, containerRef }) {
           companyId: e.company?.id,
           remindButton: (
             <Button
+              disabled={
+                e.latestInviteEmailTime &&
+                isLessThanOneDayAgo(e.latestInviteEmailTime)
+              }
               priority="tertiary no outline"
               size="small"
               iconPosition="left"
