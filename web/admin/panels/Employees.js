@@ -217,14 +217,6 @@ export function Employees({ company, containerRef }) {
 
   const pendingEmploymentColumns = [
     {
-      label: "Nom",
-      name: "name",
-      minWidth: 75,
-      baseWidth: 200,
-      overflowTooltip: true,
-      align: "left"
-    },
-    {
       label: "Identifiant ou email",
       name: "idOrEmail",
       create: true,
@@ -420,7 +412,6 @@ export function Employees({ company, containerRef }) {
         .map(e => ({
           pending: true,
           idOrEmail: e.email || e.user?.id,
-          name: e.user ? formatPersonName(e.user, true) : null,
           hasAdminRights: e.hasAdminRights,
           creationDate: e.startDate,
           latestInviteEmailDateString: frenchFormatDateStringOrTimeStamp(
