@@ -221,8 +221,8 @@ export function Employees({ company, containerRef }) {
       name: "idOrEmail",
       create: true,
       sortable: true,
-      minWidth: 200,
-      baseWidth: 200,
+      minWidth: 260,
+      baseWidth: 300,
       overflowTooltip: true,
       align: "left"
     },
@@ -230,8 +230,8 @@ export function Employees({ company, containerRef }) {
       label: "Accès gestionnaire",
       name: "hasAdminRights",
       create: true,
-      minWidth: 160,
-      baseWidth: 160,
+      minWidth: 120,
+      baseWidth: 120,
       align: "left",
       required: true,
       format: hasAdminRights => (hasAdminRights ? "Oui" : "Non"),
@@ -258,16 +258,16 @@ export function Employees({ company, containerRef }) {
         dateString ? frenchFormatDateStringOrTimeStamp(dateString) : "",
       sortable: true,
       name: "creationDate",
-      minWidth: 160,
-      baseWidth: 160,
-      align: "left"
+      minWidth: 120,
+      baseWidth: 140,
+      align: "center"
     },
     {
-      label: "Dernière relance le",
+      label: "Relancé le",
       name: "latestInviteEmailDateString",
-      minWidth: 160,
-      baseWidth: 160,
-      align: "left"
+      minWidth: 120,
+      baseWidth: 140,
+      align: "center"
     }
   ];
 
