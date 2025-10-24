@@ -99,8 +99,8 @@ const useStyles = makeStyles(theme => ({
     borderTop: "1px solid #c9d3df",
     borderRadius: "2px",
     fontWeight: 700,
-    textTransform: "uppercase",
-    fontSize: ({ small }) => (small ? "0.75rem" : "inherit")
+    fontSize: ({ small }) => (small ? "0.75rem" : "inherit"),
+    textTransform: "none !important"
   },
   cell: {
     margin: 0,
