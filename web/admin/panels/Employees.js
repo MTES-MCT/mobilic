@@ -301,6 +301,23 @@ export function Employees({ company, containerRef }) {
     });
   }
 
+  pendingEmploymentColumns.push({
+    label: "",
+    name: "remindEmployee",
+    minWidth: 100,
+    baseWidth: 100,
+    format: () => (
+      <Button
+        priority="tertiary no outline"
+        size="small"
+        iconPosition="left"
+        iconId="fr-icon-arrow-go-forward-fill"
+      >
+        Relancer
+      </Button>
+    )
+  });
+
   const validEmploymentColumns = [
     {
       label: "Nom",
