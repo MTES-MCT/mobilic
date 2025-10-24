@@ -784,16 +784,26 @@ export function Employees({ company, containerRef }) {
                   </Button>
                 }
               </Typography>
-              <InviteButtons
-                onBatchInvite={handleBatchInvite}
-                onSingleInvite={handleSingleInvite}
-                shouldShowBadge={
-                  !hasMadeInvitations &&
-                  !employeeProgressData?.shouldShowSingleInviteButton &&
-                  employeeProgressData?.shouldShowBadge
-                }
-                employeeProgressData={employeeProgressData}
-              />
+              <Stack direction="row" columnGap={1}>
+                <Button
+                  priority="tertiary no outline"
+                  size="small"
+                  iconPosition="left"
+                  iconId="fr-icon-arrow-go-forward-fill"
+                >
+                  Relancer les invitations
+                </Button>
+                <InviteButtons
+                  onBatchInvite={handleBatchInvite}
+                  onSingleInvite={handleSingleInvite}
+                  shouldShowBadge={
+                    !hasMadeInvitations &&
+                    !employeeProgressData?.shouldShowSingleInviteButton &&
+                    employeeProgressData?.shouldShowBadge
+                  }
+                  employeeProgressData={employeeProgressData}
+                />
+              </Stack>
             </Box>
             {!hidePendingEmployments && (
               <AugmentedTable
