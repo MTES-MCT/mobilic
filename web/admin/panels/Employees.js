@@ -82,6 +82,11 @@ const isLessThanOneDayAgo = ts => {
   return nbSecondsElapsed <= DAY;
 };
 
+const isLessThanTwelveHoursAgo = ts => {
+  const nbSecondsElapsed = now() - ts;
+  return nbSecondsElapsed <= DAY / 2;
+};
+
 export function Employees({ company, containerRef }) {
   const api = useApi();
   const { trackEvent } = useMatomo();
@@ -432,6 +437,7 @@ export function Employees({ company, containerRef }) {
           idOrEmail: e.email || e.user?.id,
           hasAdminRights: e.hasAdminRights,
           creationDate: e.startDate,
+          latestInviteEmailTime: e.latestInviteEmailTime,
           latestInviteEmailDateString: frenchFormatDateStringOrTimeStamp(
             e.latestInviteEmailTime
               ? e.latestInviteEmailTime * 1000
@@ -463,6 +469,16 @@ export function Employees({ company, containerRef }) {
           )
         })),
     [companyEmployments]
+  );
+
+  const disableRemindAllPendingInvitations = React.useMemo(
+    () =>
+      pendingEmployments.filter(
+        e =>
+          e.latestInviteEmailTime &&
+          isLessThanTwelveHoursAgo(e.latestInviteEmailTime)
+      ).length === pendingEmployments.length,
+    [pendingEmployments]
   );
 
   const hasMadeInvitations = React.useMemo(
@@ -809,6 +825,7 @@ export function Employees({ company, containerRef }) {
                   size="small"
                   iconPosition="left"
                   iconId="fr-icon-arrow-go-forward-fill"
+                  disabled={disableRemindAllPendingInvitations}
                   onClick={async () => {
                     await alerts.withApiErrorHandling(async () =>
                       sendInvitationsReminders(
