@@ -23,7 +23,7 @@ import {
   CANCEL_EMPLOYMENT_MUTATION,
   CHANGE_EMPLOYEE_ROLE,
   CREATE_EMPLOYMENT_MUTATION,
-  SEND_EMPLOYMENT_INVITE_REMINDER,
+  SEND_EMPLOYMENTS_INVITE_REMINDER,
   TERMINATE_EMPLOYMENT_MUTATION
 } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
@@ -205,17 +205,21 @@ export function Employees({ company, containerRef }) {
     });
   }
 
-  async function sendInvitationReminder(employmentId) {
-    await api.graphQlMutate(SEND_EMPLOYMENT_INVITE_REMINDER, { employmentId });
-    await adminStore.dispatch({
-      type: ADMIN_ACTIONS.update,
-      payload: {
-        id: employmentId,
-        entity: "employments",
-        update: { latestInviteEmailTime: now() }
-      }
+  async function sendInvitationsReminders(employmentIds) {
+    await api.graphQlMutate(SEND_EMPLOYMENTS_INVITE_REMINDER, {
+      employmentIds
     });
-    alerts.success("Relance envoyée", employmentId, 6000);
+    for (const employmentId of employmentIds) {
+      await adminStore.dispatch({
+        type: ADMIN_ACTIONS.update,
+        payload: {
+          id: employmentId,
+          entity: "employments",
+          update: { latestInviteEmailTime: now() }
+        }
+      });
+    }
+    alerts.success("Relance envoyée", employmentIds[0], 6000);
   }
 
   const formatTeam = teamId =>
@@ -450,7 +454,7 @@ export function Employees({ company, containerRef }) {
               iconId="fr-icon-arrow-go-forward-fill"
               onClick={async () => {
                 await alerts.withApiErrorHandling(async () =>
-                  sendInvitationReminder(e.id)
+                  sendInvitationsReminders([e.id])
                 );
               }}
             >
@@ -805,6 +809,13 @@ export function Employees({ company, containerRef }) {
                   size="small"
                   iconPosition="left"
                   iconId="fr-icon-arrow-go-forward-fill"
+                  onClick={async () => {
+                    await alerts.withApiErrorHandling(async () =>
+                      sendInvitationsReminders(
+                        pendingEmployments.map(e => e.id)
+                      )
+                    );
+                  }}
                 >
                   Relancer les invitations
                 </Button>
