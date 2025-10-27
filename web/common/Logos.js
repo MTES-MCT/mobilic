@@ -7,22 +7,17 @@ import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { getFallbackRoute } from "./routes";
 import { MarianneIcon } from "common/utils/icons";
 
-export function Logos({ leaveSpaceForMenu = true }) {
+export function Logos({ leaveSpaceForMenu = true, isMobile = false }) {
   const store = useStoreSyncedWithLocalStorage();
   const shouldDisplayBothLogosAndMenu = useMediaQuery("(min-width:350px)");
   const shouldDisplayBothLogosWithoutMenu = useMediaQuery("(min-width:300px)");
-  const shouldDisplayFullSizeLogo = useMediaQuery(theme =>
-    theme.breakpoints.up("sm")
-  );
   return (
     <Box className="flex-row-flex-start">
       {(leaveSpaceForMenu
         ? shouldDisplayBothLogosAndMenu
         : shouldDisplayBothLogosWithoutMenu) && (
-        <Box mr={2}>
-          <MarianneIcon
-            style={{ fontSize: shouldDisplayFullSizeLogo ? 60 : 40 }}
-          />
+        <Box mr={isMobile ? 4 : 2}>
+          <MarianneIcon style={{ fontSize: 75 }} />
         </Box>
       )}
       <LinkButton
@@ -31,9 +26,8 @@ export function Logos({ leaveSpaceForMenu = true }) {
           controllerInfo: store.controllerInfo(),
           companies: store.companies()
         })}
-        style={{ padding: "0.25rem 0.5rem" }}
       >
-        <img alt="Mobilic" height={45} width={128} src={MobilicLogoWithText} />
+        <img alt="Mobilic" height={54} width={96} src={MobilicLogoWithText} />
       </LinkButton>
     </Box>
   );
