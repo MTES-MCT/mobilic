@@ -211,24 +211,28 @@ export function Employees({ company, containerRef }) {
   }
 
   async function sendInvitationsReminders(employmentIds) {
-    await api.graphQlMutate(SEND_INVITATIONS_REMINDERS, {
-      employmentIds
-    });
-    for (const employmentId of employmentIds) {
-      await adminStore.dispatch({
-        type: ADMIN_ACTIONS.update,
-        payload: {
-          id: employmentId,
-          entity: "employments",
-          update: { latestInviteEmailTime: now() }
-        }
+    try {
+      await api.graphQlMutate(SEND_INVITATIONS_REMINDERS, {
+        employmentIds
       });
+      for (const employmentId of employmentIds) {
+        await adminStore.dispatch({
+          type: ADMIN_ACTIONS.update,
+          payload: {
+            id: employmentId,
+            entity: "employments",
+            update: { latestInviteEmailTime: now() }
+          }
+        });
+      }
+      alerts.success(
+        `${employmentIds.length} relance(s) envoyée(s)`,
+        employmentIds[0],
+        6000
+      );
+    } catch (err) {
+      alerts.error("Une erreur est survenue", {}, 6000);
     }
-    alerts.success(
-      `${employmentIds.length} relance(s) envoyée(s)`,
-      employmentIds[0],
-      6000
-    );
   }
 
   const formatTeam = teamId =>
