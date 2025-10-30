@@ -6,7 +6,6 @@ import { useAdminCompanies } from "../store/store";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Employees } from "./Employees";
-import Grid from "@mui/material/Grid";
 import { LinkButton } from "../../common/LinkButton";
 import VehicleAdmin from "./Vehicles";
 import KnownAddressAdmin from "./KnownAddresses";
@@ -150,25 +149,14 @@ function CompanyPanel({ width, containerRef }) {
       spacing={1}
       sx={{ marginTop: "8px", paddingX: "8px" }}
     >
-      <Box
-        className={`${classes.navigation} flex-row-center`}
-        sx={{ marginBottom: "4px" }}
-      >
-        <Grid
-          container
-          spacing={5}
-          justifyContent="space-between"
-          alignItems="flex-start"
-          style={{ flex: "1 1 auto" }}
-        >
-          <Grid item>
-            <Paper variant="outlined" sx={{ padding: 2, maxWidth: "640px" }}>
-              <Stack direction="column" spacing={2}>
-                <CompanyDetails company={company} />
-              </Stack>
-            </Paper>
-          </Grid>
-          <Grid item>
+      <Box>
+        <Stack direction="row" justifyContent="space-between">
+          <Paper variant="outlined" sx={{ padding: 2, maxWidth: "640px" }}>
+            <Stack direction="column" spacing={2}>
+              <CompanyDetails company={company} />
+            </Stack>
+          </Paper>
+          <Box>
             <LinkButton
               className={classes.createCompanyButton}
               priority="primary"
@@ -177,8 +165,8 @@ function CompanyPanel({ width, containerRef }) {
             >
               Inscrire une nouvelle entreprise
             </LinkButton>
-          </Grid>
-        </Grid>
+          </Box>
+        </Stack>
       </Box>
       <SubNavigationToggle view={view} setView={setView} />
       <Paper className={classes.subPanel} variant="outlined">
