@@ -9,10 +9,11 @@ import { Description } from "../../../common/typography/Description";
 import { TitleContainer } from "../../../control/components/TitleContainer";
 import classNames from "classnames";
 import { useControlBulletinActions } from "../../hooks/useControlBulletinActions";
-import { useEmploymentData } from "../../hooks/useEmploymentData";
+import { useControl } from "../../utils/contextControl";
 import ControlSendEmailModal from "../modals/ControlSendEmailModal";
 import ControlSendEmailNoLicModal from "../modals/ControlSendEmailNoLicModal";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
+import { now, HOUR } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -60,51 +61,52 @@ export function ControllerControlBottomMenu({
   downloadBDC,
   controlId,
   controlTime,
-  companyName,
-  companySiren,
-  employments,
   controlData,
+  setControlData = null,
   isNoLicContext = false
 }) {
   const classes = useStyles();
-  const [includePdf] = React.useState(true);
   const [openSendNoLicModal, setOpenSendNoLicModal] = React.useState(false);
+  const [sentToAdminOverride, setSentToAdminOverride] = React.useState(false);
 
-  const { displayCompanyName, adminEmails } = useEmploymentData(
-    employments,
-    companySiren,
-    companyName
-  );
+  const sentToAdmin = sentToAdminOverride || controlData?.sentToAdmin;
+
+  const isBulletinAvailableForDriver = React.useMemo(() => {
+    if (!controlData?.controlBulletinCreationTime) {
+      return false;
+    }
+    return controlData.controlBulletinCreationTime <= now() - HOUR;
+  }, [controlData?.controlBulletinCreationTime]);
 
   const {
     handDelivered,
     openSendModal,
-    sendToDriver,
-    sendToAdmin,
     isLoading,
     setOpenSendModal,
-    setSendToDriver,
-    setSendToAdmin,
     handleHandDeliveredChange,
     handleSend
   } = useControlBulletinActions({
     controlId,
     controlData,
-    adminEmails,
-    displayCompanyName,
-    controlTime,
-    includePdf
+    onControlDataUpdate: setControlData
   });
 
   const handleSendNoLic = React.useCallback(
     async emailAddress => {
-      setSendToAdmin(true);
-      await handleSend([emailAddress], controlData.companyName);
-      setOpenSendNoLicModal(false);
+      const success = await handleSend([emailAddress]);
+      if (success) {
+        setSentToAdminOverride(true);
+        if (setControlData) {
+          setControlData(prev => ({ ...prev, sentToAdmin: true }));
+        }
+        setOpenSendNoLicModal(false);
+      }
     },
-    [handleSend, setSendToAdmin]
+    [handleSend, setControlData]
   );
 
+  const { canDownloadBDC, bdcAlreadyExists } = useControl();
+  const bulletinExists = bdcAlreadyExists || canDownloadBDC;
   return (
     <Stack
       direction="column"
@@ -120,123 +122,153 @@ export function ControllerControlBottomMenu({
           Bulletin de contrôle
         </Typography>
         <Button
-          priority="tertiary"
+          priority={bulletinExists ? "tertiary" : "primary"}
           size="small"
           onClick={e => {
             e.preventDefault();
             editBDC();
           }}
+          iconId="fr-icon-add-line"
         >
-          Modifier
+          {bulletinExists ? "Modifier" : "Créer"}
         </Button>
       </TitleContainer>
 
-      <Stack
-        direction="column"
-        className={classes.card}
-        spacing={3}
-        sx={{
-          maxWidth: { xs: "100%", md: "70%" }
-        }}
-      >
-        <Box display="flex" gap={2}>
-          <Box
-            component="span"
-            className={classNames("fr-icon-file-text-fill", classes.fileIcon)}
-            aria-hidden="true"
-          />
-
-          <Box display="flex" flexDirection="column">
-            <Typography variant="h6">Bulletin {controlId}</Typography>
-            <Description noMargin>edité le {controlTime}</Description>
-          </Box>
-        </Box>
-        <Box
-          display="flex"
-          className={classes.checkboxAndBadge}
-          flexDirection="column"
-          gap={2}
+      {bulletinExists ? (
+        <Stack
+          direction="column"
+          className={classes.card}
+          spacing={3}
+          sx={{
+            maxWidth: { xs: "100%", md: "70%" }
+          }}
         >
-          {(controlData?.sendToAdmin || sendToAdmin) && (
-            <Badge severity="info" noIcon className={classes.badge}>
-              <i
-                className={classNames(
-                  "fr-icon-success-line",
-                  classes.badgeIcon
-                )}
-              ></i>
-              Envoyé par e-mail à l'entreprise responsable
-            </Badge>
-          )}
+          <Box display="flex" gap={2}>
+            <Box
+              component="span"
+              className={classNames("fr-icon-file-text-fill", classes.fileIcon)}
+              aria-hidden="true"
+            />
 
-          <Checkbox
-            size="small"
-            options={[
-              {
-                label: "Remis au format papier",
-                nativeInputProps: {
-                  checked: handDelivered,
-                  onChange: handleHandDeliveredChange
+            <Box display="flex" flexDirection="column">
+              <Typography variant="h6">Bulletin {controlId}</Typography>
+              <Description noMargin>edité le {controlTime}</Description>
+            </Box>
+          </Box>
+          <Box
+            display="flex"
+            className={classes.checkboxAndBadge}
+            flexDirection="column"
+            gap={2}
+          >
+            <Checkbox
+              size="small"
+              options={[
+                {
+                  label: "Remis au format papier",
+                  nativeInputProps: {
+                    checked: handDelivered,
+                    onChange: handleHandDeliveredChange
+                  }
                 }
-              }
-            ]}
-          />
-        </Box>
-        <Box display="flex" gap={2} justifyContent={"space-between"}>
-          <Button
-            priority="secondary"
-            size="medium"
-            onClick={e => {
-              e.preventDefault();
-              downloadBDC();
-            }}
-            iconId="fr-icon-download-line"
-            iconPosition="left"
-            className={classes.button}
-          >
-            Télécharger
-          </Button>
-          <Button
-            priority="primary"
-            size="medium"
-            onClick={e => {
-              e.preventDefault();
-              if (isNoLicContext) {
-                setOpenSendNoLicModal(true);
-              } else {
-                setOpenSendModal(true);
-              }
-            }}
-            iconId="fr-icon-send-plane-line"
-            iconPosition="left"
-            className={classes.button}
-          >
-            Envoyer
-          </Button>
-        </Box>
-      </Stack>
+              ]}
+            />
 
-      {isNoLicContext ? (
-        <ControlSendEmailNoLicModal
-          open={openSendNoLicModal}
-          handleClose={() => setOpenSendNoLicModal(false)}
-          handleSend={handleSendNoLic}
-          isLoading={isLoading}
-        />
+            {isBulletinAvailableForDriver && (
+              <Badge severity="info" noIcon className={classes.badge}>
+                <i
+                  className={classNames(
+                    "fr-icon-success-line",
+                    classes.badgeIcon
+                  )}
+                ></i>
+                Remis au format numérique
+              </Badge>
+            )}
+
+            {sentToAdmin && (
+              <Badge severity="info" noIcon className={classes.badge}>
+                <i
+                  className={classNames(
+                    "fr-icon-success-line",
+                    classes.badgeIcon
+                  )}
+                ></i>
+                Envoyé par e-mail à l'entreprise
+              </Badge>
+            )}
+          </Box>
+          <Box display="flex" gap={2} justifyContent={"space-between"}>
+            <Button
+              priority="secondary"
+              size="medium"
+              onClick={e => {
+                e.preventDefault();
+                downloadBDC();
+              }}
+              iconId="fr-icon-download-line"
+              iconPosition="left"
+              className={classes.button}
+            >
+              Télécharger
+            </Button>
+            {!sentToAdmin && (
+              <Button
+                priority="primary"
+                size="medium"
+                onClick={e => {
+                  e.preventDefault();
+                  if (isNoLicContext) {
+                    setOpenSendNoLicModal(true);
+                  } else {
+                    setOpenSendModal(true);
+                  }
+                }}
+                iconId="fr-icon-send-plane-line"
+                iconPosition="left"
+                className={classes.button}
+              >
+                Envoyer
+              </Button>
+            )}
+          </Box>
+        </Stack>
       ) : (
-        <ControlSendEmailModal
-          open={openSendModal}
-          handleClose={() => setOpenSendModal(false)}
-          sendToDriver={sendToDriver}
-          setSendToDriver={setSendToDriver}
-          sendToAdmin={sendToAdmin}
-          setSendToAdmin={setSendToAdmin}
-          displayCompanyName={displayCompanyName}
-          handleSend={handleSend}
-          isLoading={isLoading}
-          adminEmails={adminEmails}
-        />
+        <Description>
+          Éditez un bulletin de contrôle pour le télécharger au format PDF et le
+          retrouver plus tard dans votre historique des contrôles.
+        </Description>
       )}
+
+      {bulletinExists &&
+        (isNoLicContext ? (
+          <ControlSendEmailNoLicModal
+            open={openSendNoLicModal}
+            handleClose={() => setOpenSendNoLicModal(false)}
+            handleSend={handleSendNoLic}
+            isLoading={isLoading}
+          />
+        ) : (
+          <ControlSendEmailModal
+            open={openSendModal}
+            handleClose={() => setOpenSendModal(false)}
+            handleSend={async shouldSendToAdmin => {
+              if (shouldSendToAdmin) {
+                const success = await handleSend();
+                if (success) {
+                  setSentToAdminOverride(true);
+                  if (setControlData) {
+                    setControlData(prev => ({ ...prev, sentToAdmin: true }));
+                  }
+                  setOpenSendModal(false);
+                }
+              } else {
+                setOpenSendModal(false);
+              }
+            }}
+            isLoading={isLoading}
+          />
+        ))}
     </Stack>
   );
 }

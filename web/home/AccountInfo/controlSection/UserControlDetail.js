@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, Typography, Box, Stack } from "@mui/material";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import { textualPrettyFormatDayHour } from "../../../../common/utils/time";
+import { textualPrettyFormatDayHour, now, HOUR } from "common/utils/time";
 import { useDownloadBDC } from "../../../controller/utils/useDownloadBDC";
 import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
@@ -37,6 +37,13 @@ const useStyles = makeStyles(theme => ({
 export default function UserControlDetail({ control, onClose }) {
   const downloadBDC = useDownloadBDC(control.id);
   const classes = useStyles();
+
+  const isBulletinAvailable = React.useMemo(() => {
+    if (!control?.controlBulletinCreationTime) {
+      return false;
+    }
+    return control.controlBulletinCreationTime <= now() - HOUR;
+  }, [control?.controlBulletinCreationTime]);
 
   if (!control) {
     return (
@@ -125,16 +132,23 @@ export default function UserControlDetail({ control, onClose }) {
 
                 <Box display="flex" flexDirection="column">
                   <Typography variant="h6">Bulletin de contrôle</Typography>
-                  <Description noMargin>Fichier PDF</Description>
+                  <Description noMargin>
+                    {isBulletinAvailable
+                      ? "Fichier PDF"
+                      : "Le bulletin de contrôle n'est pas encore disponible"}
+                  </Description>
                 </Box>
               </Box>
 
               <Button
                 priority="secondary"
                 size="medium"
+                disabled={!isBulletinAvailable}
                 onClick={e => {
                   e.preventDefault();
-                  downloadBDC();
+                  if (isBulletinAvailable) {
+                    downloadBDC();
+                  }
                 }}
                 iconId="fr-icon-download-line"
                 iconPosition="left"

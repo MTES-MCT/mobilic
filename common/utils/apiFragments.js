@@ -283,7 +283,7 @@ export const CONTROL_DATA_FRAGMENT = gql`
     note
     nbReportedInfractions
     deliveredByHand
-    sendToAdmin
+    sentToAdmin
     controlBulletin {
       locationLieu
     }
@@ -305,6 +305,7 @@ export const USER_CONTROL_SUMMARY_FRAGMENT = gql`
     id
     creationTime
     nbReportedInfractions
+    controlBulletinCreationTime
     controlBulletin {
       locationLieu
     }

@@ -50,7 +50,12 @@ const getTabs = alertNumber => [
   }
 ];
 
-export function ControllerControlNoLic({ editBDC, takePictures, controlData }) {
+export function ControllerControlNoLic({
+  editBDC,
+  takePictures,
+  controlData,
+  setControlData
+}) {
   const classes = controlTabsStyles();
 
   const { controlId } = useControl();
@@ -141,6 +146,7 @@ export function ControllerControlNoLic({ editBDC, takePictures, controlData }) {
               true
             )}
             controlData={controlData}
+            setControlData={setControlData}
             isNoLicContext={true}
           />
         </>

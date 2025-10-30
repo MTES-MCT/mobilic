@@ -147,9 +147,6 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
             props.controlTime || props.tokenInfo.creationTime,
             true
           )}
-          companyName={props.companyName}
-          companySiren={props.companySiren}
-          employments={props.employments}
           controlData={props.controlData}
         />
       )}

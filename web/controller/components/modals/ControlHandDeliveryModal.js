@@ -29,7 +29,6 @@ export default function ControlHandDeliveryModal({
                   priority: "primary",
                   onClick: () => {
                     if (handleConfirm) handleConfirm();
-                    handleClose();
                   }
                 },
                 {
@@ -37,7 +36,6 @@ export default function ControlHandDeliveryModal({
                   priority: "secondary",
                   onClick: () => {
                     if (handleCancel) handleCancel();
-                    handleClose();
                   }
                 }
               ]}

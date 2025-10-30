@@ -1,54 +1,54 @@
 import React from "react";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import { useModals } from "common/utils/modals";
 import {
   SEND_CONTROL_BULLETIN_EMAIL_MUTATION,
-  CONTROLLER_SAVE_CONTROL_BULLETIN
+  CONTROLLER_UPDATE_DELIVERY_STATUS
 } from "common/utils/apiQueries";
 
 export function useControlBulletinActions({
   controlId,
   controlData,
-  adminEmails,
-  displayCompanyName,
-  controlTime,
-  includePdf
+  onControlDataUpdate
 }) {
   const api = useApi();
   const alerts = useSnackbarAlerts();
-  const modals = useModals();
 
   const [handDelivered, setHandDelivered] = React.useState(
     controlData?.deliveredByHand || false
   );
   const [openSendModal, setOpenSendModal] = React.useState(false);
-  const [sendToDriver, setSendToDriver] = React.useState(false);
-  const [sendToAdmin, setSendToAdmin] = React.useState(
-    controlData?.sendToAdmin || false
-  );
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isHandDeliveryModalOpen, setIsHandDeliveryModalOpen] = React.useState(
+    false
+  );
 
   React.useEffect(() => {
-    if (controlData?.deliveredByHand !== undefined) {
-      setHandDelivered(controlData.deliveredByHand);
-    }
-    if (controlData?.sendToAdmin !== undefined) {
-      setSendToAdmin(controlData.sendToAdmin);
-    }
-  }, [controlData?.deliveredByHand, controlData?.sendToAdmin]);
+    setHandDelivered(controlData?.deliveredByHand || false);
+  }, [controlData?.deliveredByHand]);
 
   const saveHandDeliveryStatus = React.useCallback(
     async delivered => {
       try {
-        await api.graphQlMutate(
-          CONTROLLER_SAVE_CONTROL_BULLETIN,
+        if (!controlId) {
+          return;
+        }
+
+        const response = await api.graphQlMutate(
+          CONTROLLER_UPDATE_DELIVERY_STATUS,
           {
-            controlId: controlId,
+            controlId,
             deliveredByHand: delivered
           },
           { context: { nonPublicApi: true } }
         );
+
+        if (
+          response?.data?.controllerUpdateDeliveryStatus &&
+          onControlDataUpdate
+        ) {
+          onControlDataUpdate(response.data.controllerUpdateDeliveryStatus);
+        }
 
         alerts.success(
           delivered
@@ -58,12 +58,11 @@ export function useControlBulletinActions({
           3000
         );
       } catch (error) {
-        console.error("Erreur lors de la sauvegarde:", error);
         alerts.error("Erreur lors de la sauvegarde", "", 3000);
         setHandDelivered(!delivered);
       }
     },
-    [api, controlId, alerts]
+    [api, controlId, alerts, onControlDataUpdate]
   );
 
   const handleHandDeliveredChange = React.useCallback(
@@ -72,90 +71,93 @@ export function useControlBulletinActions({
       setHandDelivered(newValue);
       saveHandDeliveryStatus(newValue);
     },
-    [controlData?.deliveredByHand, modals, saveHandDeliveryStatus]
+    [saveHandDeliveryStatus]
   );
 
   const handleSend = React.useCallback(
-    async (emailOverride = null) => {
+    async (adminEmails = null) => {
       setIsLoading(true);
+      let success = false;
 
       try {
-        const effectiveEmails = emailOverride || adminEmails;
+        await alerts.withApiErrorHandling(async () => {
+          const variables = {
+            controlId: controlId.toString()
+          };
 
-        if (effectiveEmails.length > 0) {
-          await alerts.withApiErrorHandling(async () => {
-            const response = await api.graphQlMutate(
-              SEND_CONTROL_BULLETIN_EMAIL_MUTATION,
-              {
-                controlId: controlId.toString(),
-                adminEmails: Array.isArray(effectiveEmails)
-                  ? effectiveEmails
-                  : [effectiveEmails],
-                companyName: displayCompanyName || "Entreprise",
-                controlDate: controlTime,
-                includePdf: includePdf
-              },
-              { context: { nonPublicApi: true } }
-            );
+          if (adminEmails) {
+            variables.adminEmails = adminEmails;
+          }
 
-            const {
-              success,
-              emailsSent
-            } = response.data.sendControlBulletinEmail;
-
-            if (success) {
-              setSendToAdmin(true);
-
-              alerts.success(
-                `Bulletin de contrôle envoyé avec succès à ${emailsSent} gestionnaire(s)`,
-                "",
-                6000
-              );
-            }
-          }, "send-control-bulletin");
-        } else {
-          alerts.error(
-            "Erreur lors de l'envoi : Mauvais siren ou pas de gestionnaire associé à cette entreprise.",
-            "",
-            6000
+          const response = await api.graphQlMutate(
+            SEND_CONTROL_BULLETIN_EMAIL_MUTATION,
+            variables,
+            { context: { nonPublicApi: true } }
           );
-        }
 
-        setOpenSendModal(false);
-      } catch (error) {
-        console.error("Erreur lors de l'envoi:", error);
+          const {
+            success: apiSuccess,
+            nbEmailsSent
+          } = response.data.sendControlBulletinEmail;
+
+          if (apiSuccess) {
+            success = true;
+
+            if (onControlDataUpdate) {
+              onControlDataUpdate(prevData => ({
+                ...prevData,
+                sentToAdmin: true
+              }));
+            }
+
+            alerts.success(
+              `Bulletin de contrôle envoyé avec succès à ${nbEmailsSent} gestionnaire(s)`,
+              "",
+              6000
+            );
+          }
+        }, "send-control-bulletin");
       } finally {
         setIsLoading(false);
       }
+
+      return success;
     },
-    [
-      sendToAdmin,
-      adminEmails,
-      alerts,
-      api,
-      controlId,
-      displayCompanyName,
-      controlTime,
-      includePdf,
-      setSendToAdmin
-    ]
+    [alerts, api, controlId, onControlDataUpdate]
   );
 
+  const handleHandDeliveryConfirm = React.useCallback(
+    async delivered => {
+      setHandDelivered(delivered);
+      await saveHandDeliveryStatus(delivered);
+      setIsHandDeliveryModalOpen(false);
+    },
+    [saveHandDeliveryStatus]
+  );
+
+  const handleHandDeliveryConfirmWithoutClose = React.useCallback(
+    async delivered => {
+      setHandDelivered(delivered);
+      await saveHandDeliveryStatus(delivered);
+    },
+    [saveHandDeliveryStatus]
+  );
+
+  const openHandDeliveryModalAction = React.useCallback(() => {
+    setIsHandDeliveryModalOpen(true);
+  }, []);
+
   return {
-    // États
     handDelivered,
     openSendModal,
-    sendToDriver,
-    sendToAdmin,
     isLoading,
-
-    // Setters
+    isHandDeliveryModalOpen,
     setOpenSendModal,
-    setSendToDriver,
-    setSendToAdmin,
-
-    // Actions
+    setIsHandDeliveryModalOpen,
     handleHandDeliveredChange,
-    handleSend
+    handleSend,
+    handleHandDeliveryConfirm,
+    handleHandDeliveryConfirmWithoutClose,
+    openHandDeliveryModal: openHandDeliveryModalAction
   };
 }

@@ -15,16 +15,17 @@ const useStyles = makeStyles(() => ({
 export default function ControlSendEmailModal({
   open,
   handleClose,
-  sendToDriver,
-  setSendToDriver,
-  sendToAdmin,
-  setSendToAdmin,
-  displayCompanyName,
   handleSend,
-  isLoading,
-  adminEmails
+  isLoading
 }) {
   const classes = useStyles();
+  const [sendToAdmin, setSendToAdmin] = React.useState(false);
+
+  React.useEffect(() => {
+    if (open) {
+      setSendToAdmin(false);
+    }
+  }, [open]);
 
   return (
     <Modal
@@ -52,24 +53,15 @@ export default function ControlSendEmailModal({
                   </Box>
                 ),
                 nativeInputProps: {
-                  checked: sendToDriver,
-                  onChange: e => setSendToDriver(e.target.checked),
+                  checked: true,
+                  onChange: () => {}, // Ne fait rien car disabled
                   disabled: true
                 },
                 hintText:
                   'Le conducteur retrouvera le bulletin de contrôle dans sa page "Mes informations".'
               },
               {
-                label: (
-                  <span>
-                    A l'entreprise responsable{" "}
-                    {displayCompanyName && (
-                      <>
-                        <strong>{displayCompanyName}</strong>
-                      </>
-                    )}
-                  </span>
-                ),
+                label: "A l'entreprise",
                 nativeInputProps: {
                   checked: sendToAdmin,
                   onChange: e => setSendToAdmin(e.target.checked)
@@ -92,8 +84,8 @@ export default function ControlSendEmailModal({
           </Button>
           <Button
             priority="primary"
-            onClick={handleSend}
-            disabled={isLoading || adminEmails.length === 0}
+            onClick={() => handleSend(sendToAdmin)}
+            disabled={isLoading}
           >
             {isLoading ? "Envoi en cours..." : "Envoyer"}
           </Button>

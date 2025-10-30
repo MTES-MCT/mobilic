@@ -1981,6 +1981,21 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
   }
 `;
 
+export const CONTROLLER_UPDATE_DELIVERY_STATUS = gql`
+  ${CONTROL_DATA_FRAGMENT}
+  mutation controllerUpdateDeliveryStatus(
+    $controlId: Int!
+    $deliveredByHand: Boolean!
+  ) {
+    controllerUpdateDeliveryStatus(
+      controlId: $controlId
+      deliveredByHand: $deliveredByHand
+    ) {
+      ...ControlData
+    }
+  }
+`;
+
 export const CONTROLLER_SAVE_REPORTED_INFRACTIONS = gql`
   ${OBSERVED_INFRACTIONS_FRAGMENT}
   mutation controllerSaveReportedInfractions(
@@ -2433,20 +2448,11 @@ export const NOTIFICATIONS_QUERY = gql`
 export const SEND_CONTROL_BULLETIN_EMAIL_MUTATION = gql`
   mutation SendControlBulletinEmail(
     $controlId: String!
-    $adminEmails: [String]!
-    $companyName: String!
-    $controlDate: String
-    $includePdf: Boolean
+    $adminEmails: [String]
   ) {
-    sendControlBulletinEmail(
-      controlId: $controlId
-      adminEmails: $adminEmails
-      companyName: $companyName
-      controlDate: $controlDate
-      includePdf: $includePdf
-    ) {
+    sendControlBulletinEmail(controlId: $controlId, adminEmails: $adminEmails) {
       success
-      emailsSent
+      nbEmailsSent
     }
   }
 `;
