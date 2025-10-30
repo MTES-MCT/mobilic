@@ -1155,8 +1155,8 @@ export const TERMINATE_EMPLOYMENT_MUTATION = gql`
   }
 `;
 
-export const SEND_EMPLOYMENTS_INVITE_REMINDER = gql`
-  mutation sendInviteReminders($employmentIds: [Int]!) {
+export const SEND_INVITATIONS_REMINDERS = gql`
+  mutation sendInvitationsReminders($employmentIds: [Int]!) {
     employments {
       sendInvitationsReminders(employmentIds: $employmentIds) {
         success

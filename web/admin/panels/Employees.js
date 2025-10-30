@@ -23,7 +23,7 @@ import {
   CANCEL_EMPLOYMENT_MUTATION,
   CHANGE_EMPLOYEE_ROLE,
   CREATE_EMPLOYMENT_MUTATION,
-  SEND_EMPLOYMENTS_INVITE_REMINDER,
+  SEND_INVITATIONS_REMINDERS,
   TERMINATE_EMPLOYMENT_MUTATION
 } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
@@ -211,7 +211,7 @@ export function Employees({ company, containerRef }) {
   }
 
   async function sendInvitationsReminders(employmentIds) {
-    await api.graphQlMutate(SEND_EMPLOYMENTS_INVITE_REMINDER, {
+    await api.graphQlMutate(SEND_INVITATIONS_REMINDERS, {
       employmentIds
     });
     for (const employmentId of employmentIds) {
