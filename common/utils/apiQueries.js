@@ -2060,6 +2060,14 @@ export const HTTP_QUERIES = {
     method: "POST",
     endpoint: "/companies/download_activity_report"
   },
+  cancelExports: {
+    method: "POST",
+    endpoint: "/exports/cancel"
+  },
+  checkOutExports: {
+    method: "POST",
+    endpoint: "/exports/checkout"
+  },
   userC1bExport: {
     method: "POST",
     endpoint: "/users/generate_tachograph_file"
