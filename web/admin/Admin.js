@@ -37,6 +37,7 @@ import UpdateNbWorkerModal from "./modals/UpdateNbWorkerModal";
 import { Main } from "../common/semantics/Main";
 
 import { SideMenu } from "./components/SideMenu/SideMenu";
+import { ExportsBanner } from "./components/ExportsBanner";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -221,6 +222,7 @@ function InternalAdmin() {
             maxWidth={false}
             ref={ref}
           >
+            <ExportsBanner />
             <Switch>
               {views.map(view => (
                 <Route
