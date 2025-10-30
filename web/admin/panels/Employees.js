@@ -224,7 +224,11 @@ export function Employees({ company, containerRef }) {
         }
       });
     }
-    alerts.success("Relance envoyée", employmentIds[0], 6000);
+    alerts.success(
+      `${employmentIds.length} relance(s) envoyée(s)`,
+      employmentIds[0],
+      6000
+    );
   }
 
   const formatTeam = teamId =>
