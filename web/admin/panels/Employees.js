@@ -215,16 +215,12 @@ export function Employees({ company, containerRef }) {
       await api.graphQlMutate(SEND_INVITATIONS_REMINDERS, {
         employmentIds
       });
-      for (const employmentId of employmentIds) {
-        await adminStore.dispatch({
-          type: ADMIN_ACTIONS.update,
-          payload: {
-            id: employmentId,
-            entity: "employments",
-            update: { latestInviteEmailTime: now() }
-          }
-        });
-      }
+      await adminStore.dispatch({
+        type: ADMIN_ACTIONS.updateEmploymentsLatestInvitateEmailTime,
+        payload: {
+          employmentIds
+        }
+      });
       alerts.success(
         `${employmentIds.length} relance(s) envoyée(s)`,
         employmentIds[0],
