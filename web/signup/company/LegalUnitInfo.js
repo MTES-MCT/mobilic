@@ -10,16 +10,21 @@ export function LegalUnitInfo({ legalUnit }) {
       <CardContent>
         <Grid container wrap="wrap" spacing={4}>
           <Grid item>
-            <InfoItem name="Nom" value={legalUnit.name} bold />
+            <InfoItem name="Nom" value={legalUnit.name} bold maxWidth="100%" />
           </Grid>
           <Grid item>
-            <InfoItem name="Code NAF" value={legalUnit.activity} />
+            <InfoItem
+              name="Code NAF"
+              value={legalUnit.activity}
+              maxWidth="100%"
+            />
           </Grid>
           {legalUnit.creation_date && (
             <Grid item>
               <InfoItem
                 name="Année de création"
                 value={legalUnit.creation_date.slice(0, 4)}
+                maxWidth="100%"
               />
             </Grid>
           )}

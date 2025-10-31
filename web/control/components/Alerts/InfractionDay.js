@@ -76,7 +76,7 @@ export const InfractionDay = ({ alerts, sanction }) => {
     initialDays
   ]);
 
-  const maxDate = new Date(unixToJSTimestamp(controlData.creationTime));
+  const maxDate = new Date(unixToJSTimestamp(controlData.controlTime));
   const minDate = addDaysToDate(new Date(maxDate), -controlHistoryDepth);
 
   const onSelectedDatesChange = values => {

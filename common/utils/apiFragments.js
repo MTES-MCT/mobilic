@@ -272,6 +272,7 @@ export const CONTROL_DATA_FRAGMENT = gql`
     id
     controlType
     qrCodeGenerationTime
+    controlTime
     nbControlledDays
     creationTime
     companyName

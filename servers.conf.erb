@@ -75,6 +75,7 @@ server {
       proxy_ssl_server_name on;
 
       proxy_hide_header Cache-Control;
+      proxy_set_header X-Ogo-Shield "";
 
       proxy_redirect $upstream_endpoint_0 /api/;
     }

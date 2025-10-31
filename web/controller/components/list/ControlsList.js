@@ -63,7 +63,7 @@ export function ControlsList({
   const [expandedDates, setExpandedDates] = React.useState([]);
   const controlsByPeriod = useMemo(() => {
     const controlsGroupedByPeriod = groupBy(controls, control =>
-      getGroupByKey(new Date(control.creationTime * 1000), period)
+      getGroupByKey(new Date(control.controlTime * 1000), period)
     );
     let res = [];
     for (const date in controlsGroupedByPeriod) {
@@ -76,12 +76,11 @@ export function ControlsList({
             employee: `${control.userFirstName} ${control.userLastName}`,
             vehicle: control.vehicleRegistrationNumber,
             company: control.companyName,
-            time: control.creationTime,
+            time: control.controlTime,
             controlLocation: control?.controlBulletin?.locationLieu,
             formattedTime:
-              (period !== "day"
-                ? `${formatDay(control.creationTime)} - `
-                : "") + formatTimeOfDay(control.creationTime),
+              (period !== "day" ? `${formatDay(control.controlTime)} - ` : "") +
+              formatTimeOfDay(control.controlTime),
             type: control.controlType,
             nbControlledDays:
               // Do not show for no lic or lic papier, default value set for greco stat usage
