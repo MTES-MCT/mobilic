@@ -12,7 +12,6 @@ import { useDownloadBDC } from "../../controller/utils/useDownloadBDC";
 import Box from "@mui/material/Box";
 import Notice from "../../common/Notice";
 import { scrollToId } from "../../common/hooks/useScroll";
-import { formatDateTime } from "common/utils/time";
 
 export const controlTabsStyles = makeStyles(theme => ({
   middleTab: {
@@ -142,12 +141,6 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
         <ControllerControlBottomMenu
           editBDC={props.openBulletinControl}
           downloadBDC={downloadBDC}
-          controlId={props.controlId}
-          controlTime={formatDateTime(
-            props.controlTime || props.tokenInfo.creationTime,
-            true
-          )}
-          controlData={props.controlData}
         />
       )}
     </>

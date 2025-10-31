@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "../../../common/Modal";
 import { Typography, Box } from "@mui/material";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import { Input } from "@codegouvfr/react-dsfr/Input";
+import { EmailField } from "../../../common/EmailField";
 
 export default function ControlSendEmailNoLicModal({
   open,
@@ -11,6 +11,7 @@ export default function ControlSendEmailNoLicModal({
   isLoading
 }) {
   const [emailAddress, setEmailAddress] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
 
   const handleSubmit = () => {
     if (emailAddress.trim()) {
@@ -36,15 +37,13 @@ export default function ControlSendEmailNoLicModal({
             renseignée dans le champ ci-dessous.
           </Typography>
 
-          <Input
-            label="Adresse email de l'entreprise"
-            placeholder="email@mon-entreprise.com"
-            nativeInputProps={{
-              type: "email",
-              value: emailAddress,
-              onChange: e => setEmailAddress(e.target.value),
-              required: true
-            }}
+          <EmailField
+            required
+            value={emailAddress}
+            setValue={setEmailAddress}
+            validate
+            error={emailError}
+            setError={setEmailError}
           />
         </Box>
       }
@@ -59,7 +58,7 @@ export default function ControlSendEmailNoLicModal({
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={isLoading || !emailAddress.trim()}
+            disabled={isLoading || !emailAddress.trim() || !!emailError}
           >
             {isLoading ? "Envoi..." : "Envoyer"}
           </Button>

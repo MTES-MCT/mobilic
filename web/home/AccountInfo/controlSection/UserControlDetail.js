@@ -39,11 +39,11 @@ export default function UserControlDetail({ control, onClose }) {
   const classes = useStyles();
 
   const isBulletinAvailable = React.useMemo(() => {
-    if (!control?.controlBulletinCreationTime) {
+    if (!control?.controlBulletinUpdateTime) {
       return false;
     }
-    return control.controlBulletinCreationTime <= now() - HOUR;
-  }, [control?.controlBulletinCreationTime]);
+    return control.controlBulletinUpdateTime <= now() - HOUR;
+  }, [control?.controlBulletinUpdateTime]);
 
   if (!control) {
     return (

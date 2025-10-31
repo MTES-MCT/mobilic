@@ -13,7 +13,7 @@ import { useControl } from "../../utils/contextControl";
 import ControlSendEmailModal from "../modals/ControlSendEmailModal";
 import ControlSendEmailNoLicModal from "../modals/ControlSendEmailNoLicModal";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
-import { now, HOUR } from "common/utils/time";
+import { now, HOUR, formatDateTime } from "common/utils/time";
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -59,24 +59,34 @@ const useStyles = makeStyles(theme => ({
 export function ControllerControlBottomMenu({
   editBDC,
   downloadBDC,
-  controlId,
-  controlTime,
-  controlData,
-  setControlData = null,
   isNoLicContext = false
 }) {
+  const {
+    canDownloadBDC,
+    bdcAlreadyExists,
+    controlId,
+    controlData,
+    setControlData
+  } = useControl();
+
   const classes = useStyles();
   const [openSendNoLicModal, setOpenSendNoLicModal] = React.useState(false);
   const [sentToAdminOverride, setSentToAdminOverride] = React.useState(false);
 
+  React.useEffect(() => {
+    if (controlData?.sentToAdmin === false) {
+      setSentToAdminOverride(false);
+    }
+  }, [controlData?.sentToAdmin]);
+
   const sentToAdmin = sentToAdminOverride || controlData?.sentToAdmin;
 
   const isBulletinAvailableForDriver = React.useMemo(() => {
-    if (!controlData?.controlBulletinCreationTime) {
+    if (!controlData?.controlBulletinUpdateTime) {
       return false;
     }
-    return controlData.controlBulletinCreationTime <= now() - HOUR;
-  }, [controlData?.controlBulletinCreationTime]);
+    return controlData.controlBulletinUpdateTime <= now() - HOUR;
+  }, [controlData?.controlBulletinUpdateTime]);
 
   const {
     handDelivered,
@@ -105,7 +115,6 @@ export function ControllerControlBottomMenu({
     [handleSend, setControlData]
   );
 
-  const { canDownloadBDC, bdcAlreadyExists } = useControl();
   const bulletinExists = bdcAlreadyExists || canDownloadBDC;
   return (
     <Stack
@@ -127,8 +136,11 @@ export function ControllerControlBottomMenu({
           onClick={e => {
             e.preventDefault();
             editBDC();
+            // Note: setSentToAdminOverride(false) n'est plus nécessaire ici
+            // car il sera automatiquement reseté par l'useEffect quand le backend
+            // mettra sent_to_admin = false après modification du bulletin
           }}
-          iconId="fr-icon-add-line"
+          iconId={!bulletinExists ? "fr-icon-add-line" : ""}
         >
           {bulletinExists ? "Modifier" : "Créer"}
         </Button>
@@ -152,7 +164,10 @@ export function ControllerControlBottomMenu({
 
             <Box display="flex" flexDirection="column">
               <Typography variant="h6">Bulletin {controlId}</Typography>
-              <Description noMargin>edité le {controlTime}</Description>
+              <Description noMargin>
+                edité le{" "}
+                {formatDateTime(controlData.controlBulletinUpdateTime, true)}{" "}
+              </Description>
             </Box>
           </Box>
           <Box
@@ -209,6 +224,7 @@ export function ControllerControlBottomMenu({
               iconId="fr-icon-download-line"
               iconPosition="left"
               className={classes.button}
+              disabled={!canDownloadBDC}
             >
               Télécharger
             </Button>
@@ -227,6 +243,7 @@ export function ControllerControlBottomMenu({
                 iconId="fr-icon-send-plane-line"
                 iconPosition="left"
                 className={classes.button}
+                disabled={!canDownloadBDC}
               >
                 Envoyer
               </Button>

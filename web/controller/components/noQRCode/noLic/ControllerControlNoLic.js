@@ -50,15 +50,10 @@ const getTabs = alertNumber => [
   }
 ];
 
-export function ControllerControlNoLic({
-  editBDC,
-  takePictures,
-  controlData,
-  setControlData
-}) {
+export function ControllerControlNoLic({ editBDC, takePictures }) {
   const classes = controlTabsStyles();
 
-  const { controlId } = useControl();
+  const { controlId, controlData, setControlData } = useControl();
   const downloadBDC = useDownloadBDC(controlId);
   const { checkedAlertsNumber, isReportingInfractions } = useInfractions();
   const [displayPictures, setDisplayPictures] = React.useState(false);

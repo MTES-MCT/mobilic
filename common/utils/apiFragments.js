@@ -278,6 +278,7 @@ export const CONTROL_DATA_FRAGMENT = gql`
     userFirstName
     userLastName
     controlBulletinCreationTime
+    controlBulletinUpdateTime
     vehicleRegistrationNumber
     isDayPageFilled
     note
@@ -306,6 +307,7 @@ export const USER_CONTROL_SUMMARY_FRAGMENT = gql`
     creationTime
     nbReportedInfractions
     controlBulletinCreationTime
+    controlBulletinUpdateTime
     controlBulletin {
       locationLieu
     }

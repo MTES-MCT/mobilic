@@ -72,12 +72,7 @@ export function ControllerControlNoLicDrawer({
         controlDate={controlData.creationTime}
         onCloseDrawer={() => closeControl()}
       />
-      <ControllerControlNoLic
-        editBDC={editBDC}
-        takePictures={takePictures}
-        controlData={controlData}
-        setControlData={setControlData}
-      />
+      <ControllerControlNoLic editBDC={editBDC} takePictures={takePictures} />
 
       <ControlHandDeliveryModal
         open={actions.isHandDeliveryModalOpen}

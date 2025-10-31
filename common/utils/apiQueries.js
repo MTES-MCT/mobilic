@@ -2448,7 +2448,7 @@ export const NOTIFICATIONS_QUERY = gql`
 export const SEND_CONTROL_BULLETIN_EMAIL_MUTATION = gql`
   mutation SendControlBulletinEmail(
     $controlId: String!
-    $adminEmails: [String]
+    $adminEmails: [Email!]
   ) {
     sendControlBulletinEmail(controlId: $controlId, adminEmails: $adminEmails) {
       success
