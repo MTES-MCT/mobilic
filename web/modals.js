@@ -19,6 +19,7 @@ import ConfirmationCancelControlBulletinModal from "./controller/components/moda
 import ControlPicture from "./controller/components/modals/ControlPicture";
 import ControlHandDeliveryModal from "./controller/components/modals/ControlHandDeliveryModal";
 import ControlSendEmailModal from "./controller/components/modals/ControlSendEmailModal";
+import ControllerUpdateTimeModal from "./controller/components/modals/ControllerUpdateTime";
 
 // admin
 import UpdateCompanyDetailsModal from "./admin/modals/UpdateCompanyDetailsModal";
@@ -99,5 +100,6 @@ export const MODAL_DICT = {
   controlPicture: ControlPicture,
   overrideValidation: OverrideValidationJustificationModal,
   handDeliveryConfirmation: ControlHandDeliveryModal,
-  controlSendEmail: ControlSendEmailModal
+  controlSendEmail: ControlSendEmailModal,
+  controllerUpdateTime: ControllerUpdateTimeModal
 };

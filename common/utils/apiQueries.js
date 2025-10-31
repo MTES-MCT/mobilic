@@ -1914,6 +1914,14 @@ export const CONTROLLER_ADD_CONTROL_NOTE = gql`
   }
 `;
 
+export const CONTROLLER_UPDATE_CONTROL_TIME = gql`
+  mutation controllerUpdateControlTime($controlId: Int!, $newTime: TimeStamp!) {
+    controllerUpdateControlTime(controlId: $controlId, newTime: $newTime) {
+      controlTime
+    }
+  }
+`;
+
 export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
   ${CONTROL_BULLETIN_FRAGMENT}
   ${CONTROL_DATA_FRAGMENT}

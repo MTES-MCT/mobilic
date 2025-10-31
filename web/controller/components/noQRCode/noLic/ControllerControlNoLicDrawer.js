@@ -69,7 +69,7 @@ export function ControllerControlNoLicDrawer({
         onClose={() => setDisplayTakePictures(false)}
       />
       <ControllerControlHeader
-        controlDate={controlData.creationTime}
+        controlDate={controlData.controlTime}
         onCloseDrawer={() => closeControl()}
       />
       <ControllerControlNoLic editBDC={editBDC} takePictures={takePictures} />

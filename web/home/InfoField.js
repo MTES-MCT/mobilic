@@ -58,7 +58,7 @@ export function InfoItem({
           <Grid item>
             <Button
               size="small"
-              priority={value ? "secondary" : "primary"}
+              priority={value ? "tertiary" : "primary"}
               onClick={action}
             >
               {title}
