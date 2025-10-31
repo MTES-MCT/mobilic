@@ -811,6 +811,28 @@ export const ADMIN_COMPANIES_QUERY = gql`
             }
           }
         }
+        vehicles {
+          id
+          registrationNumber
+          alias
+        }
+        employments {
+          ...FullEmploymentData
+          shouldSeeCertificateInfo
+          shouldForceNbWorkerInfo
+        }
+      }
+    }
+  }
+`;
+
+export const ADMIN_DELETED_MISSIONS_QUERY = gql`
+  ${FRAGMENT_LOCATION_FULL}
+  ${FRAGMENT_ACTIVITY}
+  query adminCompanies($id: Int!, $companyIds: [Int]) {
+    user(id: $id) {
+      adminedCompanies(companyIds: $companyIds) {
+        id
         missionsDeleted {
           edges {
             node {
@@ -861,16 +883,6 @@ export const ADMIN_COMPANIES_QUERY = gql`
               }
             }
           }
-        }
-        vehicles {
-          id
-          registrationNumber
-          alias
-        }
-        employments {
-          ...FullEmploymentData
-          shouldSeeCertificateInfo
-          shouldForceNbWorkerInfo
         }
       }
     }
