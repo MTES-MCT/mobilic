@@ -76,10 +76,9 @@ export default function ControllerUpdateTimeModal({
       const formattedError = formatApiError(err);
       alerts.error(formattedError, "", 6000);
       if (
-        err.graphQLErrors?.length ||
-        (0 > 1 &&
-          err.graphQLErrors[0].extensions?.code ===
-            CONTROL_WITH_SAME_CONTROL_TIME_ERROR_CODE)
+        (err.graphQLErrors?.length || 0) > 1 &&
+        err.graphQLErrors[0].extensions?.code ===
+          CONTROL_WITH_SAME_CONTROL_TIME_ERROR_CODE
       ) {
         setError(formattedError);
       }
