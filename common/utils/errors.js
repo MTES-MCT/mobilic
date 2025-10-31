@@ -9,6 +9,9 @@ export function isConnectionError(error) {
   );
 }
 
+export const CONTROL_WITH_SAME_CONTROL_TIME_ERROR_CODE =
+  "CONTROL_WITH_SAME_CONTROL_TIME";
+
 export function formatApiError(error, overrideFormatGraphQLError) {
   let formattedError = "Une erreur est survenue. Veuillez réessayer plus tard.";
 
@@ -223,6 +226,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
             text: "https://mobilic.beta.gouv.fr/resources/controller"
           }
         };
+      case CONTROL_WITH_SAME_CONTROL_TIME_ERROR_CODE:
+        return "Un contrôle a déjà été enregistré à la même heure.";
       default:
         return null;
     }

@@ -3,12 +3,16 @@ import Typography from "@mui/material/Typography";
 import { InfoItem } from "../../../home/InfoField";
 import { formatDateTime, formatDay } from "common/utils/time";
 import { Description } from "../../../common/typography/Description";
-import { Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 
 const controlHistoryDepth =
   process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH || 28;
 
-export function ControllerControlHistory({ controlTime, tokenInfo }) {
+export function ControllerControlHistory({
+  controlTime,
+  tokenInfo,
+  updateControlTime
+}) {
   return (
     <Stack rowGap={1}>
       <>
@@ -24,14 +28,17 @@ export function ControllerControlHistory({ controlTime, tokenInfo }) {
           au {formatDay(tokenInfo.creationTime, true)}
         </Description>
       </>
-      <InfoItem
-        name="Date et heure de contrôle"
-        value={formatDateTime(controlTime || tokenInfo.creationTime, true)}
-        uppercaseTitle={false}
-        titleProps={{
-          component: "h3"
-        }}
-      />
+      <Box maxWidth="300px">
+        <InfoItem
+          name="Date et heure de contrôle"
+          value={formatDateTime(controlTime || tokenInfo.controlTime, true)}
+          uppercaseTitle={false}
+          titleProps={{
+            component: "h3"
+          }}
+          action={updateControlTime}
+        />
+      </Box>
     </Stack>
   );
 }
