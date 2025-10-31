@@ -8,6 +8,7 @@ import TabContext from "@mui/lab/TabContext";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import WarningAmberOutlinedIcon from "@mui/icons-material/WarningOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
+import { formatDateTime } from "common/utils/time";
 import { ControllerControlNoLicHistory } from "./ControllerControlNoLicHistory";
 import { ControllerControlNoLicInformations } from "./ControllerControlNoLicInformations";
 import { useDownloadBDC } from "../../../utils/useDownloadBDC";
@@ -52,7 +53,7 @@ const getTabs = alertNumber => [
 export function ControllerControlNoLic({ editBDC, takePictures }) {
   const classes = controlTabsStyles();
 
-  const { controlId } = useControl();
+  const { controlId, controlData, setControlData } = useControl();
   const downloadBDC = useDownloadBDC(controlId);
   const { checkedAlertsNumber, isReportingInfractions } = useInfractions();
   const [displayPictures, setDisplayPictures] = React.useState(false);
@@ -131,7 +132,18 @@ export function ControllerControlNoLic({ editBDC, takePictures }) {
       </TabContext>
       {!isReportingInfractions && (
         <>
-          <BottomMenu editBDC={editBDC} downloadBDC={downloadBDC} />
+          <BottomMenu
+            editBDC={editBDC}
+            downloadBDC={downloadBDC}
+            controlId={controlId}
+            controlTime={formatDateTime(
+              controlData?.creationTime || new Date(),
+              true
+            )}
+            controlData={controlData}
+            setControlData={setControlData}
+            isNoLicContext={true}
+          />
         </>
       )}
     </>

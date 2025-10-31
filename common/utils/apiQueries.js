@@ -14,7 +14,8 @@ import {
   FULL_MISSION_FRAGMENT,
   FULL_EMPLOYMENT_FRAGMENT,
   USER_AGREEMENT,
-  NOTIFICATION_FRAGMENT
+  NOTIFICATION_FRAGMENT,
+  USER_CONTROL_SUMMARY_FRAGMENT
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
 
@@ -1806,7 +1807,6 @@ export const REGISTER_KILOMETER_AT_LOCATION = gql`
     }
   }
 `;
-
 export const MISSION_QUERY = gql`
   ${FULL_MISSION_FRAGMENT}
   query mission($id: Int!) {
@@ -1827,9 +1827,12 @@ export const OAUTH_TOKEN_QUERY = gql`
 `;
 
 export const USER_CONTROLS_QUERY = gql`
+  ${USER_CONTROL_SUMMARY_FRAGMENT}
   query userControls($userId: Int!) {
     user(id: $userId) {
-      controlsDate
+      userControls {
+        ...UserControlSummary
+      }
     }
   }
 `;
@@ -1948,6 +1951,7 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
     $observation: String
     $businessType: String
     $isDayPageFilled: Boolean
+    $deliveredByHand: Boolean
   ) {
     controllerSaveControlBulletin(
       controlId: $controlId
@@ -1975,11 +1979,27 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
       observation: $observation
       businessType: $businessType
       isDayPageFilled: $isDayPageFilled
+      deliveredByHand: $deliveredByHand
     ) {
       ...ControlData
       controlBulletin {
         ...ControlBulletin
       }
+    }
+  }
+`;
+
+export const CONTROLLER_UPDATE_DELIVERY_STATUS = gql`
+  ${CONTROL_DATA_FRAGMENT}
+  mutation controllerUpdateDeliveryStatus(
+    $controlId: Int!
+    $deliveredByHand: Boolean!
+  ) {
+    controllerUpdateDeliveryStatus(
+      controlId: $controlId
+      deliveredByHand: $deliveredByHand
+    ) {
+      ...ControlData
     }
   }
 `;
@@ -2235,7 +2255,6 @@ export const UPDATE_HIDE_EMAIL_MUTATION = gql`
     }
   }
 `;
-
 export const ADD_SCENARIO_TESTING_RESULT = gql`
   mutation addScenarioTestingResult(
     $userId: Int!
@@ -2431,6 +2450,17 @@ export const NOTIFICATIONS_QUERY = gql`
       notifications {
         ...NotificationData
       }
+    }
+  }
+`;
+export const SEND_CONTROL_BULLETIN_EMAIL_MUTATION = gql`
+  mutation SendControlBulletinEmail(
+    $controlId: String!
+    $adminEmails: [Email!]
+  ) {
+    sendControlBulletinEmail(controlId: $controlId, adminEmails: $adminEmails) {
+      success
+      nbEmailsSent
     }
   }
 `;
