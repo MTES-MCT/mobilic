@@ -729,7 +729,7 @@ const MaterialUITable = React.forwardRef(
   }
 );
 
-const _VirtualizedTable = React.forwardRef(
+const VirtualizedTableComponent = React.forwardRef(
   (
     {
       columns,
@@ -757,7 +757,9 @@ const _VirtualizedTable = React.forwardRef(
     },
     ref
   ) => {
-    let actualRef = ref || React.useRef();
+    const actualRef = React.useRef();
+    
+    let actualRefToUse = ref || actualRef;
 
     const minTableWidth = columns.reduce((acc, col) => {
       return (
@@ -767,7 +769,7 @@ const _VirtualizedTable = React.forwardRef(
     const actualHeight = Math.max(height, minHeight);
     return (
       <Table
-        ref={actualRef}
+        ref={actualRefToUse}
         autoHeight={autoHeight}
         className={`table ${classes.table}`}
         width={Math.max(width, minTableWidth)}
@@ -914,7 +916,7 @@ const VirtualizedTable = React.forwardRef(
               >
                 {({ width }) => (
                   <div ref={registerChild}>
-                    <_VirtualizedTable
+                    <VirtualizedTableComponent
                       ref={ref}
                       columns={columns}
                       entries={entries}
@@ -950,7 +952,7 @@ const VirtualizedTable = React.forwardRef(
           <AutoSizer style={{ filter: loading ? "blur(5px)" : "none" }}>
             {({ width, height }) => {
               return (
-                <_VirtualizedTable
+                <VirtualizedTableComponent
                   ref={ref}
                   columns={columns}
                   entries={entries}

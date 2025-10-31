@@ -2,7 +2,7 @@ version: 2
 jobs:
   lint:
     docker:
-      - image: cimg/node:16.20.0
+      - image: cimg/node:20.18.1
 
     steps:
       - checkout:
@@ -19,7 +19,7 @@ jobs:
 
   build:
     docker:
-      - image: cimg/node:16.20.0
+      - image: cimg/node:20.18.1
 
     steps:
       - checkout:
@@ -36,7 +36,7 @@ jobs:
 
   deploy:
     docker:
-      - image: cimg/node:16.20.0
+      - image: cimg/node:20.18.1
     steps:
       - checkout:
           method: full
