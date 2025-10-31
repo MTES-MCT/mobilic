@@ -129,6 +129,7 @@ export const ROUTES = [
     label: "Mes missions",
     accessible: ({ userInfo }) => userInfo?.hasActivatedEmail && userInfo?.id,
     component: <Navigation />,
+    menuItemFilter: () => false,
     subRoutes: [
       {
         accessible: ({ companies }) => companies?.length > 0,

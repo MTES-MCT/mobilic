@@ -216,7 +216,7 @@ export const Notifications = ({ openHistory }) => {
         id={collapseElementId}
         style={{ paddingTop: 0, paddingBottom: 0 }}
       >
-        <Stack direction="column" width="100%" maxHeight="85vh">
+        <Stack direction="column" width="100%" maxHeight="83vh">
           {notifs.length > 0 ? (
             notifs.map(notif => (
               <InnerNotification

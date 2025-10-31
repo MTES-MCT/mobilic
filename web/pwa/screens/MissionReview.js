@@ -8,10 +8,10 @@ import {
   renderMissionKpis,
   WorkTimeSummaryKpiGrid
 } from "../components/WorkTimeSummary";
-import { AccountButton } from "../components/AccountButton";
 import { prettyFormatDay } from "common/utils/time";
 import { MissionDetails } from "../components/MissionDetails";
 import { fr } from "@codegouvfr/react-dsfr";
+import { Header } from "../../common/Header";
 
 const useStyles = makeStyles(theme => ({
   overviewTimersContainer: {
@@ -41,8 +41,8 @@ export function MissionReview({
   const classes = useStyles();
   return (
     <Container style={{ flexGrow: 1 }} className="flex-column" disableGutters>
+      <Header forceMobile />
       <Box p={2} pt={2} pb={4} className={classes.overviewTimersContainer}>
-        <AccountButton pb={4} darkBackground />
         <Typography
           className={classes.overviewTimersTitle}
           align="left"

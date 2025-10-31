@@ -43,10 +43,6 @@ const dataCustody = [
     </>
   ],
   [
-    "Données relatives au temps de travail et de repos des salariés",
-    "Les données sont conservées pendant 5 ans, conformément à l’article 5 de l’arrêté du 20 juillet 1998"
-  ],
-  [
     "Données relatives à la newsletter",
     "Jusqu’à la demande de désinscription ou 2 ans à compter du dernier contact"
   ],

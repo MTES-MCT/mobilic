@@ -1155,10 +1155,10 @@ export const TERMINATE_EMPLOYMENT_MUTATION = gql`
   }
 `;
 
-export const SEND_EMPLOYMENT_INVITE_REMINDER = gql`
-  mutation sendInviteReminder($employmentId: Int!) {
+export const SEND_INVITATIONS_REMINDERS = gql`
+  mutation sendInvitationsReminders($employmentIds: [Int]!) {
     employments {
-      sendInvitationReminder(employmentId: $employmentId) {
+      sendInvitationsReminders(employmentIds: $employmentIds) {
         success
       }
     }
@@ -1907,6 +1907,14 @@ export const CONTROLLER_ADD_CONTROL_NOTE = gql`
   mutation controllerAddControlNote($controlId: Int!, $content: String!) {
     controllerAddControlNote(controlId: $controlId, content: $content) {
       note
+    }
+  }
+`;
+
+export const CONTROLLER_UPDATE_CONTROL_TIME = gql`
+  mutation controllerUpdateControlTime($controlId: Int!, $newTime: TimeStamp!) {
+    controllerUpdateControlTime(controlId: $controlId, newTime: $newTime) {
+      controlTime
     }
   }
 `;

@@ -11,10 +11,10 @@ import { parseMissionPayloadFromBackend } from "common/utils/mission";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { formatApiError } from "common/utils/errors";
 import { makeStyles } from "@mui/styles";
-import { AccountButton } from "./AccountButton";
 import { MISSION_QUERY } from "common/utils/apiQueries";
 import { parseActivityPayloadFromBackend } from "common/utils/activities";
 import { captureSentryException } from "common/utils/sentry";
+import { Header } from "../../common/Header";
 
 const useStyles = makeStyles(theme => ({
   overview: {
@@ -123,39 +123,40 @@ export default function EditPastMission({
   const actualDay =
     mission.activities.length > 0 ? mission.activities[0].startTime : day;
 
-  return [
-    <Container key={0} maxWidth={false} className={classes.overview}>
-      <AccountButton darkBackground />
-      <Typography variant="h1" align="left" className={classes.title}>
-        {mission.name
-          ? `Mission : ${mission.name}`
-          : `Mission du ${prettyFormatDay(actualDay)}`}
-      </Typography>
-      {actualDay && !!mission.name && (
-        <Typography align="left">{prettyFormatDay(actualDay)}</Typography>
-      )}
-    </Container>,
-    <MissionDetails
-      key={3}
-      mission={mission}
-      editActivityEvent={editActivityEvent}
-      editExpenditures={editExpenditures}
-      nullableEndTimeInEditActivity={false}
-      logComment={logComment}
-      cancelComment={cancelComment}
-      hideValidations={mission.activities.length === 0}
-      validateMission={async m => {
-        await validateMission(m);
-        if (parseInt(mission.id)) openHistory(mission.id);
-      }}
-      validationButtonName="Valider la mission"
-      createActivity={createActivity}
-      isMissionEnded={true}
-      editKilometerReading={registerKilometerReading}
-      editVehicle={vehicle => editVehicle({ mission, vehicle })}
-      defaultTime={day}
-      disableEmptyActivitiesPlaceHolder
-      forceDisplayEndLocation
-    />
-  ];
+  return (
+    <>
+      <Header forceMobile />
+      <Container maxWidth={false} className={classes.overview}>
+        <Typography variant="h1" align="left" className={classes.title}>
+          {mission.name
+            ? `Mission : ${mission.name}`
+            : `Mission du ${prettyFormatDay(actualDay)}`}
+        </Typography>
+        {actualDay && !!mission.name && (
+          <Typography align="left">{prettyFormatDay(actualDay)}</Typography>
+        )}
+      </Container>
+      <MissionDetails
+        mission={mission}
+        editActivityEvent={editActivityEvent}
+        editExpenditures={editExpenditures}
+        nullableEndTimeInEditActivity={false}
+        logComment={logComment}
+        cancelComment={cancelComment}
+        hideValidations={mission.activities.length === 0}
+        validateMission={async m => {
+          await validateMission(m);
+          if (parseInt(mission.id)) openHistory(mission.id);
+        }}
+        validationButtonName="Valider la mission"
+        createActivity={createActivity}
+        isMissionEnded={true}
+        editKilometerReading={registerKilometerReading}
+        editVehicle={vehicle => editVehicle({ mission, vehicle })}
+        defaultTime={day}
+        disableEmptyActivitiesPlaceHolder
+        forceDisplayEndLocation
+      />
+    </>
+  );
 }
