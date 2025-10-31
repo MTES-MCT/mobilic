@@ -52,7 +52,6 @@ import { usePageTitle } from "../../common/UsePageTitle";
 
 import { DEFAULT_MONTH_RANGE_HISTORY } from "common/utils/mission";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import { AccountButton } from "../components/AccountButton";
 import { Day } from "../components/history/Day";
 import { Mission } from "../components/history/Mission";
 import { Month } from "../components/history/Month";
@@ -65,6 +64,8 @@ import { LogHolidayButton } from "../../common/LogHolidayButton";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { fr } from "@codegouvfr/react-dsfr";
 import { getDayChip } from "../components/history/Chips";
+import { Header } from "../../common/Header";
+import { Stack } from "@mui/material";
 
 const tabs = {
   mission: {
@@ -147,11 +148,6 @@ const useStyles = makeStyles(theme => ({
   generateAccessButton: {
     margin: theme.spacing(2),
     alignSelf: "flex-start"
-  },
-  accessControlContainer: {
-    display: "flex",
-    justifyContent: "flex-start",
-    alignItems: "center"
   },
   tab: {
     textTransform: "none",
@@ -253,10 +249,6 @@ export function History({
       history.push(location.pathname, location.state);
     }
   };
-
-  const onBackButtonClick = location.state
-    ? () => history.push(location.state.previousPagePath)
-    : null;
 
   /* MANAGE FILTER PERIOD */
 
@@ -428,18 +420,30 @@ export function History({
     >
       {!isInControl && (
         <>
-          <AccountButton p={2} onBackButtonClick={onBackButtonClick} />
-          <Box className={classes.accessControlContainer}>
+          <Header forceMobile />
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            ml={2}
+          >
+            <Typography component="h1" variant="h3">
+              Historique
+            </Typography>
             <Button
               priority="secondary"
               className={cx(classes.generateAccessButton, "error")}
               onClick={() => {
                 modals.open("userReadQRCode");
               }}
+              iconPosition="right"
+              iconId="fr-icon-qr-code-fill"
+              size="sm"
             >
               Accès contrôleurs
             </Button>
-          </Box>
+          </Stack>
+
           <Grid
             container
             direction="row"
