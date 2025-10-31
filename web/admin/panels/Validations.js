@@ -46,6 +46,7 @@ import {
 } from "../store/reducers/team";
 import { usePageTitle } from "../../common/UsePageTitle";
 import { Explanation } from "../../common/typography/Explanation";
+import { useRefreshDeletedMissions } from "../hooks/useRefreshDeletedMissions";
 import { VALIDATE_MISSION_MUTATION } from "common/utils/apiQueries/missions";
 
 const VALIDATION_TABS = [
@@ -86,6 +87,8 @@ function ValidationPanel() {
   const alerts = useSnackbarAlerts();
   const location = useLocation();
   const { trackEvent } = useMatomo();
+
+  const { refresh: refreshDeletedMissions } = useRefreshDeletedMissions();
 
   const [tab, setTab] = React.useState(0);
   const [tableEntries, setTableEntries] = React.useState([]);
@@ -287,6 +290,12 @@ function ValidationPanel() {
       payload: { teams: newTeams, users: usersToSelect }
     });
   };
+
+  React.useEffect(() => {
+    if (tab === 3) {
+      refreshDeletedMissions();
+    }
+  }, [tab]);
 
   React.useEffect(() => {
     switch (tab) {

@@ -145,17 +145,6 @@ export function updateCompanyDetailsReducer(
       }))
     )
   );
-  const deletedMissions = flatMap(
-    companiesPayload.map(c =>
-      c.missionsDeleted.edges.map(m => ({
-        ...m.node,
-        companyId: c.id,
-        isDeleted: true
-      }))
-    )
-  );
-
-  const missions = deletedMissions.concat(regularMissions);
 
   return {
     ...stateWithWorkDays,
@@ -189,7 +178,7 @@ export function updateCompanyDetailsReducer(
           )
       )
     ),
-    missions,
+    missions: regularMissions,
     activitiesFilters: {
       ...state.activitiesFilters,
       teams: usersAndTeamsFilters.activitiesFilters.teams,
