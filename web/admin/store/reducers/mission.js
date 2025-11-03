@@ -21,7 +21,7 @@ export function putAsideOriginalMissionsReducer(state, { missionId }) {
         {
           id: mission.id,
           activities: [...mission.activities],
-          expenditures: [...mission.expenditures] || []
+          expenditures: [...(mission.expenditures ?? [])]
         }
       ]
     });
@@ -37,7 +37,7 @@ export function revertMissionToOriginalValuesReducer(state, { missionId }) {
       entity: "missions",
       update: {
         activities: [...originalMission.activities],
-        expenditures: [...originalMission.expenditures] || []
+        expenditures: [...(originalMission.expenditures ?? [])]
       }
     });
   }
