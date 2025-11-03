@@ -37,14 +37,9 @@ export default function UserControlsList({ userId, onControlClick }) {
 
   if (userControls.length === 0) {
     return (
-      <Card sx={{ m: 2 }}>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Mes contrôles
-          </Typography>
-          <Typography color="textSecondary">Aucun contrôle trouvé.</Typography>
-        </CardContent>
-      </Card>
+      <Box sx={{ p: 2, textAlign: "center" }}>
+        <Typography color="textSecondary">Aucun contrôle trouvé.</Typography>
+      </Box>
     );
   }
 
