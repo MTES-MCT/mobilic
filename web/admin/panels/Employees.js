@@ -226,7 +226,7 @@ export function Employees({ company, containerRef }) {
         employmentIds[0],
         6000
       );
-    } catch (err) {
+    } catch {
       alerts.error("Une erreur est survenue", {}, 6000);
     }
   }
@@ -389,9 +389,8 @@ export function Employees({ company, containerRef }) {
       name: "active",
       format: active => (
         <Typography
-          className={`bold ${
-            active ? classes.successText : classes.terminatedEmployment
-          }`}
+          className={`bold ${active ? classes.successText : classes.terminatedEmployment
+            }`}
         >
           {active ? "Actif" : "Terminé"}
         </Typography>
@@ -639,38 +638,38 @@ export function Employees({ company, containerRef }) {
     const conditionalX = moreThanOne ? "x" : "";
     nbTeamsOnlyAdmin > 0
       ? modals.open("confirmation", {
-          textButtons: true,
-          title: modalTitle,
-          content: (
-            <Box>
-              <Typography>
-                Ce gestionnaire est le seul gestionnaire rattaché au
-                {conditionalX} groupe{conditionalS} suivant{conditionalS}:{" "}
-                <span className="bold">
-                  {teamsWhereUserIsOnlyAdmin.join(", ")}.
-                </span>
-              </Typography>
-              <Typography>
-                Si vous{" "}
-                {terminateEmployment
-                  ? "mettez fin à son rattachement"
-                  : "lui retirez ses droits de gestion"}
-                , il n'y aura plus de gestionnaire pour ce{conditionalS} groupe
-                {conditionalS}.
-              </Typography>
-              <Typography>
-                Êtes-vous certain(e) de vouloir{" "}
-                {terminateEmployment
-                  ? "mettre fin à son rattachement"
-                  : "lui retirer ses droits de gestion"}
-                ?
-              </Typography>
-            </Box>
-          ),
-          handleConfirm: async () => {
-            await action();
-          }
-        })
+        textButtons: true,
+        title: modalTitle,
+        content: (
+          <Box>
+            <Typography>
+              Ce gestionnaire est le seul gestionnaire rattaché au
+              {conditionalX} groupe{conditionalS} suivant{conditionalS}:{" "}
+              <span className="bold">
+                {teamsWhereUserIsOnlyAdmin.join(", ")}.
+              </span>
+            </Typography>
+            <Typography>
+              Si vous{" "}
+              {terminateEmployment
+                ? "mettez fin à son rattachement"
+                : "lui retirez ses droits de gestion"}
+              , il n'y aura plus de gestionnaire pour ce{conditionalS} groupe
+              {conditionalS}.
+            </Typography>
+            <Typography>
+              Êtes-vous certain(e) de vouloir{" "}
+              {terminateEmployment
+                ? "mettre fin à son rattachement"
+                : "lui retirer ses droits de gestion"}
+              ?
+            </Typography>
+          </Box>
+        ),
+        handleConfirm: async () => {
+          await action();
+        }
+      })
       : action();
   };
 

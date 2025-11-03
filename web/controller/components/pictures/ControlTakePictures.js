@@ -89,7 +89,7 @@ export function ControlTakePictures({ onClose }) {
         mediaStream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: { exact: "environment" }, aspectRatio: 1 }
         });
-      } catch (error) {
+      } catch {
         console.warn("Back camera not available, trying default camera...");
         // Try default camera as a fallback
         mediaStream = await navigator.mediaDevices.getUserMedia({
