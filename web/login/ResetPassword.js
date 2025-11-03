@@ -73,7 +73,7 @@ export function ResetPassword() {
         if (!decodedToken.user_id || !decodedToken.hasOwnProperty("hash")) {
           throw Error;
         }
-      } catch (err) {
+      } catch {
         setTokenError(
           "Le lien de réinitialisation du mot de passe est invalide."
         );

@@ -104,8 +104,8 @@ export function ControllerScanQRCode() {
   const onScanQRCode = async scannedResult => {
     withLoadingScreen(async () => {
       try {
-        const scannedCode = Array.isArray(scannedResult) 
-          ? scannedResult[0]?.rawValue 
+        const scannedCode = Array.isArray(scannedResult)
+          ? scannedResult[0]?.rawValue
           : scannedResult;
         const tokenToSend = getNewTokenFromOldQRCode(scannedCode);
         const apiResponse = await api.graphQlMutate(
@@ -127,7 +127,7 @@ export function ControllerScanQRCode() {
             type: CONTROL_TYPES.MOBILIC.label
           }
         });
-      } catch (_) {
+      } catch {
         history.push(CONTROLLER_ROUTE_PREFIX + "/scan_error");
       }
     });

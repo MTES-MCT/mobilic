@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 import { makeStyles } from "@mui/styles";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { useModals } from "common/utils/modals";
-import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
+import { addDaysToDate } from "common/utils/time";
 import React from "react";
 import { PeriodToggle } from "../../../admin/components/PeriodToggle";
 import { ControlTypeFilters } from "../filters/ControlTypeFilter";
@@ -64,10 +64,10 @@ export function ControllerHistoryFilters({
             setControlFilters(prevFilters => {
               return {
                 ...prevFilters,
-                fromDate: isoFormatLocalDate(newFromDate),
+                fromDate: newFromDate,
                 toDate:
-                  newFromDate > new Date(prevFilters.toDate)
-                    ? isoFormatLocalDate(newFromDate)
+                  newFromDate > prevFilters.toDate
+                    ? newFromDate
                     : prevFilters.toDate
               };
             });
@@ -91,10 +91,10 @@ export function ControllerHistoryFilters({
             setControlFilters(prevFilters => {
               return {
                 ...prevFilters,
-                toDate: isoFormatLocalDate(newToDate),
+                toDate: newToDate,
                 fromDate:
-                  newToDate < new Date(prevFilters.fromDate)
-                    ? isoFormatLocalDate(newToDate)
+                  newToDate < prevFilters.fromDate
+                    ? newToDate
                     : prevFilters.fromDate
               };
             });

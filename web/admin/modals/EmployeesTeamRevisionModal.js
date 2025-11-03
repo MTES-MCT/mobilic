@@ -48,12 +48,14 @@ export default function EmployeesTeamRevisionModal({
       const {
         teams,
         employments
-      } = apiResponse?.data?.employments?.changeEmployeeTeam;
-      adminStore.dispatch({
-        type: ADMIN_ACTIONS.updateTeams,
-        payload: { teams, employments }
-      });
-      alerts.success(`L'affectation a bien été mise à jour.`, "", 6000);
+      } = apiResponse?.data?.employments?.changeEmployeeTeam ?? {};
+      if (teams && employments) {
+        adminStore.dispatch({
+          type: ADMIN_ACTIONS.updateTeams,
+          payload: { teams, employments }
+        });
+        alerts.success(`L'affectation a bien été mise à jour.`, "", 6000);
+      }
       handleClose();
     }, "update-team");
     setSubmitting(false);
@@ -63,15 +65,13 @@ export default function EmployeesTeamRevisionModal({
     <Modal
       open={open}
       handleClose={handleClose}
-      title={`Modifier l'affectation de groupe du salarié${
-        employment.name ? " " + employment.name : ""
-      }`}
+      title={`Modifier l'affectation de groupe du salarié${employment.name ? " " + employment.name : ""
+        }`}
       content={
         <Grid container spacing={4}>
           <Grid item xs={12}>
-            <InputLabel id="select-team-label">{`Veuillez sélectionner un nouveau groupe pour le salarié${
-              employment.name ? " " + employment.name : ""
-            }`}</InputLabel>
+            <InputLabel id="select-team-label">{`Veuillez sélectionner un nouveau groupe pour le salarié${employment.name ? " " + employment.name : ""
+              }`}</InputLabel>
             <Select
               labelId="select-team-label"
               id="select-team"
