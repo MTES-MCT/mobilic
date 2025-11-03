@@ -261,7 +261,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
 export const ADMIN_DELETED_MISSIONS_QUERY = gql`
   ${FRAGMENT_LOCATION_FULL}
   ${FRAGMENT_ACTIVITY}
-  query adminCompanies($id: Int!, $companyIds: [Int]) {
+  query refreshDeletedMissions($id: Int!, $companyIds: [Int]) {
     user(id: $id) {
       adminedCompanies(companyIds: $companyIds) {
         id
