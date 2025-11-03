@@ -40,7 +40,7 @@ export default function ControllerUpdateTimeModal({
   React.useEffect(() => {
     setError("");
     if (newTime && newTime > now()) {
-      setError("L'heure ne peut pas être dans le futur.");
+      setError("Le contrôle ne peut pas être enregistré dans le futur.");
     }
     if (newTime && minDateTime && newTime < minDateTime) {
       setError(
