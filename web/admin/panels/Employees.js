@@ -159,23 +159,27 @@ export function Employees({ company, containerRef }) {
       const {
         teams,
         employments
-      } = apiResponse?.data?.employments?.changeEmployeeRole;
-      await adminStore.dispatch({
-        type: ADMIN_ACTIONS.update,
-        payload: {
-          id: employmentId,
-          entity: "employments",
-          update: {
-            ...employments.find(employment => employment.id === employmentId),
-            companyId,
-            adminStore
+      } = apiResponse?.data?.employments?.changeEmployeeRole ?? {};
+      if (employments) {
+        await adminStore.dispatch({
+          type: ADMIN_ACTIONS.update,
+          payload: {
+            id: employmentId,
+            entity: "employments",
+            update: {
+              ...employments.find(employment => employment.id === employmentId),
+              companyId,
+              adminStore
+            }
           }
-        }
-      });
-      await adminStore.dispatch({
-        type: ADMIN_ACTIONS.updateTeams,
-        payload: { teams, employments }
-      });
+        });
+      }
+      if (teams && employments) {
+        await adminStore.dispatch({
+          type: ADMIN_ACTIONS.updateTeams,
+          payload: { teams, employments }
+        });
+      }
     } catch (err) {
       alerts.error(formatApiError(err), employmentId, 6000);
     }
