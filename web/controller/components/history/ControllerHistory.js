@@ -4,7 +4,6 @@ import { makeStyles } from "@mui/styles";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import {
   addDaysToDate,
-  isoFormatLocalDate,
   startOfMonthAsDate
 } from "common/utils/time";
 import React from "react";
@@ -39,10 +38,9 @@ export function ControllerHistory() {
   const [controlOnFocus, setControlOnFocus] = React.useState(null);
 
   const [controlFilters, setControlFilters] = React.useState({
-    fromDate: isoFormatLocalDate(
-      startOfMonthAsDate(addDaysToDate(new Date(), -91))
+    fromDate: startOfMonthAsDate(addDaysToDate(new Date(), -91)
     ),
-    toDate: isoFormatLocalDate(new Date()),
+    toDate: new Date(),
     controlsType: ""
   });
   const [period, setPeriod] = React.useState("day");
