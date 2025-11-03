@@ -2,6 +2,7 @@ import React from "react";
 import { LoadingButton } from "common/components/LoadingButton";
 
 import {
+  DAY,
   getStartOfDay,
   now,
   sameMinute,
@@ -33,7 +34,7 @@ export default function ControllerUpdateTimeModal({
   );
 
   const minDateTime = React.useMemo(
-    () => getStartOfDay(controlData.qrCodeGenerationTime),
+    () => controlData.qrCodeGenerationTime ? getStartOfDay(controlData.qrCodeGenerationTime) : getStartOfDay(now() - 30 * DAY),
     [controlData.qrCodeGenerationTime]
   );
 
