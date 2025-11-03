@@ -34,8 +34,8 @@ export default function ControllerUpdateTimeModal({
   );
 
   const minDateTime = React.useMemo(
-    () => controlData.qrCodeGenerationTime ? getStartOfDay(controlData.qrCodeGenerationTime) : getStartOfDay(now() - 30 * DAY),
-    [controlData.qrCodeGenerationTime]
+    () => controlData.qrCodeGenerationTime ? getStartOfDay(controlData.qrCodeGenerationTime) : getStartOfDay(controlData.creationTime - 30 * DAY),
+    [controlData.qrCodeGenerationTime, controlData.creationTime]
   );
 
   React.useEffect(() => {
