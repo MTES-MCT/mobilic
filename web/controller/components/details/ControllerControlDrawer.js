@@ -5,9 +5,27 @@ import { ControllerControlNoLicDrawer } from "../noQRCode/noLic/ControllerContro
 import { ControlDrawer } from "../../utils/ControlDrawer";
 import { InfractionsProvider } from "../../utils/contextInfractions";
 import { ControlProvider, useControl } from "../../utils/contextControl";
+import { useControlBulletinActions } from "../../hooks/useControlBulletinActions";
+import ControlHandDeliveryModal from "../modals/ControlHandDeliveryModal";
 
 const InnerControllerControlDrawer = ({ onClose }) => {
   const { controlData, setControlData, controlId, controlType } = useControl();
+  const actions = useControlBulletinActions({
+    controlId,
+    controlData,
+    onControlDataUpdate: setControlData
+  });
+
+  const handleClose = React.useCallback(() => {
+    const bulletinExists = !!controlData?.controlBulletinCreationTime;
+    const deliveryNotSet = controlData?.deliveredByHand === null;
+
+    if (bulletinExists && deliveryNotSet) {
+      actions.openHandDeliveryModal();
+    } else {
+      onClose();
+    }
+  }, [controlData, onClose, actions]);
 
   if (!controlData) {
     return null;
@@ -18,13 +36,13 @@ const InnerControllerControlDrawer = ({ onClose }) => {
       {controlType === CONTROL_TYPES.MOBILIC.label ? (
         <ControlDrawer
           isOpen={!!controlId}
-          onClose={onClose}
+          onClose={handleClose}
           controlId={controlId}
         >
           <ControllerControlDetails
             controlData={controlData}
             setControlData={setControlData}
-            onClose={onClose}
+            onClose={handleClose}
           />
         </ControlDrawer>
       ) : (
@@ -35,6 +53,20 @@ const InnerControllerControlDrawer = ({ onClose }) => {
           onClose={onClose}
         />
       )}
+
+      <ControlHandDeliveryModal
+        open={actions.isHandDeliveryModalOpen}
+        handleConfirm={async () => {
+          await actions.handleHandDeliveryConfirmWithoutClose(true);
+          actions.setIsHandDeliveryModalOpen(false);
+          onClose();
+        }}
+        handleCancel={async () => {
+          await actions.handleHandDeliveryConfirmWithoutClose(false);
+          actions.setIsHandDeliveryModalOpen(false);
+          onClose();
+        }}
+      />
     </InfractionsProvider>
   );
 };

@@ -46,7 +46,7 @@ export default function CertificateBadgeEmbedModal({
       await navigator.clipboard.writeText(code);
       setCopiedCode(code);
       setTimeout(() => setCopiedCode(""), 2000);
-    } catch (err) {
+    } catch {
       alerts.error("Erreur lors de la copie", null, 2000);
     }
   };

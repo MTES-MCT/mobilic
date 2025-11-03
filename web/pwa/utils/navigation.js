@@ -5,7 +5,7 @@ import { MissionReview } from "../screens/MissionReview";
 import App from "common/components/App";
 import { useStoreMissions } from "../../common/hooks/useStoreMissions";
 
-function _InnerAppScreen(props) {
+function InnerAppScreen(props) {
   const { displayCurrentMission } = useStoreMissions();
 
   if (!displayCurrentMission) {
@@ -17,5 +17,5 @@ function _InnerAppScreen(props) {
 }
 
 export default function ActualApp() {
-  return <App ScreenComponent={_InnerAppScreen} />;
+  return <App ScreenComponent={InnerAppScreen} />;
 }
