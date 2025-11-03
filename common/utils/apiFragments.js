@@ -279,10 +279,13 @@ export const CONTROL_DATA_FRAGMENT = gql`
     userFirstName
     userLastName
     controlBulletinCreationTime
+    controlBulletinUpdateTime
     vehicleRegistrationNumber
     isDayPageFilled
     note
     nbReportedInfractions
+    deliveredByHand
+    sentToAdmin
     controlBulletin {
       locationLieu
     }
@@ -296,6 +299,25 @@ export const CONTROLLER_USER_FRAGMENT = gql`
     lastName
     email
     grecoId
+  }
+`;
+
+export const USER_CONTROL_SUMMARY_FRAGMENT = gql`
+  fragment UserControlSummary on ControllerControl {
+    id
+    creationTime
+    nbReportedInfractions
+    controlBulletinCreationTime
+    controlBulletinUpdateTime
+    controlBulletin {
+      locationLieu
+    }
+    controllerUser {
+      id
+      grecoId
+      firstName
+      lastName
+    }
   }
 `;
 

@@ -46,6 +46,10 @@ function formatAlertPeriod(alert, type) {
 }
 
 export function formatAlertText(alert, type) {
+  if (!alert || !alert.extra) {
+    return <span>Données d'alerte indisponibles</span>;
+  }
+
   switch (type) {
     case ALERT_TYPES.minimumDailyRest: {
       const maxBreakLengthInSeconds =
