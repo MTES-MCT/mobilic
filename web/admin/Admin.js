@@ -38,6 +38,7 @@ import { Main } from "../common/semantics/Main";
 
 import { SideMenu } from "./components/SideMenu/SideMenu";
 import { ExportsBanner } from "./components/ExportsBanner";
+import { useExportsContext } from "./utils/contextExports";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -66,6 +67,7 @@ function InternalAdmin() {
   const withLoadingScreen = useLoadingScreen();
   const { path } = useRouteMatch();
   const alerts = useSnackbarAlerts();
+  const { updateExports } = useExportsContext()
 
   const classes = useStyles();
   const [shouldRefreshData, setShouldRefreshData] = React.useState({
@@ -151,6 +153,7 @@ function InternalAdmin() {
 
   React.useEffect(() => {
     if (shouldRefreshData.value) loadDataCompaniesList();
+    updateExports()
   }, [adminStore.userId]);
 
   React.useEffect(() => {

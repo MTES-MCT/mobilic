@@ -44,10 +44,6 @@ export function useExports() {
     }
   }, [nbExports]);
 
-  useEffect(() => {
-    updateExports();
-  }, []);
-
   const cancelExports = async () => {
     const res = await api.jsonHttpQuery(HTTP_QUERIES.cancelExports);
     if (res?.result === "ok") {
