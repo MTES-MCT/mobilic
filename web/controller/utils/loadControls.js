@@ -3,6 +3,7 @@ import { useApi } from "common/utils/api";
 
 import { CONTROLLER_USER_CONTROLS_QUERY } from "common/utils/apiQueries";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import { isoFormatLocalDate } from "common/utils/time";
 
 export const useLoadControls = () => {
   const api = useApi();
@@ -23,8 +24,8 @@ export const useLoadControls = () => {
         CONTROLLER_USER_CONTROLS_QUERY,
         {
           id: controllerId,
-          fromDate,
-          toDate,
+          fromDate: fromDate ? isoFormatLocalDate(fromDate) : null,
+          toDate: toDate ? isoFormatLocalDate(toDate) : null,
           limit,
           ...(controlsType && { controlsType })
         },

@@ -7,8 +7,6 @@ import {
   TableRow,
   Typography,
   Box,
-  Card,
-  CardContent,
   CircularProgress,
   Alert
 } from "@mui/material";

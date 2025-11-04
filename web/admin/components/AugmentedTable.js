@@ -207,10 +207,10 @@ export const AugmentedTable = React.forwardRef(
     const isCurrentlyEditingRow = !!editedRowId;
     const shouldDisplayEditActionsColumn = Boolean(
       !!onRowEdit ||
-        isCurrentlyAddingRow ||
-        !!onRowDelete ||
-        isCurrentlyEditingRow ||
-        customRowActions
+      isCurrentlyAddingRow ||
+      !!onRowDelete ||
+      isCurrentlyEditingRow ||
+      customRowActions
     );
 
     const editActionsColumn = {
@@ -243,7 +243,7 @@ export const AugmentedTable = React.forwardRef(
         (groupByColumn &&
           params[groupByColumn.name] !== editedValues[groupByColumn.name])
       ) {
-        setEditedValues({ ...params, __adding: true } || { __adding: true });
+        setEditedValues({ ...(params ?? {}), __adding: true });
         setEditedRowId(0);
       }
     }
@@ -414,11 +414,9 @@ export const AugmentedTable = React.forwardRef(
           baseClassName = rowClassName;
         } else baseClassName = rowClassName(entry);
       }
-      return `${baseClassName} ${
-        entry.__endOfGroup ? classes.interGroupRow : ""
-      } ${entry.__groupKey ? `${classes.groupRow}` : ""} ${
-        isRowCollapsed(entry) ? classes.collapsed : ""
-      } ${entry.__collapsedGroup ? "__a__" : ""}`;
+      return `${baseClassName} ${entry.__endOfGroup ? classes.interGroupRow : ""
+        } ${entry.__groupKey ? `${classes.groupRow}` : ""} ${isRowCollapsed(entry) ? classes.collapsed : ""
+        } ${entry.__collapsedGroup ? "__a__" : ""}`;
     }
 
     function rowId(entry) {
@@ -427,8 +425,8 @@ export const AugmentedTable = React.forwardRef(
         (entry.__groupKey
           ? `group_${entry.__groupKey}`
           : entry.__endOfGroup
-          ? `end_${entry.__endOfGroup}`
-          : 0)
+            ? `end_${entry.__endOfGroup}`
+            : 0)
       );
     }
 
@@ -513,12 +511,12 @@ export const AugmentedTable = React.forwardRef(
     const virtualizedRowHeightFunc = entry =>
       entry.__endOfGroup
         ? (groupByColumn && groupByColumn.interGroupHeight) ||
-          DEFAULT_INTER_GROUP_ROW_HEIGHT
+        DEFAULT_INTER_GROUP_ROW_HEIGHT
         : isRowCollapsed(entry)
-        ? 0
-        : typeof virtualizedRowHeight === "number"
-        ? virtualizedRowHeight
-        : virtualizedRowHeight(entry);
+          ? 0
+          : typeof virtualizedRowHeight === "number"
+            ? virtualizedRowHeight
+            : virtualizedRowHeight(entry);
 
     const onRowClickFunc = entry => {
       if (entry.__groupKey) {
@@ -655,9 +653,8 @@ const MaterialUITable = React.forwardRef(
       >
         <TableHead>
           <TableRow
-            className={`${classes.header} ${
-              headerClassName ? headerClassName : ""
-            }`}
+            className={`${classes.header} ${headerClassName ? headerClassName : ""
+              }`}
           >
             {columns.map(column => (
               <TableCell
@@ -691,11 +688,10 @@ const MaterialUITable = React.forwardRef(
                 }
                 isAddingRow={isRowBeingAdded}
                 isEditingRow={isRowUnderEdit}
-                rowClassName={`${classes.row} ${
-                  onRowClickFunc && !entry.__groupKey && !entry.__endOfGroup
+                rowClassName={`${classes.row} ${onRowClickFunc && !entry.__groupKey && !entry.__endOfGroup
                     ? classes.clickableRow
                     : ""
-                } ${rowClassName(entry)}`}
+                  } ${rowClassName(entry)}`}
                 renderCell={renderCell}
                 renderRow={renderRow}
                 renderRowContainer={props => <TableRow hover {...props} />}
@@ -749,8 +745,8 @@ const VirtualizedTableComponent = React.forwardRef(
       minHeight,
       headerHeight,
       rowHeightFunc,
-      onScroll = () => {},
-      onScrollAction = () => {},
+      onScroll = () => { },
+      onScrollAction = () => { },
       scrollTop = null,
       autoHeight = false,
       rowId
@@ -758,7 +754,7 @@ const VirtualizedTableComponent = React.forwardRef(
     ref
   ) => {
     const actualRef = React.useRef();
-    
+
     let actualRefToUse = ref || actualRef;
 
     const minTableWidth = columns.reduce((acc, col) => {
@@ -812,13 +808,12 @@ const VirtualizedTableComponent = React.forwardRef(
         rowHeight={({ index }) => rowHeightFunc(entries[index])}
         rowClassName={({ index }) =>
           index >= 0
-            ? `${classes.row} ${
-                onRowClick(entries[index]) &&
-                !entries[index].__groupKey &&
-                !entries[index].__endOfGroup
-                  ? classes.clickableRow
-                  : ""
-              } ${rowClassName && rowClassName(entries[index])}`
+            ? `${classes.row} ${onRowClick(entries[index]) &&
+              !entries[index].__groupKey &&
+              !entries[index].__endOfGroup
+              ? classes.clickableRow
+              : ""
+            } ${rowClassName && rowClassName(entries[index])}`
             : `${classes.header} ${headerClassName ? headerClassName : ""}`
         }
         onScroll={args => {
@@ -889,7 +884,7 @@ const VirtualizedTable = React.forwardRef(
       headerClassName,
       loading,
       classes,
-      onScroll = () => {},
+      onScroll = () => { },
       rowId
     },
     ref

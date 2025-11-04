@@ -2,6 +2,7 @@ import React from "react";
 import { LoadingButton } from "common/components/LoadingButton";
 
 import {
+  DAY,
   getStartOfDay,
   now,
   sameMinute,
@@ -33,14 +34,14 @@ export default function ControllerUpdateTimeModal({
   );
 
   const minDateTime = React.useMemo(
-    () => getStartOfDay(controlData.qrCodeGenerationTime),
-    [controlData.qrCodeGenerationTime]
+    () => controlData.qrCodeGenerationTime ? getStartOfDay(controlData.qrCodeGenerationTime) : getStartOfDay(controlData.creationTime - 30 * DAY),
+    [controlData.qrCodeGenerationTime, controlData.creationTime]
   );
 
   React.useEffect(() => {
     setError("");
     if (newTime && newTime > now()) {
-      setError("L'heure ne peut pas être dans le futur.");
+      setError("Le contrôle ne peut pas être enregistré dans le futur.");
     }
     if (newTime && minDateTime && newTime < minDateTime) {
       setError(

@@ -58,13 +58,11 @@ export function Day({
   const missionsDeletedWarning = React.useMemo(() => {
     if (missionsDeleted.length === 1) {
       const missionDeleted = missionsDeleted[0];
-      return `La journée comporte une ${
-        missionDeleted.isHoliday
-          ? "absence de type " + missionDeleted.name.toLowerCase()
-          : "mission"
-      } supprimée le ${prettyFormatDay(missionDeleted.deletedAt, true)} par ${
-        missionDeleted.deletedBy
-      }.`;
+      return `La journée comporte une ${missionDeleted.isHoliday
+        ? "absence de type " + missionDeleted.name.toLowerCase()
+        : "mission"
+        } supprimée le ${prettyFormatDay(missionDeleted.deletedAt, true)} par ${missionDeleted.deletedBy
+        }.`;
     } else {
       return `La journée comporte plusieurs missions et/ou absences supprimées.`;
     }
@@ -90,15 +88,15 @@ export function Day({
     () =>
       employeeVersion?.activities
         ? [
-            ...employeeVersion?.activities?.filter(
-              a => a.userId === userId && !a.isMissionDeleted
-            ),
-            ...activitiesWithNextAndPreviousDay.filter(
-              a =>
-                !missionsInPeriod.map(m => m.id).includes(a.missionId) &&
-                !a.isMissionDeleted
-            )
-          ]
+          ...employeeVersion?.activities?.filter(
+            a => a.userId === userId && !a.isMissionDeleted
+          ) ?? [],
+          ...activitiesWithNextAndPreviousDay.filter(
+            a =>
+              !missionsInPeriod.map(m => m.id).includes(a.missionId) &&
+              !a.isMissionDeleted
+          )
+        ]
         : undefined,
     [employeeVersion]
   );
@@ -107,7 +105,7 @@ export function Day({
     () => [
       ...adminVersion?.activities?.filter(
         a => a.userId === userId && !a.isMissionDeleted
-      ),
+      ) ?? [],
       ...activitiesWithNextAndPreviousDay.filter(
         a =>
           !missionsInPeriod.map(m => m.id).includes(a.missionId) &&

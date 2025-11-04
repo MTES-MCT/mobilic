@@ -57,7 +57,7 @@ export function useControlBulletinActions({
           "",
           3000
         );
-      } catch (error) {
+      } catch {
         alerts.error("Erreur lors de la sauvegarde", "", 3000);
         setHandDelivered(!delivered);
       }
