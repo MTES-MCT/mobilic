@@ -21,7 +21,12 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
   const [isEnabledDownload, setIsEnabledDownload] = React.useState(true);
   const { updateExports, nbExports } = useExportsContext()
 
-  useEffect(() => updateExports(), [userId])
+  useEffect(() => {
+    const run = async () => {
+      await updateExports()
+    }
+    run()
+  }, [userId])
 
   const downloadUserData = async () => {
     setIsEnabledDownload(false);
