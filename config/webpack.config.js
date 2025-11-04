@@ -6,6 +6,7 @@ const PnpWebpackPlugin = require("pnp-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CaseSensitivePathsPlugin = require("case-sensitive-paths-webpack-plugin");
 const InlineChunkHtmlPlugin = require("react-dev-utils/InlineChunkHtmlPlugin");
+const InterpolateHtmlPlugin = require("react-dev-utils/InterpolateHtmlPlugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
@@ -84,7 +85,17 @@ module.exports = function(webpackEnv) {
       },
       {
         loader: require.resolve("css-loader"),
-        options: cssOptions
+        options: {
+          ...cssOptions,
+          url: {
+            filter: (url) => {
+              if (url.startsWith('data:')) {
+                return false;
+              }
+              return true;
+            }
+          }
+        }
       },
       {
         loader: require.resolve("postcss-loader"),
@@ -306,6 +317,8 @@ module.exports = function(webpackEnv) {
           oneOf: [
             {
               test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+              // Exclude images using inline url-loader 
+              exclude: /partner-logos|sponsor-logos|interfaced-logos/,
               type: "asset",
               parser: {
                 dataUrlCondition: {
@@ -314,6 +327,31 @@ module.exports = function(webpackEnv) {
               },
               generator: {
                 filename: "static/media/[name].[contenthash:8][ext]"
+              }
+            },
+            {
+              test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
+              include: /(partner-logos|sponsor-logos|interfaced-logos)/,
+              type: "asset",
+              parser: {
+                dataUrlCondition: {
+                  maxSize: imageInlineSizeLimit
+                }
+              },
+              generator: {
+                filename: (pathData) => {
+                  const filePath = pathData.filename;
+                  if (filePath.includes('partner-logos')) {
+                    return 'static/partner-logos/[name].[contenthash:8][ext]';
+                  }
+                  if (filePath.includes('sponsor-logos')) {
+                    return 'static/sponsor-logos/[name].[contenthash:8][ext]';
+                  }
+                  if (filePath.includes('interfaced-logos')) {
+                    return 'static/interfaced-logos/[name].[contenthash:8][ext]';
+                  }
+                  return 'static/media/[name].[contenthash:8][ext]';
+                }
               }
             },
             {
@@ -423,64 +461,66 @@ module.exports = function(webpackEnv) {
     },
     plugins: [
       // Seulement générer playground.html si demandé
-      ...(process.env.REACT_APP_BUILD_TARGET === 'playground' ? [
-        new HtmlWebpackPlugin({
-          inject: "body",
-          filename: "api-playground.html",
-          chunks: ["playground"].filter(Boolean),
-          templateContent: `<!DOCTYPE html>
-<html lang="fr">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="${publicPath}favicon.svg" />
-    <title>API Playground - Mobilic</title>
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
-</html>`,
-          scriptLoading: "blocking"
-        })
+      ...(process.env.REACT_APP_BUILD_TARGET === 'playground' && isEnvProduction ? [
+        new HtmlWebpackPlugin(
+          Object.assign(
+            {},
+            {
+              inject: true,
+              filename: "api-playground.html",
+              chunks: ["playground"].filter(Boolean),
+              template: paths.playgroundHtml
+            },
+            isEnvProduction
+              ? {
+                  minify: {
+                    removeComments: true,
+                    collapseWhitespace: true,
+                    removeRedundantAttributes: true,
+                    useShortDoctype: true,
+                    removeEmptyAttributes: true,
+                    removeStyleLinkTypeAttributes: true,
+                    keepClosingSlash: true,
+                    minifyJS: true,
+                    minifyCSS: true,
+                    minifyURLs: true
+                  }
+                }
+              : undefined
+          )
+        )
       ] : []),
       
-      new HtmlWebpackPlugin({
-        inject: "body",
-        filename: "index.html",
-        chunks: ["main"].filter(Boolean),
-        templateContent: `<!DOCTYPE html>
-<html lang="fr">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="${publicPath}favicon.svg" />
-    <link rel="mask-icon" href="${publicPath}safari-mask-icon.svg" color="#3184FF" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=10.0, height=device-height, target-densitydpi=device-dpi" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="theme-color" content="#3184FF" />
-    <meta name="description" content="Suivre son temps de travail sur la route et en-dehors" />
-    <link rel="apple-touch-icon" href="${publicPath}logos/logo180.png" />
-    <link rel="manifest" href="${publicPath}manifest.json" />
-    <link rel="stylesheet" href="${publicPath}dsfr/utility/icons/icons.min.css?hash=7c2c662a" />
-    <link rel="stylesheet" href="${publicPath}dsfr/dsfr.min.css?v=1.13.2" />
-    <title>Mobilic</title>
-    <script>
-      if (typeof global === 'undefined') {
-        var global = globalThis;
-      }
-      if (typeof process === 'undefined') {
-        var process = { env: {}, browser: true };
-      }
-    </script>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-  </body>
-</html>`,
-        scriptLoading: "blocking"
-      }),
+      new HtmlWebpackPlugin(
+        Object.assign(
+          {},
+          {
+            inject: true,
+            chunks: ["main"].filter(Boolean),
+            template: paths.appHtml
+          },
+          isEnvProduction
+            ? {
+                minify: {
+                  removeComments: true,
+                  collapseWhitespace: true,
+                  removeRedundantAttributes: true,
+                  useShortDoctype: true,
+                  removeEmptyAttributes: true,
+                  removeStyleLinkTypeAttributes: true,
+                  keepClosingSlash: true,
+                  minifyJS: true,
+                  minifyCSS: true,
+                  minifyURLs: true
+                }
+              }
+            : undefined
+        )
+      ),
       isEnvProduction &&
         shouldInlineRuntimeChunk &&
         new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/runtime-.+[.]js/]),
+      new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
       new ModuleNotFoundPlugin(paths.appPath),
       new webpack.DefinePlugin({
         ...env.stringified,
