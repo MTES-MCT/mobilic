@@ -47,7 +47,14 @@ export function useControlBulletinActions({
           response?.data?.controllerUpdateDeliveryStatus &&
           onControlDataUpdate
         ) {
-          onControlDataUpdate(response.data.controllerUpdateDeliveryStatus);
+          onControlDataUpdate(prevData => ({
+            ...prevData,
+            ...response.data.controllerUpdateDeliveryStatus,
+            controlBulletin: {
+              ...prevData?.controlBulletin,
+              ...response.data.controllerUpdateDeliveryStatus?.controlBulletin
+            }
+          }));
         }
 
         alerts.success(
