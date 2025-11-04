@@ -77,11 +77,6 @@ const isUserOnlyAdminOfTeams = (teams, userId) => {
     .map(team => team.name);
 };
 
-const isLessThanOneDayAgo = ts => {
-  const nbSecondsElapsed = now() - ts;
-  return nbSecondsElapsed <= DAY;
-};
-
 const isLessThanTwelveHoursAgo = ts => {
   const nbSecondsElapsed = now() - ts;
   return nbSecondsElapsed <= DAY / 2;
@@ -216,17 +211,18 @@ export function Employees({ company, containerRef }) {
 
   async function sendInvitationsReminders(employmentIds) {
     try {
-      await api.graphQlMutate(SEND_INVITATIONS_REMINDERS, {
+      const res = await api.graphQlMutate(SEND_INVITATIONS_REMINDERS, {
         employmentIds
       });
+      const sentToEmploymentIds = res.data.employments.sendInvitationsReminders.sentToEmploymentIds
       await adminStore.dispatch({
         type: ADMIN_ACTIONS.updateEmploymentsLatestInvitateEmailTime,
         payload: {
-          employmentIds
+          employmentIds: sentToEmploymentIds
         }
       });
       alerts.success(
-        `${employmentIds.length} relance(s) envoyée(s)`,
+        `${sentToEmploymentIds.length} relance(s) envoyée(s)`,
         employmentIds[0],
         6000
       );
@@ -459,7 +455,7 @@ export function Employees({ company, containerRef }) {
             <Button
               disabled={
                 e.latestInviteEmailTime &&
-                isLessThanOneDayAgo(e.latestInviteEmailTime)
+                isLessThanTwelveHoursAgo(e.latestInviteEmailTime)
               }
               priority="tertiary no outline"
               size="small"
@@ -836,7 +832,9 @@ export function Employees({ company, containerRef }) {
                   onClick={async () => {
                     await alerts.withApiErrorHandling(async () =>
                       sendInvitationsReminders(
-                        pendingEmployments.map(e => e.id)
+                        pendingEmployments.filter(
+                          e => !e.latestInviteEmailTime || !isLessThanTwelveHoursAgo(e.latestInviteEmailTime)
+                        ).map(e => e.id)
                       )
                     );
                   }}
