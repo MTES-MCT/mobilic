@@ -451,7 +451,7 @@ function DesktopHeader({ disableMenu }) {
   );
 }
 
-function _Header({ disableMenu, forceMobile = false }) {
+export function Header({ disableMenu, forceMobile = false }) {
   const store = useStoreSyncedWithLocalStorage();
   const controllerId = store.controllerId();
   const isMdUp = useIsWidthUp("md");
@@ -467,5 +467,3 @@ function _Header({ disableMenu, forceMobile = false }) {
     </HeaderContainer>
   );
 }
-
-export const Header = _Header;

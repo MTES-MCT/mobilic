@@ -53,12 +53,16 @@ export default function CompanyTeamsPanel({ company }) {
       const apiResponse = await api.graphQlMutate(DELETE_TEAM_MUTATION, {
         teamId: team.id
       });
-      const { teams, employments } = apiResponse?.data?.teams?.deleteTeam;
-      setTeams(teams);
-      adminStore.dispatch({
-        type: ADMIN_ACTIONS.updateTeams,
-        payload: { teams, employments }
-      });
+      const { teams, employments } = apiResponse?.data?.teams?.deleteTeam ?? {};
+      if (teams) {
+        setTeams(teams);
+      }
+      if (teams && employments) {
+        adminStore.dispatch({
+          type: ADMIN_ACTIONS.updateTeams,
+          payload: { teams, employments }
+        });
+      }
       alerts.success(`Le groupe '${team.name}' a bien été supprimé.`, "", 6000);
     }, "delete-team");
   }

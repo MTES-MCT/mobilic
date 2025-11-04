@@ -76,63 +76,63 @@ const dataInfra = [
     "Scalingo",
     "Hébergement de la base de données",
     "France",
-    // eslint-disable-next-line react/jsx-key
+     
     <ExternalLink url={scalingoLink} title="Garantie Scalingo" />
   ],
   [
     "OVH",
     "Hébergement des logs",
     "France",
-    // eslint-disable-next-line react/jsx-key
+     
     <ExternalLink url={ovhLink} title="Garantie OVH" />
   ],
   [
     "Scaleway",
     "Hébergement de photographies des documents",
     "France",
-    // eslint-disable-next-line react/jsx-key
+     
     <ExternalLink url={scalewayLink} title="Garantie Scaleway" />
   ],
   [
     "Crisp",
     "Support / Chat",
     "France",
-    // eslint-disable-next-line react/jsx-key
+     
     <ExternalLink url={crispLink} title="Garantie Crisp" />
   ],
   [
     "Sentry",
     "Tracking d’erreurs",
     "États-Unis",
-    // eslint-disable-next-line react/jsx-key
+     
     <ExternalLink url={sentryLink} title="Garantie Sentry" />
   ],
   [
     "Metabase",
     "Mesure d’audience",
     "France",
-    // eslint-disable-next-line react/jsx-key
+     
     <ExternalLink url={metabaseLink} title="Garantie Metabase" />
   ],
   [
     "Mailjet",
     "Envoi d’e-mails / Newsletter",
     "France",
-    // eslint-disable-next-line react/jsx-key
+     
     <ExternalLink url={mailjetLink} title="Garantie Mailjet" />
   ],
   [
     "Brevo",
     "Envoi d’e-mails / Newsletter",
     "France",
-    // eslint-disable-next-line react/jsx-key
+     
     <ExternalLink url={brevoLink} title="Garantie Brevo" />
   ],
   [
     "Livestorm",
     "Webinaires",
     "Irlande",
-    // eslint-disable-next-line react/jsx-key
+     
     <ExternalLink url={livestormLink} title="Garantie Livestorm" />
   ]
 ];

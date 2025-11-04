@@ -37,7 +37,7 @@ export function UserReadInfo({
   vehicleRegistrationNumber,
   businesses
 }) {
-  const { controlData } = useControl() ?? {};
+  const { controlData, updateControlTime } = useControl() ?? {};
   const { checkedAlertsNumber } = useInfractions() ?? {};
   const [userName, setUserName] = React.useState("");
   React.useEffect(() => {
@@ -80,8 +80,9 @@ export function UserReadInfo({
         businesses={businesses}
       />
       <ControllerControlHistory
-        controlTime={controlTime}
+        controlTime={controlData?.controlTime || controlTime}
         tokenInfo={tokenInfo}
+        updateControlTime={updateControlTime}
       />
       <ControllerControlNbCards
         nbWorkingDays={workingDaysNumber}

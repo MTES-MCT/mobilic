@@ -36,6 +36,7 @@ import { addUsersReducer } from "./users";
 import { updateValidationsFiltersReducer } from "./validationsFilters";
 import { updateTeamsReducer } from "./team";
 import { updateBusinessTypeReducer } from "./businessType";
+import { updateEmploymentsLatestInvitateEmailTimeReducer } from "./employments";
 
 export const ADMIN_ACTIONS = {
   createOrSyncActivity: createOrSyncActivityReducer,
@@ -65,7 +66,8 @@ export const ADMIN_ACTIONS = {
   putAsideOriginalMissions: putAsideOriginalMissionsReducer,
   revertMissionToOriginalValues: revertMissionToOriginalValuesReducer,
   updateCompanyNameAndPhoneNumber: updateCompanyNameAndPhoneNumberReducer,
-  updateCompanyNbWorkerSnooze: updateCompanyNbWorkerSnoozeReducer
+  updateCompanyNbWorkerSnooze: updateCompanyNbWorkerSnoozeReducer,
+  updateEmploymentsLatestInvitateEmailTime: updateEmploymentsLatestInvitateEmailTimeReducer
 };
 
 const ADMIN_REDUCERS = {};

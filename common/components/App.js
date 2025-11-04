@@ -19,12 +19,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function _App({ ScreenComponent, loadUser }) {
+function AppComponent({ ScreenComponent }) {
   const { path } = useRouteMatch();
   const history = useHistory();
+  const store = useStoreSyncedWithLocalStorage();
 
   const actions = useActions();
-  const store = useStoreSyncedWithLocalStorage();
   const api = useApi();
 
   React.useEffect(() => {
@@ -112,7 +112,7 @@ function _App({ ScreenComponent, loadUser }) {
             logComment={actions.logComment}
             cancelComment={actions.cancelComment}
             previousMissionEnd={previousMissionEnd}
-            loadUser={loadUser}
+            loadUser={() => {}} // TODO: Implémenter si nécessaire
             openHistory={openHistory}
           />
         </Route>
@@ -124,7 +124,7 @@ function _App({ ScreenComponent, loadUser }) {
 function App(props) {
   return (
     <ActionsContextProvider>
-      <_App {...props} />
+      <AppComponent {...props} />
     </ActionsContextProvider>
   );
 }

@@ -43,7 +43,6 @@ import {
   useMatomo
 } from "@datapunt/matomo-tracker-react";
 import { Crisp } from "crisp-sdk-web";
-import CircularProgress from "@mui/material/CircularProgress";
 import { ErrorBoundary } from "./common/ErrorFallback";
 import { RegulationDrawerContextProvider } from "./landing/ResourcePage/RegulationDrawer";
 import { isGoogleAdsInitiated, initGoogleAds } from "common/utils/trackAds";
@@ -106,7 +105,7 @@ export default function Root() {
                         <ExportsProvider>
                           <ModalProvider modalDict={MODAL_DICT}>
                             <RegulationDrawerContextProvider>
-                              <_Root />
+                              <RootComponent />
                             </RegulationDrawerContextProvider>
                           </ModalProvider>
                         </ExportsProvider>
@@ -123,7 +122,7 @@ export default function Root() {
   );
 }
 
-function _Root() {
+function RootComponent() {
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
@@ -251,7 +250,7 @@ function _Root() {
     ) {
       history.replace(
         "/controller-login?next=" +
-          encodeURIComponent(location.pathname + location.search)
+        encodeURIComponent(location.pathname + location.search)
       );
     } else if (
       location.pathname !== "/" &&
@@ -328,11 +327,12 @@ function _Root() {
     <>
       {(process.env.REACT_APP_SENTRY_ENVIRONMENT === "staging" ||
         process.env.REACT_APP_SENTRY_ENVIRONMENT === "sandbox") && (
-        <EnvironmentHeader />
-      )}
+          <EnvironmentHeader />
+        )}
       {process.env.REACT_APP_CRISP_AUTOLOAD !== "1" &&
         process.env.REACT_APP_CRISP_WEBSITE_ID &&
         !controllerId && <LiveChat />}
+      <LiveChat />
       {store.userId() && shouldSeeCguModal && (
         <AcceptCguModal
           onAccept={() => setSeeAgainCgu(false)}
@@ -347,26 +347,24 @@ function _Root() {
         />
       )}
       <ChangeGenderModal
-        open={store.userId() && shouldSeeGenderModal}
+        open={!!(store.userId() && shouldSeeGenderModal)}
         buttonLabel="Valider"
         title="Veuillez indiquer votre sexe pour continuer à utiliser Mobilic"
         showExplanation
       />
       {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
-      <React.Suspense fallback={<CircularProgress color="primary" />}>
-        <Switch>
-          {routes.map(route => (
-            <Route
-              key={route.path}
-              exact={route.exact || false}
-              path={route.path}
-            >
-              {route.component}
-            </Route>
-          ))}
-          <Route path="*" render={() => <Redirect to={fallbackRoute} />} />
-        </Switch>
-      </React.Suspense>
+      <Switch>
+        {routes.map(route => (
+          <Route
+            key={route.path}
+            exact={route.exact || false}
+            path={route.path}
+          >
+            {route.component}
+          </Route>
+        ))}
+        <Route path="*" render={() => <Redirect to={fallbackRoute} />} />
+      </Switch>
     </>
   );
 }

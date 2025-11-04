@@ -330,7 +330,7 @@ function ActivitiesPanel() {
         <Grid item>
           <MobileDatePicker
             label="Début"
-            value={minDate}
+            value={new Date(minDate)}
             inputFormat="d MMMM yyyy"
             fullWidth
             disableCloseOnSelect={false}
@@ -354,7 +354,7 @@ function ActivitiesPanel() {
         <Grid item>
           <MobileDatePicker
             label="Fin"
-            value={maxDate}
+            value={new Date(maxDate)}
             inputFormat="d MMMM yyyy"
             fullWidth
             disableCloseOnSelect={false}

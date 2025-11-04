@@ -2,10 +2,11 @@ version: 2
 jobs:
   lint:
     docker:
-      - image: cimg/node:16.20.0
+      - image: cimg/node:20.18.1
 
     steps:
-      - checkout
+      - checkout:
+          method: full
       - restore_cache:
           keys:
             - v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
@@ -18,10 +19,11 @@ jobs:
 
   build:
     docker:
-      - image: cimg/node:16.20.0
+      - image: cimg/node:20.18.1
 
     steps:
-      - checkout
+      - checkout:
+          method: full
       - restore_cache:
           keys:
             - v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
@@ -34,9 +36,10 @@ jobs:
 
   deploy:
     docker:
-      - image: cimg/node:16.20.0
+      - image: cimg/node:20.18.1
     steps:
-      - checkout
+      - checkout:
+          method: full
       - run:
           name: Add Scalingo to known_hosts
           command: ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts

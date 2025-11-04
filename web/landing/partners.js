@@ -56,19 +56,19 @@ if (typeof require.context === "undefined") {
 }
 
 const sponsorsSrcs = require.context(
-  "!url-loader?limit=10000&name=static%2Fsponsor-logos%2F%5Bname%5D.%5Bext%5D!common/assets/images/sponsor-logos",
+  "common/assets/images/sponsor-logos",
   true,
   /\.(png|jpe?g|svg)$/
 );
 
 const partnersSrcs = require.context(
-  "!url-loader?limit=10000&name=static%2Fpartner-logos%2F%5Bname%5D.%5Bext%5D!common/assets/images/partner-logos",
+  "common/assets/images/partner-logos",
   true,
   /\.(png|jpe?g|svg)$/
 );
 
 const interfacedSrcs = require.context(
-  "!url-loader?limit=10000&name=static%2Finterfaced-logos%2F%5Bname%5D.%5Bext%5D!common/assets/images/interfaced-logos",
+  "common/assets/images/interfaced-logos",
   true,
   /\.(png|jpe?g|svg)$/
 );
@@ -122,7 +122,7 @@ export function Partners() {
   const [showAllPartners, setShowAllPartners] = React.useState(false);
 
   const shuffledPartners = useMemo(() => {
-    return shuffle(partnersSrcs.keys());
+    return shuffle(partnersSrcs.keys().filter(src => src.startsWith('./')));
   }, []);
 
   React.useEffect(() => {
@@ -161,15 +161,19 @@ export function Partners() {
                 alignItems="center"
                 spacing={{ xs: 2, md: 4 }}
               >
-                {partnersToShow.map(src => (
-                  <Grid item key={src}>
-                    <img
-                      alt={src}
-                      src={partnersSrcs(src)}
-                      className={classes.partnerImage}
-                    />
-                  </Grid>
-                ))}
+                {partnersToShow.map(src => {
+                  const imgModule = partnersSrcs(src);
+                  const imgSrc = imgModule.default || imgModule;
+                  return (
+                    <Grid item key={src}>
+                      <img
+                        alt={src}
+                        src={imgSrc}
+                        className={classes.partnerImage}
+                      />
+                    </Grid>
+                  );
+                })}
               </Grid>
               {!showAllPartners && (
                 <LoadingButton
@@ -234,15 +238,22 @@ export function Partners() {
                   alignItems="center"
                   spacing={{ xs: 2, sm: 4 }}
                 >
-                  {interfacedSrcs.keys().map(src => (
-                    <Grid item key={src}>
-                      <img
-                        alt={src}
-                        src={interfacedSrcs(src)}
-                        className={classes.interfacedImage}
-                      />
-                    </Grid>
-                  ))}
+                  {interfacedSrcs.keys()
+                    .filter(src => src.startsWith('./'))
+                    .map(src => {
+                      const imgModule = interfacedSrcs(src);
+                      // Si c'est un module ES (pour les SVG), utiliser .default
+                      const imgSrc = imgModule.default || imgModule;
+                      return (
+                        <Grid item key={src}>
+                          <img
+                            alt={src}
+                            src={imgSrc}
+                            className={classes.interfacedImage}
+                          />
+                        </Grid>
+                      );
+                    })}
                 </Grid>
                 <LinkButton
                   className={classes.cta}
@@ -266,15 +277,21 @@ export function Partners() {
                   alignItems="center"
                   spacing={{ xs: 2, sm: 4 }}
                 >
-                  {sponsorsSrcs.keys().map(src => (
-                    <Grid item key={src}>
-                      <img
-                        alt={src}
-                        src={sponsorsSrcs(src)}
-                        className={classes.sponsorImage}
-                      />
-                    </Grid>
-                  ))}
+                  {sponsorsSrcs.keys()
+                    .filter(src => src.startsWith('./'))
+                    .map(src => {
+                      const imgModule = sponsorsSrcs(src);
+                      const imgSrc = imgModule.default || imgModule;
+                      return (
+                        <Grid item key={src}>
+                          <img
+                            alt={src}
+                            src={imgSrc}
+                            className={classes.sponsorImage}
+                          />
+                        </Grid>
+                      );
+                    })}
                 </Grid>
               </Box>
             </Grid>

@@ -17,6 +17,9 @@ import ControllerExportC1BAll from "./controller/components/modals/ControllerExp
 import ControllerExportC1BOne from "./controller/components/modals/ControllerExportC1BOne";
 import ConfirmationCancelControlBulletinModal from "./controller/components/modals/ConfirmationCancelControlBulletinModal";
 import ControlPicture from "./controller/components/modals/ControlPicture";
+import ControlHandDeliveryModal from "./controller/components/modals/ControlHandDeliveryModal";
+import ControlSendEmailModal from "./controller/components/modals/ControlSendEmailModal";
+import ControllerUpdateTimeModal from "./controller/components/modals/ControllerUpdateTime";
 
 // admin
 import UpdateCompanyDetailsModal from "./admin/modals/UpdateCompanyDetailsModal";
@@ -95,5 +98,8 @@ export const MODAL_DICT = {
   successMessage: SuccessMessageModal,
   webinars: WebinarsModal,
   controlPicture: ControlPicture,
-  overrideValidation: OverrideValidationJustificationModal
+  overrideValidation: OverrideValidationJustificationModal,
+  handDeliveryConfirmation: ControlHandDeliveryModal,
+  controlSendEmail: ControlSendEmailModal,
+  controllerUpdateTime: ControllerUpdateTimeModal
 };

@@ -11,6 +11,7 @@ import { useLoadingScreen } from "common/utils/loading";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { canDownloadBDC as _canDownloadBDC } from "./controlBulletin";
 import { strToUnixTimestamp } from "common/utils/time";
+import { useModals } from "common/utils/modals";
 
 // Value AND label must match ControlType enum from API
 export const CONTROL_TYPES = {
@@ -23,6 +24,7 @@ export const useReadControlData = (controlId, controlType) => {
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
+  const modals = useModals();
 
   const [controlData, setControlData] = React.useState({});
 
@@ -103,6 +105,13 @@ export const useReadControlData = (controlId, controlType) => {
     }, "controls-upload-pictures");
   };
 
+  const updateControlTime = async () => {
+    modals.open("controllerUpdateTime", {
+      controlData,
+      setControlData
+    });
+  };
+
   return {
     controlData,
     setControlData,
@@ -110,6 +119,7 @@ export const useReadControlData = (controlId, controlType) => {
     controlType,
     canDownloadBDC,
     bdcAlreadyExists,
-    uploadPictures
+    uploadPictures,
+    updateControlTime
   };
 };
