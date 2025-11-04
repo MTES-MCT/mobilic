@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import Modal, { modalStyles } from "../../common/Modal";
@@ -9,7 +9,8 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
-import { Link } from "@mui/material";
+import { CircularProgress, Link, Stack } from "@mui/material";
+import { useExportsContext } from "../../admin/utils/contextExports";
 
 export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
   const { isAdmin } = useIsAdmin();
@@ -18,6 +19,9 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
   const alerts = useSnackbarAlerts();
   const { trackLink } = useMatomo();
   const [isEnabledDownload, setIsEnabledDownload] = React.useState(true);
+  const { updateExports, nbExports } = useExportsContext()
+
+  useEffect(() => updateExports(), [userId])
 
   const downloadUserData = async () => {
     setIsEnabledDownload(false);
@@ -31,10 +35,11 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
         json: { user_id: userId }
       });
       alerts.success(
-        "Votre demande a été prise en compte. Le fichier sera envoyé par email d'ici quelques minutes.",
+        "Votre demande a été prise en compte. Le fichier sera prêt d'ici quelques minutes.",
         null,
         9000
       );
+      updateExports()
     } catch (err) {
       alerts.error(
         formatApiError(err),
@@ -51,7 +56,7 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
       size="sm"
       zIndex={3500}
       content={
-        <>
+        <Stack direction="column" rowGap={2}>
           <Typography>
             Attention,{" "}
             <span className={classes.warningText}>
@@ -75,7 +80,7 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
               </>
             )}
           </Typography>
-          <Typography sx={{ marginTop: 1 }}>
+          <Typography>
             S’il s’agit d’une erreur, vous pouvez accepter nos conditions
             générales d’utilisation en{" "}
             <button
@@ -87,7 +92,11 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
             </button>
             .
           </Typography>
-        </>
+          {!!nbExports && <Stack direction="row" columnGap={1} alignItems="center">
+            <CircularProgress color="inherit" size="1rem" />
+            <div>Export des données en cours de préparation...</div>
+          </Stack>}
+        </Stack>
       }
       actions={
         <>
@@ -100,7 +109,7 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
             iconId="fr-icon-download-line"
             disabled={!isEnabledDownload}
           >
-            Recevoir les données par&nbsp;e&#8209;mail
+            Télécharger l'ensemble des données
           </Button>
         </>
       }
