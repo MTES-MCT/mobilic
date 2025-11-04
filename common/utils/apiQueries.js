@@ -1161,6 +1161,7 @@ export const SEND_INVITATIONS_REMINDERS = gql`
     employments {
       sendInvitationsReminders(employmentIds: $employmentIds) {
         success
+        sentToEmploymentIds
       }
     }
   }
