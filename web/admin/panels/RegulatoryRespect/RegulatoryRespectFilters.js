@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Stack } from "@mui/material";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { addDaysToDate } from "common/utils/time";
 import { useAdminStore } from "../../store/store";
 import { TeamFilter } from "../../components/TeamFilter";
+import { EmployeeFilter } from "../../components/EmployeeFilter";
 
 export default function RegulatoryRespectFilters() {
 
@@ -11,7 +12,8 @@ export default function RegulatoryRespectFilters() {
     const [date, setDate] = useState(new Date())
     const minDate = addDaysToDate(new Date(), -365)
     const today = new Date()
-    const [teams, setTeams] = React.useState([]);
+    const [teams, setTeams] = useState([]);
+    const [users, setUsers] = useState([])
 
     React.useEffect(() => {
         const _teams = adminStore.exportFilters.teams
@@ -29,6 +31,8 @@ export default function RegulatoryRespectFilters() {
             selected: (preSelectTeamId && t.id === preSelectTeamId)
         })));
     }, [adminStore.exportFilters.teams, adminStore.userId]);
+
+    useEffect(() => setUsers(adminStore.users), [adminStore.users])
 
     return <Stack direction="row" mt={2} columnGap={4}>
         <MobileDatePicker
@@ -55,7 +59,10 @@ export default function RegulatoryRespectFilters() {
             )}
         />
         {teams?.length > 0 && (
-            <TeamFilter teams={teams} setTeams={setTeams} multiple={false} />
+            <TeamFilter teams={teams} setTeams={setTeams} multiple={false} size="medium" sx={{ minWidth: "250px" }} />
+        )}
+        {users?.length > 0 && (
+            <EmployeeFilter users={users} multiple={false} size="medium" sx={{ minWidth: "250px" }} uniqueEmptyLabel="Tous les salariés" setUsers={setUsers} />
         )}
     </Stack>
 }
