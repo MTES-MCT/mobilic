@@ -71,15 +71,8 @@ export function ControllerControlBottomMenu({
 
   const classes = useStyles();
   const [openSendNoLicModal, setOpenSendNoLicModal] = React.useState(false);
-  const [sentToAdminOverride, setSentToAdminOverride] = React.useState(false);
 
-  React.useEffect(() => {
-    if (controlData?.sentToAdmin === false) {
-      setSentToAdminOverride(false);
-    }
-  }, [controlData?.sentToAdmin]);
-
-  const sentToAdmin = sentToAdminOverride || controlData?.sentToAdmin;
+  const sentToAdmin = controlData?.sentToAdmin;
 
   const isBulletinAvailableForDriver = React.useMemo(() => {
     if (!controlData?.controlBulletinUpdateTime) {
@@ -105,7 +98,6 @@ export function ControllerControlBottomMenu({
     async emailAddress => {
       const success = await handleSend([emailAddress]);
       if (success) {
-        setSentToAdminOverride(true);
         if (setControlData) {
           setControlData(prev => ({ ...prev, sentToAdmin: true }));
         }
@@ -136,9 +128,6 @@ export function ControllerControlBottomMenu({
           onClick={e => {
             e.preventDefault();
             editBDC();
-            // Note: setSentToAdminOverride(false) n'est plus nécessaire ici
-            // car il sera automatiquement reseté par l'useEffect quand le backend
-            // mettra sent_to_admin = false après modification du bulletin
           }}
           iconId={!bulletinExists ? "fr-icon-add-line" : ""}
         >
@@ -165,7 +154,7 @@ export function ControllerControlBottomMenu({
             <Box display="flex" flexDirection="column">
               <Typography variant="h6">Bulletin {controlId}</Typography>
               <Description noMargin>
-                edité le{" "}
+                modifié le{" "}
                 {formatDateTime(controlData.controlBulletinUpdateTime, true)}{" "}
               </Description>
             </Box>
@@ -273,7 +262,6 @@ export function ControllerControlBottomMenu({
               if (shouldSendToAdmin) {
                 const success = await handleSend();
                 if (success) {
-                  setSentToAdminOverride(true);
                   if (setControlData) {
                     setControlData(prev => ({ ...prev, sentToAdmin: true }));
                   }
