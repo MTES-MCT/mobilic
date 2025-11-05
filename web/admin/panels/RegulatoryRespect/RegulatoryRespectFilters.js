@@ -32,7 +32,28 @@ export default function RegulatoryRespectFilters() {
         })));
     }, [adminStore.exportFilters.teams, adminStore.userId]);
 
-    useEffect(() => setUsers(adminStore.users), [adminStore.users])
+    useEffect(() => {
+        // no teams, all users are selectable
+        if (teams.length === 0) {
+            setUsers(adminStore.users)
+        }
+
+        let selectedTeams = []
+        // no team is selected
+        if (teams.every(t => !t.selected)) {
+            selectedTeams = teams
+        } else {
+            selectedTeams = teams.filter(t => t.selected)
+        }
+
+        //filter to keep only teams where current admin is an admin
+        selectedTeams = selectedTeams.filter(t => t.adminUsers.map(ad => ad.id).includes(adminStore.userId))
+
+        // extract unique userIds from selected teams 
+        const selectedTeamsUserIds = [... new Set(selectedTeams.flatMap(team => team.users).map(u => u.id))]
+        setUsers(adminStore.users.filter(u => selectedTeamsUserIds.includes(u.id)))
+    }
+        , [adminStore.users, teams])
 
     return <Stack direction="row" mt={2} columnGap={4}>
         <MobileDatePicker
@@ -53,16 +74,12 @@ export default function RegulatoryRespectFilters() {
                     {...props}
                     required
                     variant="outlined"
-                // error={!!dateRangeError}
-                // helperText={dateRangeError}
                 />
             )}
         />
         {teams?.length > 0 && (
             <TeamFilter teams={teams} setTeams={setTeams} multiple={false} size="medium" sx={{ minWidth: "250px" }} />
         )}
-        {users?.length > 0 && (
-            <EmployeeFilter users={users} multiple={false} size="medium" sx={{ minWidth: "250px" }} uniqueEmptyLabel="Tous les salariés" setUsers={setUsers} />
-        )}
+        <EmployeeFilter users={users} multiple={false} size="medium" sx={{ minWidth: "250px" }} uniqueEmptyLabel="Tous les salariés" setUsers={setUsers} />
     </Stack>
 }
