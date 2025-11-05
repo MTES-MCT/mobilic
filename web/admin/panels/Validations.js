@@ -88,7 +88,8 @@ function ValidationPanel() {
   const location = useLocation();
   const { trackEvent } = useMatomo();
 
-  const { refresh: refreshDeletedMissions } = useRefreshDeletedMissions();
+  const { refresh: refreshDeletedMissions, loading: loadingDeletedMissions } =
+    useRefreshDeletedMissions();
 
   const [tab, setTab] = React.useState(0);
   const [tableEntries, setTableEntries] = React.useState([]);
@@ -423,6 +424,7 @@ function ValidationPanel() {
       </Grid>
       <Explanation>{VALIDATION_TABS[tab].explanation}</Explanation>
       <AugmentedTable
+        loading={loadingDeletedMissions}
         columns={tableColumns}
         entries={tableEntries}
         ref={ref}

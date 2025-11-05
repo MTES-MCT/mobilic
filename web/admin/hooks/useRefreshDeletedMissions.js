@@ -1,17 +1,18 @@
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../store/store";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { MINUTE, now } from "common/utils/time";
+import { ADMIN_DELETED_MISSIONS_QUERY } from "common/utils/apiQueries/admin";
 
 const CACHE_BY_COMPANY_MIN = 20;
 const deletedMissionsCaches = {};
-import { ADMIN_DELETED_MISSIONS_QUERY } from "common/utils/apiQueries/admin";
 
 export const useRefreshDeletedMissions = () => {
   const api = useApi();
   const adminStore = useAdminStore();
 
+  const [loading, setLoading] = useState(false);
   const companyId = adminStore.companyId;
   const companyIds = [companyId];
   const userId = adminStore.userId;
@@ -47,9 +48,11 @@ export const useRefreshDeletedMissions = () => {
       type: ADMIN_ACTIONS.updateCompanyDeletedMissions,
       payload: { companyId, missionsDeleted }
     });
+    setLoading(false);
   };
 
   return {
-    refresh
+    refresh,
+    loading
   };
 };
