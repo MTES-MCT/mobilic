@@ -29,7 +29,8 @@ export const useRefreshDeletedMissions = () => {
         ADMIN_DELETED_MISSIONS_QUERY,
         {
           id: userId,
-          companyIds
+          companyIds,
+          first: 200
         },
         { context: { timeout: process.env.REACT_APP_TIMEOUT_MS || 60000 } }
       );
