@@ -32,7 +32,7 @@ export function TeamFilter({
   const classes = useStyles();
 
   const handleChange = (event, value) => {
-    const selectedIds = multiple ? value.map(u => u.id) : [value.id];
+    const selectedIds = multiple ? value.map(u => u.id) : value ? [value.id] : [];
     setTeams(
       teams.map(u => ({
         ...u,
@@ -63,19 +63,18 @@ export function TeamFilter({
           <span>{option.name}</span>
         </li>
       )}
-      value={selectedTeams}
+      value={multiple ? selectedTeams : selectedTeams.length > 0 ? selectedTeams[0] : null}
       onChange={handleSelect || handleChange}
       renderInput={params => (
         <TextField
           className={classes.formControl}
           {...params}
-          placeholder={`${
-            multiple
-              ? selectedTeams.length === 0
-                ? "Tous les groupes"
-                : ""
-              : "Sélectionner un groupe"
-          }`}
+          placeholder={`${multiple
+            ? selectedTeams.length === 0
+              ? "Tous les groupes"
+              : ""
+            : "Tous les groupes"
+            }`}
         />
       )}
     />
