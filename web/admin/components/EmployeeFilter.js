@@ -28,12 +28,15 @@ export function EmployeeFilter({
   setUsers,
   multiple = true,
   handleSelect = null,
-  showOnlyUserIds = null
+  showOnlyUserIds = null,
+  uniqueEmptyLabel = 'Sélectionner un salarié',
+  size = "small",
+  ...otherProps
 }) {
   const classes = useStyles();
 
   const handleChange = (event, value) => {
-    const selectedIds = multiple ? value.map(u => u.id) : [value.id];
+    const selectedIds = multiple ? value.map(u => u.id) : value ? [value.id] : [];
     setUsers(
       users.map(u => ({
         ...u,
@@ -61,8 +64,8 @@ export function EmployeeFilter({
         ["asc", "asc"]
       )}
       limitTags={1}
-      size="small"
-      disableCloseOnSelect
+      size={size}
+      disableCloseOnSelect={multiple}
       getOptionLabel={option => formatPersonName(option, true)}
       renderOption={(props, option) => (
         <li {...props} key={option.id}>
@@ -76,21 +79,22 @@ export function EmployeeFilter({
           <span>{formatPersonName(option, true)}</span>
         </li>
       )}
-      value={selectedUsers}
+      value={multiple ? selectedUsers : selectedUsers?.length > 0 ? selectedUsers[0] : null}
       onChange={handleSelect || handleChange}
       renderInput={params => (
         <TextField
           className={classes.formControl}
           {...params}
-          placeholder={`${
-            multiple
-              ? selectedUsers.length === 0
-                ? "Tous les salariés"
-                : ""
-              : "Sélectionner un salarié"
-          }`}
+          placeholder={`${multiple
+            ? selectedUsers.length === 0
+              ? "Tous les salariés"
+              : ""
+            : uniqueEmptyLabel
+            }`}
         />
       )}
+      disableClearable={!multiple && (!selectedUsers || selectedUsers.length === 0)}
+      {...otherProps}
     />
   );
 }
