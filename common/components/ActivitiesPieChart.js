@@ -52,6 +52,10 @@ export function ActivitiesPieChart({
 
   const stats = computeTotalActivityDurations(activities, fromTime, untilTime);
 
+  if (!stats || !stats.total) {
+    return null;
+  }
+
   const pieData = Object.values(ACTIVITIES)
     .map(a => ({
       title: a.label,

@@ -341,6 +341,11 @@ function ActivitiesPanel() {
             }}
             cancelText={null}
             maxDate={today}
+            slotProps={{
+              textField: {
+                size: "small"
+              }
+            }}
             // renderDay is needed to fix issue caused by key being passed with props
             renderDay={(day, selectedDates, pickersDayProps) => {
               const { key, ...safeProps } = pickersDayProps;
@@ -365,6 +370,11 @@ function ActivitiesPanel() {
             }}
             cancelText={null}
             maxDate={today}
+            slotProps={{
+              textField: {
+                size: "small"
+              }
+            }}
             // renderDay is needed to fix issue caused by key being passed with props
             renderDay={(day, selectedDates, pickersDayProps) => {
               const { key, ...safeProps } = pickersDayProps;

@@ -186,6 +186,11 @@ export default function ExcelExportModal({
                   renderInput={props => (
                     <TextField {...props} variant="outlined" />
                   )}
+                  slotProps={{
+                    textField: {
+                      size: "small"
+                    }
+                  }}
                 />
               </Grid>
               <Grid item sm={6}>
@@ -203,6 +208,11 @@ export default function ExcelExportModal({
                   renderInput={props => (
                     <TextField {...props} variant="outlined" />
                   )}
+                  slotProps={{
+                    textField: {
+                      size: "small"
+                    }
+                  }}
                 />
               </Grid>
             </DateOrDateTimeRangeSelectionContext>

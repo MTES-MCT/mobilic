@@ -162,7 +162,7 @@ export function ControllerScanQRCode() {
                   borderRadius: theme.spacing(2),
                   zIndex: -1
                 }}
-                onDecode={(result) => {
+                onScan={(result) => {
                   if (result) {
                     onScanQRCode(result);
                   }
