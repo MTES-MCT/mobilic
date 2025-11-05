@@ -6,7 +6,6 @@ import { LinkButton } from "../../../common/LinkButton";
 import ButtonBase from "@mui/material/ButtonBase";
 import classNames from "classnames";
 import { fr } from "@codegouvfr/react-dsfr";
-import { Badge } from "@codegouvfr/react-dsfr/Badge";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -38,9 +37,6 @@ const useStyles = makeStyles(theme => ({
   },
   text: {
     flexGrow: 1
-  },
-  badge: {
-    marginRight: theme.spacing(1)
   }
 }));
 
@@ -48,8 +44,7 @@ export function ControllerHomeCard({
   text,
   icon,
   link,
-  onClick,
-  isNew = false
+  onClick
 }) {
   const classes = useStyles();
 
@@ -77,11 +72,6 @@ export function ControllerHomeCard({
           aria-hidden="true"
         ></span>
         <Typography className={classes.text}>{text}</Typography>
-        {isNew && (
-          <Badge severity="new" small noIcon className={classes.badge}>
-            Nouveauté
-          </Badge>
-        )}
         <span
           className={classNames(
             "fr-icon-arrow-right-s-line",
