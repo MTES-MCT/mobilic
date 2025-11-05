@@ -27,7 +27,9 @@ export function TeamFilter({
   setTeams,
   multiple = true,
   handleSelect = null,
-  orderByProperty = "name"
+  orderByProperty = "name",
+  size = "small",
+  ...otherProps
 }) {
   const classes = useStyles();
 
@@ -48,8 +50,8 @@ export function TeamFilter({
       id="team-filter"
       options={orderBy(teams, [orderByProperty])}
       limitTags={1}
-      size="small"
-      disableCloseOnSelect
+      size={size}
+      disableCloseOnSelect={multiple}
       getOptionLabel={option => option.name}
       renderOption={(props, option) => (
         <li {...props}>
@@ -77,6 +79,7 @@ export function TeamFilter({
             }`}
         />
       )}
+      {...otherProps}
     />
   );
 }
