@@ -5,81 +5,113 @@ import { addDaysToDate } from "common/utils/time";
 import { useAdminStore } from "../../store/store";
 import { TeamFilter } from "../../components/TeamFilter";
 import { EmployeeFilter } from "../../components/EmployeeFilter";
+import { useRegulatoryAlertsSummaryContext } from "../../utils/contextRegulatoryAlertsSummary";
 
 export default function RegulatoryRespectFilters() {
+  const adminStore = useAdminStore();
+  const { date, setDate, onSelectUniqueUserId } =
+    useRegulatoryAlertsSummaryContext();
+  const minDate = addDaysToDate(new Date(), -365);
+  const today = new Date();
+  const [teams, setTeams] = useState([]);
+  const [users, setUsers] = useState([]);
 
-    const adminStore = useAdminStore()
-    const [date, setDate] = useState(new Date())
-    const minDate = addDaysToDate(new Date(), -365)
-    const today = new Date()
-    const [teams, setTeams] = useState([]);
-    const [users, setUsers] = useState([])
-
-    React.useEffect(() => {
-        const _teams = adminStore.exportFilters.teams
-        const adminId = adminStore.userId
-        if (!_teams || !adminId) {
-            setTeams([])
-        }
-
-        const isAdminOfTeams = _teams.filter(t => t.adminUsers.map(a => a.id).includes(adminId))
-
-        const preSelectTeamId = isAdminOfTeams.length === 1 ? isAdminOfTeams[0].id : null
-
-        setTeams(adminStore.exportFilters.teams.map(t => ({
-            ...t,
-            selected: (preSelectTeamId && t.id === preSelectTeamId)
-        })));
-    }, [adminStore.exportFilters.teams, adminStore.userId]);
-
-    useEffect(() => {
-        // no teams, all users are selectable
-        if (teams.length === 0) {
-            setUsers(adminStore.users)
-        }
-
-        let selectedTeams = []
-        // no team is selected
-        if (teams.every(t => !t.selected)) {
-            selectedTeams = teams
-        } else {
-            selectedTeams = teams.filter(t => t.selected)
-        }
-
-        //filter to keep only teams where current admin is an admin
-        selectedTeams = selectedTeams.filter(t => t.adminUsers.map(ad => ad.id).includes(adminStore.userId))
-
-        // extract unique userIds from selected teams 
-        const selectedTeamsUserIds = [... new Set(selectedTeams.flatMap(team => team.users).map(u => u.id))]
-        setUsers(adminStore.users.filter(u => selectedTeamsUserIds.includes(u.id)))
+  React.useEffect(() => {
+    const _teams = adminStore.exportFilters.teams;
+    const adminId = adminStore.userId;
+    if (!_teams || !adminId) {
+      setTeams([]);
     }
-        , [adminStore.users, teams])
 
-    return <Stack direction="row" mt={2} columnGap={4}>
-        <MobileDatePicker
-            label="Mois"
-            value={date}
-            inputFormat="MMMM yyyy"
-            fullWidth
-            onChange={setDate}
-            openTo={"month"}
-            views={["year", "month"]}
-            cancelText={null}
-            disableCloseOnSelect={false}
-            disableMaskedInput={true}
-            maxDate={today}
-            minDate={minDate}
-            renderInput={props => (
-                <TextField
-                    {...props}
-                    required
-                    variant="outlined"
-                />
-            )}
-        />
-        {teams?.length > 0 && (
-            <TeamFilter teams={teams} setTeams={setTeams} multiple={false} size="medium" sx={{ minWidth: "250px" }} />
+    const isAdminOfTeams = _teams.filter((t) =>
+      t.adminUsers.map((a) => a.id).includes(adminId)
+    );
+
+    const preSelectTeamId =
+      isAdminOfTeams.length === 1 ? isAdminOfTeams[0].id : null;
+
+    setTeams(
+      adminStore.exportFilters.teams.map((t) => ({
+        ...t,
+        selected: preSelectTeamId && t.id === preSelectTeamId,
+      }))
+    );
+  }, [adminStore.exportFilters.teams, adminStore.userId]);
+
+  useEffect(() => {
+    // no teams, all users are selectable
+    if (teams.length === 0) {
+      setUsers(adminStore.users);
+      return;
+    }
+
+    let selectedTeams = [];
+    // no team is selected
+    if (teams.every((t) => !t.selected)) {
+      selectedTeams = teams;
+    } else {
+      selectedTeams = teams.filter((t) => t.selected);
+    }
+
+    //filter to keep only teams where current admin is an admin
+    selectedTeams = selectedTeams.filter((t) =>
+      t.adminUsers.map((ad) => ad.id).includes(adminStore.userId)
+    );
+
+    // extract unique userIds from selected teams
+    const selectedTeamsUserIds = [
+      ...new Set(selectedTeams.flatMap((team) => team.users).map((u) => u.id)),
+    ];
+    setUsers(
+      adminStore.users.filter((u) => selectedTeamsUserIds.includes(u.id))
+    );
+  }, [adminStore.users, teams]);
+
+  useEffect(() => {
+    const selectedUsers = users.filter((u) => u.selected);
+    if (selectedUsers.length === 1) {
+      onSelectUniqueUserId(selectedUsers[0].id);
+    } else {
+      onSelectUniqueUserId(null);
+    }
+  }, [users]);
+
+  return (
+    <Stack direction="row" mt={2} columnGap={4}>
+      <MobileDatePicker
+        label="Mois"
+        value={date}
+        inputFormat="MMMM yyyy"
+        fullWidth
+        onChange={setDate}
+        openTo={"month"}
+        views={["year", "month"]}
+        cancelText={null}
+        disableCloseOnSelect={false}
+        disableMaskedInput={true}
+        maxDate={today}
+        minDate={minDate}
+        renderInput={(props) => (
+          <TextField {...props} required variant="outlined" />
         )}
-        <EmployeeFilter users={users} multiple={false} size="medium" sx={{ minWidth: "250px" }} uniqueEmptyLabel="Tous les salariés" setUsers={setUsers} />
+      />
+      {teams?.length > 0 && (
+        <TeamFilter
+          teams={teams}
+          setTeams={setTeams}
+          multiple={false}
+          size="medium"
+          sx={{ minWidth: "250px" }}
+        />
+      )}
+      <EmployeeFilter
+        users={users}
+        multiple={false}
+        size="medium"
+        sx={{ minWidth: "250px" }}
+        uniqueEmptyLabel="Tous les salariés"
+        setUsers={setUsers}
+      />
     </Stack>
+  );
 }

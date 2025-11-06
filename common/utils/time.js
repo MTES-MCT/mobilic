@@ -14,9 +14,9 @@ export const SHORT_MONTHS = [
   "sep",
   "oct",
   "nov",
-  "déc"
+  "déc",
 ];
-const MONTHS = [
+export const MONTHS = [
   "janvier",
   "février",
   "mars",
@@ -28,7 +28,7 @@ const MONTHS = [
   "septembre",
   "octobre",
   "novembre",
-  "décembre"
+  "décembre",
 ];
 
 export const SHORT_DAYS = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"];
@@ -40,7 +40,7 @@ export const DAYS = [
   "mercredi",
   "jeudi",
   "vendredi",
-  "samedi"
+  "samedi",
 ];
 
 export const LONG_BREAK_DURATION = 10 * HOUR;
@@ -96,7 +96,7 @@ function _localFormatDate(date, withYear = false) {
   return date.toLocaleDateString(undefined, {
     month: "2-digit",
     day: "2-digit",
-    year: withYear ? "numeric" : undefined
+    year: withYear ? "numeric" : undefined,
   });
 }
 
@@ -137,6 +137,10 @@ export function prettyFormatDay(unixTimestamp, withYear = false) {
 
 export function prettyFormatMonth(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
+  return prettyFormatMonth_Date(date);
+}
+
+export function prettyFormatMonth_Date(date) {
   return `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
 }
 
@@ -199,12 +203,12 @@ export function formatDateTime(
     date.toLocaleDateString(undefined, {
       month: "2-digit",
       day: "2-digit",
-      year: showYear ? "numeric" : undefined
+      year: showYear ? "numeric" : undefined,
     }),
     separator,
     addZero(date.getHours()),
     ":",
-    addZero(date.getMinutes() % 60)
+    addZero(date.getMinutes() % 60),
   ].join("");
 }
 
@@ -373,5 +377,5 @@ export function isDateBeforeNbDays(dateToTest, nbDays) {
 export const isMoreOrLessTheSameDay = (time1, time2) =>
   Math.abs(time1 - time2) < HOUR * 3;
 
-export const strToUnixTimestamp = dateStr =>
+export const strToUnixTimestamp = (dateStr) =>
   jsToUnixTimestamp(startOfDayAsDate(new Date(dateStr)).getTime());

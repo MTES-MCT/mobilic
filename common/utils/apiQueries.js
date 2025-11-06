@@ -15,7 +15,7 @@ import {
   FULL_EMPLOYMENT_FRAGMENT,
   USER_AGREEMENT,
   NOTIFICATION_FRAGMENT,
-  USER_CONTROL_SUMMARY_FRAGMENT
+  USER_CONTROL_SUMMARY_FRAGMENT,
 } from "./apiFragments";
 import { nowMilliseconds } from "./time";
 
@@ -1578,7 +1578,7 @@ export const CREATE_VEHICLE_MUTATION = gql`
   }
 `;
 export const EDIT_VEHICLE_MUTATION = gql`
-  mutation($id: Int!, $alias: String) {
+  mutation ($id: Int!, $alias: String) {
     vehicles {
       editVehicle(id: $id, alias: $alias) {
         id
@@ -2055,39 +2055,39 @@ export function buildLogLocationPayloadFromAddress(
     missionId,
     type: isStart ? "mission_start_location" : "mission_end_location",
     kilometerReading,
-    creationTime: nowMilliseconds()
+    creationTime: nowMilliseconds(),
   };
 
   return {
     ...payload,
-    ...buildBackendPayloadForAddress(address)
+    ...buildBackendPayloadForAddress(address),
   };
 }
 
 export const HTTP_QUERIES = {
   subscribeToNewsletter: {
     method: "POST",
-    endpoint: "/contacts/subscribe-to-newsletter"
+    endpoint: "/contacts/subscribe-to-newsletter",
   },
   verifyXlsxSignature: {
     method: "POST",
-    endpoint: "/control/verify-xlsx-signature"
+    endpoint: "/control/verify-xlsx-signature",
   },
   generateUserReadToken: {
     method: "POST",
-    endpoint: "/control/generate-user-read-token"
+    endpoint: "/control/generate-user-read-token",
   },
   refresh: {
     method: "POST",
-    endpoint: "/token/refresh"
+    endpoint: "/token/refresh",
   },
   logout: {
     method: "POST",
-    endpoint: "/token/logout"
+    endpoint: "/token/logout",
   },
   excelExport: {
     method: "POST",
-    endpoint: "/companies/download_activity_report"
+    endpoint: "/companies/download_activity_report",
   },
   cancelExports: {
     method: "POST",
@@ -2099,64 +2099,64 @@ export const HTTP_QUERIES = {
   },
   userC1bExport: {
     method: "POST",
-    endpoint: "/users/generate_tachograph_file"
+    endpoint: "/users/generate_tachograph_file",
   },
   companyC1bExport: {
     method: "POST",
-    endpoint: "/companies/generate_tachograph_files"
+    endpoint: "/companies/generate_tachograph_files",
   },
   pdfExport: {
     method: "POST",
-    endpoint: "/users/generate_pdf_export"
+    endpoint: "/users/generate_pdf_export",
   },
   missionExport: {
     method: "POST",
-    endpoint: "/users/generate_mission_export"
+    endpoint: "/users/generate_mission_export",
   },
   missionControlExport: {
     method: "POST",
-    endpoint: "/users/generate_mission_control_export"
+    endpoint: "/users/generate_mission_control_export",
   },
   oauthAuthorize: {
     method: "GET",
-    endpoint: "/oauth/authorize"
+    endpoint: "/oauth/authorize",
   },
   webinars: {
     method: "GET",
-    endpoint: "/next-webinars"
+    endpoint: "/next-webinars",
   },
   controlExcelExport: {
     method: "POST",
-    endpoint: "/controllers/download_control_report"
+    endpoint: "/controllers/download_control_report",
   },
   controlXmlExport: {
     method: "POST",
-    endpoint: "/controllers/download_control_xml"
+    endpoint: "/controllers/download_control_xml",
   },
   controlC1bExport: {
     method: "POST",
-    endpoint: "/controllers/download_control_c1b"
+    endpoint: "/controllers/download_control_c1b",
   },
   controlsC1bExport: {
     method: "POST",
-    endpoint: "/controllers/generate_tachograph_files"
+    endpoint: "/controllers/generate_tachograph_files",
   },
   controlBDCExport: {
     method: "POST",
-    endpoint: "/controllers/generate_control_bulletin"
+    endpoint: "/controllers/generate_control_bulletin",
   },
   controlPicturesGeneratePresignedUrls: {
     method: "POST",
-    endpoint: "/controllers/control_pictures_generate_presigned_urls"
+    endpoint: "/controllers/control_pictures_generate_presigned_urls",
   },
   certificateSearch: {
     method: "POST",
-    endpoint: "/companies/public_company_certification"
+    endpoint: "/companies/public_company_certification",
   },
   downloadFullDataWhenCGUrefused: {
     method: "POST",
-    endpoint: "/users/download_full_data_when_CGU_refused"
-  }
+    endpoint: "/users/download_full_data_when_CGU_refused",
+  },
 };
 
 export const CHECK_AUTH_QUERY = gql`
@@ -2470,6 +2470,26 @@ export const SEND_CONTROL_BULLETIN_EMAIL_MUTATION = gql`
     sendControlBulletinEmail(controlId: $controlId, adminEmails: $adminEmails) {
       success
       nbEmailsSent
+    }
+  }
+`;
+
+export const ADMIN_COMPANY_REGULATORY_ALERTS_SUMMARY_QUERY = gql`
+  query regulatoryAlertsSummary(
+    $id: Int!
+    $companyIds: [Int]
+    $month: ShortMonth!
+    $uniqueUserId: Int
+  ) {
+    user(id: $id) {
+      adminedCompanies(companyIds: $companyIds) {
+        id
+        regulatoryAlertsRecap(month: $month, uniqueUserId: $uniqueUserId) {
+          month
+          totalNbAlerts
+          totalNbAlertsPreviousMonth
+        }
+      }
     }
   }
 `;
