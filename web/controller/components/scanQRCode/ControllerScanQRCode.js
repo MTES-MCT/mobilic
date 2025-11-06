@@ -176,6 +176,11 @@ export function ControllerScanQRCode() {
                   }
                 }}
                 className={classes.qrCodeScan}
+                components={{
+                  audio: false
+                }}
+                allowMultiple={false}
+                scanDelay={500}
               />
             </div>
           </Grid>

@@ -341,9 +341,10 @@ export function renderPeriodKpis(
   formattedKpis.push(workTimeKpis);
   if (Object.keys(kpis.expendituresCount).length > 0) {
     Object.keys(kpis.expendituresCount).forEach(type => {
+      const label = EXPENDITURES[type].plural;
       formattedKpis.push({
         name: `expenditure-${type}`,
-        label: EXPENDITURES[type].plural,
+        label: label.charAt(0).toUpperCase() + label.slice(1),
         value: kpis.expendituresCount[type],
         subText,
         hideSubText: true
