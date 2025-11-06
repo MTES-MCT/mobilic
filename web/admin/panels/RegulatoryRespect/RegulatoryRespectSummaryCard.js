@@ -9,23 +9,23 @@ import { useRegulatoryAlertsSummaryContext } from "../../utils/contextRegulatory
 import {
   addDaysToDate,
   MONTHS,
-  prettyFormatMonth_Date,
+  prettyFormatMonth_Date
 } from "common/utils/time";
 
 const useStyles = makeStyles((theme) => ({
   card: {
-    borderBottom: `4px solid #3965EA`,
+    borderBottom: `4px solid #3965EA`
   },
   title: {
-    color: fr.colors.decisions.text.actionHigh.grey.default,
+    color: fr.colors.decisions.text.actionHigh.grey.default
   },
   subTitle: {
-    color: fr.colors.decisions.background.flat.grey.default,
+    color: fr.colors.decisions.background.flat.grey.default
   },
   change: {
     color: fr.colors.decisions.text.mention.grey.default,
-    fontSize: "0.75rem",
-  },
+    fontSize: "0.75rem"
+  }
 }));
 
 export const SummaryCard = () => {
@@ -33,7 +33,7 @@ export const SummaryCard = () => {
   const { summary, date: currentMonth } = useRegulatoryAlertsSummaryContext();
   const {
     totalNbAlerts: nbAlerts,
-    totalNbAlertsPreviousMonth: nbAlertsPreviousMonth,
+    totalNbAlertsPreviousMonth: nbAlertsPreviousMonth
   } = summary;
 
   const previousMonth = useMemo(() => {
