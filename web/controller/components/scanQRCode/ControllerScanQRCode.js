@@ -157,10 +157,19 @@ export function ControllerScanQRCode() {
           <Grid item xs={12} md={8} lg={4}>
             <div className={"camera-box"}>
               <Scanner
-                constraints={{ facingMode: "environment", aspectRatio: 1 }}
-                containerStyle={{
-                  borderRadius: theme.spacing(2),
-                  zIndex: -1
+                constraints={{
+                  facingMode: 'environment',
+                  aspectRatio: 1,
+                }}
+                styles={{
+                  container: {
+                    borderRadius: theme.spacing(2),
+                    zIndex: -1
+                  },
+                  video: {
+                    borderRadius: theme.spacing(2),
+                    zIndex: -1
+                  }
                 }}
                 onScan={(result) => {
                   if (result) {
@@ -177,7 +186,7 @@ export function ControllerScanQRCode() {
                 }}
                 className={classes.qrCodeScan}
                 components={{
-                  audio: false
+                   finder: false,
                 }}
                 allowMultiple={false}
                 scanDelay={500}
