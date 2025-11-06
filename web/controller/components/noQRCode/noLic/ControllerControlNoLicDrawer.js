@@ -5,6 +5,8 @@ import { ControlBulletinDrawer } from "../../controlBulletin/ControlBulletinDraw
 import { ControlDrawer } from "../../../utils/ControlDrawer";
 import { useInfractions } from "../../../utils/contextInfractions";
 import { ControlTakePicturesDrawer } from "../../pictures/ControlTakePicturesDrawer";
+import { useControlBulletinActions } from "../../../hooks/useControlBulletinActions";
+import ControlHandDeliveryModal from "../../modals/ControlHandDeliveryModal";
 
 export function ControllerControlNoLicDrawer({
   controlData,
@@ -15,6 +17,12 @@ export function ControllerControlNoLicDrawer({
   const [isEditingBDC, setIsEditingBDC] = React.useState(false);
   const [displayTakePictures, setDisplayTakePictures] = React.useState(false);
   const { setIsReportingInfractions } = useInfractions();
+  const actions = useControlBulletinActions({
+    controlId: controlData?.id,
+    controlData,
+    onControlDataUpdate: setControlData
+  });
+
   const takePictures = () => {
     setDisplayTakePictures(true);
   };
@@ -22,11 +30,22 @@ export function ControllerControlNoLicDrawer({
     setIsEditingBDC(true);
   };
 
-  const closeControl = () => {
+  const actuallyCloseDrawer = React.useCallback(() => {
     setControlData(null);
     setIsReportingInfractions(false);
     onClose();
-  };
+  }, [setControlData, setIsReportingInfractions, onClose]);
+
+  const closeControl = React.useCallback(() => {
+    const bulletinExists = !!controlData?.controlBulletinCreationTime;
+    const deliveryNotSet = controlData?.deliveredByHand === null;
+
+    if (bulletinExists && deliveryNotSet) {
+      actions.openHandDeliveryModal();
+    } else {
+      actuallyCloseDrawer();
+    }
+  }, [controlData, actions, actuallyCloseDrawer]);
 
   return (
     <ControlDrawer
@@ -50,10 +69,24 @@ export function ControllerControlNoLicDrawer({
         onClose={() => setDisplayTakePictures(false)}
       />
       <ControllerControlHeader
-        controlDate={controlData.creationTime}
+        controlDate={controlData.controlTime}
         onCloseDrawer={() => closeControl()}
       />
       <ControllerControlNoLic editBDC={editBDC} takePictures={takePictures} />
+
+      <ControlHandDeliveryModal
+        open={actions.isHandDeliveryModalOpen}
+        handleConfirm={async () => {
+          await actions.handleHandDeliveryConfirmWithoutClose(true);
+          actions.setIsHandDeliveryModalOpen(false);
+          actuallyCloseDrawer();
+        }}
+        handleCancel={async () => {
+          await actions.handleHandDeliveryConfirmWithoutClose(false);
+          actions.setIsHandDeliveryModalOpen(false);
+          actuallyCloseDrawer();
+        }}
+      />
     </ControlDrawer>
   );
 }

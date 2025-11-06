@@ -96,13 +96,17 @@ export default function CompanyTeamCreationRevisionModal({
         companyId: company.id,
         ...commonPayloadFromFields()
       });
-      const { teams, employments } = apiResponse?.data?.teams?.createTeam;
-      setTeams(teams);
-      adminStore.dispatch({
-        type: ADMIN_ACTIONS.updateTeams,
-        payload: { teams, employments }
-      });
-      alerts.success(`Le groupe '${name}' a bien été créé.`, "", 6000);
+      const { teams, employments } = apiResponse?.data?.teams?.createTeam ?? {};
+      if (teams) {
+        setTeams(teams);
+      }
+      if (teams && employments) {
+        adminStore.dispatch({
+          type: ADMIN_ACTIONS.updateTeams,
+          payload: { teams, employments }
+        });
+        alerts.success(`Le groupe '${name}' a bien été créé.`, "", 6000);
+      }
       handleClose();
     }, "create-team");
     setSubmitting(false);
@@ -115,13 +119,17 @@ export default function CompanyTeamCreationRevisionModal({
         teamId: team.id,
         ...commonPayloadFromFields()
       });
-      const { teams, employments } = apiResponse?.data?.teams?.updateTeam;
-      setTeams(teams);
-      adminStore.dispatch({
-        type: ADMIN_ACTIONS.updateTeams,
-        payload: { teams, employments }
-      });
-      alerts.success(`Le groupe '${name}' a bien été mis à jour.`, "", 6000);
+      const { teams, employments } = apiResponse?.data?.teams?.updateTeam ?? {};
+      if (teams) {
+        setTeams(teams);
+      }
+      if (teams && employments) {
+        adminStore.dispatch({
+          type: ADMIN_ACTIONS.updateTeams,
+          payload: { teams, employments }
+        });
+        alerts.success(`Le groupe '${name}' a bien été mis à jour.`, "", 6000);
+      }
       handleClose();
     }, "update-team");
     setSubmitting(false);

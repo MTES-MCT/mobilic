@@ -37,7 +37,8 @@ export function ControllerControlDetails({
   const legacyTokenInfo = {
     creationDay: new Date(unixToJSTimestamp(controlData.qrCodeGenerationTime)),
     historyStartDay: controlData.historyStartDate,
-    creationTime: controlData.creationTime
+    creationTime: controlData.creationTime,
+    controlTime: controlData.controlTime
   };
 
   const _onClose = () => {
@@ -109,10 +110,14 @@ export function ControllerControlDetails({
     [employments]
   );
 
+  const companySiren = React.useMemo(() => {
+    return controlData?.controlBulletin?.siren || null;
+  }, [controlData]);
+
   return (
     <>
       <ControllerControlHeader
-        controlDate={legacyTokenInfo?.creationTime}
+        controlDate={legacyTokenInfo?.controlTime}
         onCloseDrawer={_onClose}
       />
       <UserReadTabs
@@ -131,7 +136,9 @@ export function ControllerControlDetails({
         allowC1BExport={false}
         controlId={controlData.id}
         companyName={controlData.companyName}
+        companySiren={companySiren}
         vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
+        controlData={controlData}
         openBulletinControl={() => setIsEditingBC(true)}
         reportedInfractionsLastUpdateTime={reportedInfractionsLastUpdateTime}
         isReportingInfractions={isReportingInfractions}

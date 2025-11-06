@@ -1,6 +1,6 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import QRCode from "qrcode.react";
+import { QRCodeCanvas } from "qrcode.react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useApi } from "common/utils/api";
 import { formatApiError } from "common/utils/errors";
@@ -40,7 +40,10 @@ export default function UserReadQRCodeModal({ open, handleClose }) {
 
   async function getReadLink() {
     try {
-      const json = await api.jsonHttpQuery(HTTP_QUERIES.generateUserReadToken);
+      const json = await api.jsonHttpQuery(
+        HTTP_QUERIES.generateUserReadToken,
+        { json: {} }
+      );
       const token = json.token;
       const controlToken = json.controlToken;
       setLink(
@@ -73,7 +76,7 @@ export default function UserReadQRCodeModal({ open, handleClose }) {
                 montrer ce QR code qui leur permettra de consulter les données
                 de votre historique.
               </Typography>
-              <QRCode value={link} size={180} includeMargin={true} />
+              <QRCodeCanvas value={link} size={180} includeMargin={true} />
             </>
           ) : error ? (
             <Notice

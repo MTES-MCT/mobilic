@@ -79,6 +79,7 @@ export function ControlBulletinFormStep1({
         fieldLabel="Département du contrôle"
         options={DEPARTMENTS}
         showErrors={showErrors}
+        searchByCodeAndLabel={true}
         onChange={(_, newValue) => {
           editControlBulletinField(newValue.label, "locationDepartment");
           editControlBulletinField("", "locationCommune");
@@ -144,7 +145,7 @@ export function ControlBulletinFormStep1({
         label="Nationalité du salarié"
         nativeSelectProps={{
           onChange: e => handleEditControlBulletin(e),
-          value: controlBulletin.userNationality,
+          value: controlBulletin.userNationality || "",
           name: "userNationality"
         }}
         state={
@@ -153,6 +154,9 @@ export function ControlBulletinFormStep1({
         stateRelatedMessage="Veuillez compléter ce champ."
         required
       >
+        <option value="" disabled>
+          Sélectionnez une nationalité
+        </option>
         {COUNTRIES.map(option => (
           <option key={option.value} value={option.value}>
             {option.label}

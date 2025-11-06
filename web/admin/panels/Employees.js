@@ -13,6 +13,7 @@ import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
 import {
+  DAY,
   frenchFormatDateStringOrTimeStamp,
   isoFormatLocalDate,
   now
@@ -22,7 +23,7 @@ import {
   CANCEL_EMPLOYMENT_MUTATION,
   CHANGE_EMPLOYEE_ROLE,
   CREATE_EMPLOYMENT_MUTATION,
-  SEND_EMPLOYMENT_INVITE_REMINDER,
+  SEND_INVITATIONS_REMINDERS,
   TERMINATE_EMPLOYMENT_MUTATION
 } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
@@ -74,6 +75,11 @@ const isUserOnlyAdminOfTeams = (teams, userId) => {
       team => team.adminUsers?.length === 1 && team.adminUsers[0].id === userId
     )
     .map(team => team.name);
+};
+
+const isLessThanTwelveHoursAgo = ts => {
+  const nbSecondsElapsed = now() - ts;
+  return nbSecondsElapsed <= DAY / 2;
 };
 
 export function Employees({ company, containerRef }) {
@@ -148,23 +154,27 @@ export function Employees({ company, containerRef }) {
       const {
         teams,
         employments
-      } = apiResponse?.data?.employments?.changeEmployeeRole;
-      await adminStore.dispatch({
-        type: ADMIN_ACTIONS.update,
-        payload: {
-          id: employmentId,
-          entity: "employments",
-          update: {
-            ...employments.find(employment => employment.id === employmentId),
-            companyId,
-            adminStore
+      } = apiResponse?.data?.employments?.changeEmployeeRole ?? {};
+      if (employments) {
+        await adminStore.dispatch({
+          type: ADMIN_ACTIONS.update,
+          payload: {
+            id: employmentId,
+            entity: "employments",
+            update: {
+              ...employments.find(employment => employment.id === employmentId),
+              companyId,
+              adminStore
+            }
           }
-        }
-      });
-      await adminStore.dispatch({
-        type: ADMIN_ACTIONS.updateTeams,
-        payload: { teams, employments }
-      });
+        });
+      }
+      if (teams && employments) {
+        await adminStore.dispatch({
+          type: ADMIN_ACTIONS.updateTeams,
+          payload: { teams, employments }
+        });
+      }
     } catch (err) {
       alerts.error(formatApiError(err), employmentId, 6000);
     }
@@ -199,17 +209,26 @@ export function Employees({ company, containerRef }) {
     });
   }
 
-  async function sendInvitationReminder(employmentId) {
-    await api.graphQlMutate(SEND_EMPLOYMENT_INVITE_REMINDER, { employmentId });
-    await adminStore.dispatch({
-      type: ADMIN_ACTIONS.update,
-      payload: {
-        id: employmentId,
-        entity: "employments",
-        update: { latestInviteEmailTime: now() }
-      }
-    });
-    alerts.success("Relance envoyée", employmentId, 6000);
+  async function sendInvitationsReminders(employmentIds) {
+    try {
+      const res = await api.graphQlMutate(SEND_INVITATIONS_REMINDERS, {
+        employmentIds
+      });
+      const sentToEmploymentIds = res.data.employments.sendInvitationsReminders.sentToEmploymentIds
+      await adminStore.dispatch({
+        type: ADMIN_ACTIONS.updateEmploymentsLatestInvitateEmailTime,
+        payload: {
+          employmentIds: sentToEmploymentIds
+        }
+      });
+      alerts.success(
+        `${sentToEmploymentIds.length} relance(s) envoyée(s)`,
+        employmentIds[0],
+        6000
+      );
+    } catch {
+      alerts.error("Une erreur est survenue", {}, 6000);
+    }
   }
 
   const formatTeam = teamId =>
@@ -217,20 +236,12 @@ export function Employees({ company, containerRef }) {
 
   const pendingEmploymentColumns = [
     {
-      label: "Nom",
-      name: "name",
-      minWidth: 75,
-      baseWidth: 200,
-      overflowTooltip: true,
-      align: "left"
-    },
-    {
       label: "Identifiant ou email",
       name: "idOrEmail",
       create: true,
       sortable: true,
-      minWidth: 200,
-      baseWidth: 200,
+      minWidth: 260,
+      baseWidth: 300,
       overflowTooltip: true,
       align: "left"
     },
@@ -238,8 +249,8 @@ export function Employees({ company, containerRef }) {
       label: "Accès gestionnaire",
       name: "hasAdminRights",
       create: true,
-      minWidth: 160,
-      baseWidth: 160,
+      minWidth: 120,
+      baseWidth: 120,
       align: "left",
       required: true,
       format: hasAdminRights => (hasAdminRights ? "Oui" : "Non"),
@@ -266,16 +277,16 @@ export function Employees({ company, containerRef }) {
         dateString ? frenchFormatDateStringOrTimeStamp(dateString) : "",
       sortable: true,
       name: "creationDate",
-      minWidth: 160,
-      baseWidth: 160,
-      align: "left"
+      minWidth: 120,
+      baseWidth: 140,
+      align: "center"
     },
     {
-      label: "Dernière relance le",
+      label: "Relancé le",
       name: "latestInviteEmailDateString",
-      minWidth: 160,
-      baseWidth: 160,
-      align: "left"
+      minWidth: 120,
+      baseWidth: 140,
+      align: "center"
     }
   ];
 
@@ -308,6 +319,14 @@ export function Employees({ company, containerRef }) {
       )
     });
   }
+
+  pendingEmploymentColumns.push({
+    label: "",
+    name: "remindButton",
+    minWidth: 140,
+    baseWidth: 140,
+    format: remindButton => remindButton
+  });
 
   const validEmploymentColumns = [
     {
@@ -370,9 +389,8 @@ export function Employees({ company, containerRef }) {
       name: "active",
       format: active => (
         <Typography
-          className={`bold ${
-            active ? classes.successText : classes.terminatedEmployment
-          }`}
+          className={`bold ${active ? classes.successText : classes.terminatedEmployment
+            }`}
         >
           {active ? "Actif" : "Terminé"}
         </Typography>
@@ -420,9 +438,9 @@ export function Employees({ company, containerRef }) {
         .map(e => ({
           pending: true,
           idOrEmail: e.email || e.user?.id,
-          name: e.user ? formatPersonName(e.user, true) : null,
           hasAdminRights: e.hasAdminRights,
           creationDate: e.startDate,
+          latestInviteEmailTime: e.latestInviteEmailTime,
           latestInviteEmailDateString: frenchFormatDateStringOrTimeStamp(
             e.latestInviteEmailTime
               ? e.latestInviteEmailTime * 1000
@@ -432,9 +450,38 @@ export function Employees({ company, containerRef }) {
           teamId: e.teamId,
           employmentId: e.id,
           userId: e.user?.id,
-          companyId: e.company?.id
+          companyId: e.company?.id,
+          remindButton: (
+            <Button
+              disabled={
+                e.latestInviteEmailTime &&
+                isLessThanTwelveHoursAgo(e.latestInviteEmailTime)
+              }
+              priority="tertiary no outline"
+              size="small"
+              iconPosition="left"
+              iconId="fr-icon-arrow-go-forward-fill"
+              onClick={async () => {
+                await alerts.withApiErrorHandling(async () =>
+                  sendInvitationsReminders([e.id])
+                );
+              }}
+            >
+              Relancer
+            </Button>
+          )
         })),
     [companyEmployments]
+  );
+
+  const disableRemindAllPendingInvitations = React.useMemo(
+    () =>
+      pendingEmployments.filter(
+        e =>
+          e.latestInviteEmailTime &&
+          isLessThanTwelveHoursAgo(e.latestInviteEmailTime)
+      ).length === pendingEmployments.length,
+    [pendingEmployments]
   );
 
   const hasMadeInvitations = React.useMemo(
@@ -542,15 +589,6 @@ export function Employees({ company, containerRef }) {
     }
     const customActions = [
       {
-        name: "reminder",
-        label: "Relancer l'invitation",
-        action: async empl => {
-          await alerts.withApiErrorHandling(async () =>
-            sendInvitationReminder(empl.id)
-          );
-        }
-      },
-      {
         name: "delete",
         label: "Annuler l'invitation",
         action: empl => {
@@ -600,38 +638,38 @@ export function Employees({ company, containerRef }) {
     const conditionalX = moreThanOne ? "x" : "";
     nbTeamsOnlyAdmin > 0
       ? modals.open("confirmation", {
-          textButtons: true,
-          title: modalTitle,
-          content: (
-            <Box>
-              <Typography>
-                Ce gestionnaire est le seul gestionnaire rattaché au
-                {conditionalX} groupe{conditionalS} suivant{conditionalS}:{" "}
-                <span className="bold">
-                  {teamsWhereUserIsOnlyAdmin.join(", ")}.
-                </span>
-              </Typography>
-              <Typography>
-                Si vous{" "}
-                {terminateEmployment
-                  ? "mettez fin à son rattachement"
-                  : "lui retirez ses droits de gestion"}
-                , il n'y aura plus de gestionnaire pour ce{conditionalS} groupe
-                {conditionalS}.
-              </Typography>
-              <Typography>
-                Êtes-vous certain(e) de vouloir{" "}
-                {terminateEmployment
-                  ? "mettre fin à son rattachement"
-                  : "lui retirer ses droits de gestion"}
-                ?
-              </Typography>
-            </Box>
-          ),
-          handleConfirm: async () => {
-            await action();
-          }
-        })
+        textButtons: true,
+        title: modalTitle,
+        content: (
+          <Box>
+            <Typography>
+              Ce gestionnaire est le seul gestionnaire rattaché au
+              {conditionalX} groupe{conditionalS} suivant{conditionalS}:{" "}
+              <span className="bold">
+                {teamsWhereUserIsOnlyAdmin.join(", ")}.
+              </span>
+            </Typography>
+            <Typography>
+              Si vous{" "}
+              {terminateEmployment
+                ? "mettez fin à son rattachement"
+                : "lui retirez ses droits de gestion"}
+              , il n'y aura plus de gestionnaire pour ce{conditionalS} groupe
+              {conditionalS}.
+            </Typography>
+            <Typography>
+              Êtes-vous certain(e) de vouloir{" "}
+              {terminateEmployment
+                ? "mettre fin à son rattachement"
+                : "lui retirer ses droits de gestion"}
+              ?
+            </Typography>
+          </Box>
+        ),
+        handleConfirm: async () => {
+          await action();
+        }
+      })
       : action();
   };
 
@@ -784,16 +822,36 @@ export function Employees({ company, containerRef }) {
                   </Button>
                 }
               </Typography>
-              <InviteButtons
-                onBatchInvite={handleBatchInvite}
-                onSingleInvite={handleSingleInvite}
-                shouldShowBadge={
-                  !hasMadeInvitations &&
-                  !employeeProgressData?.shouldShowSingleInviteButton &&
-                  employeeProgressData?.shouldShowBadge
-                }
-                employeeProgressData={employeeProgressData}
-              />
+              <Stack direction="row" columnGap={1}>
+                <Button
+                  priority="tertiary no outline"
+                  size="small"
+                  iconPosition="left"
+                  iconId="fr-icon-arrow-go-forward-fill"
+                  disabled={disableRemindAllPendingInvitations}
+                  onClick={async () => {
+                    await alerts.withApiErrorHandling(async () =>
+                      sendInvitationsReminders(
+                        pendingEmployments.filter(
+                          e => !e.latestInviteEmailTime || !isLessThanTwelveHoursAgo(e.latestInviteEmailTime)
+                        ).map(e => e.id)
+                      )
+                    );
+                  }}
+                >
+                  Relancer les invitations
+                </Button>
+                <InviteButtons
+                  onBatchInvite={handleBatchInvite}
+                  onSingleInvite={handleSingleInvite}
+                  shouldShowBadge={
+                    !hasMadeInvitations &&
+                    !employeeProgressData?.shouldShowSingleInviteButton &&
+                    employeeProgressData?.shouldShowBadge
+                  }
+                  employeeProgressData={employeeProgressData}
+                />
+              </Stack>
             </Box>
             {!hidePendingEmployments && (
               <AugmentedTable

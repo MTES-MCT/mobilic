@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
-import { QrReader } from "react-qr-reader";
+import { Scanner } from "@yudiel/react-qr-scanner";
 import Grid from "@mui/material/Grid";
 import useTheme from "@mui/styles/useTheme";
 import { useHistory } from "react-router-dom";
@@ -86,19 +86,27 @@ export function ControllerScanQRCode() {
   }, []);
 
   const getNewTokenFromOldQRCode = scannedCode => {
-    if (
-      scannedCode.startsWith(`${window.location.origin}/control/user-history`)
-    ) {
-      const queryString = new URLSearchParams(scannedCode);
-      return queryString.get("controlToken");
-    } else {
+    try {
+      if (
+        scannedCode.startsWith(`${window.location.origin}/control/user-history`)
+      ) {
+        const url = new URL(scannedCode);
+        return url.searchParams.get("controlToken") || scannedCode;
+      } else {
+        return scannedCode;
+      }
+    } catch (error) {
+      console.error('Error parsing QR code:', error);
       return scannedCode;
     }
   };
 
-  const onScanQRCode = async scannedCode => {
+  const onScanQRCode = async scannedResult => {
     withLoadingScreen(async () => {
       try {
+        const scannedCode = Array.isArray(scannedResult)
+          ? scannedResult[0]?.rawValue
+          : scannedResult;
         const tokenToSend = getNewTokenFromOldQRCode(scannedCode);
         const apiResponse = await api.graphQlMutate(
           CONTROLLER_SCAN_CODE,
@@ -119,7 +127,7 @@ export function ControllerScanQRCode() {
             type: CONTROL_TYPES.MOBILIC.label
           }
         });
-      } catch (err) {
+      } catch {
         history.push(CONTROLLER_ROUTE_PREFIX + "/scan_error");
       }
     });
@@ -148,17 +156,27 @@ export function ControllerScanQRCode() {
         >
           <Grid item xs={12} md={8} lg={4}>
             <div className={"camera-box"}>
-              <QrReader
-                constraints={{ facingMode: "environment", aspectRatio: 1 }}
-                videoContainerStyle={{
-                  borderRadius: theme.spacing(2),
-                  zIndex: -1
+              <Scanner
+                constraints={{
+                  facingMode: 'environment',
+                  aspectRatio: 1,
                 }}
-                onResult={(result, error) => {
-                  if (result && result?.text) {
-                    onScanQRCode(result?.text);
+                styles={{
+                  container: {
+                    borderRadius: theme.spacing(2),
+                    zIndex: -1
+                  },
+                  video: {
+                    borderRadius: theme.spacing(2),
+                    zIndex: -1
                   }
-
+                }}
+                onScan={(result) => {
+                  if (result) {
+                    onScanQRCode(result);
+                  }
+                }}
+                onError={(error) => {
                   if (error) {
                     if (isPermissionDeniedOnSafari(error)) {
                       displayCameraDeniedAlert();
@@ -167,6 +185,11 @@ export function ControllerScanQRCode() {
                   }
                 }}
                 className={classes.qrCodeScan}
+                components={{
+                   finder: false,
+                }}
+                allowMultiple={false}
+                scanDelay={500}
               />
             </div>
           </Grid>

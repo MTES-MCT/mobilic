@@ -15,6 +15,8 @@ export function computeTotalActivityDurations(
     untilTime
   );
 
+  if (filteredActivityEvents.length === 0) return {};
+
   const actualUntil = Math.min(
     filteredActivityEvents[filteredActivityEvents.length - 1].endTime ||
       current,

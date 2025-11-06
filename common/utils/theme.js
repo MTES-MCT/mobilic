@@ -1,4 +1,3 @@
-import { fr } from "@codegouvfr/react-dsfr";
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
 export const customOptions = {
@@ -49,10 +48,10 @@ export const customOptions = {
       dark: "#202DA7"
     },
     warning: {
-      light: fr.colors.options.warning._425_625.default,
-      main: fr.colors.options.warning._425_625.default,
-      dark: fr.colors.options.warning._425_625.hover,
-      contrastText: fr.colors.options.grey._1000_50.default
+      light: "#b34000", // warning-425-625-active en mode clair
+      main: "#b34000", // warning-425-625 en mode clair
+      dark: "#ff6218", // warning-425-625-hover en mode clair
+      contrastText: "#fff" // Blanc pour contraste sur warning
     }
   },
   typography: {

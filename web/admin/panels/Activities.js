@@ -330,7 +330,7 @@ function ActivitiesPanel() {
         <Grid item>
           <MobileDatePicker
             label="Début"
-            value={minDate}
+            value={new Date(minDate)}
             inputFormat="d MMMM yyyy"
             fullWidth
             disableCloseOnSelect={false}
@@ -341,6 +341,11 @@ function ActivitiesPanel() {
             }}
             cancelText={null}
             maxDate={today}
+            slotProps={{
+              textField: {
+                size: "small"
+              }
+            }}
             // renderDay is needed to fix issue caused by key being passed with props
             renderDay={(day, selectedDates, pickersDayProps) => {
               const { key, ...safeProps } = pickersDayProps;
@@ -354,7 +359,7 @@ function ActivitiesPanel() {
         <Grid item>
           <MobileDatePicker
             label="Fin"
-            value={maxDate}
+            value={new Date(maxDate)}
             inputFormat="d MMMM yyyy"
             fullWidth
             disableCloseOnSelect={false}
@@ -365,6 +370,11 @@ function ActivitiesPanel() {
             }}
             cancelText={null}
             maxDate={today}
+            slotProps={{
+              textField: {
+                size: "small"
+              }
+            }}
             // renderDay is needed to fix issue caused by key being passed with props
             renderDay={(day, selectedDates, pickersDayProps) => {
               const { key, ...safeProps } = pickersDayProps;

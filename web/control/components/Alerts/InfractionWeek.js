@@ -49,7 +49,7 @@ export const InfractionWeek = ({ alerts, sanction }) => {
           : ""
       }
       options={getLastFourMondays(
-        new Date(unixToJSTimestamp(controlData.creationTime))
+        new Date(unixToJSTimestamp(controlData.controlTime))
       )
         .reverse()
         .map(monday => ({

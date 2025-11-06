@@ -19,6 +19,9 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
 
   React.useEffect(() => {
     if (!userBirthDate) {
+      setDay("");
+      setMonth("");
+      setYear("");
       return;
     }
     const date = new Date(userBirthDate);

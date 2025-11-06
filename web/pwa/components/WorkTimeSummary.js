@@ -339,46 +339,18 @@ export function renderPeriodKpis(
   };
 
   formattedKpis.push(workTimeKpis);
-  if (Object.keys(kpis.expendituresCount).length > 0)
-    formattedKpis.push({
-      name: "expenditures",
-      label: "Frais",
-      fullWidth: true,
-      render: () => (
-        <Grid
-          container
-          direction="row"
-          justifyContent="center"
-          alignItems={"center"}
-          spacing={1}
-        >
-          {Object.keys(kpis.expendituresCount).map(type => (
-            <Grid key={type} item xs>
-              <Box py={1} m="auto">
-                <Typography
-                  variant="body2"
-                  style={{
-                    textTransform: "capitalize",
-                    fontWeight: "bold",
-                    whiteSpace: "nowrap"
-                  }}
-                  component="h2"
-                >
-                  {EXPENDITURES[type].plural}
-                </Typography>
-                <Typography
-                  variant="h4"
-                  component="span"
-                  style={{ fontWeight: "bold" }}
-                >
-                  {kpis.expendituresCount[type]}
-                </Typography>
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
-      )
+  if (Object.keys(kpis.expendituresCount).length > 0) {
+    Object.keys(kpis.expendituresCount).forEach(type => {
+      const label = EXPENDITURES[type].plural;
+      formattedKpis.push({
+        name: `expenditure-${type}`,
+        label: label.charAt(0).toUpperCase() + label.slice(1),
+        value: kpis.expendituresCount[type],
+        subText,
+        hideSubText: true
+      });
     });
+  }
   if (kpis.offDays) {
     formattedKpis.push({
       name: "offDays",

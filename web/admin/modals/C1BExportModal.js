@@ -231,6 +231,11 @@ export default function C1BExportModal({
                       helperText={dateRangeError}
                     />
                   )}
+                  slotProps={{
+                    textField: {
+                      size: "small"
+                    }
+                  }}
                 />
               </Grid>
               <Grid item sm={6}>
@@ -252,6 +257,11 @@ export default function C1BExportModal({
                       helperText={dateRangeError}
                     />
                   )}
+                  slotProps={{
+                    textField: {
+                      size: "small"
+                    }
+                  }}
                 />
               </Grid>
             </DateOrDateTimeRangeSelectionContext>

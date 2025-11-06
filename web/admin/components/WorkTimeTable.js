@@ -170,7 +170,7 @@ export function WorkTimeTable({
 
   return (
     <>
-      <SwipeableDrawer
+    {workdayOnFocus && <SwipeableDrawer
         key={0}
         anchor="right"
         open={!!wordDayDrawerOpen}
@@ -196,7 +196,7 @@ export function WorkTimeTable({
           }}
           width={width}
         />
-      </SwipeableDrawer>
+      </SwipeableDrawer>}
       <AugmentedTable
         key={2}
         columns={columns}
