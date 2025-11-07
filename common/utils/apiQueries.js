@@ -2488,6 +2488,14 @@ export const ADMIN_COMPANY_REGULATORY_ALERTS_SUMMARY_QUERY = gql`
           month
           totalNbAlerts
           totalNbAlertsPreviousMonth
+          dailyAlerts {
+            alertsType
+            nbAlerts
+          }
+          weeklyAlerts {
+            alertsType
+            nbAlerts
+          }
         }
       }
     }

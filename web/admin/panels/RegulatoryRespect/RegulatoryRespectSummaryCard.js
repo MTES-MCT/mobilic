@@ -76,8 +76,8 @@ export const SummaryCard = () => {
                   className={cx(
                     "fr-icon--sm",
                     percDiff > 0
-                      ? "fr-icon-corner-right-up-line"
-                      : "fr-icon-corner-right-down-line"
+                      ? "fr-icon-arrow-right-up-line"
+                      : "fr-icon-arrow-right-down-line"
                   )}
                 />
                 {Math.abs(percDiff)}%
