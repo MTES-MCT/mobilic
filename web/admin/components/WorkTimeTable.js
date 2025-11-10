@@ -15,12 +15,12 @@ import { WorkTimeDetails } from "./WorkTimeDetails";
 import { ChevronRight } from "@mui/icons-material";
 import { SwipeableDrawer } from "@mui/material";
 import { MissionNamesList } from "./MissionNamesList";
-import { useMissionDrawer } from "./MissionDrawer";
+import { useMissionDrawer } from "../drawers/MissionDrawer";
 import { WorkDayEndTime } from "./WorkDayEndTime";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { OPEN_WORKDAY_DRAWER } from "common/utils/matomoTags";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   expenditures: {
     padding: theme.spacing(4)
   },
@@ -56,7 +56,7 @@ export function WorkTimeTable({
     periodFormatter = textualPrettyFormatDay;
   } else if (period === "week") {
     periodLabel = "Semaine";
-    periodFormatter = ts => textualPrettyFormatWeek(getStartOfWeek(ts));
+    periodFormatter = (ts) => textualPrettyFormatWeek(getStartOfWeek(ts));
   } else if (period === "month") {
     periodLabel = "Mois";
     periodFormatter = prettyFormatMonth;
@@ -71,7 +71,7 @@ export function WorkTimeTable({
   const startTimeCol = {
     label: "Début",
     name: "startTime",
-    format: time => (time ? formatTimeOfDay(time) : null),
+    format: (time) => (time ? formatTimeOfDay(time) : null),
     align: "right",
     minWidth: 80
   };
@@ -99,14 +99,14 @@ export function WorkTimeTable({
   const restTimeCol = {
     label: "Repos",
     name: "rest",
-    format: time => (time ? formatTimer(time) : null),
+    format: (time) => (time ? formatTimer(time) : null),
     align: "right",
     minWidth: 100
   };
   const expenditureCol = {
     label: "Frais",
     name: "expenditureAggs",
-    format: exps => (exps ? formatExpendituresAsOneString(exps) : null),
+    format: (exps) => (exps ? formatExpendituresAsOneString(exps) : null),
     align: "left",
     minWidth: 200,
     overflowTooltip: true,
@@ -120,7 +120,7 @@ export function WorkTimeTable({
   const missionNamesCol = {
     label: "Mission(s)",
     name: "missionNames",
-    format: missionNames => (
+    format: (missionNames) => (
       <MissionNamesList missionNames={missionNames} openMission={openMission} />
     ),
     align: "left",
@@ -158,7 +158,7 @@ export function WorkTimeTable({
 
   columns = columns.filter(Boolean);
 
-  const preFormattedWorkTimeEntries = workTimeEntries.map(wte => {
+  const preFormattedWorkTimeEntries = workTimeEntries.map((wte) => {
     const base = {
       ...wte,
       id: wte.user.id + wte.periodStart.toString(),
@@ -170,33 +170,35 @@ export function WorkTimeTable({
 
   return (
     <>
-    {workdayOnFocus && <SwipeableDrawer
-        key={0}
-        anchor="right"
-        open={!!wordDayDrawerOpen}
-        onOpen={() => setWordDayDrawerOpen(true)}
-        disableDiscovery
-        disableSwipeToOpen
-        onClose={() => {
-          setWordDayDrawerOpen(false);
-        }}
-        PaperProps={{
-          className: classes.workTimeModal,
-          sx: {
-            width: { xs: "100vw", md: 885 }
-          }
-        }}
-      >
-        <WorkTimeDetails
-          key={1}
-          workTimeEntry={workdayOnFocus}
-          openMission={openMission}
-          handleClose={() => {
+      {workdayOnFocus && (
+        <SwipeableDrawer
+          key={0}
+          anchor="right"
+          open={!!wordDayDrawerOpen}
+          onOpen={() => setWordDayDrawerOpen(true)}
+          disableDiscovery
+          disableSwipeToOpen
+          onClose={() => {
             setWordDayDrawerOpen(false);
           }}
-          width={width}
-        />
-      </SwipeableDrawer>}
+          PaperProps={{
+            className: classes.workTimeModal,
+            sx: {
+              width: { xs: "100vw", md: 885 }
+            }
+          }}
+        >
+          <WorkTimeDetails
+            key={1}
+            workTimeEntry={workdayOnFocus}
+            openMission={openMission}
+            handleClose={() => {
+              setWordDayDrawerOpen(false);
+            }}
+            width={width}
+          />
+        </SwipeableDrawer>
+      )}
       <AugmentedTable
         key={2}
         columns={columns}
@@ -207,7 +209,7 @@ export function WorkTimeTable({
         defaultSortType="desc"
         className={className}
         virtualized
-        onRowClick={entry => {
+        onRowClick={(entry) => {
           if (!entry.day) return false;
           trackEvent(OPEN_WORKDAY_DRAWER);
           setWorkdayOnFocus(entry);

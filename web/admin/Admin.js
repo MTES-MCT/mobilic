@@ -29,7 +29,7 @@ import { useIsWidthUp, useWidth } from "common/utils/useWidth";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
-import { MissionDrawerContextProvider } from "./components/MissionDrawer";
+import { MissionDrawerContextProvider } from "./drawers/MissionDrawer";
 import { shouldUpdateBusinessType } from "common/utils/updateBusinessType";
 import { shouldUpdateNbWorker } from "common/utils/updateNbWorker";
 import UpdateCompanyBusinessTypeModal from "./modals/UpdateCompanyBusinessTypeModal";
@@ -38,7 +38,7 @@ import { Main } from "../common/semantics/Main";
 
 import { SideMenu } from "./components/SideMenu/SideMenu";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     display: "flex",
     flexGrow: 1,
@@ -75,7 +75,7 @@ function InternalAdmin() {
   const width = useWidth();
   const isMdUp = useIsWidthUp("md");
 
-  const views = ADMIN_VIEWS.map(view => {
+  const views = ADMIN_VIEWS.map((view) => {
     const absPath = `${path}${view.path}`;
     return {
       ...view,
@@ -170,17 +170,14 @@ function InternalAdmin() {
       return;
     }
     const employment = employments.find(
-      employment =>
+      (employment) =>
         employment.companyId === companyId && employment.user?.id === userId
     );
     if (!employment) {
       return;
     }
-    const {
-      shouldSeeCertificateInfo,
-      shouldForceNbWorkerInfo,
-      id
-    } = employment;
+    const { shouldSeeCertificateInfo, shouldForceNbWorkerInfo, id } =
+      employment;
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateShouldSeeCertificateInfo,
       payload: { shouldSeeCertificateInfo }
@@ -197,9 +194,9 @@ function InternalAdmin() {
 
   const ref = React.useRef(null);
 
-  const shouldRefreshDataSetter = val => setShouldRefreshData({ value: val });
+  const shouldRefreshDataSetter = (val) => setShouldRefreshData({ value: val });
 
-  const defaultView = views.find(view => view.isDefault);
+  const defaultView = views.find((view) => view.isDefault);
   return (
     <>
       {!!adminStore.business &&
@@ -222,14 +219,14 @@ function InternalAdmin() {
             ref={ref}
           >
             <Switch>
-              {views.map(view => (
+              {views.map((view) => (
                 <Route
                   key={view.label}
                   path={view.path}
                   render={() => (
                     <view.component
                       containerRef={ref}
-                      setShouldRefreshData={val =>
+                      setShouldRefreshData={(val) =>
                         setShouldRefreshData(shouldRefreshDataSetter)
                       }
                     />
