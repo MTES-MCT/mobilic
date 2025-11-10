@@ -5,6 +5,7 @@ import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { fr } from "@codegouvfr/react-dsfr";
 import { useRegulatoryAlertsSummaryContext } from "../../utils/contextRegulatoryAlertsSummary";
+import { ExternalLink } from "../../../common/ExternalLink";
 
 const PRETTY_LABELS = {
   maximumWorkedDaysInWeek: "Repos hebdomadaire",
@@ -66,7 +67,7 @@ export const AlertsRecap = ({ ...otherProps }) => {
   const classes = useStyles();
   const { summary } = useRegulatoryAlertsSummaryContext();
   return (
-    <Stack {...otherProps} rowGap={4}>
+    <Stack {...otherProps} rowGap={3}>
       <Stack rowGap={1}>
         <Typography className={classes.title}>
           Respects des seuils journaliers
@@ -83,6 +84,11 @@ export const AlertsRecap = ({ ...otherProps }) => {
         </Typography>
         {displayAlerts(summary.weeklyAlerts)}
       </Stack>
+      <ExternalLink
+        url="/resources/home"
+        text="En savoir plus sur les seuils à respecter par secteur d’activité"
+        withIcon
+      />
     </Stack>
   );
 };
