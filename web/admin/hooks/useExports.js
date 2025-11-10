@@ -1,12 +1,14 @@
+import React, { useEffect, useRef, useState } from "react";
 import { useApi } from "common/utils/api";
 import { HTTP_QUERIES } from "common/utils/apiQueries";
-import { useEffect, useRef, useState } from "react";
+import { useSilentDownload } from "../../common/hooks/useSilentDownload";
 
 export function useExports() {
   const api = useApi();
 
   const intervalRef = useRef(null);
   const [nbExports, setNbExports] = useState(0);
+  const { silentDownload } = useSilentDownload();
 
   const updateExports = async () => {
     let res;
@@ -22,7 +24,7 @@ export function useExports() {
     setNbExports(res?.nb_wip_exports || 0);
 
     for (const dlUrl of res.ready_exports_links) {
-      window.open(dlUrl);
+      silentDownload(dlUrl);
     }
   };
 
