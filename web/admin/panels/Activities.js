@@ -501,7 +501,6 @@ function ActivitiesPanel() {
           showExpenditures={adminStore.settings.requireExpenditures}
           showMissionName={adminStore.settings.requireMissionName}
           loading={loading}
-          width={width}
         />
         <Drawer
           anchor="right"

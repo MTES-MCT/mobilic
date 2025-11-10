@@ -11,14 +11,13 @@ import { formatPersonName } from "common/utils/coworkers";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import { AugmentedTable } from "./AugmentedTable";
 import { makeStyles } from "@mui/styles";
-import { WorkTimeDetails } from "./WorkTimeDetails";
 import { ChevronRight } from "@mui/icons-material";
-import { SwipeableDrawer } from "@mui/material";
 import { MissionNamesList } from "./MissionNamesList";
 import { useMissionDrawer } from "../drawers/MissionDrawer";
 import { WorkDayEndTime } from "./WorkDayEndTime";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { OPEN_WORKDAY_DRAWER } from "common/utils/matomoTags";
+import { useDayDrawer } from "../drawers/DayDrawer";
 
 const useStyles = makeStyles((theme) => ({
   expenditures: {
@@ -38,13 +37,10 @@ export function WorkTimeTable({
   className,
   showMissionName,
   showExpenditures,
-  loading,
-  width
+  loading
 }) {
-  const [workdayOnFocus, setWorkdayOnFocus] = React.useState(null);
-  const [wordDayDrawerOpen, setWordDayDrawerOpen] = React.useState(false);
-
   const openMission = useMissionDrawer()[1];
+  const { openWorkday } = useDayDrawer();
 
   const { trackEvent } = useMatomo();
 
@@ -170,35 +166,6 @@ export function WorkTimeTable({
 
   return (
     <>
-      {workdayOnFocus && (
-        <SwipeableDrawer
-          key={0}
-          anchor="right"
-          open={!!wordDayDrawerOpen}
-          onOpen={() => setWordDayDrawerOpen(true)}
-          disableDiscovery
-          disableSwipeToOpen
-          onClose={() => {
-            setWordDayDrawerOpen(false);
-          }}
-          PaperProps={{
-            className: classes.workTimeModal,
-            sx: {
-              width: { xs: "100vw", md: 885 }
-            }
-          }}
-        >
-          <WorkTimeDetails
-            key={1}
-            workTimeEntry={workdayOnFocus}
-            openMission={openMission}
-            handleClose={() => {
-              setWordDayDrawerOpen(false);
-            }}
-            width={width}
-          />
-        </SwipeableDrawer>
-      )}
       <AugmentedTable
         key={2}
         columns={columns}
@@ -212,8 +179,7 @@ export function WorkTimeTable({
         onRowClick={(entry) => {
           if (!entry.day) return false;
           trackEvent(OPEN_WORKDAY_DRAWER);
-          setWorkdayOnFocus(entry);
-          setWordDayDrawerOpen(true);
+          openWorkday(entry);
         }}
         groupByColumn={{
           label: periodLabel,

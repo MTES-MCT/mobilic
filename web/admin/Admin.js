@@ -37,6 +37,7 @@ import UpdateNbWorkerModal from "./modals/UpdateNbWorkerModal";
 import { Main } from "../common/semantics/Main";
 
 import { SideMenu } from "./components/SideMenu/SideMenu";
+import { DayDrawerContextProvider } from "./drawers/DayDrawer";
 import { ExportsBanner } from "./components/ExportsBanner";
 import { useExportsContext } from "./utils/contextExports";
 
@@ -67,7 +68,7 @@ function InternalAdmin() {
   const withLoadingScreen = useLoadingScreen();
   const { path } = useRouteMatch();
   const alerts = useSnackbarAlerts();
-  const { updateExports } = useExportsContext()
+  const { updateExports } = useExportsContext();
 
   const classes = useStyles();
   const [shouldRefreshData, setShouldRefreshData] = React.useState({
@@ -153,7 +154,7 @@ function InternalAdmin() {
 
   React.useEffect(() => {
     if (shouldRefreshData.value) loadDataCompaniesList();
-    updateExports()
+    updateExports();
   }, [adminStore.userId]);
 
   React.useEffect(() => {
@@ -215,38 +216,40 @@ function InternalAdmin() {
         setShouldRefreshData={shouldRefreshDataSetter}
         refreshData={refreshData}
       >
-        <Main maxWidth={false} className={classes.container} disableGutters>
-          {isMdUp && <SideMenu views={views} />}
-          <Container
-            className={`scrollable ${classes.panelContainer}`}
-            maxWidth={false}
-            ref={ref}
-          >
-            <ExportsBanner />
-            <Switch>
-              {views.map((view) => (
-                <Route
-                  key={view.label}
-                  path={view.path}
-                  render={() => (
-                    <view.component
-                      containerRef={ref}
-                      setShouldRefreshData={(val) =>
-                        setShouldRefreshData(shouldRefreshDataSetter)
-                      }
-                    />
-                  )}
-                />
-              ))}
-              {defaultView && (
-                <Route
-                  path="*"
-                  render={() => <Redirect push to={defaultView.path} />}
-                />
-              )}
-            </Switch>
-          </Container>
-        </Main>
+        <DayDrawerContextProvider>
+          <Main maxWidth={false} className={classes.container} disableGutters>
+            {isMdUp && <SideMenu views={views} />}
+            <Container
+              className={`scrollable ${classes.panelContainer}`}
+              maxWidth={false}
+              ref={ref}
+            >
+              <ExportsBanner />
+              <Switch>
+                {views.map((view) => (
+                  <Route
+                    key={view.label}
+                    path={view.path}
+                    render={() => (
+                      <view.component
+                        containerRef={ref}
+                        setShouldRefreshData={(val) =>
+                          setShouldRefreshData(shouldRefreshDataSetter)
+                        }
+                      />
+                    )}
+                  />
+                ))}
+                {defaultView && (
+                  <Route
+                    path="*"
+                    render={() => <Redirect push to={defaultView.path} />}
+                  />
+                )}
+              </Switch>
+            </Container>
+          </Main>
+        </DayDrawerContextProvider>
       </MissionDrawerContextProvider>
     </>
   );
