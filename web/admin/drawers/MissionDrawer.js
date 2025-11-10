@@ -1,5 +1,5 @@
 import React from "react";
-import { MissionDetails } from "./MissionDetails/MissionDetails";
+import { MissionDetails } from "../components/MissionDetails/MissionDetails";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import { makeStyles } from "@mui/styles";
 import { useLocation } from "react-router-dom";
@@ -13,7 +13,7 @@ import {
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import Notice from "../../common/Notice";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   missionDrawer: {
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2)
@@ -36,7 +36,7 @@ export function MissionDrawerContextProvider({
   const adminStore = useAdminStore();
   const { trackEvent } = useMatomo();
 
-  const handleCloseTab = ev => {
+  const handleCloseTab = (ev) => {
     if (
       adminStore.virtualActivities.length > 0 ||
       adminStore.virtualExpenditureActions.length > 0
