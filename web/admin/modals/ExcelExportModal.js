@@ -21,6 +21,7 @@ import Modal, { modalStyles } from "../../common/Modal";
 import { TeamFilter } from "../components/TeamFilter";
 import { EmployeeFilter } from "../components/EmployeeFilter";
 import Notice from "../../common/Notice";
+import { useExportsContext } from "../utils/contextExports";
 
 export const syncUsers = (setUsers, newUsers) => {
   setUsers(currentUsers => [
@@ -45,6 +46,7 @@ export default function ExcelExportModal({
   const api = useApi();
   const alerts = useSnackbarAlerts();
   const { trackLink } = useMatomo();
+  const { addExport } = useExportsContext();
   const [minDate, setMinDate] = React.useState(defaultMinDate);
   const [maxDate, setMaxDate] = React.useState(defaultMaxDate);
   const [isOneFileByEmployee, setIsOneFileByEmployee] = React.useState(false);
@@ -259,11 +261,7 @@ export default function ExcelExportModal({
                   json: options
                 });
                 setIsEnabledDownload(false);
-                alerts.success(
-                  "Le fichier étant volumineux, il vous sera envoyé par e-mail d’ici à quelques minutes.",
-                  "",
-                  6000
-                );
+                await addExport();
               }, "download-company-report")
             }
           >
