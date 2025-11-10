@@ -37,6 +37,7 @@ import UpdateNbWorkerModal from "./modals/UpdateNbWorkerModal";
 import { Main } from "../common/semantics/Main";
 
 import { SideMenu } from "./components/SideMenu/SideMenu";
+import { DayDrawerContextProvider } from "./drawers/DayDrawer";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -211,37 +212,39 @@ function InternalAdmin() {
         setShouldRefreshData={shouldRefreshDataSetter}
         refreshData={refreshData}
       >
-        <Main maxWidth={false} className={classes.container} disableGutters>
-          {isMdUp && <SideMenu views={views} />}
-          <Container
-            className={`scrollable ${classes.panelContainer}`}
-            maxWidth={false}
-            ref={ref}
-          >
-            <Switch>
-              {views.map((view) => (
-                <Route
-                  key={view.label}
-                  path={view.path}
-                  render={() => (
-                    <view.component
-                      containerRef={ref}
-                      setShouldRefreshData={(val) =>
-                        setShouldRefreshData(shouldRefreshDataSetter)
-                      }
-                    />
-                  )}
-                />
-              ))}
-              {defaultView && (
-                <Route
-                  path="*"
-                  render={() => <Redirect push to={defaultView.path} />}
-                />
-              )}
-            </Switch>
-          </Container>
-        </Main>
+        <DayDrawerContextProvider>
+          <Main maxWidth={false} className={classes.container} disableGutters>
+            {isMdUp && <SideMenu views={views} />}
+            <Container
+              className={`scrollable ${classes.panelContainer}`}
+              maxWidth={false}
+              ref={ref}
+            >
+              <Switch>
+                {views.map((view) => (
+                  <Route
+                    key={view.label}
+                    path={view.path}
+                    render={() => (
+                      <view.component
+                        containerRef={ref}
+                        setShouldRefreshData={(val) =>
+                          setShouldRefreshData(shouldRefreshDataSetter)
+                        }
+                      />
+                    )}
+                  />
+                ))}
+                {defaultView && (
+                  <Route
+                    path="*"
+                    render={() => <Redirect push to={defaultView.path} />}
+                  />
+                )}
+              </Switch>
+            </Container>
+          </Main>
+        </DayDrawerContextProvider>
       </MissionDrawerContextProvider>
     </>
   );
