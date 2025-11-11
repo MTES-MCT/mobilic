@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Stack } from "@mui/material";
 import { MobileDatePicker } from "@mui/x-date-pickers";
-import { addDaysToDate } from "common/utils/time";
+import { addDaysToDate, lastMonth } from "common/utils/time";
 import { useAdminStore } from "../../store/store";
 import { TeamFilter } from "../../components/TeamFilter";
 import { EmployeeFilter } from "../../components/EmployeeFilter";
@@ -12,7 +12,7 @@ export default function RegulatoryRespectFilters() {
   const { date, setDate, onSelectUniqueUserId, onSelectTeamId } =
     useRegulatoryAlertsSummaryContext();
   const minDate = addDaysToDate(new Date(), -365);
-  const today = new Date();
+  const maxDate = lastMonth();
   const [teams, setTeams] = useState([]);
   const [users, setUsers] = useState([]);
 
@@ -93,7 +93,7 @@ export default function RegulatoryRespectFilters() {
         cancelText={null}
         disableCloseOnSelect={false}
         disableMaskedInput={true}
-        maxDate={today}
+        maxDate={maxDate}
         minDate={minDate}
         renderInput={(props) => (
           <TextField {...props} required variant="outlined" />
