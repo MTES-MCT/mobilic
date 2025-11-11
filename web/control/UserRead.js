@@ -10,10 +10,6 @@ import {
   parseMissionPayloadFromBackend
 } from "common/utils/mission";
 import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
-import {
-  USER_READ_QUERY,
-  USER_READ_TOKEN_QUERY
-} from "common/utils/apiQueries";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { captureSentryException } from "common/utils/sentry";
 import { useImpersonation } from "./utils/impersonation";
@@ -30,6 +26,8 @@ import { getDaysBetweenTwoDates } from "common/utils/time";
 import { getRegulationComputationsAndAlertNumber } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
 import { getAlertsGroupedByDayFromRegulationComputationsByDay } from "common/utils/regulation/groupAlertsByDay";
 import { usePageTitle } from "../common/UsePageTitle";
+import { USER_READ_TOKEN_QUERY } from "common/utils/apiQueries/auth";
+import { USER_READ_QUERY } from "common/utils/apiQueries/user";
 
 export function getTabs(alertNumber) {
   return [
@@ -77,10 +75,8 @@ export function UserRead() {
   const [vehicles, setVehicles] = React.useState(null);
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
   const [workingDays, setWorkingDays] = React.useState(new Set([]));
-  const [
-    regulationComputationsByDay,
-    setRegulationComputationsByDay
-  ] = React.useState([]);
+  const [regulationComputationsByDay, setRegulationComputationsByDay] =
+    React.useState([]);
   const [alertNumber, setAlertNumber] = React.useState(0);
 
   const [error, setError] = React.useState("");
@@ -112,7 +108,7 @@ export function UserRead() {
         } catch (err) {
           captureSentryException(err);
           setError(
-            formatApiError(err, gqlError => {
+            formatApiError(err, (gqlError) => {
               if (graphQLErrorMatchesCode(gqlError, "INVALID_TOKEN")) {
                 return "le lien d'accès à l'historique du salarié est invalide.";
               }
@@ -146,16 +142,16 @@ export function UserRead() {
             email: userPayload.email
           });
 
-          const resultMissions = userPayload.missions.edges.map(e => e.node);
+          const resultMissions = userPayload.missions.edges.map((e) => e.node);
 
           const missionData = [];
-          resultMissions.forEach(mission => {
+          resultMissions.forEach((mission) => {
             const isMissionDeleted = !!mission.deletedAt;
             missionData.push({
               ...mission,
               ...parseMissionPayloadFromBackend(mission, userPayload.id),
               isDeleted: isMissionDeleted,
-              allActivities: mission.activities.map(activity => ({
+              allActivities: mission.activities.map((activity) => ({
                 ...activity,
                 isMissionDeleted
               }))
@@ -165,27 +161,27 @@ export function UserRead() {
           const missions_ = augmentAndSortMissions(
             missionData,
             userPayload.id
-          ).filter(m => m.activities.length > 0);
+          ).filter((m) => m.activities.length > 0);
           setMissions(missions_);
 
           const userWorkingDays = new Set([]);
-          missions_.forEach(mission =>
+          missions_.forEach((mission) =>
             getDaysBetweenTwoDates(
               mission.startTime,
               mission.endTime || tokenInfo.creationDay
-            ).forEach(day => userWorkingDays.add(day))
+            ).forEach((day) => userWorkingDays.add(day))
           );
           setWorkingDays(userWorkingDays);
           const _vehicles = {};
-          userPayload.employments.forEach(e => {
-            e.company.vehicles.forEach(v => {
+          userPayload.employments.forEach((e) => {
+            e.company.vehicles.forEach((v) => {
               _vehicles[v.id.toString()] = v;
             });
           });
           setVehicles(_vehicles);
           const _coworkers = {};
-          userPayload.missions.edges.forEach(m => {
-            m.node.activities.forEach(a => {
+          userPayload.missions.edges.forEach((m) => {
+            m.node.activities.forEach((a) => {
               _coworkers[a.user.id.toString()] = a.user;
             });
           });

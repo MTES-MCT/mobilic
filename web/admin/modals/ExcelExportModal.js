@@ -9,7 +9,6 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import Grid from "@mui/material/Grid";
 import { isoFormatLocalDate } from "common/utils/time";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
 import { CheckboxField } from "../../common/CheckboxField";
 import { Autocomplete } from "@mui/lab";
@@ -21,13 +20,14 @@ import Modal, { modalStyles } from "../../common/Modal";
 import { TeamFilter } from "../components/TeamFilter";
 import { EmployeeFilter } from "../components/EmployeeFilter";
 import Notice from "../../common/Notice";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 
 export const syncUsers = (setUsers, newUsers) => {
-  setUsers(currentUsers => [
+  setUsers((currentUsers) => [
     ...currentUsers,
     ...newUsers.filter(
-      newUser =>
-        !currentUsers.map(currentUser => currentUser.id).includes(newUser.id)
+      (newUser) =>
+        !currentUsers.map((currentUser) => currentUser.id).includes(newUser.id)
     )
   ]);
 };
@@ -65,13 +65,10 @@ export default function ExcelExportModal({
     load();
   }, [minDate]);
 
-  React.useEffect(() => setIsEnabledDownload(true), [
-    minDate,
-    maxDate,
-    isOneFileByEmployee,
-    users,
-    selectedCompany
-  ]);
+  React.useEffect(
+    () => setIsEnabledDownload(true),
+    [minDate, maxDate, isOneFileByEmployee, users, selectedCompany]
+  );
 
   const today = new Date();
 
@@ -80,13 +77,13 @@ export default function ExcelExportModal({
     setMaxDate(defaultMaxDate);
   }, [open]);
 
-  const handleUserFilterChange = newUsers => {
+  const handleUserFilterChange = (newUsers) => {
     const unselectedTeams = unselectAndGetAllTeams(teams);
     setTeams(unselectedTeams);
     setUsers(newUsers);
   };
 
-  const handleTeamFilterChange = newTeams => {
+  const handleTeamFilterChange = (newTeams) => {
     const usersToSelect = getUsersToSelectFromTeamSelection(newTeams, users);
     setUsers(usersToSelect);
     setTeams(newTeams);
@@ -139,10 +136,10 @@ export default function ExcelExportModal({
                   label="Entreprise"
                   options={companies}
                   defaultValue={defaultCompany}
-                  getOptionLabel={c => c.name}
+                  getOptionLabel={(c) => c.name}
                   disableClearable
                   onChange={(_, newValue) => setSelectedCompany(newValue)}
-                  renderInput={params => (
+                  renderInput={(params) => (
                     <TextField {...params} label="Entreprise" />
                   )}
                 />
@@ -183,7 +180,7 @@ export default function ExcelExportModal({
                   disableCloseOnSelect={false}
                   disableMaskedInput={true}
                   maxDate={today}
-                  renderInput={props => (
+                  renderInput={(props) => (
                     <TextField {...props} variant="outlined" />
                   )}
                 />
@@ -200,7 +197,7 @@ export default function ExcelExportModal({
                   disableCloseOnSelect={false}
                   disableMaskedInput={true}
                   maxDate={today}
-                  renderInput={props => (
+                  renderInput={(props) => (
                     <TextField {...props} variant="outlined" />
                   )}
                 />
@@ -210,7 +207,7 @@ export default function ExcelExportModal({
               <FormControl component="fieldset" variant="standard">
                 <CheckboxField
                   checked={isOneFileByEmployee}
-                  onChange={e => setIsOneFileByEmployee(e.target.checked)}
+                  onChange={(e) => setIsOneFileByEmployee(e.target.checked)}
                   label="Générer un fichier unique par employé pour la période concernée"
                   required={false}
                 />
@@ -229,15 +226,15 @@ export default function ExcelExportModal({
         <>
           <LoadingButton
             disabled={!isEnabledDownload}
-            onClick={async e =>
+            onClick={async (e) =>
               await alerts.withApiErrorHandling(async () => {
-                let selectedUsers = users.filter(u => u.selected);
+                let selectedUsers = users.filter((u) => u.selected);
                 const options = {
                   company_ids: [selectedCompany.id],
                   one_file_by_employee: isOneFileByEmployee
                 };
                 if (selectedUsers.length > 0)
-                  options["user_ids"] = selectedUsers.map(u => u.id);
+                  options["user_ids"] = selectedUsers.map((u) => u.id);
                 if (minDate) options["min_date"] = isoFormatLocalDate(minDate);
                 if (maxDate) options["max_date"] = isoFormatLocalDate(maxDate);
                 e.preventDefault();

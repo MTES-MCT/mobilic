@@ -6,20 +6,20 @@ import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import { useLoadingScreen } from "common/utils/loading";
 import Typography from "@mui/material/Typography";
 import { useHistory } from "react-router-dom";
-import { FRANCE_CONNECT_LOGIN_MUTATION } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";
 import { FranceConnectErrorDisplay } from "../common/FranceConnectErrorDisplay";
 import { NavigationService } from "common/utils/navigationService";
 import { JWTDecoder } from "common/utils/jwtDecoder";
 import { AdminDetector } from "common/utils/adminDetector";
+import { FRANCE_CONNECT_LOGIN_MUTATION } from "common/utils/apiQueries/loginSignup";
 
 export function removeParamsFromQueryString(qs, params) {
   const qsWithoutQuestionMark = qs.startsWith("?") ? qs.slice(1) : qs;
   const filteredQsParams = qsWithoutQuestionMark
     .split("&")
-    .map(p => p.split("="))
-    .filter(p => !params.includes(p[0]));
-  return filteredQsParams.map(p => p.join("=")).join("&");
+    .map((p) => p.split("="))
+    .filter((p) => !params.includes(p[0]));
+  return filteredQsParams.map((p) => p.join("=")).join("&");
 }
 
 export function FranceConnectCallback() {
@@ -33,10 +33,8 @@ export function FranceConnectCallback() {
   const [franceConnectError, setFranceConnectError] = React.useState(null);
   const [queryParams, setQueryParams] = React.useState(null);
   const [noAccountError, setNoAccountError] = React.useState(false);
-  const [
-    userAlreadyRegisteredError,
-    setUserAlreadyRegisteredError
-  ] = React.useState(false);
+  const [userAlreadyRegisteredError, setUserAlreadyRegisteredError] =
+    React.useState(false);
 
   async function retrieveFranceConnectInfo(
     code,
@@ -71,7 +69,7 @@ export function FranceConnectCallback() {
         captureSentryException(err);
 
         if (
-          err.graphQLErrors?.some(e =>
+          err.graphQLErrors?.some((e) =>
             graphQLErrorMatchesCode(e, "AUTHENTICATION_ERROR")
           )
         ) {
@@ -80,7 +78,7 @@ export function FranceConnectCallback() {
         }
 
         if (
-          err.graphQLErrors?.some(e =>
+          err.graphQLErrors?.some((e) =>
             graphQLErrorMatchesCode(e, "FC_USER_ALREADY_REGISTERED")
           )
         ) {

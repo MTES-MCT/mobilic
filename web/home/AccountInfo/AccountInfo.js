@@ -17,12 +17,6 @@ import {
   PaperContainerTitle
 } from "../../common/PaperContainer";
 import { frenchFormatDateStringOrTimeStamp } from "common/utils/time";
-import {
-  CHANGE_EMAIL_MUTATION,
-  CHANGE_NAME_MUTATION,
-  CHANGE_PHONE_NUMBER_MUTATION,
-  CHANGE_TIMEZONE_MUTATION
-} from "common/utils/apiQueries";
 import { EmploymentInfoCard } from "../../common/EmploymentInfoCard";
 import { employmentSelector } from "common/store/selectors";
 import AlertEmailNotActivated from "./AlertEmailNotActivated";
@@ -41,8 +35,14 @@ import {
   getEmploymentsStatus
 } from "common/utils/employments";
 import { Stack } from "@mui/material";
+import {
+  CHANGE_EMAIL_MUTATION,
+  CHANGE_NAME_MUTATION,
+  CHANGE_PHONE_NUMBER_MUTATION,
+  CHANGE_TIMEZONE_MUTATION
+} from "common/utils/apiQueries/userInfo";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   innerContainer: {
     paddingBottom: theme.spacing(6)
   }
@@ -89,16 +89,17 @@ export default function Home() {
     return phoneNumber ? phoneNumber.formatNational() : undefined;
   }, [userInfo.phoneNumber]);
 
-  const hasEmployment = React.useMemo(() => employments.length > 0, [
-    employments
-  ]);
+  const hasEmployment = React.useMemo(
+    () => employments.length > 0,
+    [employments]
+  );
 
   const hasActiveEmployments = React.useMemo(
     () =>
       employments
-        .map(employment => getEmploymentsStatus(employment))
+        .map((employment) => getEmploymentsStatus(employment))
         .filter(
-          status =>
+          (status) =>
             status !== EMPLOYMENT_STATUS.ceased &&
             status !== EMPLOYMENT_STATUS.ended
         ).length > 0,
@@ -184,7 +185,7 @@ export default function Home() {
                       value={userInfo.email}
                       action={() =>
                         modals.open("changeEmail", {
-                          handleSubmit: async email => {
+                          handleSubmit: async (email) => {
                             const apiResponse = await api.graphQlMutate(
                               CHANGE_EMAIL_MUTATION,
                               { email },
@@ -214,7 +215,7 @@ export default function Home() {
                       data-testid="genderInfoItem"
                       name="Sexe"
                       value={
-                        GENDERS.find(g => g.value === userInfo.gender)?.label
+                        GENDERS.find((g) => g.value === userInfo.gender)?.label
                       }
                       valuePlaceholder="Sexe non renseigné"
                       action={() =>
@@ -233,7 +234,7 @@ export default function Home() {
                       action={() =>
                         modals.open("changeTimezone", {
                           defaultValue: getTimezone(userInfo.timezoneName),
-                          handleSubmit: async timezone => {
+                          handleSubmit: async (timezone) => {
                             const apiResponse = await api.graphQlMutate(
                               CHANGE_TIMEZONE_MUTATION,
                               { timezoneName: timezone.name },
@@ -296,7 +297,7 @@ export default function Home() {
                   >
                     {hasEmployment && (
                       <Grid container spacing={2} direction="column">
-                        {employments.map(e => (
+                        {employments.map((e) => (
                           <Grid item xs={12} key={e.id}>
                             <EmploymentInfoCard
                               employment={e}

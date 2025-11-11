@@ -7,18 +7,17 @@ import { AddressField } from "../../common/AddressField";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { AugmentedTable } from "../components/AugmentedTable";
-import {
-  CREATE_KNOWN_ADDRESS_MUTATION,
-  EDIT_KNOWN_ADDRESS_MUTATION,
-  TERMINATE_KNOWN_ADDRESS_MUTATION
-} from "common/utils/apiQueries";
-
 import { usePanelStyles } from "./Company";
 import { captureSentryException } from "common/utils/sentry";
 import { buildBackendPayloadForAddress } from "common/utils/addresses";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Explanation } from "../../common/typography/Explanation";
+import {
+  CREATE_KNOWN_ADDRESS_MUTATION,
+  EDIT_KNOWN_ADDRESS_MUTATION,
+  TERMINATE_KNOWN_ADDRESS_MUTATION
+} from "common/utils/apiQueries/admin";
 
 export default function KnownAddressAdmin({ company }) {
   const api = useApi();
@@ -35,7 +34,7 @@ export default function KnownAddressAdmin({ company }) {
       label: "Adresse",
       name: "address",
       propertyForSorting: "name",
-      format: address => (
+      format: (address) => (
         <span>
           <span className="bold">{address.name}</span>{" "}
           <span style={{ fontStyle: "italic" }}>
@@ -67,8 +66,8 @@ export default function KnownAddressAdmin({ company }) {
   ];
 
   const knownAddresses = adminStore.knownAddresses
-    .filter(a => a.companyId === companyId)
-    .map(a => ({ ...a, address: a }));
+    .filter((a) => a.companyId === companyId)
+    .map((a) => ({ ...a, address: a }));
 
   return (
     <>
@@ -143,7 +142,7 @@ export default function KnownAddressAdmin({ company }) {
             });
           }, "create-known-address");
         }}
-        onRowDelete={address =>
+        onRowDelete={(address) =>
           modals.open("confirmation", {
             textButtons: true,
             title: "Confirmer suppression",

@@ -5,7 +5,6 @@ import {
   RegulatoryTextNotCalculatedYet,
   RegulatoryTextWeekBeforeAndAfter
 } from "./RegulatoryText";
-import { USER_READ_REGULATION_COMPUTATIONS_QUERY } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import Skeleton from "@mui/material/Skeleton";
@@ -19,6 +18,7 @@ import {
 } from "common/utils/regulation/alertTypes";
 import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 import { SectionTitle } from "../common/typography/SectionTitle";
+import { USER_READ_REGULATION_COMPUTATIONS_QUERY } from "common/utils/apiQueries/user";
 
 export function GenericRegulatoryAlerts({
   userId,
@@ -84,13 +84,13 @@ export function GenericRegulatoryAlerts({
           )}
           {regulationComputations.regulationChecks
             ?.filter(
-              regulationCheck =>
+              (regulationCheck) =>
                 regulationCheck.type in ALERT_TYPE_PROPS_SIMPLER
             )
             ?.filter(
-              regulationCheck => regulationCheck.unit === regulationCheckUnit
+              (regulationCheck) => regulationCheck.unit === regulationCheckUnit
             )
-            .map(regulationCheck => renderRegulationCheck(regulationCheck))}
+            .map((regulationCheck) => renderRegulationCheck(regulationCheck))}
         </>
       )}
       {!loading && !regulationComputations && (

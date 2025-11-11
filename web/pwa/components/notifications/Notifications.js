@@ -11,24 +11,24 @@ import React, {
 import { Notification } from "./Notification";
 import { cx } from "@codegouvfr/react-dsfr/fr/cx";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import {
-  NOTIFICATIONS_QUERY,
-  READ_NOTIFICATIONS_MUTATION
-} from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { getNotificationContent } from "./NotificationContent";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
+import {
+  NOTIFICATIONS_QUERY,
+  READ_NOTIFICATIONS_MUTATION
+} from "common/utils/apiQueries/notifications";
 
 const mergeNotifications = (apiNotifs, localNotifs) => {
-  const localById = Object.fromEntries(localNotifs.map(n => [n.id, n]));
+  const localById = Object.fromEntries(localNotifs.map((n) => [n.id, n]));
 
-  const apiIds = new Set(apiNotifs.map(api => api.id));
+  const apiIds = new Set(apiNotifs.map((api) => api.id));
 
   const allNotifs = [
-    ...apiNotifs.map(api =>
+    ...apiNotifs.map((api) =>
       localById[api.id] ? { ...api, read: localById[api.id].read } : api
     ),
-    ...localNotifs.filter(local => !apiIds.has(local.id))
+    ...localNotifs.filter((local) => !apiIds.has(local.id))
   ];
 
   return allNotifs.sort(
@@ -116,7 +116,7 @@ export const Notifications = ({ openHistory }) => {
 
   const updateNotificationsReadStatus = useCallback(
     async (notificationIds, errorKey = "read-notifications") => {
-      const updatedNotifs = notifsRef.current.map(n =>
+      const updatedNotifs = notifsRef.current.map((n) =>
         notificationIds.includes(n.id) ? { ...n, read: true } : n
       );
 
@@ -139,15 +139,15 @@ export const Notifications = ({ openHistory }) => {
 
   useEffect(() => {
     return () => {
-      if (isExpendedRef.current && notifsRef.current.some(n => !n.read)) {
-        const allNotificationIds = notifsRef.current.map(n => n.id);
+      if (isExpendedRef.current && notifsRef.current.some((n) => !n.read)) {
+        const allNotificationIds = notifsRef.current.map((n) => n.id);
         updateNotificationsReadStatus(allNotificationIds, "read-notifications");
       }
     };
   }, [updateNotificationsReadStatus]);
 
   const markNotificationAsRead = useCallback(
-    async notificationId => {
+    async (notificationId) => {
       await updateNotificationsReadStatus(
         [notificationId],
         "read-notification"
@@ -157,7 +157,7 @@ export const Notifications = ({ openHistory }) => {
   );
 
   const markNotificationsAsRead = useCallback(async () => {
-    const allNotificationIds = notifsRef.current.map(n => n.id);
+    const allNotificationIds = notifsRef.current.map((n) => n.id);
     await updateNotificationsReadStatus(
       allNotificationIds,
       "read-notifications"
@@ -165,8 +165,8 @@ export const Notifications = ({ openHistory }) => {
   }, [updateNotificationsReadStatus]);
 
   const handleNotificationClick = useCallback(
-    async missionId => {
-      const notification = notifsRef.current.find(n => {
+    async (missionId) => {
+      const notification = notifsRef.current.find((n) => {
         const details = getNotificationContent(n.type, JSON.parse(n.data));
         return details.missionId === missionId;
       });
@@ -187,13 +187,13 @@ export const Notifications = ({ openHistory }) => {
     if (
       isExpended &&
       !isExpended_newValue &&
-      notifsRef.current.some(n => !n.read)
+      notifsRef.current.some((n) => !n.read)
     ) {
       await markNotificationsAsRead();
     }
   }, [isExpended, markNotificationsAsRead]);
 
-  const unreadNotifs = useMemo(() => notifs.filter(n => !n.read), [notifs]);
+  const unreadNotifs = useMemo(() => notifs.filter((n) => !n.read), [notifs]);
 
   const title = useMemo(
     () => (unreadNotifs.length > 0 ? unreadNotifs.length : ""),
@@ -218,7 +218,7 @@ export const Notifications = ({ openHistory }) => {
       >
         <Stack direction="column" width="100%" maxHeight="83vh">
           {notifs.length > 0 ? (
-            notifs.map(notif => (
+            notifs.map((notif) => (
               <InnerNotification
                 key={`notif__${notif.id}`}
                 {...notif}

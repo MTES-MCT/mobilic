@@ -1,6 +1,5 @@
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useApi } from "common/utils/api";
-import { RESET_PASSWORD_CONNECTED_MUTATION } from "common/utils/apiQueries";
 import { clearUpdateTimeCookie, snooze } from "common/utils/updatePassword";
 import React, { useState } from "react";
 import { useSnackbarAlerts } from "../../common/Snackbar";
@@ -9,6 +8,7 @@ import { getPasswordErrors } from "common/utils/passwords";
 import { NewPasswordBlock } from "../../common/NewPasswordBlock";
 import { currentUserId } from "common/utils/cookie";
 import Modal from "../../common/Modal";
+import { RESET_PASSWORD_CONNECTED_MUTATION } from "common/utils/apiQueries/loginSignup";
 
 export default function UpdatePasswordModal() {
   const api = useApi();
@@ -25,7 +25,7 @@ export default function UpdatePasswordModal() {
       ? "Le mot de passe n'est pas identique"
       : null;
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     await alerts.withApiErrorHandling(async () => {

@@ -20,7 +20,6 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
-import { VALIDATE_MISSION_MUTATION } from "common/utils/apiQueries";
 import { useStyles } from "../components/styles/ValidationsStyle";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMissionDrawer } from "../drawers/MissionDrawer";
@@ -47,6 +46,7 @@ import {
 } from "../store/reducers/team";
 import { usePageTitle } from "../../common/UsePageTitle";
 import { Explanation } from "../../common/typography/Explanation";
+import { VALIDATE_MISSION_MUTATION } from "common/utils/apiQueries/missions";
 
 const VALIDATION_TABS = [
   {

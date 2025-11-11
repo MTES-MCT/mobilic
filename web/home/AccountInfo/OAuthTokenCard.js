@@ -8,12 +8,12 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import { InfoItem } from "../InfoField";
 import classNames from "classnames";
-import { REVOKE_OAUTH_TOKEN_MUTATION } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { REVOKE_OAUTH_TOKEN_MUTATION } from "common/utils/apiQueries/auth";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   clientName: {
     fontWeight: "bold",
     overflowWrap: "anywhere"
@@ -43,7 +43,7 @@ export function OAuthTokenCard({ accessTokenInfo, setAccessTokens }) {
   const api = useApi();
   const alerts = useSnackbarAlerts();
 
-  const onRevokeToken = async tokenId => {
+  const onRevokeToken = async (tokenId) => {
     await alerts.withApiErrorHandling(async () => {
       const apiResponse = await api.graphQlMutate(
         REVOKE_OAUTH_TOKEN_MUTATION,

@@ -17,11 +17,11 @@ import {
   startOfDayAsDate,
   startOfMonthAsDate
 } from "common/utils/time";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
 import { startOfMonth, subMonths } from "date-fns";
 import { MAX_NB_MONTHS_HISTORY } from "common/utils/mission";
 import Modal, { modalStyles } from "../../common/Modal";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 
 export default function PDFExportModal({
   open,
@@ -91,7 +91,7 @@ export default function PDFExportModal({
                   disableMaskedInput={true}
                   maxDate={today}
                   minDate={firstHistoryDate}
-                  renderInput={props => (
+                  renderInput={(props) => (
                     <TextField
                       {...props}
                       required
@@ -116,7 +116,7 @@ export default function PDFExportModal({
                   disableMaskedInput={true}
                   maxDate={today}
                   minDate={firstHistoryDate}
-                  renderInput={props => (
+                  renderInput={(props) => (
                     <TextField
                       {...props}
                       required
@@ -135,7 +135,7 @@ export default function PDFExportModal({
         <>
           <LoadingButton
             disabled={!minDate || !maxDate || dateRangeError}
-            onClick={async e => {
+            onClick={async (e) => {
               const options = {};
               if (minDate)
                 options["min_date"] = isoFormatLocalDate(

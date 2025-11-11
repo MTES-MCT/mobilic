@@ -21,9 +21,10 @@ import {
 } from "./cookie";
 import { MaxSizeCache } from "./cache";
 import { saveAs } from "file-saver";
-import { CHECK_AUTH_QUERY, HTTP_QUERIES } from "./apiQueries";
 import { captureSentryException } from "./sentry";
 import { buildAgentConnectLogoutUrl } from "../../web/controller/utils/agentConnect";
+import { HTTP_QUERIES } from "./apiQueries/httpQueries";
+import { CHECK_AUTH_QUERY } from "./apiQueries/auth";
 
 export const API_HOST = "/api";
 
@@ -50,7 +51,7 @@ class Api {
       this.apolloClient = new ApolloClient({
         uri: this.uri,
         link: ApolloLink.from([
-          onError(error => {
+          onError((error) => {
             if (isAuthenticationError(error)) {
               this.logout({});
             }
@@ -67,7 +68,7 @@ class Api {
             return forward(operation);
           }),
           ApolloLink.split(
-            operation => {
+            (operation) => {
               return !!operation.getContext().nonPublicApi;
             },
             new HttpLink({
@@ -205,7 +206,7 @@ class Api {
 
   async downloadFileHttpQuery(queryInfo, options = {}) {
     const response = await this.httpQuery(queryInfo, options);
-    const blob = await response.blob().catch(err => console.log(err));
+    const blob = await response.blob().catch((err) => console.log(err));
     const fileName = response.headers
       .get("Content-Disposition")
       .split("filename=")[1]
@@ -279,13 +280,13 @@ class Api {
       this.responseHandlers[request.apiResponseHandlerName] || {};
     // 0. Resolve temporary IDs if they exist
     const identityMap = this.store.identityMap();
-    ["storeInfo", "variables"].forEach(requestProp => {
+    ["storeInfo", "variables"].forEach((requestProp) => {
       [
         "activityId",
         "missionId",
         "currentActivityId",
         "missionLocationId"
-      ].forEach(field => {
+      ].forEach((field) => {
         if (request[requestProp] && identityMap[request[requestProp][field]]) {
           request[requestProp][field] =
             identityMap[request[requestProp][field]];
@@ -319,7 +320,7 @@ class Api {
         }
         await this.store.clearPendingRequest(request);
       }
-      Sentry.withScope(function(scope) {
+      Sentry.withScope(function (scope) {
         scope.setContext("request", {
           query: JSON.stringify(request.query),
           variables: request.variables
@@ -358,13 +359,13 @@ class Api {
     if (hasFcToken) {
       window.location.href = buildFCLogoutUrl(postFCLogoutRedirect);
       // Effectively stop JS execution
-      const waitUntilLocationChange = new Promise(resolve =>
+      const waitUntilLocationChange = new Promise((resolve) =>
         setTimeout(resolve, 5000)
       );
       await waitUntilLocationChange;
     } else if (hasAcToken) {
       window.location.href = buildAgentConnectLogoutUrl(postFCLogoutRedirect);
-      const waitUntilLocationChange = new Promise(resolve =>
+      const waitUntilLocationChange = new Promise((resolve) =>
         setTimeout(resolve, 5000)
       );
       await waitUntilLocationChange;

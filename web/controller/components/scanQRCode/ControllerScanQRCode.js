@@ -5,7 +5,6 @@ import Grid from "@mui/material/Grid";
 import useTheme from "@mui/styles/useTheme";
 import { useHistory } from "react-router-dom";
 import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
-import { CONTROLLER_SCAN_CODE } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { prettyFormatDayHour } from "common/utils/time";
@@ -17,8 +16,9 @@ import { usePageTitle } from "../../../common/UsePageTitle";
 import Notice from "../../../common/Notice";
 import { Main } from "../../../common/semantics/Main";
 import { ControllerBackButton } from "./ControllerBackButton";
+import { CONTROLLER_SCAN_CODE } from "common/utils/apiQueries/controller";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     paddingTop: theme.spacing(3),
     paddingBottom: theme.spacing(7),
@@ -66,17 +66,18 @@ export function ControllerScanQRCode() {
     );
   };
 
-  const managePermissionState = state => {
+  const managePermissionState = (state) => {
     if (state === "denied") {
       displayCameraDeniedAlert();
     }
   };
 
-  const isPermissionDeniedOnSafari = error => error?.name === "NotAllowedError";
+  const isPermissionDeniedOnSafari = (error) =>
+    error?.name === "NotAllowedError";
 
   React.useEffect(() => {
     if (navigator.permissions) {
-      navigator.permissions.query({ name: "camera" }).then(res => {
+      navigator.permissions.query({ name: "camera" }).then((res) => {
         managePermissionState(res.state);
         res.onchange = () => {
           managePermissionState(res.state);
@@ -85,7 +86,7 @@ export function ControllerScanQRCode() {
     }
   }, []);
 
-  const getNewTokenFromOldQRCode = scannedCode => {
+  const getNewTokenFromOldQRCode = (scannedCode) => {
     try {
       if (
         scannedCode.startsWith(`${window.location.origin}/control/user-history`)
@@ -96,12 +97,12 @@ export function ControllerScanQRCode() {
         return scannedCode;
       }
     } catch (error) {
-      console.error('Error parsing QR code:', error);
+      console.error("Error parsing QR code:", error);
       return scannedCode;
     }
   };
 
-  const onScanQRCode = async scannedResult => {
+  const onScanQRCode = async (scannedResult) => {
     withLoadingScreen(async () => {
       try {
         const scannedCode = Array.isArray(scannedResult)

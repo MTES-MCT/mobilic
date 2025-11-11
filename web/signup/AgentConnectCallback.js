@@ -5,12 +5,12 @@ import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import { useLoadingScreen } from "common/utils/loading";
 import Typography from "@mui/material/Typography";
-import { AGENT_CONNECT_LOGIN_MUTATION } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";
 import { removeParamsFromQueryString } from "./FranceConnectCallback";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { useHistory } from "react-router-dom";
 import { Link } from "../common/LinkButton";
+import { AGENT_CONNECT_LOGIN_MUTATION } from "common/utils/apiQueries/loginSignup";
 
 export function AgentConnectCallback() {
   const api = useApi();
@@ -39,7 +39,7 @@ export function AgentConnectCallback() {
       } catch (err) {
         captureSentryException(err);
         alerts.error(
-          formatApiError(err, gqlError => {
+          formatApiError(err, (gqlError) => {
             if (graphQLErrorMatchesCode(gqlError, "AUTHENTICATION_ERROR")) {
               return "Erreur lors de la connexion à Mobilic, veuillez réessayer plus tard.";
             }

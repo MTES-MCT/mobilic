@@ -7,9 +7,9 @@ import { useIsAdmin } from "../../common/hooks/useIsAdmin";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import { Link } from "@mui/material";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 
 export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
   const { isAdmin } = useIsAdmin();

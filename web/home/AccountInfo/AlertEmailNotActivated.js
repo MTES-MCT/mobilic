@@ -2,7 +2,6 @@ import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
 import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import React from "react";
-import { RESEND_ACTIVATION_EMAIL } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
@@ -10,9 +9,10 @@ import { makeStyles } from "@mui/styles";
 import Emoji from "../../common/Emoji";
 import Notice from "../../common/Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { RESEND_ACTIVATION_EMAIL } from "common/utils/apiQueries/loginSignup";
 
 export default function AlertEmailNotActivated({ email }) {
-  const useStyles = makeStyles(theme => ({
+  const useStyles = makeStyles((theme) => ({
     emailCheckIcon: {
       color: "rgb(85, 21, 15)",
       minWidth: theme.spacing(5)

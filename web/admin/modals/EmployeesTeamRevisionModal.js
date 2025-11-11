@@ -4,13 +4,13 @@ import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import { LoadingButton } from "common/components/LoadingButton";
-import { CHANGE_EMPLOYEE_TEAM } from "common/utils/apiQueries";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { NO_TEAMS_LABEL, NO_TEAM_ID } from "../utils/teams";
 import Modal from "../../common/Modal";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { CHANGE_EMPLOYEE_TEAM } from "common/utils/apiQueries/employments";
 
 export default function EmployeesTeamRevisionModal({
   employment,
@@ -45,10 +45,8 @@ export default function EmployeesTeamRevisionModal({
         CHANGE_EMPLOYEE_TEAM,
         payload
       );
-      const {
-        teams,
-        employments
-      } = apiResponse?.data?.employments?.changeEmployeeTeam ?? {};
+      const { teams, employments } =
+        apiResponse?.data?.employments?.changeEmployeeTeam ?? {};
       if (teams && employments) {
         adminStore.dispatch({
           type: ADMIN_ACTIONS.updateTeams,
@@ -65,24 +63,26 @@ export default function EmployeesTeamRevisionModal({
     <Modal
       open={open}
       handleClose={handleClose}
-      title={`Modifier l'affectation de groupe du salarié${employment.name ? " " + employment.name : ""
-        }`}
+      title={`Modifier l'affectation de groupe du salarié${
+        employment.name ? " " + employment.name : ""
+      }`}
       content={
         <Grid container spacing={4}>
           <Grid item xs={12}>
-            <InputLabel id="select-team-label">{`Veuillez sélectionner un nouveau groupe pour le salarié${employment.name ? " " + employment.name : ""
-              }`}</InputLabel>
+            <InputLabel id="select-team-label">{`Veuillez sélectionner un nouveau groupe pour le salarié${
+              employment.name ? " " + employment.name : ""
+            }`}</InputLabel>
             <Select
               labelId="select-team-label"
               id="select-team"
               value={newTeamId}
-              onChange={e => setNewTeamId(e.target.value)}
-              renderValue={val =>
-                teams.find(team => team.id === val)?.name || NO_TEAMS_LABEL
+              onChange={(e) => setNewTeamId(e.target.value)}
+              renderValue={(val) =>
+                teams.find((team) => team.id === val)?.name || NO_TEAMS_LABEL
               }
             >
               <MenuItem value={NO_TEAM_ID}>{NO_TEAMS_LABEL}</MenuItem>
-              {teams.map(team => (
+              {teams.map((team) => (
                 <MenuItem key={team.id} value={team.id}>
                   {team.name}
                 </MenuItem>

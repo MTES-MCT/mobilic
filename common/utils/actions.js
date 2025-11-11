@@ -30,6 +30,13 @@ import {
 } from "./expenditures";
 import { useSnackbarAlerts } from "../../web/common/Snackbar";
 import { useModals } from "./modals";
+import { hasPendingUpdates } from "../store/offline";
+import { ACTIONS } from "../store/reducers/root";
+import {
+  firstActionDateForSurvey,
+  hasNotSubmittedSurvey,
+  nbTimesSurveyWasDisplayed
+} from "./surveys";
 import {
   buildLogLocationPayloadFromAddress,
   CANCEL_ACTIVITY_MUTATION,
@@ -45,14 +52,7 @@ import {
   REGISTER_KILOMETER_AT_LOCATION,
   UPDATE_MISSION_VEHICLE_MUTATION,
   VALIDATE_MISSION_MUTATION
-} from "./apiQueries";
-import { hasPendingUpdates } from "../store/offline";
-import { ACTIONS } from "../store/reducers/root";
-import {
-  firstActionDateForSurvey,
-  hasNotSubmittedSurvey,
-  nbTimesSurveyWasDisplayed
-} from "./surveys";
+} from "./apiQueries/missions";
 
 const ActionsContext = React.createContext(() => {});
 
@@ -106,7 +106,7 @@ class Actions {
         let requestsToCancel = this.store
           .pendingRequests()
           .filter(
-            req =>
+            (req) =>
               (req.variables && req.variables.activityId === tempActivityId) ||
               (req.storeInfo && req.storeInfo.activityId === tempActivityId)
           );
@@ -115,18 +115,18 @@ class Actions {
           let otherRequestsToCancel = this.store
             .pendingRequests()
             .filter(
-              req => req.groupId === groupId && req.requestId !== requestId
+              (req) => req.groupId === groupId && req.requestId !== requestId
             );
           // We should also cancel further requests concerning these non submitted activities
           const activityIds = otherRequestsToCancel.map(
-            req => req.storeInfo.activityId
+            (req) => req.storeInfo.activityId
           );
           otherRequestsToCancel = [
             ...otherRequestsToCancel,
             ...this.store
               .pendingRequests()
               .filter(
-                req =>
+                (req) =>
                   req.variables &&
                   req.variables.activityId &&
                   activityIds.includes(req.variables.activityId)
@@ -146,7 +146,7 @@ class Actions {
               ACTIVITIES[type].label
             } de ${formatPersonName(user)} à ${formatTimeOfDay(startTime)}`,
             isActionDescriptionFemale: true,
-            overrideFormatGraphQLError: gqlError => {
+            overrideFormatGraphQLError: (gqlError) => {
               return this.formatLogActivityError(
                 gqlError,
                 user,
@@ -160,7 +160,7 @@ class Actions {
           });
         }
         await Promise.all(
-          requestsToCancel.map(req => this.store.clearPendingRequest(req))
+          requestsToCancel.map((req) => this.store.clearPendingRequest(req))
         );
       }
     });
@@ -201,7 +201,7 @@ class Actions {
             actionDescription: `La correction de l'activité ${
               ACTIVITIES[type].label
             } de ${formatPersonName(user)}`,
-            overrideFormatGraphQLError: gqlError => {
+            overrideFormatGraphQLError: (gqlError) => {
               return this.formatLogActivityError(gqlError, user, selfId);
             },
             hasRequestFailed: true,
@@ -239,19 +239,21 @@ class Actions {
         const pendingMissionRequests = this.store
           .pendingRequests()
           .filter(
-            req =>
+            (req) =>
               (req.variables && req.variables.missionId === tempMissionId) ||
               (req.storeInfo && req.storeInfo.missionId === tempMissionId)
           );
         await Promise.all(
-          pendingMissionRequests.map(req => this.store.clearPendingRequest(req))
+          pendingMissionRequests.map((req) =>
+            this.store.clearPendingRequest(req)
+          )
         );
         this.store.deleteEntityObject(tempMissionId, "missions");
       }
     });
 
     api.registerResponseHandler("endMission", {
-      onSuccess: apiResponse => {
+      onSuccess: (apiResponse) => {
         const mission = apiResponse.data.activities.endMission;
         this.store.updateEntityObject({
           objectId: mission.id,
@@ -262,17 +264,17 @@ class Actions {
         this.store.syncEntity(
           mission.activities.map(parseActivityPayloadFromBackend),
           "activities",
-          a => a.missionId === mission.id
+          (a) => a.missionId === mission.id
         );
       },
       onError: (error, { userId, missionId, currentActivityId, name }) => {
         if (
           isGraphQLError(error) &&
-          error.graphQLErrors.some(gqle =>
+          error.graphQLErrors.some((gqle) =>
             graphQLErrorMatchesCode(gqle, "MISSION_ALREADY_ENDED")
           )
         ) {
-          const missionEndTime = error.graphQLErrors.find(gqle =>
+          const missionEndTime = error.graphQLErrors.find((gqle) =>
             graphQLErrorMatchesCode(gqle, "MISSION_ALREADY_ENDED")
           ).extensions.missionEnd.endTime;
           if (currentActivityId) {
@@ -294,7 +296,7 @@ class Actions {
           this.displayApiErrors({
             graphQLErrors: error.graphQLErrors,
             actionDescription: `La fin de la mission ${name ? `${name} ` : ""}`,
-            overrideFormatGraphQLError: gqlError => {
+            overrideFormatGraphQLError: (gqlError) => {
               const selfId = this.store.userId();
               const user =
                 userId === selfId
@@ -313,7 +315,7 @@ class Actions {
     });
 
     api.registerResponseHandler("validateMission", {
-      onSuccess: async apiResponse => {
+      onSuccess: async (apiResponse) => {
         const userId = this.store.userId();
         const userInfo = this.store.userInfo();
         const missionResponse = apiResponse.data.activities.validateMission;
@@ -355,7 +357,7 @@ class Actions {
     });
 
     api.registerResponseHandler("logExpenditure", {
-      onSuccess: apiResponse => {
+      onSuccess: (apiResponse) => {
         const expenditure = apiResponse.data.activities.logExpenditure;
         this.store.createEntityObject(expenditure, "expenditures");
       },
@@ -367,7 +369,7 @@ class Actions {
               : this.store.getEntity("coworkers")[userId.toString()];
           this.displayApiErrors({
             graphQLErrors: error.graphQLErrors,
-            overrideFormatGraphQLError: gqlError => {
+            overrideFormatGraphQLError: (gqlError) => {
               if (graphQLErrorMatchesCode(gqlError, "DUPLICATE_EXPENDITURES")) {
                 return "Un frais de cette nature a déjà été enregistré sur la mission.";
               }
@@ -389,7 +391,7 @@ class Actions {
     });
 
     api.registerResponseHandler("logComment", {
-      onSuccess: apiResponse => {
+      onSuccess: (apiResponse) => {
         const comment = apiResponse.data.activities.logComment;
         this.store.createEntityObject(comment, "comments");
       }
@@ -460,7 +462,7 @@ class Actions {
     title = null,
     message = null
   }) => {
-    this.modals.open("apiErrorDialog", {}, currentProps => {
+    this.modals.open("apiErrorDialog", {}, (currentProps) => {
       const newError = {
         actionDescription,
         graphQLErrors,
@@ -509,7 +511,7 @@ class Actions {
     return this.api.recentRequestStatuses.get(request.id, time);
   };
 
-  graphQLErrorImpliesNotUpToDateData = gqlError => {
+  graphQLErrorImpliesNotUpToDateData = (gqlError) => {
     if (graphQLErrorMatchesCode(gqlError, "OVERLAPPING_MISSIONS")) {
       return (
         gqlError.extensions.conflictingMission &&
@@ -538,10 +540,12 @@ class Actions {
     }
   };
 
-  shouldProposeRefresh = error => {
+  shouldProposeRefresh = (error) => {
     return (
       isGraphQLError(error) &&
-      error.graphQLErrors.some(e => this.graphQLErrorImpliesNotUpToDateData(e))
+      error.graphQLErrors.some((e) =>
+        this.graphQLErrorImpliesNotUpToDateData(e)
+      )
     );
   };
 
@@ -568,7 +572,7 @@ class Actions {
       });
 
     const teamToType = {};
-    team.forEach(id => {
+    team.forEach((id) => {
       if (activityType === ACTIVITIES.drive.name && driverId) {
         teamToType[id] =
           id === driverId ? ACTIVITIES.drive.name : ACTIVITIES.support.name;
@@ -596,8 +600,8 @@ class Actions {
 
     if (!baseActivityResult || !baseActivityResult.error) {
       team
-        .filter(id => id !== userId)
-        .forEach(async id => {
+        .filter((id) => id !== userId)
+        .forEach(async (id) => {
           this.pushNewActivityEvent({
             activityType: teamToType[id],
             missionId,
@@ -741,7 +745,7 @@ class Actions {
       const activitiesToEdit = values(
         this.store.getEntity("activities")
       ).filter(
-        a =>
+        (a) =>
           (a.missionId === activityEvent.missionId ||
             (identityMap[activityEvent.missionId] &&
               a.missionId === identityMap[activityEvent.missionId])) &&
@@ -749,8 +753,8 @@ class Actions {
           a.endTime === activityEvent.endTime
       );
       activitiesToEdit
-        .filter(a => a.userId === this.store.userId())
-        .map(a =>
+        .filter((a) => a.userId === this.store.userId())
+        .map((a) =>
           this.editActivityEvent(
             a,
             actionType,
@@ -761,8 +765,8 @@ class Actions {
           )
         );
       activitiesToEdit
-        .filter(a => a.userId !== this.store.userId())
-        .map(a =>
+        .filter((a) => a.userId !== this.store.userId())
+        .map((a) =>
           this.editActivityEvent(
             a,
             actionType,
@@ -923,12 +927,12 @@ class Actions {
     const formattedAddress = address.id
       ? address
       : address.manual
-      ? { manual: address.manual, name: address.name }
-      : address.properties
-      ? { ...address.properties, postalCode: address.properties.postcode }
-      : typeof address === "string"
-      ? { manual: true, name: address }
-      : null;
+        ? { manual: address.manual, name: address.name }
+        : address.properties
+          ? { ...address.properties, postalCode: address.properties.postcode }
+          : typeof address === "string"
+            ? { manual: true, name: address }
+            : null;
 
     const payload = buildLogLocationPayloadFromAddress(
       address,
@@ -1084,8 +1088,8 @@ class Actions {
 
     return Promise.all(
       team
-        .filter(id => id !== userId)
-        .map(id =>
+        .filter((id) => id !== userId)
+        .map((id) =>
           this.endMission({
             endTime,
             mission,
@@ -1109,7 +1113,7 @@ class Actions {
       companyAddresses: this.store
         .getEntity("knownAddresses")
         .filter(
-          a =>
+          (a) =>
             a.companyId ===
             (mission.company ? mission.company.id : mission.companyId)
         ),
@@ -1147,7 +1151,7 @@ class Actions {
     const identityMap = this.store.identityMap();
 
     const currentActivity = values(this.store.getEntity("activities")).find(
-      a =>
+      (a) =>
         a.userId === userId &&
         (a.missionId === missionId ||
           (identityMap[missionId] && a.missionId === identityMap[missionId])) &&
@@ -1236,7 +1240,7 @@ class Actions {
     ]);
   };
 
-  validateMission = async mission => {
+  validateMission = async (mission) => {
     const userId = this.store.userId();
     const validation = {
       receptionTime: now(),
@@ -1282,7 +1286,7 @@ class Actions {
       );
     }
     return Promise.all(
-      team.map(id =>
+      team.map((id) =>
         this.editExpenditures(
           newExpenditures,
           oldMissionExpenditures,
@@ -1300,7 +1304,7 @@ class Actions {
     userId = null
   ) => {
     const oldUserExpenditures = oldMissionExpenditures.filter(
-      e => e.userId === userId || this.store.userId()
+      (e) => e.userId === userId || this.store.userId()
     );
     return await editUserExpenditures(
       newExpenditures,
@@ -1322,7 +1326,7 @@ class Actions {
       return this.logExpenditure({ type, missionId, spendingDate });
     }
     return Promise.all(
-      team.map(id =>
+      team.map((id) =>
         this.logExpenditure({ type, missionId, spendingDate, userId: id })
       )
     );
@@ -1360,13 +1364,13 @@ class Actions {
     if (hasPendingUpdates(expenditure)) {
       if (
         this.api.isCurrentlySubmittingRequests() ||
-        expenditure.pendingUpdates.some(upd => upd.type === "delete")
+        expenditure.pendingUpdates.some((upd) => upd.type === "delete")
       )
         return;
 
       const pendingCreationRequest = this.store
         .pendingRequests()
-        .find(r => r.id === expenditure.pendingUpdates[0].requestId);
+        .find((r) => r.id === expenditure.pendingUpdates[0].requestId);
       if (pendingCreationRequest)
         return await this.store.clearPendingRequest(pendingCreationRequest);
     }
@@ -1410,17 +1414,17 @@ class Actions {
     );
   };
 
-  cancelComment = async commentToCancel => {
+  cancelComment = async (commentToCancel) => {
     if (hasPendingUpdates(commentToCancel)) {
       if (
         this.api.isCurrentlySubmittingRequests() ||
-        commentToCancel.pendingUpdates.some(upd => upd.type === "delete")
+        commentToCancel.pendingUpdates.some((upd) => upd.type === "delete")
       )
         return;
 
       const pendingCreationRequest = this.store
         .pendingRequests()
-        .find(r => r.id === commentToCancel.pendingUpdates[0].requestId);
+        .find((r) => r.id === commentToCancel.pendingUpdates[0].requestId);
       if (pendingCreationRequest)
         return await this.store.clearPendingRequest(pendingCreationRequest);
     }

@@ -3,10 +3,6 @@ import React from "react";
 import { Stepper } from "@codegouvfr/react-dsfr/Stepper";
 import Typography from "@mui/material/Typography";
 import { ControlBulletinHeader } from "./ControlBulletinHeader";
-import {
-  CONTROLLER_CHANGE_GRECO_ID,
-  CONTROLLER_SAVE_CONTROL_BULLETIN
-} from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
 import { formatApiError } from "common/utils/errors";
@@ -27,6 +23,10 @@ import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { useInfractions } from "../../utils/contextInfractions";
 import { useControl } from "../../utils/contextControl";
 import { scrollToId } from "../../../common/hooks/useScroll";
+import {
+  CONTROLLER_CHANGE_GRECO_ID,
+  CONTROLLER_SAVE_CONTROL_BULLETIN
+} from "common/utils/apiQueries/controller";
 
 const STEPS = {
   1: {
@@ -66,7 +66,7 @@ export function ControllerControlBulletin({
   const { setIsReportingInfractions } = useInfractions();
   const { controlData } = useControl();
 
-  const onUpdateGrecoId = newGrecoId => {
+  const onUpdateGrecoId = (newGrecoId) => {
     setGrecoId(newGrecoId);
     setFieldUpdated(true);
   };
@@ -98,9 +98,9 @@ export function ControllerControlBulletin({
     }
   };
 
-  const handleEditControlBulletin = e => {
+  const handleEditControlBulletin = (e) => {
     const { name, value } = e.target;
-    setControlBulletin(prevState => ({
+    setControlBulletin((prevState) => ({
       ...prevState,
       [name]: value
     }));
@@ -111,7 +111,7 @@ export function ControllerControlBulletin({
     setFieldUpdated(true);
   };
 
-  const onSaveButton = async newControlBulletin => {
+  const onSaveButton = async (newControlBulletin) => {
     if (
       STEPS[step].checkRequiredField &&
       !STEPS[step].checkRequiredField(newControlBulletin)

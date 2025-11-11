@@ -17,7 +17,6 @@ import {
 } from "common/store/store";
 import { filterActivitiesOverlappingPeriod } from "common/utils/activities";
 import { useApi } from "common/utils/api";
-import { USER_MISSIONS_HISTORY_QUERY } from "common/utils/apiQueries";
 import { useSelectPeriod } from "common/utils/history/changePeriod";
 import { useComputePeriodStatuses } from "common/utils/history/computePeriodStatuses";
 import { useGroupMissionsAndExtractActivities } from "common/utils/history/groupByPeriodUnit";
@@ -66,6 +65,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { getDayChip } from "../components/history/Chips";
 import { Header } from "../../common/Header";
 import { Stack } from "@mui/material";
+import { USER_MISSIONS_HISTORY_QUERY } from "common/utils/apiQueries/user";
 
 const tabs = {
   mission: {
@@ -94,7 +94,7 @@ const tabs = {
     getSubtitle: (period, _) => formatCompleteDayOfWeek(period),
     renderChip: getDayChip,
     ...PERIOD_UNITS.day,
-    renderPeriod: props => <Day headingComponent="h2" {...props} />
+    renderPeriod: (props) => <Day headingComponent="h2" {...props} />
   },
   week: {
     label: "Semaine",
@@ -103,13 +103,13 @@ const tabs = {
     getTitle: (period, _) => shortPrettyFormatDay(period),
     getSubtitle: (period, _) => `au ${shortPrettyFormatDay(period + DAY * 6)}`,
     renderChip: getDayChip,
-    renderPeriod: props => <Week headingComponent="h2" {...props} />
+    renderPeriod: (props) => <Week headingComponent="h2" {...props} />
   },
   month: {
     label: "Mois",
     value: "month",
     ...PERIOD_UNITS.month,
-    renderPeriod: props => <Month {...props} />,
+    renderPeriod: (props) => <Month {...props} />,
     getTitle: (period, _) => {
       const periodDate = new Date(period * 1000);
       return SHORT_MONTHS[periodDate.getMonth()];
@@ -122,7 +122,7 @@ const tabs = {
   }
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   contentContainer: {
     flexGrow: 1,
     flexShrink: 0,
@@ -216,7 +216,7 @@ export function History({
         params[pair[0]] = pair[1];
       }
     }
-    const periodUnit = Object.keys(params).find(unit =>
+    const periodUnit = Object.keys(params).find((unit) =>
       Object.keys(PERIOD_UNITS).includes(unit)
     );
     if (periodUnit === "mission") {
@@ -260,11 +260,10 @@ export function History({
   const [endPeriodFilter, setEndPeriodFilter] = React.useState(
     controlTime ? new Date(controlTime * 1000) : endOfToday()
   );
-  const [periodFilterRangeError, setPeriodFilterRangeError] = React.useState(
-    null
-  );
+  const [periodFilterRangeError, setPeriodFilterRangeError] =
+    React.useState(null);
 
-  const onChangeStartPeriodFilter = async value => {
+  const onChangeStartPeriodFilter = async (value) => {
     const newStartPeriodFilter = startOfMonth(value);
     setStartPeriodFilter(newStartPeriodFilter);
     setPeriodFilterRangeError(null);
@@ -287,7 +286,7 @@ export function History({
     }
   };
 
-  const onChangeEndPeriodFilter = async value => {
+  const onChangeEndPeriodFilter = async (value) => {
     const newEndPeriodFilter = isThisMonth(value)
       ? value
       : endOfDay(endOfMonthAsDate(value));
@@ -298,8 +297,9 @@ export function History({
       DEFAULT_MONTH_RANGE_HISTORY
     ) {
       setPeriodFilterRangeError(
-        `La période sélectionnée doit être inférieure à ${DEFAULT_MONTH_RANGE_HISTORY +
-          1} mois !`
+        `La période sélectionnée doit être inférieure à ${
+          DEFAULT_MONTH_RANGE_HISTORY + 1
+        } mois !`
       ); // +1 because it's the default range + days from current month day.
     } else {
       setPeriodFilterRangeError(null);
@@ -316,37 +316,31 @@ export function History({
         untilTime: jsToUnixTimestamp(end.getTime())
       });
       const resultMissions = apiResponse.data.me.missions.edges.map(
-        e => e.node
+        (e) => e.node
       );
       await syncMissions(resultMissions, store, store.addToEntityObject);
       await broadCastChannel.postMessage("update");
     }, "missions-history");
   };
 
-  const [
-    missionGroupsByPeriodUnit,
-    activities
-  ] = useGroupMissionsAndExtractActivities(
-    missions,
-    startPeriodFilter,
-    endPeriodFilter,
-    periodFilterRangeError,
-    Object.values(tabs)
-  );
+  const [missionGroupsByPeriodUnit, activities] =
+    useGroupMissionsAndExtractActivities(
+      missions,
+      startPeriodFilter,
+      endPeriodFilter,
+      periodFilterRangeError,
+      Object.values(tabs)
+    );
 
   /* MANAGE PERIOD FROM CAROUSSEL*/
 
-  const [
-    selectedPeriod,
-    goToPeriod,
-    goToMission,
-    periodsByPeriodUnit
-  ] = useSelectPeriod(
-    missionGroupsByPeriodUnit,
-    currentTab,
-    startPeriodFilter,
-    endPeriodFilter
-  );
+  const [selectedPeriod, goToPeriod, goToMission, periodsByPeriodUnit] =
+    useSelectPeriod(
+      missionGroupsByPeriodUnit,
+      currentTab,
+      startPeriodFilter,
+      endPeriodFilter
+    );
   const periodStatuses = useComputePeriodStatuses(missionGroupsByPeriodUnit);
 
   const groupedMissions = missionGroupsByPeriodUnit[currentTab] || {};
@@ -371,7 +365,7 @@ export function History({
       return [];
     }
     const periodElement = regulationComputationsByDay.find(
-      item => item.day === isoFormatLocalDate(selectedPeriod)
+      (item) => item.day === isoFormatLocalDate(selectedPeriod)
     );
     return periodElement ? periodElement.regulationComputations : [];
   }, [selectedPeriod, regulationComputationsByDay]);
@@ -385,11 +379,11 @@ export function History({
         let { alerts, ...rest } = curr;
         alerts = alerts
           .filter(
-            alert =>
+            (alert) =>
               !!alert[currentTab] &&
               isMoreOrLessTheSameDay(alert[currentTab], selectedPeriod)
           )
-          .map(alert => ({
+          .map((alert) => ({
             ...alert,
             ...rest
           }));
@@ -401,7 +395,7 @@ export function History({
 
   /* MANAGE MESSAGE WHEN NO DATA */
 
-  const noDataMessage = currentTab => {
+  const noDataMessage = (currentTab) => {
     if (currentTab === "day") {
       return "Journée non renseignée";
     }
@@ -463,7 +457,7 @@ export function History({
                       disableKilometerReading: true,
                       withDay: true,
                       withEndLocation: true,
-                      handleContinue: async missionInfos => {
+                      handleContinue: async (missionInfos) => {
                         await alerts.withApiErrorHandling(async () => {
                           const tempMissionId = await createMission({
                             companyId: missionInfos.company.id,
@@ -475,9 +469,8 @@ export function History({
                               missionInfos.pastRegistrationJustification
                           });
                           await api.executePendingRequests();
-                          const actualMissionId = store.identityMap()[
-                            tempMissionId
-                          ];
+                          const actualMissionId =
+                            store.identityMap()[tempMissionId];
                           if (!actualMissionId) {
                             alerts.error(
                               "La mission n'a pas pu être créée. Vérifiez votre connexion internet, vous ne pouvez pas créer de mission passée sans être connecté.",
@@ -565,13 +558,13 @@ export function History({
           <PeriodCarouselPicker
             periods={periods}
             selectedPeriod={selectedPeriod}
-            onPeriodChange={newp => {
+            onPeriodChange={(newp) => {
               goToPeriod(currentTab, newp);
               resetLocation();
             }}
             periodStatuses={periodStatuses[currentTab] || {}}
             {...tabs[currentTab]}
-            periodMissionsGetter={period => groupedMissions[period]}
+            periodMissionsGetter={(period) => groupedMissions[period]}
           />
         )}
       </Container>
@@ -592,7 +585,7 @@ export function History({
               selectedPeriod - DAY,
               selectedPeriodEnd + DAY
             ),
-            handleMissionClick: date => e =>
+            handleMissionClick: (date) => (e) =>
               handlePeriodChange(e, "mission", date),
             weekActivities: filterActivitiesOverlappingPeriod(
               activities,
