@@ -6,12 +6,12 @@ import { useApi } from "common/utils/api";
 import { formatApiError } from "common/utils/errors";
 import { makeStyles } from "@mui/styles";
 import { now } from "common/utils/time";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
 import Notice from "../common/Notice";
 import Modal from "../common/Modal";
 import Box from "@mui/material/Box";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     display: "flex",
     flexShrink: 0,

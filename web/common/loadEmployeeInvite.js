@@ -1,5 +1,5 @@
+import { GET_EMPLOYMENT_QUERY } from "common/utils/apiQueries/employments";
 import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
-import { GET_EMPLOYMENT_QUERY } from "common/utils/apiQueries";
 
 export async function loadEmployeeInvite(token, store, api, setError) {
   try {
@@ -16,7 +16,7 @@ export async function loadEmployeeInvite(token, store, api, setError) {
     });
   } catch (err) {
     setError(
-      formatApiError(err, gqlError => {
+      formatApiError(err, (gqlError) => {
         if (graphQLErrorMatchesCode(gqlError, "INVALID_TOKEN")) {
           return "le lien d'invitation est invalide";
         }

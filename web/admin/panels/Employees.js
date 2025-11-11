@@ -18,14 +18,6 @@ import {
   isoFormatLocalDate,
   now
 } from "common/utils/time";
-import {
-  BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
-  CANCEL_EMPLOYMENT_MUTATION,
-  CHANGE_EMPLOYEE_ROLE,
-  CREATE_EMPLOYMENT_MUTATION,
-  SEND_INVITATIONS_REMINDERS,
-  TERMINATE_EMPLOYMENT_MUTATION
-} from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { EMPLOYMENT_ROLE } from "common/utils/employments";
 import { TeamFilter } from "../components/TeamFilter";
@@ -48,8 +40,16 @@ import {
   INVITE_MISSING_EMPLOYEES_CLICK,
   INVITE_NEW_EMPLOYEE_CLICK
 } from "common/utils/matomoTags";
+import {
+  BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
+  CANCEL_EMPLOYMENT_MUTATION,
+  CHANGE_EMPLOYEE_ROLE,
+  CREATE_EMPLOYMENT_MUTATION,
+  SEND_INVITATIONS_REMINDERS,
+  TERMINATE_EMPLOYMENT_MUTATION
+} from "common/utils/apiQueries/employments";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   title: {
     display: "flex",
     justifyContent: "space-between",
@@ -72,12 +72,13 @@ const useStyles = makeStyles(theme => ({
 const isUserOnlyAdminOfTeams = (teams, userId) => {
   return teams
     .filter(
-      team => team.adminUsers?.length === 1 && team.adminUsers[0].id === userId
+      (team) =>
+        team.adminUsers?.length === 1 && team.adminUsers[0].id === userId
     )
-    .map(team => team.name);
+    .map((team) => team.name);
 };
 
-const isLessThanTwelveHoursAgo = ts => {
+const isLessThanTwelveHoursAgo = (ts) => {
   const nbSecondsElapsed = now() - ts;
   return nbSecondsElapsed <= DAY / 2;
 };
@@ -100,7 +101,7 @@ export function Employees({ company, containerRef }) {
     if (adminStore?.teams?.length > 0) {
       setTeams([
         { name: NO_TEAMS_LABEL, id: NO_TEAM_ID, rankName: "zzz" },
-        ...adminStore.teams.map(team => ({ ...team, rankName: team.name }))
+        ...adminStore.teams.map((team) => ({ ...team, rankName: team.name }))
       ]);
     } else {
       setTeams([]);
@@ -111,16 +112,15 @@ export function Employees({ company, containerRef }) {
     if (!teams) {
       return [];
     }
-    return teams.filter(team => team.selected).map(team => team.id);
+    return teams.filter((team) => team.selected).map((team) => team.id);
   }, [teams]);
 
   const setForceUpdate = React.useState({
     value: false
   })[1];
 
-  const [hidePendingEmployments, setHidePendingEmployments] = React.useState(
-    true
-  );
+  const [hidePendingEmployments, setHidePendingEmployments] =
+    React.useState(true);
   const [wantsToAddEmployment, setWantsToAddEmployment] = React.useState(false);
 
   const classes = useStyles();
@@ -151,10 +151,8 @@ export function Employees({ company, containerRef }) {
         employmentId,
         hasAdminRights
       });
-      const {
-        teams,
-        employments
-      } = apiResponse?.data?.employments?.changeEmployeeRole ?? {};
+      const { teams, employments } =
+        apiResponse?.data?.employments?.changeEmployeeRole ?? {};
       if (employments) {
         await adminStore.dispatch({
           type: ADMIN_ACTIONS.update,
@@ -162,7 +160,9 @@ export function Employees({ company, containerRef }) {
             id: employmentId,
             entity: "employments",
             update: {
-              ...employments.find(employment => employment.id === employmentId),
+              ...employments.find(
+                (employment) => employment.id === employmentId
+              ),
               companyId,
               adminStore
             }
@@ -214,7 +214,8 @@ export function Employees({ company, containerRef }) {
       const res = await api.graphQlMutate(SEND_INVITATIONS_REMINDERS, {
         employmentIds
       });
-      const sentToEmploymentIds = res.data.employments.sendInvitationsReminders.sentToEmploymentIds
+      const sentToEmploymentIds =
+        res.data.employments.sendInvitationsReminders.sentToEmploymentIds;
       await adminStore.dispatch({
         type: ADMIN_ACTIONS.updateEmploymentsLatestInvitateEmailTime,
         payload: {
@@ -231,8 +232,8 @@ export function Employees({ company, containerRef }) {
     }
   }
 
-  const formatTeam = teamId =>
-    adminStore?.teams?.find(team => team.id === teamId)?.name;
+  const formatTeam = (teamId) =>
+    adminStore?.teams?.find((team) => team.id === teamId)?.name;
 
   const pendingEmploymentColumns = [
     {
@@ -253,14 +254,14 @@ export function Employees({ company, containerRef }) {
       baseWidth: 120,
       align: "left",
       required: true,
-      format: hasAdminRights => (hasAdminRights ? "Oui" : "Non"),
+      format: (hasAdminRights) => (hasAdminRights ? "Oui" : "Non"),
       renderEditMode: (type, entry, setType) => (
         <TextField
           required
           fullWidth
           select
           value={type}
-          onChange={e => setType(e.target.value)}
+          onChange={(e) => setType(e.target.value)}
         >
           <MenuItem key={0} value={EMPLOYMENT_ROLE.admin}>
             Oui
@@ -273,7 +274,7 @@ export function Employees({ company, containerRef }) {
     },
     {
       label: "Invité le",
-      format: dateString =>
+      format: (dateString) =>
         dateString ? frenchFormatDateStringOrTimeStamp(dateString) : "",
       sortable: true,
       name: "creationDate",
@@ -305,12 +306,12 @@ export function Employees({ company, containerRef }) {
           fullWidth
           select
           value={type}
-          onChange={e => setType(e.target.value)}
+          onChange={(e) => setType(e.target.value)}
         >
           <MenuItem key={NO_TEAM_ID} value={NO_TEAM_ID}>
             {"-"}
           </MenuItem>
-          {adminStore.teams.map(team => (
+          {adminStore.teams.map((team) => (
             <MenuItem key={team.id} value={team.id}>
               {team.name}
             </MenuItem>
@@ -325,7 +326,7 @@ export function Employees({ company, containerRef }) {
     name: "remindButton",
     minWidth: 140,
     baseWidth: 140,
-    format: remindButton => remindButton
+    format: (remindButton) => remindButton
   });
 
   const validEmploymentColumns = [
@@ -363,7 +364,7 @@ export function Employees({ company, containerRef }) {
     {
       label: "Accès gestionnaire",
       name: "hasAdminRights",
-      format: hasAdminRights => (hasAdminRights ? "Oui" : "Non"),
+      format: (hasAdminRights) => (hasAdminRights ? "Oui" : "Non"),
       align: "left",
       sortable: true,
       minWidth: 160
@@ -372,14 +373,14 @@ export function Employees({ company, containerRef }) {
       label: "Début rattachement",
       name: "startDate",
       align: "left",
-      format: startDate => frenchFormatDateStringOrTimeStamp(startDate),
+      format: (startDate) => frenchFormatDateStringOrTimeStamp(startDate),
       sortable: true,
       minWidth: 150
     },
     {
       label: "Fin rattachement",
       name: "endDate",
-      format: endDate =>
+      format: (endDate) =>
         endDate ? frenchFormatDateStringOrTimeStamp(endDate) : null,
       align: "left",
       minWidth: 150
@@ -387,10 +388,11 @@ export function Employees({ company, containerRef }) {
     {
       label: "Statut",
       name: "active",
-      format: active => (
+      format: (active) => (
         <Typography
-          className={`bold ${active ? classes.successText : classes.terminatedEmployment
-            }`}
+          className={`bold ${
+            active ? classes.successText : classes.terminatedEmployment
+          }`}
         >
           {active ? "Actif" : "Terminé"}
         </Typography>
@@ -427,15 +429,15 @@ export function Employees({ company, containerRef }) {
   });
 
   const companyEmployments = React.useMemo(
-    () => adminStore.employments.filter(e => e.companyId === companyId),
+    () => adminStore.employments.filter((e) => e.companyId === companyId),
     [adminStore.employments, companyId]
   );
 
   const pendingEmployments = React.useMemo(
     () =>
       companyEmployments
-        .filter(e => !e.isAcknowledged)
-        .map(e => ({
+        .filter((e) => !e.isAcknowledged)
+        .map((e) => ({
           pending: true,
           idOrEmail: e.email || e.user?.id,
           hasAdminRights: e.hasAdminRights,
@@ -477,7 +479,7 @@ export function Employees({ company, containerRef }) {
   const disableRemindAllPendingInvitations = React.useMemo(
     () =>
       pendingEmployments.filter(
-        e =>
+        (e) =>
           e.latestInviteEmailTime &&
           isLessThanTwelveHoursAgo(e.latestInviteEmailTime)
       ).length === pendingEmployments.length,
@@ -486,8 +488,8 @@ export function Employees({ company, containerRef }) {
 
   const hasMadeInvitations = React.useMemo(
     () =>
-      companyEmployments.filter(e => e.user?.id !== adminStore.userId).length >
-      0,
+      companyEmployments.filter((e) => e.user?.id !== adminStore.userId)
+        .length > 0,
     [adminStore.userId, companyEmployments]
   );
 
@@ -501,15 +503,15 @@ export function Employees({ company, containerRef }) {
   const validEmployments = React.useMemo(
     () =>
       companyEmployments
-        .filter(e => {
+        .filter((e) => {
           return (
             selectedTeamIds.length === 0 ||
             selectedTeamIds.includes(e.teamId) ||
             (selectedTeamIds.includes(NO_TEAM_ID) && !e.teamId)
           );
         })
-        .filter(e => e.isAcknowledged)
-        .map(e => ({
+        .filter((e) => e.isAcknowledged)
+        .map((e) => ({
           pending: false,
           id: e.user.id,
           email: e.user.email,
@@ -530,12 +532,12 @@ export function Employees({ company, containerRef }) {
   );
 
   const areThereEmploymentsWithoutBusinessType = React.useMemo(
-    () => validEmployments.filter(e => !e.business).length > 0,
+    () => validEmployments.filter((e) => !e.business).length > 0,
     [validEmployments]
   );
 
   const activeValidEmployments = React.useMemo(
-    () => validEmployments.filter(e => e.active),
+    () => validEmployments.filter((e) => e.active),
     [validEmployments]
   );
 
@@ -573,7 +575,7 @@ export function Employees({ company, containerRef }) {
   const customActionEditTeam = {
     name: "editTeam",
     label: "Modifier l'affectation",
-    action: employment => {
+    action: (employment) => {
       modals.open("employeesTeamRevisionModal", {
         employment,
         teams: adminStore?.teams,
@@ -583,7 +585,7 @@ export function Employees({ company, containerRef }) {
     }
   };
 
-  const customActionsPendingEmployment = employment => {
+  const customActionsPendingEmployment = (employment) => {
     if (!employment) {
       return [];
     }
@@ -591,7 +593,7 @@ export function Employees({ company, containerRef }) {
       {
         name: "delete",
         label: "Annuler l'invitation",
-        action: empl => {
+        action: (empl) => {
           modals.open("confirmation", {
             textButtons: true,
             title: "Confirmer annulation du rattachement",
@@ -608,14 +610,14 @@ export function Employees({ company, containerRef }) {
       customActions.push({
         name: "setAdmin",
         label: "Donner accès gestionnaire",
-        action: empl => giveAdminPermission(empl.id)
+        action: (empl) => giveAdminPermission(empl.id)
       });
     } else {
       customActions.push({
         name: "setWorker",
         label: "Retirer accès gestionnaire",
         disabled: employment.id === adminStore.userId,
-        action: empl => giveWorkerPermission(empl.employmentId)
+        action: (empl) => giveWorkerPermission(empl.employmentId)
       });
     }
     if (adminStore?.teams?.length > 0) {
@@ -638,42 +640,42 @@ export function Employees({ company, containerRef }) {
     const conditionalX = moreThanOne ? "x" : "";
     nbTeamsOnlyAdmin > 0
       ? modals.open("confirmation", {
-        textButtons: true,
-        title: modalTitle,
-        content: (
-          <Box>
-            <Typography>
-              Ce gestionnaire est le seul gestionnaire rattaché au
-              {conditionalX} groupe{conditionalS} suivant{conditionalS}:{" "}
-              <span className="bold">
-                {teamsWhereUserIsOnlyAdmin.join(", ")}.
-              </span>
-            </Typography>
-            <Typography>
-              Si vous{" "}
-              {terminateEmployment
-                ? "mettez fin à son rattachement"
-                : "lui retirez ses droits de gestion"}
-              , il n'y aura plus de gestionnaire pour ce{conditionalS} groupe
-              {conditionalS}.
-            </Typography>
-            <Typography>
-              Êtes-vous certain(e) de vouloir{" "}
-              {terminateEmployment
-                ? "mettre fin à son rattachement"
-                : "lui retirer ses droits de gestion"}
-              ?
-            </Typography>
-          </Box>
-        ),
-        handleConfirm: async () => {
-          await action();
-        }
-      })
+          textButtons: true,
+          title: modalTitle,
+          content: (
+            <Box>
+              <Typography>
+                Ce gestionnaire est le seul gestionnaire rattaché au
+                {conditionalX} groupe{conditionalS} suivant{conditionalS}:{" "}
+                <span className="bold">
+                  {teamsWhereUserIsOnlyAdmin.join(", ")}.
+                </span>
+              </Typography>
+              <Typography>
+                Si vous{" "}
+                {terminateEmployment
+                  ? "mettez fin à son rattachement"
+                  : "lui retirez ses droits de gestion"}
+                , il n'y aura plus de gestionnaire pour ce{conditionalS} groupe
+                {conditionalS}.
+              </Typography>
+              <Typography>
+                Êtes-vous certain(e) de vouloir{" "}
+                {terminateEmployment
+                  ? "mettre fin à son rattachement"
+                  : "lui retirer ses droits de gestion"}
+                ?
+              </Typography>
+            </Box>
+          ),
+          handleConfirm: async () => {
+            await action();
+          }
+        })
       : action();
   };
 
-  const customActionsValidEmployment = employment => {
+  const customActionsValidEmployment = (employment) => {
     if (!employment) {
       return [];
     }
@@ -685,14 +687,14 @@ export function Employees({ company, containerRef }) {
       customActions.push({
         name: "setAdmin",
         label: "Donner accès gestionnaire",
-        action: empl => giveAdminPermission(empl.employmentId)
+        action: (empl) => giveAdminPermission(empl.employmentId)
       });
     } else {
       customActions.push({
         name: "setWorker",
         label: "Retirer accès gestionnaire",
         disabled: employment.id === adminStore.userId,
-        action: empl =>
+        action: (empl) =>
           confirmActionIfOnlyAdmin(
             adminStore.teams,
             empl.id,
@@ -706,7 +708,7 @@ export function Employees({ company, containerRef }) {
       name: "terminate",
       label: "Mettre fin au rattachement",
       disabled: employment.id === adminStore.userId,
-      action: empl =>
+      action: (empl) =>
         confirmActionIfOnlyAdmin(
           adminStore.teams,
           empl.id,
@@ -714,7 +716,7 @@ export function Employees({ company, containerRef }) {
           () =>
             modals.open("terminateEmployment", {
               minDate: new Date(empl.startDate),
-              terminateEmployment: async endDate =>
+              terminateEmployment: async (endDate) =>
                 terminateEmployment(empl.employmentId, endDate)
             }),
           true
@@ -723,7 +725,7 @@ export function Employees({ company, containerRef }) {
     return customActions;
   };
 
-  const inviteEmails = async mails => {
+  const inviteEmails = async (mails) => {
     await alerts.withApiErrorHandling(async () => {
       const employmentsResponse = await api.graphQlMutate(
         BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
@@ -737,7 +739,7 @@ export function Employees({ company, containerRef }) {
       adminStore.dispatch({
         type: ADMIN_ACTIONS.create,
         payload: {
-          items: employments.map(e => ({ ...e, companyId })),
+          items: employments.map((e) => ({ ...e, companyId })),
           entity: "employments"
         }
       });
@@ -832,9 +834,13 @@ export function Employees({ company, containerRef }) {
                   onClick={async () => {
                     await alerts.withApiErrorHandling(async () =>
                       sendInvitationsReminders(
-                        pendingEmployments.filter(
-                          e => !e.latestInviteEmailTime || !isLessThanTwelveHoursAgo(e.latestInviteEmailTime)
-                        ).map(e => e.id)
+                        pendingEmployments
+                          .filter(
+                            (e) =>
+                              !e.latestInviteEmailTime ||
+                              !isLessThanTwelveHoursAgo(e.latestInviteEmailTime)
+                          )
+                          .map((e) => e.id)
                       )
                     );
                   }}
@@ -865,7 +871,7 @@ export function Employees({ company, containerRef }) {
                   !!idOrEmail && !!hasAdminRights
                 }
                 forceParentUpdateOnRowAdd={() =>
-                  setForceUpdate(value => !value)
+                  setForceUpdate((value) => !value)
                 }
                 editActionsColumnMinWidth={180}
                 defaultSortBy={"creationDate"}
@@ -970,7 +976,7 @@ export function Employees({ company, containerRef }) {
           defaultSortBy="lastName"
           alwaysSortBy={[["active", "desc"]]}
           virtualizedAttachScrollTo={containerRef.current}
-          rowClassName={row =>
+          rowClassName={(row) =>
             !row.active ? classes.terminatedEmployment : ""
           }
           customRowActions={customActionsValidEmployment}

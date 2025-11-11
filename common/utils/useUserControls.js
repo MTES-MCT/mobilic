@@ -1,8 +1,8 @@
-import { USER_CONTROLS_QUERY } from "../utils/apiQueries";
 import { useApi } from "../utils/api";
 import React from "react";
+import { USER_CONTROLS_QUERY } from "./apiQueries/user";
 
-export const useUserControls = userId => {
+export const useUserControls = (userId) => {
   const api = useApi();
   const [userControls, setUserControls] = React.useState([]);
   const [loading, setLoading] = React.useState(false);

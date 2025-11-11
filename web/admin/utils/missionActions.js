@@ -1,16 +1,4 @@
 import { v4 as uuidv4 } from "uuid";
-import {
-  buildLogLocationPayloadFromAddress,
-  BULK_ACTIVITY_QUERY,
-  CANCEL_COMMENT_MUTATION,
-  CANCEL_MISSION_MUTATION,
-  CHANGE_MISSION_NAME_MUTATION,
-  LOG_COMMENT_MUTATION,
-  LOG_LOCATION_MUTATION,
-  REGISTER_KILOMETER_AT_LOCATION,
-  UPDATE_MISSION_VEHICLE_MUTATION,
-  VALIDATE_MISSION_MUTATION
-} from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useApi } from "common/utils/api";
 import {
@@ -27,6 +15,18 @@ import {
   getPayloadFromVirtualExpenditures,
   getPayloadUpdateActivity
 } from "./virtualPayloads";
+import { BULK_ACTIVITY_QUERY } from "common/utils/apiQueries/admin";
+import {
+  buildLogLocationPayloadFromAddress,
+  CANCEL_COMMENT_MUTATION,
+  CANCEL_MISSION_MUTATION,
+  CHANGE_MISSION_NAME_MUTATION,
+  LOG_COMMENT_MUTATION,
+  LOG_LOCATION_MUTATION,
+  REGISTER_KILOMETER_AT_LOCATION,
+  UPDATE_MISSION_VEHICLE_MUTATION,
+  VALIDATE_MISSION_MUTATION
+} from "common/utils/apiQueries/missions";
 
 const testBulkActivities = async (api, virtualActivities) => {
   if (virtualActivities.length > 0) {
@@ -44,13 +44,8 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
 
   for (const arg of modalArgs.actions) {
     if (arg.type === VIRTUAL_ACTIVITIES_ACTIONS.edit) {
-      const {
-        activity,
-        actionType,
-        newStartTime,
-        newEndTime,
-        userComment
-      } = arg.payload;
+      const { activity, actionType, newStartTime, newEndTime, userComment } =
+        arg.payload;
       const { payload, shouldCancel } = getPayloadUpdateActivity(
         activity,
         actionType,
@@ -72,10 +67,10 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
       // update
       if (shouldCancel) {
         mission.activities = mission.activities.filter(
-          a => a.id !== activity.id
+          (a) => a.id !== activity.id
         );
       } else {
-        mission.activities = mission.activities.map(a =>
+        mission.activities = mission.activities.map((a) =>
           a.id === activity.id
             ? {
                 ...a,
@@ -131,7 +126,7 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
     }
   }
 
-  toDispatch.forEach(payload => adminStore.dispatch(payload));
+  toDispatch.forEach((payload) => adminStore.dispatch(payload));
 }
 
 async function createExpenditure(
@@ -174,7 +169,7 @@ async function cancelExpenditure(api, mission, adminStore, { expenditure }) {
     }
   });
   mission.expenditures = mission.expenditures.filter(
-    e => e.id !== expenditure.id
+    (e) => e.id !== expenditure.id
   );
 }
 
@@ -232,7 +227,7 @@ async function deleteComment(api, mission, adminStore, comment) {
   await api.graphQlMutate(CANCEL_COMMENT_MUTATION, {
     commentId: comment.id
   });
-  mission.comments = mission.comments.filter(c => c.id !== comment.id);
+  mission.comments = mission.comments.filter((c) => c.id !== comment.id);
 }
 
 async function changeName(api, mission, adminStore, name) {
@@ -292,26 +287,29 @@ async function updateKilometerReading(
   };
 }
 
-const missionActionWrapper = (
-  alerts,
-  api,
-  mission,
-  adminStore,
-  setShouldRefreshActivityPanel,
-  setMission
-) => (action, shouldRefreshActivityPanel = true) => async (...args) => {
-  await alerts.withApiErrorHandling(async () => {
-    if (shouldRefreshActivityPanel) {
-      setShouldRefreshActivityPanel(true);
-    }
-    await action(api, mission, adminStore, ...args);
-    setMission({ ...mission });
-    adminStore.dispatch({
-      type: ADMIN_ACTIONS.update,
-      payload: { id: mission.id, entity: "missions", update: mission }
+const missionActionWrapper =
+  (
+    alerts,
+    api,
+    mission,
+    adminStore,
+    setShouldRefreshActivityPanel,
+    setMission
+  ) =>
+  (action, shouldRefreshActivityPanel = true) =>
+  async (...args) => {
+    await alerts.withApiErrorHandling(async () => {
+      if (shouldRefreshActivityPanel) {
+        setShouldRefreshActivityPanel(true);
+      }
+      await action(api, mission, adminStore, ...args);
+      setMission({ ...mission });
+      adminStore.dispatch({
+        type: ADMIN_ACTIONS.update,
+        payload: { id: mission.id, entity: "missions", update: mission }
+      });
     });
-  });
-};
+  };
 
 export function useMissionActions(
   mission,

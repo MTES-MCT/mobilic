@@ -2,10 +2,6 @@ import React from "react";
 import TextField from "common/utils/TextField";
 import Grid from "@mui/material/Grid";
 import { LoadingButton } from "common/components/LoadingButton";
-import {
-  CREATE_TEAM_MUTATION,
-  UPDATE_TEAM_MUTATION
-} from "common/utils/apiQueries";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
@@ -14,6 +10,10 @@ import { MultipleValuesFilter } from "../panels/MultipleValuesFilter";
 import Modal from "../../common/Modal";
 import Notice from "../../common/Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import {
+  CREATE_TEAM_MUTATION,
+  UPDATE_TEAM_MUTATION
+} from "common/utils/apiQueries/teams";
 
 export default function CompanyTeamCreationRevisionModal({
   team,
@@ -37,34 +37,34 @@ export default function CompanyTeamCreationRevisionModal({
   const api = useApi();
 
   React.useEffect(() => {
-    selectableUsers.forEach(su => (su.selected = false));
-    selectableAdmins.forEach(sa => (sa.selected = false));
-    selectableKnownAddresses.forEach(sa => (sa.selected = false));
-    selectableVehicles.forEach(sv => (sv.selected = false));
+    selectableUsers.forEach((su) => (su.selected = false));
+    selectableAdmins.forEach((sa) => (sa.selected = false));
+    selectableKnownAddresses.forEach((sa) => (sa.selected = false));
+    selectableVehicles.forEach((sv) => (sv.selected = false));
     setNewAdmins(
-      selectableAdmins.map(sa => ({
+      selectableAdmins.map((sa) => ({
         ...sa,
         selected: team
-          ? team?.adminUsers?.some(au => au.id === sa.id)
+          ? team?.adminUsers?.some((au) => au.id === sa.id)
           : sa.id === adminStore.userId
       }))
     );
     setNewUsers(
-      selectableUsers.map(sa => ({
+      selectableUsers.map((sa) => ({
         ...sa,
-        selected: team?.users?.some(au => au.id === sa.id)
+        selected: team?.users?.some((au) => au.id === sa.id)
       }))
     );
     setNewKnownAddresses(
-      selectableKnownAddresses.map(sa => ({
+      selectableKnownAddresses.map((sa) => ({
         ...sa,
-        selected: team?.knownAddresses?.some(au => au.id === sa.id)
+        selected: team?.knownAddresses?.some((au) => au.id === sa.id)
       }))
     );
     setNewVehicles(
-      selectableVehicles.map(sv => ({
+      selectableVehicles.map((sv) => ({
         ...sv,
-        selected: team?.vehicles?.some(v => v.id === sv.id)
+        selected: team?.vehicles?.some((v) => v.id === sv.id)
       }))
     );
   }, []);
@@ -72,12 +72,12 @@ export default function CompanyTeamCreationRevisionModal({
   const commonPayloadFromFields = () => {
     return {
       name: name,
-      userIds: newUsers?.filter(u => u.selected).map(u => u.id),
-      adminIds: newAdmins?.filter(u => u.selected).map(u => u.id),
+      userIds: newUsers?.filter((u) => u.selected).map((u) => u.id),
+      adminIds: newAdmins?.filter((u) => u.selected).map((u) => u.id),
       knownAddressIds: newKnownAddresses
-        ?.filter(a => a.selected)
-        .map(a => a.id),
-      vehicleIds: newVehicles?.filter(v => v.selected).map(v => v.id)
+        ?.filter((a) => a.selected)
+        .map((a) => a.id),
+      vehicleIds: newVehicles?.filter((v) => v.selected).map((v) => v.id)
     };
   };
 
@@ -154,7 +154,7 @@ export default function CompanyTeamCreationRevisionModal({
                 maxLength: 255
               }}
               value={name}
-              onChange={e => setName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
             />
           </Grid>
           <Grid item xs={12}>
@@ -184,7 +184,7 @@ export default function CompanyTeamCreationRevisionModal({
               setValues={setNewKnownAddresses}
               fieldLabel={"Adresse(s) associée(s)"}
               orderFields={["alias", "name"]}
-              optionLabel={o => {
+              optionLabel={(o) => {
                 return o.alias || o.name;
               }}
             />
@@ -195,7 +195,7 @@ export default function CompanyTeamCreationRevisionModal({
               setValues={setNewVehicles}
               fieldLabel={"Véhicule(s) associé(s)"}
               orderFields={["alias", "registrationNumber"]}
-              optionLabel={o => {
+              optionLabel={(o) => {
                 return o.alias || o.registrationNumber;
               }}
             />

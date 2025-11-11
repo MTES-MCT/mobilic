@@ -8,8 +8,8 @@ import React, {
 
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../store/store";
-import { ADMIN_COMPANY_REGULATORY_ALERTS_SUMMARY_QUERY } from "common/utils/apiQueries";
 import { lastMonth } from "common/utils/time";
+import { ADMIN_COMPANY_REGULATORY_ALERTS_SUMMARY_QUERY } from "common/utils/apiQueries/admin";
 
 function useRegulatoryAlertsSummary() {
   const api = useApi();

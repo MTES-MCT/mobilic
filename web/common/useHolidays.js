@@ -1,7 +1,6 @@
 import React from "react";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { useApi } from "common/utils/api";
-import { LOG_HOLIDAY_MUTATION } from "common/utils/apiQueries";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "./Snackbar";
@@ -10,6 +9,7 @@ import { isoFormatLocalDate } from "common/utils/time";
 import { syncMissions } from "common/utils/loadUserData";
 import { DISMISSABLE_WARNINGS } from "../admin/utils/dismissableWarnings";
 import Notice from "./Notice";
+import { LOG_HOLIDAY_MUTATION } from "common/utils/apiQueries/missions";
 
 export const useHolidays = () => {
   const modals = useModals();
@@ -23,7 +23,7 @@ export const useHolidays = () => {
   const openHolidaysModal = () => {
     modals.open("logHoliday", {
       companies,
-      handleContinue: async payload => {
+      handleContinue: async (payload) => {
         const logHolidayProcess = async () => {
           await alerts.withApiErrorHandling(
             async () => {
@@ -54,7 +54,7 @@ export const useHolidays = () => {
               }, 1000);
             },
             "logHoliday",
-            graphQLError => {
+            (graphQLError) => {
               if (
                 graphQLErrorMatchesCode(graphQLError, "OVERLAPPING_MISSIONS")
               ) {

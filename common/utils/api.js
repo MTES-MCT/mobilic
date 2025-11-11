@@ -21,9 +21,10 @@ import {
 } from "./cookie";
 import { MaxSizeCache } from "./cache";
 import { saveAs } from "file-saver";
-import { CHECK_AUTH_QUERY, HTTP_QUERIES } from "./apiQueries";
 import { captureSentryException } from "./sentry";
 import { buildAgentConnectLogoutUrl } from "../../web/controller/utils/agentConnect";
+import { HTTP_QUERIES } from "./apiQueries/httpQueries";
+import { CHECK_AUTH_QUERY } from "./apiQueries/auth";
 
 export const API_HOST = "/api";
 

@@ -16,10 +16,7 @@ import { Section } from "../common/Section";
 import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainerTitle } from "../common/PaperContainer";
-import {
-  CONFIRM_FC_EMAIL_MUTATION,
-  HTTP_QUERIES
-} from "common/utils/apiQueries";
+
 import { CheckboxField } from "../common/CheckboxField";
 import { EmailField } from "../common/EmailField";
 import { captureSentryException } from "common/utils/sentry";
@@ -29,8 +26,10 @@ import { WayHeardOfMobilic } from "../common/WayHeardOfMobilic";
 import { getPasswordErrors } from "common/utils/passwords";
 import { PasswordInput } from "../common/forms/PasswordInput";
 import { Stack } from "@mui/material";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
+import { CONFIRM_FC_EMAIL_MUTATION } from "common/utils/apiQueries/loginSignup";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   text: {
     paddingBottom: theme.spacing(2)
   }
@@ -50,9 +49,8 @@ export function EmailSelection() {
   const [isAdmin, setIsAdmin] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [wayHeardOfMobilic, setWayHeardOfMobilic] = React.useState("");
-  const [selectedTimezone, setSelectedTimezone] = React.useState(
-    getClientTimezone()
-  );
+  const [selectedTimezone, setSelectedTimezone] =
+    React.useState(getClientTimezone());
   const [emailError, setEmailError] = React.useState("");
   const [origEmailSet, setOrigEmailSet] = React.useState(false);
   const [password, setPassword] = React.useState("");
@@ -78,7 +76,7 @@ export function EmailSelection() {
     setIsAdmin(!!admin);
   }, [location]);
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (store.hasAcceptedCgu()) {
       await _createLogin(
@@ -229,7 +227,7 @@ export function EmailSelection() {
                 nativeInputProps={{
                   autoComplete: "current-password",
                   value: password,
-                  onChange: e => setPassword(e.target.value)
+                  onChange: (e) => setPassword(e.target.value)
                 }}
                 displayMessages
                 required

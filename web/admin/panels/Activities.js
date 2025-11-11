@@ -32,13 +32,6 @@ import Drawer from "@mui/material/Drawer";
 import NewMissionForm from "../../common/NewMissionForm";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
-import {
-  ADMIN_WORK_DAYS_QUERY,
-  buildLogLocationPayloadFromAddress,
-  CREATE_MISSION_MUTATION,
-  LOG_HOLIDAY_MUTATION,
-  LOG_LOCATION_MUTATION
-} from "common/utils/apiQueries";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import TextField from "@mui/material/TextField";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
@@ -65,6 +58,13 @@ import { useGetUsersSinceDate } from "../../common/hooks/useGetUsersSinceDate";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import CloseButton from "../../common/CloseButton";
 import { PickersDay } from "@mui/x-date-pickers/PickersDay";
+import { ADMIN_WORK_DAYS_QUERY } from "common/utils/apiQueries/admin";
+import {
+  buildLogLocationPayloadFromAddress,
+  CREATE_MISSION_MUTATION,
+  LOG_HOLIDAY_MUTATION,
+  LOG_LOCATION_MUTATION
+} from "common/utils/apiQueries/missions";
 
 const useStyles = makeStyles((theme) => ({
   filterGrid: {

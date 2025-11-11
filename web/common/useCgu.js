@@ -1,11 +1,11 @@
 import React from "react";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { useApi } from "common/utils/api";
+import { useSnackbarAlerts } from "./Snackbar";
 import {
   ACCEPT_CGU_MUTATION,
   REJECT_CGU_MUTATION
-} from "common/utils/apiQueries";
-import { useSnackbarAlerts } from "./Snackbar";
+} from "common/utils/apiQueries/cgu";
 
 export const useCgu = () => {
   const api = useApi();
@@ -18,7 +18,7 @@ export const useCgu = () => {
     [store.userInfo().userAgreementStatus?.cguVersion]
   );
 
-  const updateCgu = async accept => {
+  const updateCgu = async (accept) => {
     const apiResponse = await api.graphQlMutate(
       accept ? ACCEPT_CGU_MUTATION : REJECT_CGU_MUTATION,
       { userId, cguVersion },

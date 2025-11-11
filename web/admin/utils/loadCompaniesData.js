@@ -1,8 +1,8 @@
-import { DAY, getStartOfDay, now } from "common/utils/time";
 import {
   ADMIN_COMPANIES_LIST_QUERY,
   ADMIN_COMPANIES_QUERY
-} from "common/utils/apiQueries";
+} from "common/utils/apiQueries/admin";
+import { DAY, getStartOfDay, now } from "common/utils/time";
 import { sortBy } from "lodash/collection";
 
 export async function loadCompaniesList(api, userId) {

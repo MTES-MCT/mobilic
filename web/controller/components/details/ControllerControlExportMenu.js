@@ -6,12 +6,12 @@ import { ReactComponent as C1bIcon } from "common/assets/images/tacho.svg";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 
 import { ListItemIcon, Menu, MenuItem, SvgIcon } from "@mui/material";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { useModals } from "common/utils/modals";
 import { useControl } from "../../utils/contextControl";
 import { CONTROL_TYPES } from "../../utils/useReadControlData";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 
 export function ControllerControlExportMenu() {
   const api = useApi();
@@ -25,9 +25,10 @@ export function ControllerControlExportMenu() {
     [controlType]
   );
 
-  const isOpen = React.useMemo(() => !!exportMenuAnchorEl, [
-    exportMenuAnchorEl
-  ]);
+  const isOpen = React.useMemo(
+    () => !!exportMenuAnchorEl,
+    [exportMenuAnchorEl]
+  );
   return (
     <>
       <Button
@@ -37,7 +38,7 @@ export function ControllerControlExportMenu() {
         aria-expanded={isOpen ? "true" : undefined}
         priority="secondary"
         size="small"
-        onClick={e => setExportMenuAnchorEl(e.currentTarget)}
+        onClick={(e) => setExportMenuAnchorEl(e.currentTarget)}
       >
         Exporter le contrôle
       </Button>

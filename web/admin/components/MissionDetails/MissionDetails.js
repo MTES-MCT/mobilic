@@ -14,7 +14,6 @@ import { useAdminStore } from "../../store/store";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useModals } from "common/utils/modals";
 import List from "@mui/material/List";
-import { MISSION_QUERY } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import { editUserExpenditures } from "common/utils/expenditures";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -54,6 +53,7 @@ import { MissionDetailsObservations } from "./MissionDetailsObservations";
 import Notice from "../../../common/Notice";
 import CloseButton from "../../../common/CloseButton";
 import { PastMissionNotice } from "./PastMissionNotice";
+import { MISSION_QUERY } from "common/utils/apiQueries/missions";
 
 export function MissionDetails({
   missionId,
@@ -85,19 +85,13 @@ export function MissionDetails({
 
   const [usersToAdd, setUsersToAdd] = React.useState([]);
 
-  const [
-    overrideValidationJustification,
-    setOverrideValidationJustification
-  ] = React.useState("");
+  const [overrideValidationJustification, setOverrideValidationJustification] =
+    React.useState("");
 
-  const [
-    entriesToValidateByAdmin,
-    setEntriesToValidateByAdmin
-  ] = React.useState([]);
-  const [
-    entriesToValidateByWorker,
-    setEntriesToValidateByWorker
-  ] = React.useState([]);
+  const [entriesToValidateByAdmin, setEntriesToValidateByAdmin] =
+    React.useState([]);
+  const [entriesToValidateByWorker, setEntriesToValidateByWorker] =
+    React.useState([]);
   const [entriesDeleted, setEntriesDeleted] = React.useState([]);
   const [entriesValidatedByAdmin, setEntriesValidatedByAdmin] = React.useState(
     []
@@ -112,7 +106,7 @@ export function MissionDetails({
 
   async function loadMission() {
     const alreadyFetchedMission = missionsSelector(adminStore)?.find(
-      m => m.id === missionId
+      (m) => m.id === missionId
     );
     if (alreadyFetchedMission) {
       setMission(alreadyFetchedMission);
@@ -168,7 +162,7 @@ export function MissionDetails({
   const onValidate = async () => {
     setLoading(true);
     const usersToValidate = entriesToValidateByAdmin.map(
-      workerEntryToValidate => workerEntryToValidate.user.id
+      (workerEntryToValidate) => workerEntryToValidate.user.id
     );
     await missionActions.validateMission(
       usersToValidate,
@@ -183,25 +177,24 @@ export function MissionDetails({
   }, [missionId]);
 
   React.useEffect(() => {
-    const [deleted, notDeleted] = partition(workerEntries, workerEntry =>
+    const [deleted, notDeleted] = partition(workerEntries, (workerEntry) =>
       entryDeleted(workerEntry)
     );
     setEntriesDeleted(deleted);
-    const [
-      toBeValidatedByAdmin,
-      notToBeValidatedByAdmin
-    ] = partition(notDeleted, workerEntry =>
-      entryToBeValidatedByAdmin(
-        workerEntry,
-        adminStore.userId,
-        adminMayOverrideValidation,
-        overrideValidationJustification
-      )
+    const [toBeValidatedByAdmin, notToBeValidatedByAdmin] = partition(
+      notDeleted,
+      (workerEntry) =>
+        entryToBeValidatedByAdmin(
+          workerEntry,
+          adminStore.userId,
+          adminMayOverrideValidation,
+          overrideValidationJustification
+        )
     );
     setEntriesToValidateByAdmin(toBeValidatedByAdmin);
     const [validatedByAdmin, toValidateByWorker] = partition(
       notToBeValidatedByAdmin,
-      workerEntry => workerEntry.adminValidation
+      (workerEntry) => workerEntry.adminValidation
     );
     setEntriesValidatedByAdmin(validatedByAdmin);
     setEntriesToValidateByWorker(toValidateByWorker);
@@ -215,8 +208,8 @@ export function MissionDetails({
     if (mission) {
       const entries = missionToValidationEntries(mission);
       entries.sort((e1, e2) => e1.user.id - e2.user.id);
-      const userIdsInMission = entries.map(e => e.user.id);
-      usersToAdd.forEach(user => {
+      const userIdsInMission = entries.map((e) => e.user.id);
+      usersToAdd.forEach((user) => {
         if (!userIdsInMission.includes(user.id)) {
           entries.unshift({
             user,
@@ -273,7 +266,7 @@ export function MissionDetails({
               startTime={mission.startTime}
               onEdit={
                 globalFieldsEditable && editableMissionName
-                  ? newName => missionActions.changeName(newName)
+                  ? (newName) => missionActions.changeName(newName)
                   : null
               }
               missionPrefix={!isMissionHoliday}
@@ -399,14 +392,14 @@ export function MissionDetails({
                   trackEvent(ADD_EMPLOYEE_IN_MISSION_PANEL);
                   modals.open("selectEmployee", {
                     users: adminStore.users.filter(
-                      u =>
+                      (u) =>
                         u.companyId === mission.companyId &&
                         !userIdsWithEntries.includes(u.id) &&
-                        !usersToAdd.map(u2 => u2.id).includes(u.id)
+                        !usersToAdd.map((u2) => u2.id).includes(u.id)
                     ),
-                    handleSelect: user =>
-                      setUsersToAdd(users => [
-                        ...users.filter(u => u.id !== user.id),
+                    handleSelect: (user) =>
+                      setUsersToAdd((users) => [
+                        ...users.filter((u) => u.id !== user.id),
                         user
                       ])
                   });
@@ -417,7 +410,7 @@ export function MissionDetails({
           titleProps={{ component: "h2" }}
         >
           <List>
-            {entriesToValidateByAdmin.map(e => (
+            {entriesToValidateByAdmin.map((e) => (
               <ListItem key={e.user.id} disableGutters>
                 <MissionEmployeeCard
                   className={classes.employeeCard}
@@ -435,7 +428,7 @@ export function MissionDetails({
                       ? () =>
                           modals.open("activityRevision", {
                             otherActivities: mission.activities,
-                            handleSeveralActions: actions =>
+                            handleSeveralActions: (actions) =>
                               missionActions.severalActionsActivity({
                                 actions,
                                 user: e.user
@@ -459,16 +452,16 @@ export function MissionDetails({
                       adminMayOverrideValidation,
                       overrideValidationJustification
                     ) || !e.activities
-                      ? async entry =>
+                      ? async (entry) =>
                           modals.open("activityRevision", {
                             event: entry,
                             otherActivities:
                               entry.type === ACTIVITIES.break.name
                                 ? mission.activities
                                 : mission.activities.filter(
-                                    a => a.startTime !== entry.startTime
+                                    (a) => a.startTime !== entry.startTime
                                   ),
-                            handleSeveralActions: actions =>
+                            handleSeveralActions: (actions) =>
                               missionActions.severalActionsActivity({
                                 actions,
                                 user: e.user
@@ -510,8 +503,8 @@ export function MissionDetails({
                       : null
                   }
                   removeUser={() =>
-                    setUsersToAdd(users =>
-                      users.filter(u => u.id !== e.user.id)
+                    setUsersToAdd((users) =>
+                      users.filter((u) => u.id !== e.user.id)
                     )
                   }
                   defaultOpen={workerEntries.length === 1}
@@ -532,7 +525,7 @@ export function MissionDetails({
               <LoadingButton
                 size="large"
                 className={classes.validationButton}
-                onClick={async e => {
+                onClick={async (e) => {
                   e.stopPropagation();
                   trackEvent(VALIDATE_MISSION_IN_MISSION_PANEL);
                   onValidate();
@@ -552,7 +545,7 @@ export function MissionDetails({
               les aura validées."
           />
           <List>
-            {entriesToValidateByWorker.map(e => (
+            {entriesToValidateByWorker.map((e) => (
               <ListItem key={e.user.id} disableGutters>
                 <MissionEmployeeCard
                   className={classes.employeeCard}
@@ -569,7 +562,7 @@ export function MissionDetails({
       {entriesValidatedByAdmin?.length > 0 && (
         <MissionDetailsSection key={7} title="Saisie(s) validée(s)">
           <List>
-            {entriesValidatedByAdmin.map(e => (
+            {entriesValidatedByAdmin.map((e) => (
               <ListItem key={e.user.id} disableGutters>
                 <MissionEmployeeCard
                   className={classes.employeeCard}
@@ -588,7 +581,7 @@ export function MissionDetails({
       {entriesDeleted?.length > 0 && (
         <MissionDetailsSection key={8} title="Saisie(s) supprimée(s)">
           <List>
-            {entriesDeleted.map(e => (
+            {entriesDeleted.map((e) => (
               <ListItem key={e.user.id} disableGutters>
                 <MissionEmployeeCard
                   className={classes.employeeCard}

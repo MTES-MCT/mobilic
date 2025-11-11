@@ -8,8 +8,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { captureSentryException } from "common/utils/sentry";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { Widget } from "@typeform/embed-react";
-import { CREATE_SURVEY_ACTION } from "common/utils/apiQueries";
 import { SURVEY_ACTIONS } from "common/utils/surveys";
+import { CREATE_SURVEY_ACTION } from "common/utils/apiQueries/misc";
 
 export default function TypeformModal({
   open,
@@ -17,7 +17,7 @@ export default function TypeformModal({
   typeformId,
   userId
 }) {
-  const useStyles = makeStyles(theme => ({
+  const useStyles = makeStyles((theme) => ({
     container: {
       display: "flex",
       flexDirection: "column",

@@ -2,7 +2,6 @@ import React from "react";
 import { useApi } from "common/utils/api";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { EDIT_COMPANY_SETTINGS_MUTATION } from "common/utils/apiQueries";
 import { usePanelStyles } from "./Company";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -10,6 +9,7 @@ import { SimpleToggleSetting } from "../components/Setting";
 import { useAdminStore } from "../store/store";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { OtherTask } from "../components/OtherTask";
+import { EDIT_COMPANY_SETTINGS_MUTATION } from "common/utils/apiQueries/admin";
 
 export default function SettingAdmin({ company }) {
   const api = useApi();

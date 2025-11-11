@@ -3,7 +3,6 @@ import { AugmentedTable } from "./AugmentedTable";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { useApi } from "common/utils/api";
-import { USER_WORK_DAY_QUERY } from "common/utils/apiQueries";
 import Typography from "@mui/material/Typography";
 import { useStyles } from "./styles/WorkTimeDetailsStyle";
 import {
@@ -32,6 +31,7 @@ import { OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL } from "common/utils/matomoTags";
 import { DayRegulatoryAlerts } from "../../regulatory/DayRegulatoryAlerts";
 import { WeekRegulatoryAlerts } from "../../regulatory/WeekRegulatoryAlerts";
 import CloseButton from "../../common/CloseButton";
+import { USER_WORK_DAY_QUERY } from "common/utils/apiQueries/user";
 
 export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
   const classes = useStyles();
@@ -78,7 +78,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
 
   const periodActualEnd = workTimeEntry.periodActualEnd || now();
 
-  const showMissionName = missions.some(mission => mission.name);
+  const showMissionName = missions.some((mission) => mission.name);
   const missionTableColumns = showMissionName ? [nameMissionCol] : [];
   missionTableColumns.push(
     startLocationMissionCol,
@@ -86,8 +86,8 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
     pictoCol
   );
 
-  const missionsToTableEntries = missions =>
-    missions.map(m => ({
+  const missionsToTableEntries = (missions) =>
+    missions.map((m) => ({
       ...m,
       startLocationName: m.startLocation?.name,
       endLocationName: m.endLocation?.name
@@ -110,10 +110,10 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
         userId: workTimeEntry.user.id
       });
       const allActivities = apiResponse.data.user.activities.edges.map(
-        nodeAct => nodeAct.node
+        (nodeAct) => nodeAct.node
       );
       const allMissions = apiResponse.data.user.missions.edges.map(
-        nodeMission => nodeMission.node
+        (nodeMission) => nodeMission.node
       );
       const activitiesOfDay = filterActivitiesOverlappingPeriod(
         allActivities,
@@ -278,7 +278,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
             <AugmentedTable
               columns={missionTableColumns}
               entries={missions}
-              onRowClick={entry => {
+              onRowClick={(entry) => {
                 trackEvent(OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL);
                 openMission(entry.id);
               }}

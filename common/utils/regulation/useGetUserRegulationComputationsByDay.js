@@ -1,9 +1,9 @@
 import React from "react";
 import { useSnackbarAlerts } from "../../../web/common/Snackbar";
 import { useApi } from "../api";
-import { USER_READ_REGULATION_COMPUTATIONS_QUERY } from "../apiQueries";
 import { isoFormatLocalDate } from "../time";
 import { computeNumberOfAlerts } from "./computeNumberOfAlerts";
+import { USER_READ_REGULATION_COMPUTATIONS_QUERY } from "../apiQueries/user";
 
 const queryUserRegulationComputations = async (api, payload) => {
   const apiResponse = await api.graphQlQuery(

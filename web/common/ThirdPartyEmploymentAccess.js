@@ -5,13 +5,13 @@ import {
   useStoreSyncedWithLocalStorage
 } from "common/store/store";
 import { useApi } from "common/utils/api";
-import { DISMISS_THIRD_PARTY_EMPLOYMENT_TOKEN_MUTATION } from "common/utils/apiQueries";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import React from "react";
 import { useSnackbarAlerts } from "./Snackbar";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { DISMISS_THIRD_PARTY_EMPLOYMENT_TOKEN_MUTATION } from "common/utils/apiQueries/auth";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   fieldName: {
     color: theme.palette.grey[600]
   },
@@ -35,7 +35,7 @@ const ThirdPartyEmploymentAccess = ({ employmentId, clients }) => {
 
   if (!clients || clients.length === 0) return null;
 
-  const removeClientAccess = async clientId => {
+  const removeClientAccess = async (clientId) => {
     await alerts.withApiErrorHandling(
       async () => {
         const apiResponse = await api.graphQlMutate(
@@ -46,11 +46,12 @@ const ThirdPartyEmploymentAccess = ({ employmentId, clients }) => {
         if (apiResponse.data?.dismissEmploymentToken.success) {
           const employments = store.getEntity("employments");
           const currentEmployment = employments.find(
-            employment => employment.id === employmentId
+            (employment) => employment.id === employmentId
           );
-          const authorizedClientsWithoutDismissedOne = currentEmployment.authorizedClients.filter(
-            client => client.id !== clientId
-          );
+          const authorizedClientsWithoutDismissedOne =
+            currentEmployment.authorizedClients.filter(
+              (client) => client.id !== clientId
+            );
           await store.updateEntityObject({
             objectId: employmentId,
             entity: "employments",
@@ -68,7 +69,7 @@ const ThirdPartyEmploymentAccess = ({ employmentId, clients }) => {
         }
       },
       "dismiss-client-employment",
-      graphQLError => {
+      (graphQLError) => {
         if (graphQLErrorMatchesCode(graphQLError, "INVALID_RESOURCE")) {
           return "Opération impossible. Veuillez réessayer ultérieurement.";
         }
@@ -81,7 +82,7 @@ const ThirdPartyEmploymentAccess = ({ employmentId, clients }) => {
       <Typography align="left" className={classes.fieldName} variant="overline">
         Autorisations d'accès aux services tiers
       </Typography>
-      {clients.map(client => (
+      {clients.map((client) => (
         <div key={client.id} className={classes.clientRow}>
           <Typography noWrap align="left" className={classes.fieldValue}>
             Logiciel {client.name}
