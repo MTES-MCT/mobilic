@@ -189,7 +189,7 @@
   padding-right: 1rem !important;
 }
 
-.alerts-summary .fr-accordion__btn::after {
+.alerts-summary:not(.expandable) .fr-accordion__btn::after {
   display: none !important;
 }
 .alerts-summary .fr-accordion__btn {
@@ -199,4 +199,7 @@
 .alerts-summary .fr-accordion__btn {
   font-weight: 500;
   color: var(--text-action-high-grey);
+}
+.alerts-summary:not(.expandable) {
+  pointer-events: none;
 }
