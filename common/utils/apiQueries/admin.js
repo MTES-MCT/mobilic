@@ -333,6 +333,25 @@ export const ADMIN_WORK_DAYS_QUERY = gql`
   }
 `;
 
+export const ADMIN_QUERY_USER_WORK_DAY = gql`
+  ${WORK_DAYS_DATA_FRAGMENT}
+  query adminUserWorkDay(
+    $adminId: Int!
+    $companyId: Int!
+    $day: Date
+    $userId: Int!
+  ) {
+    user(id: $adminId) {
+      adminedCompanies(companyIds: [$companyId]) {
+        id
+        workDays(fromDate: $day, untilDate: $day, userIds: [$userId]) {
+          ...WorkDayData
+        }
+      }
+    }
+  }
+`;
+
 export const ADMIN_USERS_SINCE_DATE = gql`
   query adminCompanies($id: Int!, $activityAfter: Date, $companyIds: [Int]) {
     user(id: $id) {

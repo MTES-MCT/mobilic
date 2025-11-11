@@ -12,6 +12,8 @@ import { useAdminStore } from "../../store/store";
 import { aggregateWorkDayPeriods } from "../../utils/workDays";
 import { getPrettyDateByperiod } from "common/utils/time";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { ADMIN_QUERY_USER_WORK_DAY } from "common/utils/apiQueries/admin";
+import { useApi } from "common/utils/api";
 
 const PRETTY_LABELS = {
   maximumWorkedDaysInWeek: "Repos hebdomadaire",
@@ -97,13 +99,26 @@ const DisplayAlerts = (alerts, onClickDay) => {
 
 export const AlertsRecap = ({ ...otherProps }) => {
   const classes = useStyles();
+  const api = useApi();
   const { openWorkday } = useDayDrawer();
   const { summary, uniqueUserId } = useRegulatoryAlertsSummaryContext();
   const adminStore = useAdminStore();
-  const onClickDay = (day) => {
-    const workTimeEntries = adminStore.workDays
+  const onClickDay = async (day) => {
+    let workTimeEntries = adminStore.workDays
       .filter((wd) => wd.day === day)
       .filter((wd) => wd.user.id === uniqueUserId);
+
+    if (workTimeEntries.length === 0) {
+      const resPayload = await api.graphQlQuery(ADMIN_QUERY_USER_WORK_DAY, {
+        adminId: adminStore.userId,
+        day,
+        userId: uniqueUserId,
+        companyId: adminStore.companyId
+      });
+      workTimeEntries = [
+        resPayload.data.user.adminedCompanies[0].workDays.edges[0].node
+      ];
+    }
 
     const aggregates = aggregateWorkDayPeriods(workTimeEntries, "day");
 
