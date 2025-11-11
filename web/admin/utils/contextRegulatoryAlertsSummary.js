@@ -23,8 +23,6 @@ function useRegulatoryAlertsSummary() {
   const [userId, setUserId] = useState(null);
   const [summary, setSummary] = useState(null);
 
-  useEffect(() => console.log("userId", userId), [userId]);
-
   const queryData = useCallback(async () => {
     const res = await api.graphQlQuery(
       ADMIN_COMPANY_REGULATORY_ALERTS_SUMMARY_QUERY,
@@ -34,6 +32,9 @@ function useRegulatoryAlertsSummary() {
         month: date.toISOString().slice(0, 7),
         uniqueUserId: userId,
         teamId: !userId ? teamId : null
+      },
+      {
+        fetchPolicy: "cache-first"
       }
     );
     const summary = res.data.user.adminedCompanies[0].regulatoryAlertsRecap;
