@@ -9,7 +9,7 @@ import { useRegulatoryAlertsSummaryContext } from "../../utils/contextRegulatory
 
 export default function RegulatoryRespectFilters() {
   const adminStore = useAdminStore();
-  const { date, setDate, onSelectUniqueUserId } =
+  const { date, setDate, onSelectUniqueUserId, onSelectTeamId } =
     useRegulatoryAlertsSummaryContext();
   const minDate = addDaysToDate(new Date(), -365);
   const today = new Date();
@@ -33,7 +33,7 @@ export default function RegulatoryRespectFilters() {
     setTeams(
       adminStore.exportFilters.teams.map((t) => ({
         ...t,
-        selected: preSelectTeamId && t.id === preSelectTeamId,
+        selected: preSelectTeamId && t.id === preSelectTeamId
       }))
     );
   }, [adminStore.exportFilters.teams, adminStore.userId]);
@@ -60,7 +60,7 @@ export default function RegulatoryRespectFilters() {
 
     // extract unique userIds from selected teams
     const selectedTeamsUserIds = [
-      ...new Set(selectedTeams.flatMap((team) => team.users).map((u) => u.id)),
+      ...new Set(selectedTeams.flatMap((team) => team.users).map((u) => u.id))
     ];
     setUsers(
       adminStore.users.filter((u) => selectedTeamsUserIds.includes(u.id))
@@ -73,8 +73,12 @@ export default function RegulatoryRespectFilters() {
       onSelectUniqueUserId(selectedUsers[0].id);
     } else {
       onSelectUniqueUserId(null);
+      const selectedTeams = teams.filter((t) => t.selected);
+      if (selectedTeams.length === 1) {
+        onSelectTeamId(selectedTeams[0].id);
+      }
     }
-  }, [users]);
+  }, [users, teams]);
 
   return (
     <Stack direction="row" mt={2} columnGap={4}>

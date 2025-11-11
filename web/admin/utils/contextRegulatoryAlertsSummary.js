@@ -3,7 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useState,
+  useState
 } from "react";
 
 import { useApi } from "common/utils/api";
@@ -32,24 +32,27 @@ function useRegulatoryAlertsSummary() {
         companyIds: [companyId],
         month: date.toISOString().slice(0, 7),
         uniqueUserId: userId,
+        teamId: !userId ? teamId : null
       }
     );
     const summary = res.data.user.adminedCompanies[0].regulatoryAlertsRecap;
     setSummary(summary);
-  }, [adminId, companyId, date, userId]);
+  }, [adminId, companyId, date, userId, teamId]);
 
   useEffect(() => {
     if (!adminId || !companyId) {
       return;
     }
     queryData();
-  }, [date, adminId, companyId, userId]);
+  }, [date, adminId, companyId, userId, teamId]);
 
   return {
     date,
     setDate,
     summary,
     onSelectUniqueUserId: setUserId,
+    onSelectTeamId: setTeamId,
+    uniqueUserId: userId
   };
 }
 
