@@ -1,11 +1,17 @@
 import React from "react";
-import { AccordionDetails, Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { fr } from "@codegouvfr/react-dsfr";
 import { useRegulatoryAlertsSummaryContext } from "../../utils/contextRegulatoryAlertsSummary";
 import { ExternalLink } from "../../../common/ExternalLink";
+import classNames from "classnames";
+import { useDayDrawer } from "../../drawers/DayDrawer";
+import { useAdminStore } from "../../store/store";
+import { aggregateWorkDayPeriods } from "../../utils/workDays";
+import { getPrettyDateByperiod } from "common/utils/time";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const PRETTY_LABELS = {
   maximumWorkedDaysInWeek: "Repos hebdomadaire",
@@ -13,59 +19,98 @@ const PRETTY_LABELS = {
   minimumDailyRest: "Repos journalier",
   not_enough_break: "Temps de pause",
   too_much_uninterrupted_work_time: "Durée maximale de travail ininterrompu",
-  maximumWorkDayTime: "Durée du travail quotidien",
+  maximumWorkDayTime: "Durée du travail quotidien"
 };
 
 const useStyles = makeStyles((theme) => ({
   title: {
     color: fr.colors.decisions.text.actionHigh.grey.default,
     fontSize: "1.25rem",
-    fontWeight: 700,
+    fontWeight: 700
   },
   description: {
     fontSize: "0.875rem",
-    color: fr.colors.decisions.text.mention.grey.default,
+    color: fr.colors.decisions.text.mention.grey.default
   },
+  linkButton: {
+    textDecoration: "underline",
+    textUnderlineOffset: "6px"
+  }
 }));
 
-const displayAlerts = (alerts) => (
-  <Stack mt={2}>
-    {alerts
-      .filter((alerts) => alerts.alertsType in PRETTY_LABELS)
-      .map((alerts) => (
-        <Box
-          style={{
-            pointerEvents: "none",
-          }}
-          className="alerts-summary"
-        >
-          <Accordion
-            label={
-              <Stack
-                sx={{ width: "100%" }}
-                direction="row"
-                justifyContent="space-between"
-              >
-                <Typography>{PRETTY_LABELS[alerts.alertsType]}</Typography>
-                <Badge
-                  small
-                  severity={alerts.nbAlerts === 0 ? "success" : "warning"}
+const DisplayAlerts = (alerts, onClickDay) => {
+  const classes = useStyles();
+  return (
+    <Stack mt={2}>
+      {alerts
+        .filter((alerts) => alerts.alertsType in PRETTY_LABELS)
+        .map((alerts) => (
+          <Box
+            key={`alerts__${alerts.alertsType}`}
+            className={classNames("alerts-summary", {
+              expandable: alerts.days && alerts.days.length > 0
+            })}
+          >
+            <Accordion
+              label={
+                <Stack
+                  sx={{ width: "100%" }}
+                  direction="row"
+                  justifyContent="space-between"
+                  pr={1}
                 >
-                  {alerts.nbAlerts === 0
-                    ? "Seuil respecté"
-                    : `${alerts.nbAlerts} dépassements`}
-                </Badge>
-              </Stack>
-            }
-          />
-        </Box>
-      ))}
-  </Stack>
-);
+                  <Typography>{PRETTY_LABELS[alerts.alertsType]}</Typography>
+                  <Badge
+                    small
+                    severity={alerts.nbAlerts === 0 ? "success" : "warning"}
+                  >
+                    {alerts.nbAlerts === 0
+                      ? "Seuil respecté"
+                      : `${alerts.nbAlerts} dépassements`}
+                  </Badge>
+                </Stack>
+              }
+            >
+              {alerts.days && alerts.days.length > 0 && (
+                <Stack direction="column" rowGap={1}>
+                  {alerts.days.map((day) => (
+                    <Button
+                      key={`alert__${day}`}
+                      priority="tertiary no outline"
+                      onClick={() => onClickDay(day)}
+                      size="small"
+                      iconId="fr-icon-arrow-right-line"
+                      iconPosition="right"
+                      className={classes.linkButton}
+                    >
+                      Journée du {getPrettyDateByperiod(new Date(day), "day")}
+                    </Button>
+                  ))}
+                </Stack>
+              )}
+            </Accordion>
+          </Box>
+        ))}
+    </Stack>
+  );
+};
 
 export const AlertsRecap = ({ ...otherProps }) => {
   const classes = useStyles();
-  const { summary } = useRegulatoryAlertsSummaryContext();
+  const { openWorkday } = useDayDrawer();
+  const { summary, uniqueUserId } = useRegulatoryAlertsSummaryContext();
+  const adminStore = useAdminStore();
+  const onClickDay = (day) => {
+    const workTimeEntries = adminStore.workDays
+      .filter((wd) => wd.day === day)
+      .filter((wd) => wd.user.id === uniqueUserId);
+
+    const aggregates = aggregateWorkDayPeriods(workTimeEntries, "day");
+
+    if (aggregates.length > 0) {
+      openWorkday(aggregates[0]);
+    }
+  };
   return (
     <Stack {...otherProps} rowGap={3}>
       <Stack rowGap={1}>
@@ -76,13 +121,13 @@ export const AlertsRecap = ({ ...otherProps }) => {
           Dépliez les seuils pour afficher les missions concernées par les
           dépassements.
         </Typography>
-        {displayAlerts(summary.dailyAlerts)}
+        {DisplayAlerts(summary.dailyAlerts, onClickDay)}
       </Stack>
       <Stack rowGap={1}>
         <Typography className={classes.title}>
           Respect des seuils hebdomadaires
         </Typography>
-        {displayAlerts(summary.weeklyAlerts)}
+        {DisplayAlerts(summary.weeklyAlerts)}
       </Stack>
       <ExternalLink
         url="/resources/home"
