@@ -109,12 +109,18 @@ export const AlertsRecap = ({ ...otherProps }) => {
       .filter((wd) => wd.user.id === uniqueUserId);
 
     if (workTimeEntries.length === 0) {
-      const resPayload = await api.graphQlQuery(ADMIN_QUERY_USER_WORK_DAY, {
-        adminId: adminStore.userId,
-        day,
-        userId: uniqueUserId,
-        companyId: adminStore.companyId
-      });
+      const resPayload = await api.graphQlQuery(
+        ADMIN_QUERY_USER_WORK_DAY,
+        {
+          adminId: adminStore.userId,
+          day,
+          userId: uniqueUserId,
+          companyId: adminStore.companyId
+        },
+        {
+          fetchPolicy: "cache-first"
+        }
+      );
       workTimeEntries = [
         resPayload.data.user.adminedCompanies[0].workDays.edges[0].node
       ];
