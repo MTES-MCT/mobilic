@@ -14,7 +14,7 @@ export const SHORT_MONTHS = [
   "sep",
   "oct",
   "nov",
-  "déc",
+  "déc"
 ];
 export const MONTHS = [
   "janvier",
@@ -28,7 +28,7 @@ export const MONTHS = [
   "septembre",
   "octobre",
   "novembre",
-  "décembre",
+  "décembre"
 ];
 
 export const SHORT_DAYS = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"];
@@ -40,7 +40,7 @@ export const DAYS = [
   "mercredi",
   "jeudi",
   "vendredi",
-  "samedi",
+  "samedi"
 ];
 
 export const LONG_BREAK_DURATION = 10 * HOUR;
@@ -96,7 +96,7 @@ function _localFormatDate(date, withYear = false) {
   return date.toLocaleDateString(undefined, {
     month: "2-digit",
     day: "2-digit",
-    year: withYear ? "numeric" : undefined,
+    year: withYear ? "numeric" : undefined
   });
 }
 
@@ -203,12 +203,12 @@ export function formatDateTime(
     date.toLocaleDateString(undefined, {
       month: "2-digit",
       day: "2-digit",
-      year: showYear ? "numeric" : undefined,
+      year: showYear ? "numeric" : undefined
     }),
     separator,
     addZero(date.getHours()),
     ":",
-    addZero(date.getMinutes() % 60),
+    addZero(date.getMinutes() % 60)
   ].join("");
 }
 
@@ -296,6 +296,10 @@ export function endOfMonthAsDate(date) {
 export function startOfMonthAsDate(date) {
   date.setDate(1);
   return date;
+}
+
+export function lastMonth() {
+  return addDaysToDate(startOfMonthAsDate(new Date()), -1);
 }
 
 export function startOfWeekAsDate(date) {
