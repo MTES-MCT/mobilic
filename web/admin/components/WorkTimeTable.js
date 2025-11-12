@@ -67,7 +67,7 @@ export function WorkTimeTable({
   const startTimeCol = {
     label: "Début",
     name: "startTime",
-    format: (time) => (time ? formatTimeOfDay(time) : null),
+    format: (time) => (time ? formatTimeOfDay(time, false) : null),
     align: "left",
     minWidth: 80
   };
@@ -95,7 +95,7 @@ export function WorkTimeTable({
   const restTimeCol = {
     label: "Repos",
     name: "rest",
-    format: (time) => (time ? formatTimer(time) : null),
+    format: (time) => (time ? formatTimer(time, false) : null),
     align: "left",
     minWidth: 100
   };
