@@ -11,13 +11,13 @@ import { formatPersonName } from "common/utils/coworkers";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import { AugmentedTable } from "./AugmentedTable";
 import { makeStyles } from "@mui/styles";
-import { ChevronRight } from "@mui/icons-material";
 import { MissionNamesList } from "./MissionNamesList";
 import { useMissionDrawer } from "../drawers/MissionDrawer";
 import { WorkDayEndTime } from "./WorkDayEndTime";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { OPEN_WORKDAY_DRAWER } from "common/utils/matomoTags";
 import { useDayDrawer } from "../drawers/DayDrawer";
+import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 
 const useStyles = makeStyles((theme) => ({
   expenditures: {
@@ -68,7 +68,7 @@ export function WorkTimeTable({
     label: "Début",
     name: "startTime",
     format: (time) => (time ? formatTimeOfDay(time) : null),
-    align: "right",
+    align: "left",
     minWidth: 80
   };
   const endTimeCol = {
@@ -81,7 +81,7 @@ export function WorkTimeTable({
         openMission={openMission}
       />
     ),
-    align: "right",
+    align: "left",
     minWidth: 100
   };
   const workTimeCol = {
@@ -89,14 +89,14 @@ export function WorkTimeTable({
     name: "totalWork",
     sortable: true,
     format: formatTimer,
-    align: "right",
+    align: "left",
     minWidth: 120
   };
   const restTimeCol = {
     label: "Repos",
     name: "rest",
     format: (time) => (time ? formatTimer(time) : null),
-    align: "right",
+    align: "left",
     minWidth: 100
   };
   const expenditureCol = {
@@ -126,7 +126,9 @@ export function WorkTimeTable({
   const pictoCol = {
     label: "+ d'infos",
     name: "id",
-    format: () => <ChevronRight color="primary" />,
+    format: () => (
+      <span className={cx("fr-icon--sm", "fr-icon-arrow-right-line")} />
+    ),
     sortable: false,
     align: "center",
     overflowTooltip: true
