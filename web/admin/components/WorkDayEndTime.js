@@ -7,7 +7,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { OPEN_MISSION_DRAWER_WITH_ACTIVITY_TOO_LONG } from "common/utils/matomoTags";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   warningText: {
     color: theme.palette.warning.main,
     fontWeight: "bold"
@@ -31,20 +31,21 @@ export function WorkDayEndTime({ endTime, dayAggregate, openMission }) {
   return endTime ? (
     formatTimeOfDay(endTime)
   ) : !isLastActivityTooLong() ? (
-    <span className={classes.warningText}>En cours</span>
+    <span className={classes.warningText}>en cours</span>
   ) : (
     <Link
       key={lastMissionId()}
       to="#"
-      onClick={e => {
+      onClick={(e) => {
         e.stopPropagation();
         trackEvent(OPEN_MISSION_DRAWER_WITH_ACTIVITY_TOO_LONG);
         openMission(lastMissionId());
       }}
     >
       <Tooltip
-        title={`Activité en cours depuis plus de ${DEFAULT_LAST_ACTIVITY_TOO_LONG /
-          3600} heures`}
+        title={`Activité en cours depuis plus de ${
+          DEFAULT_LAST_ACTIVITY_TOO_LONG / 3600
+        } heures`}
         disableInteractive
       >
         <span className={classes.errorText}>En cours ⚠</span>
