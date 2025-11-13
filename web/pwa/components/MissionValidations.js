@@ -7,7 +7,7 @@ import { getWorkerValidationForUser } from "common/utils/mission";
 import { JUSTIFICATIONS } from "../../admin/modals/OverrideValidationJustificationModal";
 import { makeStyles } from "@mui/styles";
 
-export const useStyles = makeStyles(theme => ({
+export const useStyles = makeStyles((theme) => ({
   sucessDetails: {
     color: theme.palette.success.main
   },
@@ -85,8 +85,8 @@ const AdminManualValidation = ({ validation, hasOverriden }) => {
           Le gestionnaire a modifié la mission après sa validation pour la
           raison suivante :{" "}
           {JUSTIFICATIONS.find(
-            justification => justification.key === validation.justification
-          )?.label?.replace(/^./, c => c.toLowerCase())}
+            (justification) => justification.key === validation.justification
+          )?.label?.replace(/^./, (c) => c.toLowerCase())}
           .
         </AccordionDetails>
       </Accordion>
@@ -128,14 +128,14 @@ export const MissionValidations = ({ mission, validations, userId }) => {
     userId
   );
 
-  const adminValidations = validations.filter(
-    v => v.isAdmin && (!v.userId || v.userId === userId)
+  const adminValidations = (validations ?? []).filter(
+    (v) => v.isAdmin && (!v.userId || v.userId === userId)
   );
   const adminAutoValidation = adminValidations.find(
-    validation => validation.isAuto
+    (validation) => validation.isAuto
   );
   const adminManualValidation = adminValidations.find(
-    validation => !validation.isAuto
+    (validation) => !validation.isAuto
   );
   return (
     <Stack direction="column" textAlign="left">
