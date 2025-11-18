@@ -304,6 +304,12 @@ export const ADMIN_COMPANIES_QUERY = gql`
           shouldSeeCertificateInfo
           shouldForceNbWorkerInfo
         }
+        adminRegulationComputationsByUserAndByDay(fromDate: $activityAfter) {
+          day
+          userId
+          nbAlertsDailyAdmin
+          nbAlertsWeeklyAdmin
+        }
       }
     }
   }
@@ -327,6 +333,15 @@ export const ADMIN_WORK_DAYS_QUERY = gql`
         }
         workDays(fromDate: $activityAfter, untilDate: $activityBefore) {
           ...WorkDayData
+        }
+        adminRegulationComputationsByUserAndByDay(
+          fromDate: $activityAfter
+          toDate: $activityBefore
+        ) {
+          day
+          userId
+          nbAlertsDailyAdmin
+          nbAlertsWeeklyAdmin
         }
       }
     }

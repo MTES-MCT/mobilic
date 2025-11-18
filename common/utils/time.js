@@ -47,10 +47,13 @@ export const LONG_BREAK_DURATION = 10 * HOUR;
 
 export const CURRENT_YEAR = new Date().getFullYear();
 
-export function formatTimer(timerDuration) {
+export function formatTimer(timerDuration, displayZeroHours = true) {
   if (!timerDuration && timerDuration !== 0) return null;
   const timerDurationInMinutes = (timerDuration / 60) >> 0;
   const timerDurationInHours = (timerDurationInMinutes / 60) >> 0;
+  if (timerDurationInHours === 0 && !displayZeroHours) {
+    return `${timerDurationInMinutes}min`;
+  }
   return `${timerDurationInHours}h${addZero(timerDurationInMinutes % 60)}`;
 }
 
@@ -87,9 +90,12 @@ export function formatWarningDurationTime(timerDurationInSeconds) {
   return pluralize(timerDurationInSeconds, "seconde");
 }
 
-export function formatTimeOfDay(unixTimestamp) {
+export function formatTimeOfDay(unixTimestamp, addZeroToHours = true) {
   const date = new Date(unixTimestamp * 1000);
-  return `${addZero(date.getHours())}:${addZero(date.getMinutes() % 60)}`;
+  if (addZeroToHours) {
+    return `${addZero(date.getHours())}:${addZero(date.getMinutes() % 60)}`;
+  }
+  return `${date.getHours()}:${addZero(date.getMinutes() % 60)}`;
 }
 
 function _localFormatDate(date, withYear = false) {
