@@ -15,6 +15,8 @@ function computeWorkDayGroupAggregates(workDayGroup) {
   let offDuration = 0;
   let minStartTime;
   let maxEndTime;
+  let dailyAlerts = 0;
+  let weeklyAlerts = 0;
   workDayGroup.forEach((wd) => {
     Object.keys(wd.activityDurations).forEach((key) => {
       aggregateTimers[key] =
@@ -34,6 +36,10 @@ function computeWorkDayGroupAggregates(workDayGroup) {
       ? Math.min(wd.startTime, minStartTime)
       : wd.startTime;
     maxEndTime = maxEndTime ? Math.max(wd.endTime, maxEndTime) : wd.endTime;
+    dailyAlerts =
+      dailyAlerts + wd.regulationComputations?.nbAlertsDailyAdmin || 0;
+    weeklyAlerts =
+      weeklyAlerts + wd.regulationComputations?.nbAlertsWeeklyAdmin || 0;
   });
   return {
     user: workDayGroup[0].user,
@@ -54,7 +60,9 @@ function computeWorkDayGroupAggregates(workDayGroup) {
       {}
     ),
     expenditureAggs: aggregateExpenditures,
-    lastActivityStartTime: workDayGroup[0].lastActivityStartTime
+    lastActivityStartTime: workDayGroup[0].lastActivityStartTime,
+    dailyAlerts,
+    weeklyAlerts
   };
 }
 
