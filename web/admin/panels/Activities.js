@@ -32,13 +32,6 @@ import Drawer from "@mui/material/Drawer";
 import NewMissionForm from "../../common/NewMissionForm";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
-import {
-  ADMIN_WORK_DAYS_QUERY,
-  buildLogLocationPayloadFromAddress,
-  CREATE_MISSION_MUTATION,
-  LOG_HOLIDAY_MUTATION,
-  LOG_LOCATION_MUTATION
-} from "common/utils/apiQueries";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import TextField from "@mui/material/TextField";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
@@ -65,8 +58,15 @@ import { useGetUsersSinceDate } from "../../common/hooks/useGetUsersSinceDate";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import CloseButton from "../../common/CloseButton";
 import { PickersDay } from "@mui/x-date-pickers/PickersDay";
+import { ADMIN_WORK_DAYS_QUERY } from "common/utils/apiQueries/admin";
+import {
+  buildLogLocationPayloadFromAddress,
+  CREATE_MISSION_MUTATION,
+  LOG_HOLIDAY_MUTATION,
+  LOG_LOCATION_MUTATION
+} from "common/utils/apiQueries/missions";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   filterGrid: {
     paddingTop: theme.spacing(2),
     paddingLeft: theme.spacing(2),
@@ -214,7 +214,7 @@ function ActivitiesPanel() {
           type: ADMIN_ACTIONS.addWorkDays,
           payload: { companiesPayload, minDate: newMinDate }
         }),
-      companiesPayload =>
+      (companiesPayload) =>
         adminStore.dispatch({
           type: ADMIN_ACTIONS.addUsers,
           payload: { companiesPayload }
@@ -242,7 +242,7 @@ function ActivitiesPanel() {
   React.useEffect(() => {
     if (adminCompanies) {
       const newCompaniesWithCurrentSelectionStatus = adminCompanies.map(
-        company => ({
+        (company) => ({
           ...company,
           selected: company.id === adminStore.companyId
         })
@@ -255,7 +255,7 @@ function ActivitiesPanel() {
     setTeams(adminStore.activitiesFilters.teams);
   }, [adminStore.activitiesFilters.teams]);
 
-  const handleUserFilterChange = newUsers => {
+  const handleUserFilterChange = (newUsers) => {
     const unselectedTeams = unselectAndGetAllTeams(teams);
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateActivitiesFilters,
@@ -263,7 +263,7 @@ function ActivitiesPanel() {
     });
   };
 
-  const handleTeamFilterChange = newTeams => {
+  const handleTeamFilterChange = (newTeams) => {
     const usersToSelect = getUsersToSelectFromTeamSelection(newTeams, users);
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateActivitiesFilters,
@@ -276,7 +276,7 @@ function ActivitiesPanel() {
   }, [users]);
 
   const selectedUsers = React.useMemo(() => {
-    const selected = users.filter(u => u.selected);
+    const selected = users.filter((u) => u.selected);
     if (selected.length === 0) {
       return users;
     }
@@ -286,8 +286,8 @@ function ActivitiesPanel() {
   const selectedWorkDays = React.useMemo(
     () =>
       adminStore.workDays.filter(
-        wd =>
-          selectedUsers.map(u => u.id).includes(wd.user.id) &&
+        (wd) =>
+          selectedUsers.map((u) => u.id).includes(wd.user.id) &&
           (!minDate || wd.day >= minDate) &&
           (!maxDate || wd.day <= maxDate)
       ),
@@ -335,7 +335,7 @@ function ActivitiesPanel() {
             fullWidth
             disableCloseOnSelect={false}
             disableMaskedInput={true}
-            onChange={val => {
+            onChange={(val) => {
               trackEvent(ACTIVITY_FILTER_MIN_DATE);
               setMinDate(isoFormatLocalDate(val));
             }}
@@ -351,7 +351,7 @@ function ActivitiesPanel() {
               const { key, ...safeProps } = pickersDayProps;
               return <PickersDay {...safeProps} />;
             }}
-            renderInput={props => (
+            renderInput={(props) => (
               <TextField {...props} required variant="outlined" size="small" />
             )}
           />
@@ -364,7 +364,7 @@ function ActivitiesPanel() {
             fullWidth
             disableCloseOnSelect={false}
             disableMaskedInput={true}
-            onChange={val => {
+            onChange={(val) => {
               trackEvent(ACTIVITY_FILTER_MAX_DATE);
               setMaxDate(isoFormatLocalDate(val));
             }}
@@ -380,14 +380,14 @@ function ActivitiesPanel() {
               const { key, ...safeProps } = pickersDayProps;
               return <PickersDay {...safeProps} />;
             }}
-            renderInput={props => (
+            renderInput={(props) => (
               <TextField {...props} required variant="outlined" size="small" />
             )}
           />
         </Grid>
         <Grid item>
           <Button
-            onClick={e => setExportMenuAnchorEl(e.currentTarget)}
+            onClick={(e) => setExportMenuAnchorEl(e.currentTarget)}
             size="small"
           >
             Exporter
@@ -459,11 +459,11 @@ function ActivitiesPanel() {
           {`${periodAggregates.length} résultats${
             periodAggregates.length > 0
               ? ` pour ${
-                  uniq(periodAggregates.map(pa => pa.user.id)).length
+                  uniq(periodAggregates.map((pa) => pa.user.id)).length
                 } salarié(s) entre le ${formatDay(
-                  min(periodAggregates.map(pa => pa.periodActualStart))
+                  min(periodAggregates.map((pa) => pa.periodActualStart))
                 )} et le ${formatDay(
-                  max(periodAggregates.map(pa => pa.periodActualEnd))
+                  max(periodAggregates.map((pa) => pa.periodActualEnd))
                 )} (uniquement les plus récents).`
               : "."
           }`}
@@ -501,7 +501,6 @@ function ActivitiesPanel() {
           showExpenditures={adminStore.settings.requireExpenditures}
           showMissionName={adminStore.settings.requireMissionName}
           loading={loading}
-          width={width}
         />
         <Drawer
           anchor="right"
@@ -522,7 +521,7 @@ function ActivitiesPanel() {
           </Box>
           <LogHolidayForm
             users={users}
-            handleSubmit={async payload =>
+            handleSubmit={async (payload) =>
               await alerts.withApiErrorHandling(
                 async () => {
                   await api.graphQlMutate(LOG_HOLIDAY_MUTATION, {
@@ -552,7 +551,7 @@ function ActivitiesPanel() {
                           reset: true
                         }
                       }),
-                    companiesPayload =>
+                    (companiesPayload) =>
                       adminStore.dispatch({
                         type: ADMIN_ACTIONS.addUsers,
                         payload: { companiesPayload }
@@ -560,7 +559,7 @@ function ActivitiesPanel() {
                   );
                 },
                 "create-holiday",
-                graphQLError => {
+                (graphQLError) => {
                   if (
                     graphQLErrorMatchesCode(
                       graphQLError,
@@ -601,7 +600,7 @@ function ActivitiesPanel() {
             disableKilometerReading={true}
             withDay={true}
             withEndLocation={true}
-            handleSubmit={async missionInfos =>
+            handleSubmit={async (missionInfos) =>
               await alerts.withApiErrorHandling(async () => {
                 const missionResponse = await api.graphQlMutate(
                   CREATE_MISSION_MUTATION,
@@ -628,7 +627,7 @@ function ActivitiesPanel() {
                       true
                     )
                   )
-                  .then(response => response.data.activities.logLocation);
+                  .then((response) => response.data.activities.logLocation);
 
                 const endLocationResponse = api
                   .graphQlMutate(
@@ -639,7 +638,7 @@ function ActivitiesPanel() {
                       false
                     )
                   )
-                  .then(response => response.data.activities.logLocation);
+                  .then((response) => response.data.activities.logLocation);
 
                 await Promise.all([startLocationResponse, endLocationResponse]);
                 history.push(`/admin/validations?mission=${mission.id}`, {

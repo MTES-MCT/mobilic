@@ -27,12 +27,14 @@ export function TeamFilter({
   setTeams,
   multiple = true,
   handleSelect = null,
-  orderByProperty = "name"
+  orderByProperty = "name",
+  size = "small",
+  ...otherProps
 }) {
   const classes = useStyles();
 
   const handleChange = (event, value) => {
-    const selectedIds = multiple ? value.map(u => u.id) : [value.id];
+    const selectedIds = multiple ? value.map(u => u.id) : value ? [value.id] : [];
     setTeams(
       teams.map(u => ({
         ...u,
@@ -48,8 +50,8 @@ export function TeamFilter({
       id="team-filter"
       options={orderBy(teams, [orderByProperty])}
       limitTags={1}
-      size="small"
-      disableCloseOnSelect
+      size={size}
+      disableCloseOnSelect={multiple}
       getOptionLabel={option => option.name}
       renderOption={(props, option) => (
         <li {...props}>
@@ -63,21 +65,21 @@ export function TeamFilter({
           <span>{option.name}</span>
         </li>
       )}
-      value={selectedTeams}
+      value={multiple ? selectedTeams : selectedTeams.length > 0 ? selectedTeams[0] : null}
       onChange={handleSelect || handleChange}
       renderInput={params => (
         <TextField
           className={classes.formControl}
           {...params}
-          placeholder={`${
-            multiple
-              ? selectedTeams.length === 0
-                ? "Tous les groupes"
-                : ""
-              : "Sélectionner un groupe"
-          }`}
+          placeholder={`${multiple
+            ? selectedTeams.length === 0
+              ? "Tous les groupes"
+              : ""
+            : "Tous les groupes"
+            }`}
         />
       )}
+      {...otherProps}
     />
   );
 }

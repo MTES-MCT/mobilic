@@ -2,9 +2,9 @@ import React from "react";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import {
-  SEND_CONTROL_BULLETIN_EMAIL_MUTATION,
-  CONTROLLER_UPDATE_DELIVERY_STATUS
-} from "common/utils/apiQueries";
+  CONTROLLER_UPDATE_DELIVERY_STATUS,
+  SEND_CONTROL_BULLETIN_EMAIL_MUTATION
+} from "common/utils/apiQueries/controller";
 
 export function useControlBulletinActions({
   controlId,
@@ -19,16 +19,15 @@ export function useControlBulletinActions({
   );
   const [openSendModal, setOpenSendModal] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [isHandDeliveryModalOpen, setIsHandDeliveryModalOpen] = React.useState(
-    false
-  );
+  const [isHandDeliveryModalOpen, setIsHandDeliveryModalOpen] =
+    React.useState(false);
 
   React.useEffect(() => {
     setHandDelivered(controlData?.deliveredByHand || false);
   }, [controlData?.deliveredByHand]);
 
   const saveHandDeliveryStatus = React.useCallback(
-    async delivered => {
+    async (delivered) => {
       try {
         if (!controlId) {
           return;
@@ -47,7 +46,7 @@ export function useControlBulletinActions({
           response?.data?.controllerUpdateDeliveryStatus &&
           onControlDataUpdate
         ) {
-          onControlDataUpdate(prevData => ({
+          onControlDataUpdate((prevData) => ({
             ...prevData,
             ...response.data.controllerUpdateDeliveryStatus,
             controlBulletin: {
@@ -73,7 +72,7 @@ export function useControlBulletinActions({
   );
 
   const handleHandDeliveredChange = React.useCallback(
-    e => {
+    (e) => {
       const newValue = e.target.checked;
       setHandDelivered(newValue);
       saveHandDeliveryStatus(newValue);
@@ -102,16 +101,14 @@ export function useControlBulletinActions({
             { context: { nonPublicApi: true } }
           );
 
-          const {
-            success: apiSuccess,
-            nbEmailsSent
-          } = response.data.sendControlBulletinEmail;
+          const { success: apiSuccess, nbEmailsSent } =
+            response.data.sendControlBulletinEmail;
 
           if (apiSuccess) {
             success = true;
 
             if (onControlDataUpdate) {
-              onControlDataUpdate(prevData => ({
+              onControlDataUpdate((prevData) => ({
                 ...prevData,
                 sentToAdmin: true
               }));
@@ -134,7 +131,7 @@ export function useControlBulletinActions({
   );
 
   const handleHandDeliveryConfirm = React.useCallback(
-    async delivered => {
+    async (delivered) => {
       setHandDelivered(delivered);
       await saveHandDeliveryStatus(delivered);
       setIsHandDeliveryModalOpen(false);
@@ -143,7 +140,7 @@ export function useControlBulletinActions({
   );
 
   const handleHandDeliveryConfirmWithoutClose = React.useCallback(
-    async delivered => {
+    async (delivered) => {
       setHandDelivered(delivered);
       await saveHandDeliveryStatus(delivered);
     },

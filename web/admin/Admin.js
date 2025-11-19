@@ -29,7 +29,7 @@ import { useIsWidthUp, useWidth } from "common/utils/useWidth";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
-import { MissionDrawerContextProvider } from "./components/MissionDrawer";
+import { MissionDrawerContextProvider } from "./drawers/MissionDrawer";
 import { shouldUpdateBusinessType } from "common/utils/updateBusinessType";
 import { shouldUpdateNbWorker } from "common/utils/updateNbWorker";
 import UpdateCompanyBusinessTypeModal from "./modals/UpdateCompanyBusinessTypeModal";
@@ -37,10 +37,11 @@ import UpdateNbWorkerModal from "./modals/UpdateNbWorkerModal";
 import { Main } from "../common/semantics/Main";
 
 import { SideMenu } from "./components/SideMenu/SideMenu";
+import { DayDrawerContextProvider } from "./drawers/DayDrawer";
 import { ExportsBanner } from "./components/ExportsBanner";
 import { useExportsContext } from "./utils/contextExports";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     display: "flex",
     flexGrow: 1,
@@ -67,7 +68,7 @@ function InternalAdmin() {
   const withLoadingScreen = useLoadingScreen();
   const { path } = useRouteMatch();
   const alerts = useSnackbarAlerts();
-  const { updateExports } = useExportsContext()
+  const { updateExports } = useExportsContext();
 
   const classes = useStyles();
   const [shouldRefreshData, setShouldRefreshData] = React.useState({
@@ -78,7 +79,7 @@ function InternalAdmin() {
   const width = useWidth();
   const isMdUp = useIsWidthUp("md");
 
-  const views = ADMIN_VIEWS.map(view => {
+  const views = ADMIN_VIEWS.map((view) => {
     const absPath = `${path}${view.path}`;
     return {
       ...view,
@@ -153,7 +154,7 @@ function InternalAdmin() {
 
   React.useEffect(() => {
     if (shouldRefreshData.value) loadDataCompaniesList();
-    updateExports()
+    updateExports();
   }, [adminStore.userId]);
 
   React.useEffect(() => {
@@ -174,17 +175,14 @@ function InternalAdmin() {
       return;
     }
     const employment = employments.find(
-      employment =>
+      (employment) =>
         employment.companyId === companyId && employment.user?.id === userId
     );
     if (!employment) {
       return;
     }
-    const {
-      shouldSeeCertificateInfo,
-      shouldForceNbWorkerInfo,
-      id
-    } = employment;
+    const { shouldSeeCertificateInfo, shouldForceNbWorkerInfo, id } =
+      employment;
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateShouldSeeCertificateInfo,
       payload: { shouldSeeCertificateInfo }
@@ -201,9 +199,9 @@ function InternalAdmin() {
 
   const ref = React.useRef(null);
 
-  const shouldRefreshDataSetter = val => setShouldRefreshData({ value: val });
+  const shouldRefreshDataSetter = (val) => setShouldRefreshData({ value: val });
 
-  const defaultView = views.find(view => view.isDefault);
+  const defaultView = views.find((view) => view.isDefault);
   return (
     <>
       {!!adminStore.business &&
@@ -218,38 +216,40 @@ function InternalAdmin() {
         setShouldRefreshData={shouldRefreshDataSetter}
         refreshData={refreshData}
       >
-        <Main maxWidth={false} className={classes.container} disableGutters>
-          {isMdUp && <SideMenu views={views} />}
-          <Container
-            className={`scrollable ${classes.panelContainer}`}
-            maxWidth={false}
-            ref={ref}
-          >
-            <ExportsBanner />
-            <Switch>
-              {views.map(view => (
-                <Route
-                  key={view.label}
-                  path={view.path}
-                  render={() => (
-                    <view.component
-                      containerRef={ref}
-                      setShouldRefreshData={val =>
-                        setShouldRefreshData(shouldRefreshDataSetter)
-                      }
-                    />
-                  )}
-                />
-              ))}
-              {defaultView && (
-                <Route
-                  path="*"
-                  render={() => <Redirect push to={defaultView.path} />}
-                />
-              )}
-            </Switch>
-          </Container>
-        </Main>
+        <DayDrawerContextProvider>
+          <Main maxWidth={false} className={classes.container} disableGutters>
+            {isMdUp && <SideMenu views={views} />}
+            <Container
+              className={`scrollable ${classes.panelContainer}`}
+              maxWidth={false}
+              ref={ref}
+            >
+              <ExportsBanner />
+              <Switch>
+                {views.map((view) => (
+                  <Route
+                    key={view.label}
+                    path={view.path}
+                    render={() => (
+                      <view.component
+                        containerRef={ref}
+                        setShouldRefreshData={(val) =>
+                          setShouldRefreshData(shouldRefreshDataSetter)
+                        }
+                      />
+                    )}
+                  />
+                ))}
+                {defaultView && (
+                  <Route
+                    path="*"
+                    render={() => <Redirect push to={defaultView.path} />}
+                  />
+                )}
+              </Switch>
+            </Container>
+          </Main>
+        </DayDrawerContextProvider>
       </MissionDrawerContextProvider>
     </>
   );

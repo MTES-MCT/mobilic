@@ -1,8 +1,4 @@
 import { useApi } from "common/utils/api";
-import {
-  CREATE_OAUTH_TOKEN_MUTATION,
-  OAUTH_TOKEN_QUERY
-} from "common/utils/apiQueries";
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
@@ -16,8 +12,12 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import Notice from "../../common/Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Section } from "../../common/Section";
+import {
+  CREATE_OAUTH_TOKEN_MUTATION,
+  OAUTH_TOKEN_QUERY
+} from "common/utils/apiQueries/auth";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   mainTitle: {
     marginBottom: theme.spacing(3),
     textAlign: "left"
@@ -47,9 +47,8 @@ export function OAuthTokenSection() {
   const alerts = useSnackbarAlerts();
   const [accessTokens, setAccessTokens] = React.useState([]);
   const [newClientId, setNewClientId] = React.useState("");
-  const [newTokenSectionVisible, setNewTokenSectionVisible] = React.useState(
-    false
-  );
+  const [newTokenSectionVisible, setNewTokenSectionVisible] =
+    React.useState(false);
   const [loadingAccessTokens, setLoadingAccessTokens] = React.useState(false);
 
   React.useEffect(() => {
@@ -82,7 +81,7 @@ export function OAuthTokenSection() {
           { context: { nonPublicApi: true } }
         );
         const apiAccessTokens = apiResponse.data.createOauthToken;
-        const processedApiAccessTokens = apiAccessTokens.map(at =>
+        const processedApiAccessTokens = apiAccessTokens.map((at) =>
           at.clientId?.toString() === newClientId ? { ...at, open: true } : at
         );
         const newKeyCreated =
@@ -146,7 +145,7 @@ export function OAuthTokenSection() {
                   size="small"
                   style={{ width: "100%" }}
                   value={newClientId}
-                  onChange={e => {
+                  onChange={(e) => {
                     setNewClientId(e.target.value);
                   }}
                   className={classes.newClientIdField}
@@ -157,7 +156,7 @@ export function OAuthTokenSection() {
                   type="submit"
                   size="small"
                   disabled={!newClientId}
-                  onClick={async e => {
+                  onClick={async (e) => {
                     e.stopPropagation();
                     await onValidateNewClientId();
                   }}
@@ -193,7 +192,7 @@ export function OAuthTokenSection() {
                 CLÉ(S) API GÉNÉRÉE(S)
               </Typography>
             )}
-            {accessTokens.map(at => (
+            {accessTokens.map((at) => (
               <Grid item xs={12} key={at.token} mb={2}>
                 <OAuthTokenCard
                   accessTokenInfo={at}

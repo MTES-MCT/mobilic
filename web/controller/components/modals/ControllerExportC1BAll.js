@@ -4,13 +4,13 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { useApi } from "common/utils/api";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { addDaysToDate, isoFormatLocalDate } from "common/utils/time";
 import React from "react";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import SignFilesCheckbox from "../../../common/SignFiles";
 import Modal, { modalStyles } from "../../../common/Modal";
 import Notice from "../../../common/Notice";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 
 export default function ControllerExportC1BAll({
   open,
@@ -75,8 +75,8 @@ export default function ControllerExportC1BAll({
                 inputFormat="d MMMM yyyy"
                 disableCloseOnSelect={false}
                 disableMaskedInput={true}
-                onChange={newFromDate => {
-                  setExportFilters(prevFilters => {
+                onChange={(newFromDate) => {
+                  setExportFilters((prevFilters) => {
                     return {
                       ...prevFilters,
                       fromDate: isoFormatLocalDate(newFromDate),
@@ -89,7 +89,7 @@ export default function ControllerExportC1BAll({
                 }}
                 minDate={oneYearAgo}
                 maxDate={today}
-                renderInput={props => (
+                renderInput={(props) => (
                   <TextField
                     {...props}
                     required
@@ -106,8 +106,8 @@ export default function ControllerExportC1BAll({
                 inputFormat="d MMMM yyyy"
                 disableCloseOnSelect={false}
                 disableMaskedInput={true}
-                onChange={newToDate => {
-                  setExportFilters(prevFilters => {
+                onChange={(newToDate) => {
+                  setExportFilters((prevFilters) => {
                     return {
                       ...prevFilters,
                       toDate: isoFormatLocalDate(newToDate),
@@ -119,7 +119,7 @@ export default function ControllerExportC1BAll({
                   });
                 }}
                 maxDate={today}
-                renderInput={props => (
+                renderInput={(props) => (
                   <TextField
                     {...props}
                     required

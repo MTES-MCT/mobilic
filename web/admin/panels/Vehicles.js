@@ -6,12 +6,6 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { AugmentedTable } from "../components/AugmentedTable";
-import {
-  CREATE_VEHICLE_MUTATION,
-  EDIT_VEHICLE_MUTATION,
-  TERMINATE_VEHICLE_MUTATION
-} from "common/utils/apiQueries";
-
 import { formatApiError } from "common/utils/errors";
 import { usePanelStyles } from "./Company";
 import { captureSentryException } from "common/utils/sentry";
@@ -19,6 +13,11 @@ import { ADMIN_ACTIONS } from "../store/reducers/root";
 import Notice from "../../common/Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Explanation } from "../../common/typography/Explanation";
+import {
+  CREATE_VEHICLE_MUTATION,
+  EDIT_VEHICLE_MUTATION,
+  TERMINATE_VEHICLE_MUTATION
+} from "common/utils/apiQueries/admin";
 
 export default function VehicleAdmin({ company }) {
   const api = useApi();
@@ -37,7 +36,7 @@ export default function VehicleAdmin({ company }) {
       name: "registrationNumber",
       create: true,
       sortable: true,
-      format: registrationNumber => registrationNumber?.toUpperCase()
+      format: (registrationNumber) => registrationNumber?.toUpperCase()
     },
     {
       label: "Nom usuel",
@@ -47,7 +46,7 @@ export default function VehicleAdmin({ company }) {
       sortable: true
     }
   ];
-  const vehicles = adminStore.vehicles.filter(v => v.companyId === companyId);
+  const vehicles = adminStore.vehicles.filter((v) => v.companyId === companyId);
 
   return (
     <>
@@ -133,7 +132,7 @@ export default function VehicleAdmin({ company }) {
             }
           }}
           defaultSortBy="registrationNumber"
-          onRowDelete={vehicle =>
+          onRowDelete={(vehicle) =>
             modals.open("confirmation", {
               textButtons: true,
               title: "Confirmer suppression",
