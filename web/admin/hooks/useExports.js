@@ -29,7 +29,9 @@ export function useExports() {
   };
 
   const addExport = async () => {
-    await updateExports();
+    setTimeout(async () => {
+      await updateExports();
+    }, 1000);
   };
 
   useEffect(() => {
