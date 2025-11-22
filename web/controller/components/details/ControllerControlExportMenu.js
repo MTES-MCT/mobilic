@@ -84,27 +84,25 @@ export function ControllerControlExportMenu() {
           </ListItemIcon>
           <Typography>Export Excel</Typography>
         </MenuItem>
-        {isControlMobilic && (
-          <MenuItem
-            disabled={!canDownloadBDC}
-            onClick={async () => {
-              setExportMenuAnchorEl(null);
-              alerts.withApiErrorHandling(async () => {
-                const options = {
-                  control_id: controlId
-                };
-                await api.downloadFileHttpQuery(HTTP_QUERIES.controlXmlExport, {
-                  json: options
-                });
-              }, "download-control-xml");
-            }}
-          >
-            <ListItemIcon>
-              <SvgIcon viewBox="0 0 64 64" component={XmlIcon} />
-            </ListItemIcon>
-            <Typography>Export XML</Typography>
-          </MenuItem>
-        )}
+        <MenuItem
+          disabled={!canDownloadBDC}
+          onClick={async () => {
+            setExportMenuAnchorEl(null);
+            alerts.withApiErrorHandling(async () => {
+              const options = {
+                control_id: controlId
+              };
+              await api.downloadFileHttpQuery(HTTP_QUERIES.controlXmlExport, {
+                json: options
+              });
+            }, "download-control-xml");
+          }}
+        >
+          <ListItemIcon>
+            <SvgIcon viewBox="0 0 64 64" component={XmlIcon} />
+          </ListItemIcon>
+          <Typography>Export XML</Typography>
+        </MenuItem>
       </Menu>
     </>
   );
