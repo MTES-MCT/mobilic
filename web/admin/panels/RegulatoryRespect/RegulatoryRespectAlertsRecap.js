@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const DisplayAlerts = (alerts, onClickDay) => {
+const DisplayAlerts = (alerts, onClickDay, uniqueUserId) => {
   const classes = useStyles();
   return (
     <Stack mt={2}>
@@ -48,7 +48,7 @@ const DisplayAlerts = (alerts, onClickDay) => {
         .filter((alerts) => alerts.alertsType in PRETTY_LABELS)
         .map((alerts) => (
           <Box
-            key={`alerts__${alerts.alertsType}`}
+            key={`alerts__${alerts.alertsType}_${uniqueUserId || ""}`}
             className={classNames("alerts-summary", {
               expandable: alerts.days && alerts.days.length > 0
             })}
@@ -142,13 +142,13 @@ export const AlertsRecap = ({ ...otherProps }) => {
           Dépliez les seuils pour afficher les missions concernées par les
           dépassements.
         </Typography>
-        {DisplayAlerts(summary.dailyAlerts, onClickDay)}
+        {DisplayAlerts(summary.dailyAlerts, onClickDay, uniqueUserId)}
       </Stack>
       <Stack rowGap={1}>
         <Typography className={classes.title}>
           Respect des seuils hebdomadaires
         </Typography>
-        {DisplayAlerts(summary.weeklyAlerts)}
+        {DisplayAlerts(summary.weeklyAlerts, uniqueUserId)}
       </Stack>
       <ExternalLink
         url="/resources/home"
