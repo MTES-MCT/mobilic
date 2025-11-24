@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { makeStyles } from "@mui/styles";
 import { formatPersonName } from "common/utils/coworkers";
 import { Autocomplete } from "@mui/material";
@@ -69,6 +69,15 @@ export function EmployeeFilter({
         : users,
     [showOnlyUserIds, users]
   );
+
+  const value = useMemo(() => {
+    if (multiple) {
+      return selectedUsers;
+    } else {
+      return selectedUsers?.length > 0 ? selectedUsers[0] : null;
+    }
+  }, [selectedUsers, multiple]);
+
   return (
     <Autocomplete
       multiple={multiple}
@@ -94,13 +103,7 @@ export function EmployeeFilter({
           <span>{formatPersonName(option, true)}</span>
         </li>
       )}
-      value={
-        multiple
-          ? selectedUsers
-          : selectedUsers?.length > 0
-            ? selectedUsers[0]
-            : null
-      }
+      value={value}
       onChange={handleSelect || handleChange}
       renderInput={(params) => (
         <TextField
