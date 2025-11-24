@@ -46,6 +46,7 @@ import {
 } from "../store/reducers/team";
 import { usePageTitle } from "../../common/UsePageTitle";
 import { Explanation } from "../../common/typography/Explanation";
+import { useRefreshDeletedMissions } from "../hooks/useRefreshDeletedMissions";
 import { VALIDATE_MISSION_MUTATION } from "common/utils/apiQueries/missions";
 
 const VALIDATION_TABS = [
@@ -86,6 +87,9 @@ function ValidationPanel() {
   const alerts = useSnackbarAlerts();
   const location = useLocation();
   const { trackEvent } = useMatomo();
+
+  const { refresh: refreshDeletedMissions, loading: loadingDeletedMissions } =
+    useRefreshDeletedMissions();
 
   const [tab, setTab] = React.useState(0);
   const [tableEntries, setTableEntries] = React.useState([]);
@@ -289,6 +293,12 @@ function ValidationPanel() {
   };
 
   React.useEffect(() => {
+    if (tab === 3) {
+      refreshDeletedMissions();
+    }
+  }, [tab]);
+
+  React.useEffect(() => {
     switch (tab) {
       case 0:
         setTableEntries(entriesToValidateByAdmin);
@@ -414,6 +424,7 @@ function ValidationPanel() {
       </Grid>
       <Explanation>{VALIDATION_TABS[tab].explanation}</Explanation>
       <AugmentedTable
+        loading={loadingDeletedMissions}
         columns={tableColumns}
         entries={tableEntries}
         ref={ref}
