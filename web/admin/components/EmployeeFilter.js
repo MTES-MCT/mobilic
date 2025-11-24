@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-EmployeeFilter.PropTypes = {
+EmployeeFilter.propTypes = {
   users: PropTypes.array,
   setUsers: PropTypes.func,
   multiple: PropTypes.bool,
