@@ -4,15 +4,15 @@ import Typography from "@mui/material/Typography";
 import { Link } from "../../common/LinkButton";
 import React from "react";
 import { Step } from "./Step";
-import { SIREN_QUERY } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import { LegalUnitInfo } from "./LegalUnitInfo";
 import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
 import { MandatoryField } from "../../common/MandatoryField";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { SIREN_QUERY } from "common/utils/apiQueries/misc";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   button: {
     marginTop: theme.spacing(2)
   },
@@ -48,7 +48,7 @@ export function SelectSirenStep({
     setHasValidatedSiren(false);
   }
 
-  const handleSirenSubmit = async e => {
+  const handleSirenSubmit = async (e) => {
     e.preventDefault();
     resetApiResponse();
     setLoadingSirenInfo(true);
@@ -90,7 +90,7 @@ export function SelectSirenStep({
       >
         <SirenInputField
           siren={siren}
-          setSiren={value => {
+          setSiren={(value) => {
             resetApiResponse();
             setSiren(value);
           }}

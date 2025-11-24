@@ -4,7 +4,6 @@ import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useAdminCompanies, useAdminStore } from "../store/store";
 import { useUpdateCompanyDetails } from "../../common/useUpdateCompanyDetails";
 import { useApi } from "common/utils/api";
-import { SNOOZE_NB_WORKER_INFO } from "common/utils/apiQueries";
 import { clearUpdateTimeCookie, snooze } from "common/utils/updateNbWorker";
 import Modal from "../../common/Modal";
 import {
@@ -14,6 +13,7 @@ import {
 } from "../../common/forms/NbWorkersInput";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
+import { SNOOZE_NB_WORKER_INFO } from "common/utils/apiQueries/misc";
 
 export default function UpdateNbWorkerModal() {
   const api = useApi();
@@ -38,14 +38,11 @@ export default function UpdateNbWorkerModal() {
     }
   };
 
-  const {
-    newNbWorkers,
-    setNewNbWorkers,
-    updateCompanyDetails
-  } = useUpdateCompanyDetails(company, adminStore, () => {
-    clearUpdateTimeCookie(company);
-    setIsOpen(false);
-  });
+  const { newNbWorkers, setNewNbWorkers, updateCompanyDetails } =
+    useUpdateCompanyDetails(company, adminStore, () => {
+      clearUpdateTimeCookie(company);
+      setIsOpen(false);
+    });
 
   const canSubmit = React.useMemo(
     () =>

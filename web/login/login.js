@@ -17,15 +17,15 @@ import { FranceConnectContainer } from "../common/FranceConnect";
 import { makeStyles } from "@mui/styles";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
-import { LOGIN_MUTATION } from "common/utils/apiQueries";
 import { EmailField } from "../common/EmailField";
 import { pluralize } from "common/utils/time";
 import { usePageTitle } from "../common/UsePageTitle";
 import { RegistrationLink } from "../common/RegistrationLink";
 import { PasswordInput } from "../common/forms/PasswordInput";
 import { Main } from "../common/semantics/Main";
+import { LOGIN_MUTATION } from "common/utils/apiQueries/loginSignup";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   forgotPasswordLink: {
     marginBottom: theme.spacing(2)
   },
@@ -57,7 +57,7 @@ export default function Login() {
   const history = useHistory();
   const classes = useStyles();
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage(null);
     setLoading(true);
@@ -75,7 +75,7 @@ export default function Login() {
         await store.updateUserIdAndInfo();
       },
       "login",
-      graphQLError => {
+      (graphQLError) => {
         if (graphQLErrorMatchesCode(graphQLError, "AUTHENTICATION_ERROR")) {
           return "Identifiants incorrects.";
         }
@@ -142,7 +142,7 @@ export default function Login() {
                   nativeInputProps={{
                     autoComplete: "current-password",
                     value: password,
-                    onChange: e => setPassword(e.target.value)
+                    onChange: (e) => setPassword(e.target.value)
                   }}
                   required
                 />
@@ -167,7 +167,7 @@ export default function Login() {
                   <Typography className={classes.forgotPasswordLink}>
                     <Link
                       href="/request_reset_password"
-                      onClick={e => {
+                      onClick={(e) => {
                         e.preventDefault();
                         history.push("/request_reset_password");
                       }}

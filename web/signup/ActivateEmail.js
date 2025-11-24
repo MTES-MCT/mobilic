@@ -9,10 +9,10 @@ import jwt_decode from "jwt-decode";
 import { currentUserId } from "common/utils/cookie";
 
 import { useSnackbarAlerts } from "../common/Snackbar";
-import { ACTIVATE_EMAIL_MUTATION } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";
 import { usePageTitle } from "../common/UsePageTitle";
 import { getFallbackRoute } from "../common/routes";
+import { ACTIVATE_EMAIL_MUTATION } from "common/utils/apiQueries/loginSignup";
 
 export function ActivateEmail() {
   usePageTitle("Confirmation Courriel - Mobilic");
@@ -78,7 +78,7 @@ export function ActivateEmail() {
               history.push(fallbackRoute);
             },
             "activate-link",
-            gqlError => {
+            (gqlError) => {
               if (graphQLErrorMatchesCode(gqlError, "INVALID_TOKEN")) {
                 return "Le lien d'activation est invalide.";
               }

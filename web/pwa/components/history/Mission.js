@@ -23,7 +23,6 @@ import { ContradictorySwitch } from "../ContradictorySwitch";
 import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory";
 import GetAppIcon from "@mui/icons-material/GetApp";
 import Grid from "@mui/material/Grid";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
@@ -38,8 +37,9 @@ import { Box, Stack } from "@mui/material";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { fr } from "@codegouvfr/react-dsfr";
 import { PastMissionNotice } from "../../../admin/components/MissionDetails/PastMissionNotice";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   alternateCard: {
     backgroundColor: theme.palette.background.default
   },
@@ -143,12 +143,12 @@ export function Mission({
   );
 
   const employeeVersionUserActivitiesToUse = React.useMemo(
-    () => employeeVersion?.activities?.filter(a => a.userId === userId),
+    () => employeeVersion?.activities?.filter((a) => a.userId === userId),
     [employeeVersion]
   );
 
   const adminVersionUserActivitiesToUse = React.useMemo(
-    () => adminVersion?.activities?.filter(a => a.userId === userId),
+    () => adminVersion?.activities?.filter((a) => a.userId === userId),
     [adminVersion]
   );
 
@@ -169,7 +169,7 @@ export function Mission({
       (shouldDisplayInitialEmployeeVersion
         ? employeeVersion
         : adminVersion
-      ).expenditures.filter(a => a.userId === userId),
+      ).expenditures.filter((a) => a.userId === userId),
     [shouldDisplayInitialEmployeeVersion, adminVersion, employeeVersion]
   );
 
@@ -185,7 +185,7 @@ export function Mission({
 
   const actualDay = mission?.startTime;
 
-  const onDownloadMission = async e => {
+  const onDownloadMission = async (e) => {
     e.stopPropagation();
     e.preventDefault();
     trackLink({
@@ -217,7 +217,7 @@ export function Mission({
       createActivity={createActivity}
       editExpenditures={editExpenditures}
       editVehicle={
-        editVehicle ? vehicle => editVehicle({ mission, vehicle }) : null
+        editVehicle ? (vehicle) => editVehicle({ mission, vehicle }) : null
       }
       nullableEndTimeInEditActivity={
         currentMission ? mission.id === currentMission.id : true

@@ -4,12 +4,12 @@ import Stack from "@mui/material/Stack";
 import { COUNTRIES } from "../../utils/country";
 import { DEPARTMENTS } from "../../utils/departments";
 import { useApi } from "common/utils/api";
-import { CONTROL_LOCATION_QUERY } from "common/utils/apiQueries";
 import { DsfrAutocomplete } from "../utils/DsfrAutocomplete";
 import { MandatoryField } from "../../../common/MandatoryField";
 import { Input } from "../../../common/forms/Input";
 import { Select } from "../../../common/forms/Select";
 import { BirthDate } from "../../../common/forms/BirthDate";
+import { CONTROL_LOCATION_QUERY } from "common/utils/apiQueries/controller";
 
 export function ControlBulletinFormStep1({
   handleEditControlBulletin,
@@ -24,7 +24,7 @@ export function ControlBulletinFormStep1({
     const loadData = async () => {
       if (controlBulletin.locationDepartment) {
         const departmentCode = DEPARTMENTS.find(
-          d => d.label === controlBulletin.locationDepartment
+          (d) => d.label === controlBulletin.locationDepartment
         )?.code;
         if (departmentCode) {
           const apiResponse = await api.graphQlQuery(
@@ -44,7 +44,7 @@ export function ControlBulletinFormStep1({
   const controlLocationCommunes = useMemo(() => {
     if (departmentLocations) {
       const allCommunes = departmentLocations
-        .map(location => location.commune)
+        .map((location) => location.commune)
         .sort((a, b) => a.localeCompare(b));
       return [...new Set(allCommunes)];
     } else {
@@ -55,7 +55,7 @@ export function ControlBulletinFormStep1({
   const controlLocationLabels = useMemo(() => {
     if (controlBulletin.locationCommune && departmentLocations) {
       return departmentLocations
-        .filter(depLoc => depLoc.commune === controlBulletin.locationCommune)
+        .filter((depLoc) => depLoc.commune === controlBulletin.locationCommune)
         .sort((a, b) => a.label.localeCompare(b.label));
     } else {
       return [];
@@ -111,7 +111,7 @@ export function ControlBulletinFormStep1({
       <Input
         nativeInputProps={{
           value: controlBulletin.userLastName || "",
-          onChange: e => handleEditControlBulletin(e),
+          onChange: (e) => handleEditControlBulletin(e),
           name: "userLastName"
         }}
         label="Nom du salarié"
@@ -124,7 +124,7 @@ export function ControlBulletinFormStep1({
       <Input
         nativeInputProps={{
           value: controlBulletin.userFirstName || "",
-          onChange: e => handleEditControlBulletin(e),
+          onChange: (e) => handleEditControlBulletin(e),
           name: "userFirstName"
         }}
         label="Prénom du salarié"
@@ -137,14 +137,14 @@ export function ControlBulletinFormStep1({
       <BirthDate
         label="Date de naissance du salarié"
         userBirthDate={controlBulletin.userBirthDate}
-        setUserBirthDate={newDateString =>
+        setUserBirthDate={(newDateString) =>
           editControlBulletinField(newDateString, "userBirthDate")
         }
       />
       <Select
         label="Nationalité du salarié"
         nativeSelectProps={{
-          onChange: e => handleEditControlBulletin(e),
+          onChange: (e) => handleEditControlBulletin(e),
           value: controlBulletin.userNationality || "",
           name: "userNationality"
         }}
@@ -157,7 +157,7 @@ export function ControlBulletinFormStep1({
         <option value="" disabled>
           Sélectionnez une nationalité
         </option>
-        {COUNTRIES.map(option => (
+        {COUNTRIES.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>

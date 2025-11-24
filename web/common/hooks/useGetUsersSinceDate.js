@@ -1,10 +1,10 @@
 import React from "react";
-import { ADMIN_USERS_SINCE_DATE } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../../admin/store/store";
 import { isoFormatLocalDate } from "common/utils/time";
 import { useSnackbarAlerts } from "../Snackbar";
 import { formatApiError } from "common/utils/errors";
+import { ADMIN_USERS_SINCE_DATE } from "common/utils/apiQueries/admin";
 
 export const useGetUsersSinceDate = () => {
   const api = useApi();
@@ -13,7 +13,7 @@ export const useGetUsersSinceDate = () => {
   const earliestDate = React.useRef(null);
   const memo = React.useRef(null);
 
-  const getUsersSinceDate = async fromDate => {
+  const getUsersSinceDate = async (fromDate) => {
     if (!earliestDate.current || fromDate < earliestDate.current) {
       try {
         const payload = await api.graphQlQuery(ADMIN_USERS_SINCE_DATE, {

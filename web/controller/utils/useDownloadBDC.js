@@ -1,10 +1,10 @@
 import { useApi } from "common/utils/api";
 
-import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 
-export const useDownloadBDC = controlId => {
+export const useDownloadBDC = (controlId) => {
   const api = useApi();
   const alerts = useSnackbarAlerts();
 

@@ -5,146 +5,17 @@ import {
   parseMissionPayloadFromBackend
 } from "./mission";
 import { startOfMonth, subMonths } from "date-fns";
-import {
-  COMPANY_SETTINGS_FRAGMENT,
-  FULL_MISSION_FRAGMENT,
-  NOTIFICATION_FRAGMENT,
-  USER_AGREEMENT
-} from "./apiFragments";
-import { gql } from "graphql-tag";
 import { captureSentryException } from "./sentry";
 import values from "lodash/values";
 import flatten from "lodash/flatten";
 import { EMPLOYMENT_STATUS, getEmploymentsStatus } from "./employments";
-import { CURRENT_MISSION_INFO } from "./apiQueries";
 import { onLogIn } from "./updatePassword";
 import { jsToUnixTimestamp } from "common/utils/time";
-
-const CURRENT_EMPLOYMENTS_QUERY = gql`
-  query currentEmployments($id: Int!) {
-    user(id: $id) {
-      id
-      currentEmployments {
-        id
-        startDate
-        isAcknowledged
-        hasAdminRights
-        company {
-          id
-          name
-          siren
-          sirets
-          users {
-            id
-            firstName
-            lastName
-          }
-          knownAddresses {
-            id
-            alias
-            name
-            postalCode
-            city
-          }
-          vehicles {
-            id
-            name
-            registrationNumber
-            lastKilometerReading
-          }
-        }
-        team {
-          id
-          name
-          vehicles {
-            id
-            name
-            registrationNumber
-            lastKilometerReading
-          }
-          knownAddresses {
-            id
-            alias
-            name
-            postalCode
-            city
-          }
-        }
-      }
-    }
-  }
-`;
-
-const USER_QUERY = gql`
-  ${COMPANY_SETTINGS_FRAGMENT}
-  ${FULL_MISSION_FRAGMENT}
-  ${USER_AGREEMENT}
-  ${NOTIFICATION_FRAGMENT}
-  query user($id: Int!, $activityAfter: TimeStamp) {
-    user(id: $id) {
-      id
-      creationTime
-      surveyActions {
-        surveyId
-        creationTime
-        action
-      }
-      firstName
-      lastName
-      gender
-      birthDate
-      phoneNumber
-      timezoneName
-      shouldUpdatePassword
-      email
-      hasConfirmedEmail
-      hasActivatedEmail
-      disabledWarnings
-      missions(fromTime: $activityAfter, includeDeletedMissions: true) {
-        edges {
-          node {
-            ...FullMissionData
-          }
-        }
-      }
-      employments(includePending: true) {
-        id
-        startDate
-        endDate
-        isAcknowledged
-        hasAdminRights
-        hideEmail
-        business {
-          transportType
-          businessType
-        }
-        authorizedClients {
-          id
-          name
-        }
-        company {
-          id
-          name
-          siren
-          sirets
-          hasNoActiveAdmins
-          hasCeasedActivity
-          ...CompanySettings
-          currentCompanyCertification {
-            isCertified
-            certificationMedal
-          }
-        }
-      }
-      userAgreementStatus {
-        ...UserAgreementData
-      }
-      notifications {
-        ...NotificationData
-      }
-    }
-  }
-`;
+import {
+  CURRENT_EMPLOYMENTS_QUERY,
+  CURRENT_MISSION_INFO,
+  USER_QUERY
+} from "./apiQueries/user";
 
 export async function loadUserData(api, store, alerts) {
   const userId = store.userId();
@@ -163,7 +34,7 @@ export async function loadUserData(api, store, alerts) {
       { context: { timeout: 12000 } }
     );
     await syncUser(userResponse.data.user, api, store);
-    loadCoworkerData(api, store, alerts).then(r => {});
+    loadCoworkerData(api, store, alerts).then((r) => {});
     await broadCastChannel.postMessage("update");
   }, "load-user");
 }
@@ -198,12 +69,12 @@ async function syncCoworkerData(coworkerPayload, store) {
     })
   );
   const syncActions = [];
-  currentEmployments.forEach(e => {
+  currentEmployments.forEach((e) => {
     const company = e.company;
     const team = e.team;
-    company.users.forEach(u => {
+    company.users.forEach((u) => {
       if (u.id !== coworkerPayload.id) {
-        const userMatch = users.find(u2 => u2.id === u.id);
+        const userMatch = users.find((u2) => u2.id === u.id);
         if (!userMatch) {
           users.push({ ...u, companyIds: [company.id] });
         } else userMatch.companyIds.push(company.id);
@@ -211,20 +82,20 @@ async function syncCoworkerData(coworkerPayload, store) {
     });
     if (team && team.vehicles.length > 0) {
       vehicles.push(
-        ...team.vehicles.map(v => ({ ...v, companyId: company.id }))
+        ...team.vehicles.map((v) => ({ ...v, companyId: company.id }))
       );
     } else {
       vehicles.push(
-        ...company.vehicles.map(v => ({ ...v, companyId: company.id }))
+        ...company.vehicles.map((v) => ({ ...v, companyId: company.id }))
       );
     }
     if (team && team.knownAddresses.length > 0) {
       knownAddresses.push(
-        ...team.knownAddresses.map(a => ({ ...a, companyId: company.id }))
+        ...team.knownAddresses.map((a) => ({ ...a, companyId: company.id }))
       );
     } else {
       knownAddresses.push(
-        ...company.knownAddresses.map(a => ({ ...a, companyId: company.id }))
+        ...company.knownAddresses.map((a) => ({ ...a, companyId: company.id }))
       );
     }
   });
@@ -242,10 +113,10 @@ export async function syncMissions(missions, store, syncMethod) {
   const missionData = [];
   const comments = [];
 
-  missions.forEach(mission => {
+  missions.forEach((mission) => {
     const isMissionDeleted = !!mission.deletedAt;
     activities.push(
-      ...mission.activities.map(activity => ({
+      ...mission.activities.map((activity) => ({
         ...activity,
         isMissionDeleted
       }))
@@ -294,9 +165,9 @@ export async function syncUser(userPayload, api, store) {
 
   onLogIn(shouldUpdatePassword);
 
-  const missions = missionsPayload.edges.map(e => e.node);
+  const missions = missionsPayload.edges.map((e) => e.node);
 
-  const notDeletedMissions = missions.filter(mission => !mission.deletedAt);
+  const notDeletedMissions = missions.filter((mission) => !mission.deletedAt);
   // Get end status for latest mission;
   if (notDeletedMissions.length > 0) {
     const latestMission = notDeletedMissions[0];
@@ -338,15 +209,14 @@ export async function syncUser(userPayload, api, store) {
     );
 
   const employmentsPerCompanyId = {};
-  employments.forEach(e => {
+  employments.forEach((e) => {
     const company = e.company;
     if (!employmentsPerCompanyId[company.id]) {
       employmentsPerCompanyId[company.id] = [e];
     } else {
       const exisitingEmployment = employmentsPerCompanyId[company.id][0];
-      const existingEmploymentStatus = getEmploymentsStatus(
-        exisitingEmployment
-      );
+      const existingEmploymentStatus =
+        getEmploymentsStatus(exisitingEmployment);
       const status = getEmploymentsStatus(e);
       if (
         existingEmploymentStatus === EMPLOYMENT_STATUS.pending &&

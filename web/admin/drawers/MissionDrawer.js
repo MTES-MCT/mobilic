@@ -1,7 +1,5 @@
 import React from "react";
-import { MissionDetails } from "./MissionDetails/MissionDetails";
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import { makeStyles } from "@mui/styles";
+import { MissionDetails } from "../components/MissionDetails/MissionDetails";
 import { useLocation } from "react-router-dom";
 import { useModals } from "common/utils/modals";
 import { useAdminStore } from "../store/store";
@@ -12,13 +10,7 @@ import {
 } from "common/utils/matomoTags";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import Notice from "../../common/Notice";
-
-const useStyles = makeStyles(theme => ({
-  missionDrawer: {
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2)
-  }
-}));
+import { Drawer } from "./Drawer";
 
 const MissionDrawerContext = React.createContext(() => {});
 
@@ -30,13 +22,12 @@ export function MissionDrawerContextProvider({
   const location = useLocation();
   const modals = useModals();
 
-  const classes = useStyles();
   const [missionIdOnFocus, setMissionIdOnFocus] = React.useState(null);
 
   const adminStore = useAdminStore();
   const { trackEvent } = useMatomo();
 
-  const handleCloseTab = ev => {
+  const handleCloseTab = (ev) => {
     if (
       adminStore.virtualActivities.length > 0 ||
       adminStore.virtualExpenditureActions.length > 0
@@ -105,19 +96,11 @@ export function MissionDrawerContextProvider({
     <MissionDrawerContext.Provider
       value={[missionIdOnFocus, setMissionIdOnFocus]}
     >
-      <SwipeableDrawer
-        anchor="right"
+      <Drawer
         open={!!missionIdOnFocus}
-        disableSwipeToOpen
-        disableDiscovery
-        onOpen={() => {}}
         onClose={onClose}
-        PaperProps={{
-          className: classes.missionDrawer,
-          sx: {
-            width: { xs: "100vw", md: 860 }
-          }
-        }}
+        zIndex={1505}
+        id="mission-drawer"
       >
         <MissionDetails
           missionId={missionIdOnFocus}
@@ -126,7 +109,7 @@ export function MissionDrawerContextProvider({
           setShouldRefreshActivityPanel={setShouldRefreshData}
           refreshData={refreshData}
         />
-      </SwipeableDrawer>
+      </Drawer>
       {children}
     </MissionDrawerContext.Provider>
   );

@@ -12,7 +12,6 @@ import {
 import { FranceConnectContainer } from "../common/FranceConnect";
 import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "../common/Snackbar";
-import { USER_SIGNUP_MUTATION } from "common/utils/apiQueries";
 import { EmailField } from "../common/EmailField";
 import TimezoneSelect from "../common/TimezoneSelect";
 import { getClientTimezone } from "common/utils/timezones";
@@ -26,6 +25,7 @@ import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Input } from "../common/forms/Input";
 import { PasswordInput } from "../common/forms/PasswordInput";
 import GenderSelect from "../common/GenderSelect";
+import { USER_SIGNUP_MUTATION } from "common/utils/apiQueries/loginSignup";
 
 export function AccountCreation({ employeeInvite, isAdmin }) {
   usePageTitle("Création de compte - Mobilic");
@@ -44,20 +44,18 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const [phoneNumber, setPhoneNumber] = React.useState("");
   const [emailError, setEmailError] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [forcePasswordValidation, setForcePasswordValidation] = React.useState(
-    false
-  );
+  const [forcePasswordValidation, setForcePasswordValidation] =
+    React.useState(false);
   const [wayHeardOfMobilic, setWayHeardOfMobilic] = React.useState("");
-  const [selectedTimezone, setSelectedTimezone] = React.useState(
-    getClientTimezone()
-  );
+  const [selectedTimezone, setSelectedTimezone] =
+    React.useState(getClientTimezone());
   const [subscribeToNewsletter, setSubscribeToNewsletter] = React.useState(
     isAdmin ? true : false
   );
   const [touched, setTouched] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setTouched(true);
     if (
@@ -213,9 +211,8 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                           true,
                           isAdmin
                         );
-                        window.location.href = buildFranceConnectUrl(
-                          callbackUrl
-                        );
+                        window.location.href =
+                          buildFranceConnectUrl(callbackUrl);
                       }}
                     />
                   </div>
@@ -243,7 +240,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                         nativeInputProps={{
                           autoComplete: "new-password",
                           value: password,
-                          onChange: e => setPassword(e.target.value)
+                          onChange: (e) => setPassword(e.target.value)
                         }}
                         displayMessages
                         forceValidation={forcePasswordValidation}
@@ -252,9 +249,9 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                       <Input
                         nativeInputProps={{
                           value: firstName,
-                          onChange: e =>
+                          onChange: (e) =>
                             setFirstName(e.target.value.trimStart()),
-                          onBlur: e =>
+                          onBlur: (e) =>
                             setFirstNameError(!e.target.value.trim()),
                           autoComplete: "given-name"
                         }}
@@ -266,9 +263,10 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                       <Input
                         nativeInputProps={{
                           value: lastName,
-                          onChange: e =>
+                          onChange: (e) =>
                             setLastName(e.target.value.trimStart()),
-                          onBlur: e => setLastNameError(!e.target.value.trim()),
+                          onBlur: (e) =>
+                            setLastNameError(!e.target.value.trim()),
                           autoComplete: "family-name"
                         }}
                         label="Nom"

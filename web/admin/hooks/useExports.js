@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useApi } from "common/utils/api";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { useSilentDownload } from "../../common/hooks/useSilentDownload";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 
 export function useExports() {
   const api = useApi();

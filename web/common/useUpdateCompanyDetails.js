@@ -1,11 +1,11 @@
 import React from "react";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "./Snackbar";
+import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
 import {
   UPDATE_COMPANY_DETAILS,
   UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE
-} from "common/utils/apiQueries";
-import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
+} from "common/utils/apiQueries/admin";
 
 export const useUpdateCompanyDetails = (
   company,
@@ -31,7 +31,7 @@ export const useUpdateCompanyDetails = (
     [newCompanyBusinessType, adminStore.business?.businessType]
   );
 
-  const updateCompanyDetails = async applyBusinessTypeToEmployees => {
+  const updateCompanyDetails = async (applyBusinessTypeToEmployees) => {
     await alerts.withApiErrorHandling(async () => {
       const apiResponse = await api.graphQlMutate(
         hasBusinessTypeChanged

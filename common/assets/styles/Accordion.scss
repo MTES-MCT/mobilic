@@ -188,3 +188,15 @@
 .regulatory-threshold-item .fr-accordion__btn {
   padding-right: 1rem !important;
 }
+
+.alerts-summary:not(.expandable) .fr-accordion__btn::after {
+  display: none !important;
+}
+.alerts-summary .fr-accordion__btn {
+  padding-right: 1rem !important;
+  font-weight: 500;
+  color: var(--text-action-high-grey);
+}
+.alerts-summary:not(.expandable) {
+  pointer-events: none;
+}

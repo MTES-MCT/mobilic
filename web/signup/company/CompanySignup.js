@@ -12,7 +12,7 @@ import SignupStepper from "../SignupStepper";
 import {
   COMPANY_SIGNUP_MUTATION,
   COMPANIES_SIGNUP_MUTATION
-} from "common/utils/apiQueries";
+} from "common/utils/apiQueries/loginSignup";
 import { SubmitStep } from "./SubmitStep";
 import { SelectSirenStep } from "./SelectSirenStep";
 import { Steps } from "./Step";
@@ -47,10 +47,8 @@ export function CompanySignup() {
   const willRegisterSeveralSirets =
     shouldSelectSirets || sirenPartiallyRegistered;
 
-  const [
-    shouldDisplaySignupProgress,
-    setShouldDisplaySignupProgress
-  ] = React.useState(false);
+  const [shouldDisplaySignupProgress, setShouldDisplaySignupProgress] =
+    React.useState(false);
 
   const [loadingCompanySignup, setLoadingCompanySignup] = React.useState(false);
 
@@ -63,20 +61,20 @@ export function CompanySignup() {
   React.useEffect(() => {
     if (sirenInfo && sirenInfo.facilities)
       setFacilities(
-        sirenInfo.facilities.map(f => ({ ...f, usualName: f.name }))
+        sirenInfo.facilities.map((f) => ({ ...f, usualName: f.name }))
       );
     else setFacilities([]);
   }, [sirenInfo]);
 
   React.useEffect(() => {
-    const firstSelectedFacility = facilities.find(f => f.selected);
+    const firstSelectedFacility = facilities.find((f) => f.selected);
     let name = firstSelectedFacility?.name;
     if (!name && sirenInfo && sirenInfo.legalUnit)
       name = sirenInfo.legalUnit.name;
     setUsualName(name);
   }, [sirenInfo, facilities]);
 
-  const handleCompanySignup = async e => {
+  const handleCompanySignup = async (e) => {
     e.preventDefault();
 
     if (process.env.REACT_APP_GOOGLE_ADS && hasGoogleAdsConsent()) {
@@ -111,7 +109,7 @@ export function CompanySignup() {
     setLoadingCompanySignup(false);
   };
 
-  const handleCompaniesSignup = async e => {
+  const handleCompaniesSignup = async (e) => {
     e.preventDefault();
 
     if (process.env.REACT_APP_GOOGLE_ADS && hasGoogleAdsConsent()) {
@@ -123,8 +121,8 @@ export function CompanySignup() {
       const payload = {
         siren: siren,
         companies: facilities
-          .filter(f => f.selected)
-          .map(f => {
+          .filter((f) => f.selected)
+          .map((f) => {
             return {
               siret: f.siret,
               usualName: f.usualName,
@@ -140,7 +138,7 @@ export function CompanySignup() {
         { context: { nonPublicApi: true } }
       );
       const employments = apiResponse.data.signUp.companies.map(
-        c => c.employment
+        (c) => c.employment
       );
       store.createEntityObject(employments, "employments");
       store.batchUpdate();
@@ -150,7 +148,9 @@ export function CompanySignup() {
           ? "/signup/complete"
           : "/signup/company_complete",
         {
-          companiesName: employments.map(employment => employment.company.name)
+          companiesName: employments.map(
+            (employment) => employment.company.name
+          )
         }
       );
     }, "company-signup");

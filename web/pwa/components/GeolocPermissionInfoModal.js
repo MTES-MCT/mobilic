@@ -7,7 +7,6 @@ import { makeStyles } from "@mui/styles";
 import GeolocModalBackground from "common/assets/images/geoloc-modal-background.svg";
 import { Dialog } from "@mui/material";
 import Slide from "@mui/material/Slide";
-import { DISABLE_WARNING_MUTATION } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { DISMISSABLE_WARNINGS } from "../../admin/utils/dismissableWarnings";
 import IconButton from "@mui/material/IconButton";
@@ -16,13 +15,14 @@ import { captureSentryException } from "common/utils/sentry";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import Emoji from "../../common/Emoji";
 import Notice from "../../common/Notice";
+import { DISABLE_WARNING_MUTATION } from "common/utils/apiQueries/misc";
 
 export default function GeolocPermissionInfoModal({
   open,
   handleClose,
   askCurrentPosition
 }) {
-  const useStyles = makeStyles(theme => ({
+  const useStyles = makeStyles((theme) => ({
     container: {
       display: "flex",
       flexDirection: "column",

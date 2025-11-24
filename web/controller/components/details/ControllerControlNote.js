@@ -4,7 +4,6 @@ import Typography from "@mui/material/Typography";
 import TextField from "common/utils/TextField";
 import { makeStyles } from "@mui/styles";
 import { SubmitCancelButtons } from "../../../common/SubmitCancelButtons";
-import { CONTROLLER_ADD_CONTROL_NOTE } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { useApi } from "common/utils/api";
@@ -12,6 +11,7 @@ import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useControl } from "../../utils/contextControl";
 import { Description } from "../../../common/typography/Description";
 import { TitleContainer } from "../../../control/components/TitleContainer";
+import { CONTROLLER_ADD_CONTROL_NOTE } from "common/utils/apiQueries/controller";
 
 const useStyles = makeStyles(() => ({
   addNoteButton: {
@@ -37,7 +37,7 @@ export function ControllerControlNote() {
     }
   }, [controlData]);
 
-  const saveControlNote = async newNote => {
+  const saveControlNote = async (newNote) => {
     try {
       const apiResponse = await api.graphQlMutate(
         CONTROLLER_ADD_CONTROL_NOTE,
@@ -79,7 +79,7 @@ export function ControllerControlNote() {
             maxRows={4}
             variant="filled"
             value={note}
-            onChange={e => setNote(e.target.value)}
+            onChange={(e) => setNote(e.target.value)}
             margin="normal"
           />
           <SubmitCancelButtons

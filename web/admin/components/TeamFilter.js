@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { makeStyles } from "@mui/styles";
 import { Autocomplete } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
 import orderBy from "lodash/orderBy";
+import PropTypes from "prop-types";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   formControl: {
     minWidth: 200,
     maxWidth: 500
@@ -22,35 +23,59 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+TeamFilter.propTypes = {
+  teams: PropTypes.array,
+  setTeams: PropTypes.func,
+  multiple: PropTypes.bool,
+  handleSelect: PropTypes.func,
+  orderByProperty: PropTypes.oneOf(["name", "rankName"]),
+  size: PropTypes.oneOf(["small", "medium"])
+};
+
 export function TeamFilter({
   teams,
   setTeams,
   multiple = true,
   handleSelect = null,
-  orderByProperty = "name"
+  orderByProperty = "name",
+  size = "small",
+  ...otherProps
 }) {
   const classes = useStyles();
 
   const handleChange = (event, value) => {
-    const selectedIds = multiple ? value.map(u => u.id) : [value.id];
+    const selectedIds = multiple
+      ? value.map((u) => u.id)
+      : value
+        ? [value.id]
+        : [];
     setTeams(
-      teams.map(u => ({
+      teams.map((u) => ({
         ...u,
         selected: selectedIds.includes(u.id)
       }))
     );
   };
 
-  const selectedTeams = teams.filter(team => team.selected);
+  const selectedTeams = teams.filter((team) => team.selected);
+
+  const value = useMemo(() => {
+    if (multiple) {
+      return selectedTeams;
+    } else {
+      return selectedTeams?.length > 0 ? selectedTeams[0] : null;
+    }
+  }, [selectedTeams, multiple]);
+
   return (
     <Autocomplete
       multiple={multiple}
       id="team-filter"
       options={orderBy(teams, [orderByProperty])}
       limitTags={1}
-      size="small"
-      disableCloseOnSelect
-      getOptionLabel={option => option.name}
+      size={size}
+      disableCloseOnSelect={multiple}
+      getOptionLabel={(option) => option.name}
       renderOption={(props, option) => (
         <li {...props}>
           {multiple && (
@@ -63,9 +88,9 @@ export function TeamFilter({
           <span>{option.name}</span>
         </li>
       )}
-      value={selectedTeams}
+      value={value}
       onChange={handleSelect || handleChange}
-      renderInput={params => (
+      renderInput={(params) => (
         <TextField
           className={classes.formControl}
           {...params}
@@ -74,10 +99,11 @@ export function TeamFilter({
               ? selectedTeams.length === 0
                 ? "Tous les groupes"
                 : ""
-              : "Sélectionner un groupe"
+              : "Tous les groupes"
           }`}
         />
       )}
+      {...otherProps}
     />
   );
 }

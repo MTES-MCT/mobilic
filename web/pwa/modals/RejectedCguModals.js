@@ -7,9 +7,9 @@ import { useIsAdmin } from "../../common/hooks/useIsAdmin";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import { CircularProgress, Link, Stack } from "@mui/material";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 import { useExportsContext } from "../../admin/utils/contextExports";
 
 export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
@@ -19,14 +19,14 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
   const alerts = useSnackbarAlerts();
   const { trackLink } = useMatomo();
   const [isEnabledDownload, setIsEnabledDownload] = React.useState(true);
-  const { updateExports, nbExports } = useExportsContext()
+  const { updateExports, nbExports } = useExportsContext();
 
   useEffect(() => {
     const run = async () => {
-      await updateExports()
-    }
-    run()
-  }, [userId])
+      await updateExports();
+    };
+    run();
+  }, [userId]);
 
   const downloadUserData = async () => {
     setIsEnabledDownload(false);
@@ -44,7 +44,7 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
         null,
         9000
       );
-      updateExports()
+      updateExports();
     } catch (err) {
       alerts.error(
         formatApiError(err),
@@ -97,10 +97,12 @@ export default function RejectedCguModal({ expiryDate, onRevert, userId }) {
             </button>
             .
           </Typography>
-          {!!nbExports && <Stack direction="row" columnGap={1} alignItems="center">
-            <CircularProgress color="inherit" size="1rem" />
-            <div>Export des données en cours de préparation...</div>
-          </Stack>}
+          {!!nbExports && (
+            <Stack direction="row" columnGap={1} alignItems="center">
+              <CircularProgress color="inherit" size="1rem" />
+              <div>Export des données en cours de préparation...</div>
+            </Stack>
+          )}
         </Stack>
       }
       actions={

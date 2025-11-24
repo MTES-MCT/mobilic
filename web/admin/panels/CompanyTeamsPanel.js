@@ -2,10 +2,6 @@ import React from "react";
 import { useApi } from "common/utils/api";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import {
-  ALL_TEAMS_COMPANY_QUERY,
-  DELETE_TEAM_MUTATION
-} from "common/utils/apiQueries";
 import { usePanelStyles } from "./Company";
 import Skeleton from "@mui/material/Skeleton";
 import Grid from "@mui/material/Grid";
@@ -19,6 +15,10 @@ import uniqBy from "lodash/uniqBy";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import Notice from "../../common/Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import {
+  ALL_TEAMS_COMPANY_QUERY,
+  DELETE_TEAM_MUTATION
+} from "common/utils/apiQueries/teams";
 
 export default function CompanyTeamsPanel({ company }) {
   const api = useApi();
@@ -28,9 +28,8 @@ export default function CompanyTeamsPanel({ company }) {
 
   const [teams, setTeams] = React.useState([]);
   const [loadingTeams, setLoadingTeams] = React.useState(false);
-  const [displayNoAdminWarning, setDisplayNoAdminWarning] = React.useState(
-    false
-  );
+  const [displayNoAdminWarning, setDisplayNoAdminWarning] =
+    React.useState(false);
 
   React.useEffect(() => {
     const loadData = async () => {
@@ -45,7 +44,9 @@ export default function CompanyTeamsPanel({ company }) {
   }, [company]);
 
   React.useEffect(() => {
-    setDisplayNoAdminWarning(teams.some(team => !team.adminUsers?.length > 0));
+    setDisplayNoAdminWarning(
+      teams.some((team) => !team.adminUsers?.length > 0)
+    );
   }, [teams]);
 
   async function deleteTeam(team) {
@@ -78,9 +79,9 @@ export default function CompanyTeamsPanel({ company }) {
     {
       label: "Gestionnaire(s)",
       name: "adminUsers",
-      format: adminUsers =>
+      format: (adminUsers) =>
         adminUsers
-          ?.map(adminUser => formatPersonName(adminUser))
+          ?.map((adminUser) => formatPersonName(adminUser))
           .sort()
           .join(", "),
       overflowTooltip: true,
@@ -90,9 +91,9 @@ export default function CompanyTeamsPanel({ company }) {
     {
       label: "Salarié(s)",
       name: "users",
-      format: users =>
+      format: (users) =>
         users
-          ?.map(user => formatPersonName(user))
+          ?.map((user) => formatPersonName(user))
           .sort()
           .join(", "),
       overflowTooltip: true,
@@ -102,9 +103,9 @@ export default function CompanyTeamsPanel({ company }) {
     {
       label: "Adresse(s)",
       name: "knownAddresses",
-      format: knownAddresses =>
+      format: (knownAddresses) =>
         knownAddresses
-          ?.map(address => address.alias || address.name)
+          ?.map((address) => address.alias || address.name)
           .sort()
           .join(", "),
       overflowTooltip: true
@@ -112,9 +113,9 @@ export default function CompanyTeamsPanel({ company }) {
     {
       label: "Véhicule(s)",
       name: "vehicles",
-      format: vehicles =>
+      format: (vehicles) =>
         vehicles
-          ?.map(vehicle => vehicle.name)
+          ?.map((vehicle) => vehicle.name)
           .sort()
           .join(", "),
       overflowTooltip: true,
@@ -123,12 +124,12 @@ export default function CompanyTeamsPanel({ company }) {
     {
       label: "Date de création",
       name: "creationTime",
-      format: creationTime => formatDay(creationTime, true),
+      format: (creationTime) => formatDay(creationTime, true),
       sortable: true
     }
   ];
 
-  const customActions = team => {
+  const customActions = (team) => {
     if (!team) {
       return [];
     }
@@ -141,7 +142,7 @@ export default function CompanyTeamsPanel({ company }) {
       {
         name: "delete",
         label: "Supprimer le groupe",
-        action: team => {
+        action: (team) => {
           modals.open("confirmation", {
             textButtons: true,
             title: "Confirmer suppression",
@@ -158,41 +159,41 @@ export default function CompanyTeamsPanel({ company }) {
   function openTeamModal(team) {
     const currentAdmins = adminStore.employments
       .filter(
-        e =>
+        (e) =>
           e.companyId === adminStore.companyId &&
           e.isAcknowledged &&
           e.hasAdminRights &&
           (!e.endDate || e.endDate >= isoFormatLocalDate(new Date()))
       )
-      .map(e => e.user);
+      .map((e) => e.user);
     const currentUsers = adminStore.employments
       .filter(
-        e =>
+        (e) =>
           e.companyId === adminStore.companyId &&
           e.isAcknowledged &&
           (!e.endDate || e.endDate >= isoFormatLocalDate(new Date()))
       )
-      .map(e => ({ ...e.user, detached: "Salarié(s) actif(s)" }));
+      .map((e) => ({ ...e.user, detached: "Salarié(s) actif(s)" }));
     const detachedUsers = uniqBy(
       adminStore.employments
         .filter(
-          e =>
+          (e) =>
             e.companyId === adminStore.companyId &&
             e.isAcknowledged &&
             e.endDate &&
             e.endDate < isoFormatLocalDate(new Date())
         )
-        .map(e => ({ ...e.user, detached: "Salarié(s) détaché(s)" })),
+        .map((e) => ({ ...e.user, detached: "Salarié(s) détaché(s)" })),
       "id"
     ).filter(
-      detachedUser =>
-        !currentUsers.some(currentUser => currentUser.id === detachedUser.id)
+      (detachedUser) =>
+        !currentUsers.some((currentUser) => currentUser.id === detachedUser.id)
     );
     const currentKnownAddresses = adminStore.knownAddresses.filter(
-      e => e.companyId === adminStore.companyId
+      (e) => e.companyId === adminStore.companyId
     );
     const currentVehicles = adminStore.vehicles.filter(
-      v => v.companyId === adminStore.companyId
+      (v) => v.companyId === adminStore.companyId
     );
     modals.open("companyTeamCreationRevisionModal", {
       team: team,
@@ -251,7 +252,7 @@ export default function CompanyTeamsPanel({ company }) {
             entries={teams}
             className={classes.vehiclesTable}
             defaultSortBy="name"
-            onRowEdit={team => openTeamModal(team)}
+            onRowEdit={(team) => openTeamModal(team)}
             customRowActions={customActions}
           />
         </Box>

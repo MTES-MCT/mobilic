@@ -7,11 +7,11 @@ import { EmailField } from "../common/EmailField";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { makeStyles } from "@mui/styles";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { MandatoryField } from "../common/MandatoryField";
 import Modal from "../common/Modal";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   caption: {
     marginTop: theme.spacing(2),
     display: "block",
@@ -102,9 +102,9 @@ export default function NewsletterSubscriptionModal({ open, handleClose }) {
               fullWidth
               select
               value={profile}
-              onChange={e => setProfile(e.target.value)}
+              onChange={(e) => setProfile(e.target.value)}
             >
-              {PROFILES.map(prof => (
+              {PROFILES.map((prof) => (
                 <MenuItem key={prof.name} value={prof.name}>
                   {prof.label}
                 </MenuItem>

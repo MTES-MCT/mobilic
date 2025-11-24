@@ -1,5 +1,5 @@
 import { broadCastChannel } from "common/store/store";
-import { CONTROLLER_USER_QUERY } from "common/utils/apiQueries";
+import { CONTROLLER_USER_QUERY } from "common/utils/apiQueries/controller";
 
 export async function loadControllerUserData(api, store, alerts) {
   const controllerId = store.controllerId();

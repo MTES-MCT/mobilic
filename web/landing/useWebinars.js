@@ -1,9 +1,9 @@
 import { useApi } from "common/utils/api";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 import { captureSentryException } from "common/utils/sentry";
 import React from "react";
 
-export const useWebinars = setCantDisplayWebinarsBecauseNoneOrError => {
+export const useWebinars = (setCantDisplayWebinarsBecauseNoneOrError) => {
   const api = useApi();
 
   const [webinars, setWebinars] = React.useState([]);

@@ -1,17 +1,17 @@
 import React from "react";
 import { useApi } from "common/utils/api";
 
-import {
-  CONTROLLER_READ_CONTROL_DATA,
-  CONTROLLER_READ_CONTROL_DATA_NO_LIC,
-  CONTROLLER_READ_CONTROL_PICTURES,
-  HTTP_QUERIES
-} from "common/utils/apiQueries";
 import { useLoadingScreen } from "common/utils/loading";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { canDownloadBDC as _canDownloadBDC } from "./controlBulletin";
 import { strToUnixTimestamp } from "common/utils/time";
 import { useModals } from "common/utils/modals";
+import {
+  CONTROLLER_READ_CONTROL_DATA,
+  CONTROLLER_READ_CONTROL_DATA_NO_LIC,
+  CONTROLLER_READ_CONTROL_PICTURES
+} from "common/utils/apiQueries/controller";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 
 // Value AND label must match ControlType enum from API
 export const CONTROL_TYPES = {
@@ -43,7 +43,7 @@ export const useReadControlData = (controlId, controlType) => {
           setControlData({
             ...controlData,
             observedInfractions: controlData.observedInfractions.map(
-              infraction => ({
+              (infraction) => ({
                 ...infraction,
                 date: infraction.date
                   ? strToUnixTimestamp(infraction.date)
@@ -56,16 +56,17 @@ export const useReadControlData = (controlId, controlType) => {
     }
   }, [controlId]);
 
-  const canDownloadBDC = React.useMemo(() => _canDownloadBDC(controlData), [
-    controlData
-  ]);
+  const canDownloadBDC = React.useMemo(
+    () => _canDownloadBDC(controlData),
+    [controlData]
+  );
 
   const bdcAlreadyExists = React.useMemo(
     () => !!controlData?.controlBulletinCreationTime,
     [controlData]
   );
 
-  const uploadPictures = async pictures => {
+  const uploadPictures = async (pictures) => {
     alerts.withApiErrorHandling(async () => {
       const presignedUrlsRes = await api.jsonHttpQuery(
         HTTP_QUERIES.controlPicturesGeneratePresignedUrls,

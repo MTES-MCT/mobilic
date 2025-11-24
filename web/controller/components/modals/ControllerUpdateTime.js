@@ -12,10 +12,10 @@ import _ from "lodash";
 import Modal from "../../../common/Modal";
 import Notice from "../../../common/Notice";
 import { NativeDateTimePicker } from "../../../common/NativeDateTimePicker";
-import { CONTROLLER_UPDATE_CONTROL_TIME } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { formatApiError } from "common/utils/errors";
+import { CONTROLLER_UPDATE_CONTROL_TIME } from "common/utils/apiQueries/controller";
 
 export default function ControllerUpdateTimeModal({
   open,
@@ -34,7 +34,10 @@ export default function ControllerUpdateTimeModal({
   );
 
   const minDateTime = React.useMemo(
-    () => controlData.qrCodeGenerationTime ? getStartOfDay(controlData.qrCodeGenerationTime) : getStartOfDay(controlData.creationTime - 30 * DAY),
+    () =>
+      controlData.qrCodeGenerationTime
+        ? getStartOfDay(controlData.qrCodeGenerationTime)
+        : getStartOfDay(controlData.creationTime - 30 * DAY),
     [controlData.qrCodeGenerationTime, controlData.creationTime]
   );
 
@@ -50,7 +53,7 @@ export default function ControllerUpdateTimeModal({
     }
   }, [newTime]);
 
-  const updateControlTime = async newTime => {
+  const updateControlTime = async (newTime) => {
     try {
       const apiResponse = await api.graphQlMutate(
         CONTROLLER_UPDATE_CONTROL_TIME,
@@ -87,7 +90,7 @@ export default function ControllerUpdateTimeModal({
         <form
           id="udpate-time-form"
           autoComplete="off"
-          onSubmit={async e => {
+          onSubmit={async (e) => {
             e.preventDefault();
             updateControlTime(newTime);
           }}

@@ -5,10 +5,6 @@ import {
   useStoreSyncedWithLocalStorage
 } from "common/store/store";
 import { useModals } from "common/utils/modals";
-import {
-  REJECT_EMPLOYMENT_MUTATION,
-  VALIDATE_EMPLOYMENT_MUTATION
-} from "common/utils/apiQueries";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import Grid from "@mui/material/Grid";
 import { InfoItem } from "../home/InfoField";
@@ -39,8 +35,12 @@ import { FieldTitle } from "./typography/FieldTitle";
 import { ExternalLink } from "./ExternalLink";
 import { useCompanyCertification } from "./hooks/useCompanyCertification";
 import { fr } from "@codegouvfr/react-dsfr";
+import {
+  REJECT_EMPLOYMENT_MUTATION,
+  VALIDATE_EMPLOYMENT_MUTATION
+} from "common/utils/apiQueries/employments";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   companyName: {
     fontWeight: 500,
     color: fr.colors.decisions.text.actionHigh.blueFrance.default,
@@ -85,16 +85,12 @@ export function EmploymentInfoCard({
 
   const emailsCurrentAdmins = useMemo(
     () =>
-      employment?.company.currentAdmins?.map(admin => admin.email).join(";"),
+      employment?.company.currentAdmins?.map((admin) => admin.email).join(";"),
     [employment]
   );
 
-  const {
-    isCertified,
-    frenchMedalLabel,
-    TextBadge,
-    CertificationImage
-  } = useCompanyCertification(employment.company?.currentCompanyCertification);
+  const { isCertified, frenchMedalLabel, TextBadge, CertificationImage } =
+    useCompanyCertification(employment.company?.currentCompanyCertification);
 
   const emailsCurrentAdminsDisplay = useMemo(
     () => (
@@ -105,7 +101,7 @@ export function EmploymentInfoCard({
           margin: "0px"
         }}
       >
-        {employment?.company.currentAdmins?.map(admin => (
+        {employment?.company.currentAdmins?.map((admin) => (
           <li
             key={admin.email}
             style={{
@@ -154,7 +150,7 @@ export function EmploymentInfoCard({
         await broadCastChannel.postMessage("update");
       },
       "validate-employment",
-      graphQLError => {
+      (graphQLError) => {
         if (graphQLErrorMatchesCode(graphQLError, "INVALID_RESOURCE")) {
           return "Opération impossible. Veuillez réessayer ultérieurement.";
         }
@@ -164,9 +160,8 @@ export function EmploymentInfoCard({
 
   const status = getEmploymentsStatus(employment);
 
-  const [statusText, statusColor] = EMPLOYMENT_STATUS_TO_TEXT_AND_COLOR(
-    useTheme()
-  )[status];
+  const [statusText, statusColor] =
+    EMPLOYMENT_STATUS_TO_TEXT_AND_COLOR(useTheme())[status];
 
   return (
     <Accordion
@@ -381,43 +376,45 @@ export function EmploymentInfoCard({
             plus saisir de temps de travail pour cette entreprise."
             />
           )}
-        {!hideStatus && !hideActions && status === EMPLOYMENT_STATUS.pending && (
-          <>
-            <Notice
-              description="La validation du rattachement vous donnera le droit d'enregistrer
+        {!hideStatus &&
+          !hideActions &&
+          status === EMPLOYMENT_STATUS.pending && (
+            <>
+              <Notice
+                description="La validation du rattachement vous donnera le droit d'enregistrer
               du temps de travail pour cette entreprise."
-            />
-            <Grid
-              className={classes.buttonContainer}
-              container
-              justifyContent="space-evenly"
-              spacing={2}
-            >
-              <Grid item>
-                <LoadingButton
-                  onClick={async () => await handleEmploymentValidation(true)}
-                >
-                  Valider le rattachement
-                </LoadingButton>
+              />
+              <Grid
+                className={classes.buttonContainer}
+                container
+                justifyContent="space-evenly"
+                spacing={2}
+              >
+                <Grid item>
+                  <LoadingButton
+                    onClick={async () => await handleEmploymentValidation(true)}
+                  >
+                    Valider le rattachement
+                  </LoadingButton>
+                </Grid>
+                <Grid item>
+                  <LoadingButton
+                    priority="secondary"
+                    onClick={() =>
+                      modals.open("confirmation", {
+                        textButtons: true,
+                        title: "Confirmer rejet du rattachement",
+                        handleConfirm: async () =>
+                          await handleEmploymentValidation(false)
+                      })
+                    }
+                  >
+                    Rejeter
+                  </LoadingButton>
+                </Grid>
               </Grid>
-              <Grid item>
-                <LoadingButton
-                  priority="secondary"
-                  onClick={() =>
-                    modals.open("confirmation", {
-                      textButtons: true,
-                      title: "Confirmer rejet du rattachement",
-                      handleConfirm: async () =>
-                        await handleEmploymentValidation(false)
-                    })
-                  }
-                >
-                  Rejeter
-                </LoadingButton>
-              </Grid>
-            </Grid>
-          </>
-        )}
+            </>
+          )}
       </AccordionDetails>
     </Accordion>
   );
