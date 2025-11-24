@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState
 } from "react";
 
@@ -31,7 +32,7 @@ function useRegulatoryAlertsSummary() {
         companyIds: [companyId],
         month: date.toISOString().slice(0, 7),
         uniqueUserId: userId,
-        teamId: !userId ? teamId : null
+        teamId: userId ? null : teamId
       },
       {
         fetchPolicy: "cache-first"
@@ -64,10 +65,10 @@ export const useRegulatoryAlertsSummaryContext = () =>
   useContext(RegulatoryAlertsSummaryContext);
 
 export function RegulatoryAlertsSummaryProvider({ children }) {
+  const summary = useRegulatoryAlertsSummary();
+  const value = useMemo(() => summary, [summary]);
   return (
-    <RegulatoryAlertsSummaryContext.Provider
-      value={{ ...useRegulatoryAlertsSummary() }}
-    >
+    <RegulatoryAlertsSummaryContext.Provider value={value}>
       {children}
     </RegulatoryAlertsSummaryContext.Provider>
   );
