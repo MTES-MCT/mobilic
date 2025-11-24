@@ -266,8 +266,6 @@ export const ADMIN_DELETED_MISSIONS_QUERY = gql`
       adminedCompanies(companyIds: $companyIds) {
         id
         missionsDeleted(first: $first) {
-        id
-        missionsDeleted {
           edges {
             node {
               id
