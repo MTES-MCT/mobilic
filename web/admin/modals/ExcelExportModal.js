@@ -261,6 +261,7 @@ export default function ExcelExportModal({
                   json: options
                 });
                 setIsEnabledDownload(false);
+                handleClose();
                 await addExport();
               }, "download-company-report")
             }
