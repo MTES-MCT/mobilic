@@ -226,12 +226,6 @@ export default function ExcelExportModal({
               </FormControl>
             </Grid>
           </Grid>
-          <Typography>
-            En cas de téléchargement des données pour un grand nombre de
-            salariés en une fois, plusieurs fichiers vous seront envoyés
-            simultanément. Chacun contiendra les temps de travail d’un groupe de
-            salariés. Le tri s’effectuera par ordre alphabétique.
-          </Typography>
         </>
       }
       actions={
