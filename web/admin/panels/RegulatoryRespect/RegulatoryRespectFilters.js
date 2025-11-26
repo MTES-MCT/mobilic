@@ -76,6 +76,8 @@ export default function RegulatoryRespectFilters() {
       const selectedTeams = teams.filter((t) => t.selected);
       if (selectedTeams.length === 1) {
         onSelectTeamId(selectedTeams[0].id);
+      } else if (selectedTeams.length === 0) {
+        onSelectTeamId(null);
       }
     }
   }, [users, teams]);
