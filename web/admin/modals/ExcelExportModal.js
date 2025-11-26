@@ -2,7 +2,6 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import TextField from "@mui/material/TextField";
-import FormControl from "@mui/material/FormControl";
 import { useApi } from "common/utils/api";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../../common/Snackbar";
@@ -10,7 +9,6 @@ import { useMatomo } from "@datapunt/matomo-tracker-react";
 import Grid from "@mui/material/Grid";
 import { isoFormatLocalDate } from "common/utils/time";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
-import { CheckboxField } from "../../common/CheckboxField";
 import { Autocomplete } from "@mui/lab";
 import {
   getUsersToSelectFromTeamSelection,
@@ -49,7 +47,6 @@ export default function ExcelExportModal({
   const { addExport } = useExportsContext();
   const [minDate, setMinDate] = React.useState(defaultMinDate);
   const [maxDate, setMaxDate] = React.useState(defaultMaxDate);
-  const [isOneFileByEmployee, setIsOneFileByEmployee] = React.useState(false);
 
   const [selectedCompany, setSelectedCompany] = React.useState(defaultCompany);
   const [users, setUsers] = React.useState(initialUsers);
@@ -69,7 +66,7 @@ export default function ExcelExportModal({
 
   React.useEffect(
     () => setIsEnabledDownload(true),
-    [minDate, maxDate, isOneFileByEmployee, users, selectedCompany]
+    [minDate, maxDate, users, selectedCompany]
   );
 
   const today = new Date();
@@ -215,16 +212,6 @@ export default function ExcelExportModal({
                 />
               </Grid>
             </DateOrDateTimeRangeSelectionContext>
-            <Grid item sm={12} className={classes.flexGrow}>
-              <FormControl component="fieldset" variant="standard">
-                <CheckboxField
-                  checked={isOneFileByEmployee}
-                  onChange={(e) => setIsOneFileByEmployee(e.target.checked)}
-                  label="Générer un fichier unique par employé pour la période concernée"
-                  required={false}
-                />
-              </FormControl>
-            </Grid>
           </Grid>
         </>
       }
@@ -237,7 +224,7 @@ export default function ExcelExportModal({
                 let selectedUsers = users.filter((u) => u.selected);
                 const options = {
                   company_ids: [selectedCompany.id],
-                  one_file_by_employee: isOneFileByEmployee
+                  one_file_by_employee: true
                 };
                 if (selectedUsers.length > 0)
                   options["user_ids"] = selectedUsers.map((u) => u.id);
