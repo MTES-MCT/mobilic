@@ -65,6 +65,10 @@ const DisplayAlerts = (alerts, onClickDay, uniqueUserId) => {
                   <Badge
                     small
                     severity={alerts.nbAlerts === 0 ? "success" : "warning"}
+                    style={{
+                      marginRight:
+                        uniqueUserId && alerts.nbAlerts === 0 ? "15px" : ""
+                    }}
                   >
                     {alerts.nbAlerts === 0
                       ? "Seuil respecté"
