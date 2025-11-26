@@ -155,7 +155,7 @@ export const AlertsRecap = ({ ...otherProps }) => {
         {DisplayAlerts(summary.weeklyAlerts, uniqueUserId)}
       </Stack>
       <ExternalLink
-        url="/resources/home"
+        url="/resources/regulations"
         text="En savoir plus sur les seuils à respecter par secteur d’activité"
         withIcon
       />
