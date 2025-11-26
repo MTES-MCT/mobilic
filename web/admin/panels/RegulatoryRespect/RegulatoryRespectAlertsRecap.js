@@ -72,7 +72,7 @@ const DisplayAlerts = (alerts, onClickDay, uniqueUserId) => {
                   >
                     {alerts.nbAlerts === 0
                       ? "Seuil respecté"
-                      : `${alerts.nbAlerts} dépassements`}
+                      : `${alerts.nbAlerts} dépassement${alerts.nbAlerts > 1 ? "s" : ""}`}
                   </Badge>
                 </Stack>
               }
