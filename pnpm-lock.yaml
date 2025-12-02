@@ -262,9 +262,6 @@ importers:
       recharts:
         specifier: ^2.15.4
         version: 2.15.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      remixicon:
-        specifier: 2.5.0
-        version: 2.5.0
       reselect:
         specifier: ^4.0.0
         version: 4.1.8
@@ -12509,12 +12506,6 @@ packages:
       }
     engines: { node: ">= 0.10" }
 
-  remixicon@2.5.0:
-    resolution:
-      {
-        integrity: sha512-q54ra2QutYDZpuSnFjmeagmEiN9IMo56/zz5dDNitzKD23oFRw77cWo4TsrAdmdkPiEn8mxlrTqxnkujDbEGww==,
-      }
-
   remove-trailing-separator@1.1.0:
     resolution:
       {
@@ -23446,8 +23437,6 @@ snapshots:
       react: 18.3.1
 
   relateurl@0.2.7: {}
-
-  remixicon@2.5.0: {}
 
   remove-trailing-separator@1.1.0: {}
 
