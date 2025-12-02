@@ -123,7 +123,7 @@
   },
   "engines": {
     "node": "18.x",
-    "pnpm": ">=10"
+    "pnpm": "10.x"
   },
   "browserslist": {
     "production": [
