@@ -1,5 +1,5 @@
 import React from "react";
-import { ApolloClient, ApolloLink, HttpLink, Observable } from "@apollo/client";
+import { ApolloClient, ApolloLink, HttpLink } from "@apollo/client";
 import { InMemoryCache } from "@apollo/client/cache";
 import { onError } from "@apollo/client/link/error";
 import * as Sentry from "@sentry/browser";
@@ -47,32 +47,6 @@ class Api {
 
   initApolloClientIfNeeded() {
     if (!this.apolloClient) {
-      const timeoutLink = (ms) =>
-        new ApolloLink((operation, forward) => {
-          return new Observable((observer) => {
-            const timer = setTimeout(() => {
-              observer.error(new Error(`Timeout after ${ms}ms`));
-            }, ms);
-
-            const subscription = forward(operation).subscribe({
-              next: (result) => {
-                clearTimeout(timer);
-                observer.next(result);
-                observer.complete();
-              },
-              error: (err) => {
-                clearTimeout(timer);
-                observer.error(err);
-              }
-            });
-
-            // Cleanup function
-            return () => {
-              clearTimeout(timer);
-              subscription.unsubscribe();
-            };
-          });
-        });
       this.apolloClient = new ApolloClient({
         uri: this.uri,
         link: ApolloLink.from([
@@ -81,7 +55,6 @@ class Api {
               this.logout({});
             }
           }),
-          timeoutLink(2000),
           new ApolloLink((operation, forward) => {
             operation.setContext(({ headers = {} }) => ({
               headers: {
