@@ -28,7 +28,6 @@
     "@svgr/webpack": "^6.0.0",
     "@typeform/embed-react": "^2.30.0",
     "@yudiel/react-qr-scanner": "^2.3.1",
-    "apollo-link-timeout": "^5.0.4",
     "babel-jest": "^29.7.0",
     "babel-loader": "^9.1.3",
     "babel-plugin-named-asset-import": "^0.3.5",
@@ -114,18 +113,15 @@
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "node scripts/start.js",
     "start-clean": "rm -rf node_modules/.cache && node scripts/start.js",
-    "build": "node scripts/build.js",
+    "build": "react-dsfr update-icons && node scripts/build.js",
     "build-analyze": "INLINE_RUNTIME_CHUNK=false node scripts/build.js --analyze",
     "build-with-nginx": "pnpm build && scripts/start_nginx.sh",
     "test": "node scripts/test.js --passWithNoTests",
     "lint": "NODE_ENV=development eslint --config eslint.config.mjs --ext .js,.jsx ./",
-    "postinstall": "react-dsfr copy-static-assets",
-    "predev": "react-dsfr update-icons",
-    "prebuild": "react-dsfr update-icons"
+    "copy-assets": "react-dsfr copy-static-assets"
   },
   "engines": {
-    "node": ">=16",
-    "yarn": ">=1.19 <2"
+    "node": ">=16"
   },
   "browserslist": {
     "production": [
@@ -200,7 +196,7 @@
       "!web/**/*.d.ts"
     ],
     "setupFiles": [
-      "react-app-polyfill/jsdom"
+      "<rootDir>/jest.setup.js"
     ],
     "setupFilesAfterEnv": [
       "<rootDir>/web/setupTests.js"
