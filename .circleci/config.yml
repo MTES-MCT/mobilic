@@ -7,16 +7,15 @@ jobs:
     steps:
       - checkout:
           method: full
-      - run: npm install -g pnpm@10.24.0
       - restore_cache:
           keys:
             - v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
-      - run: pnpm install --frozen-lockfile
+      - run: npx pnpm@10.24.0 install --frozen-lockfile
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
-      - run: pnpm run lint
+      - run: npx pnpm@10.24.0 run lint
 
   build:
     docker:
@@ -42,7 +41,6 @@ jobs:
     steps:
       - checkout:
           method: full
-      - run: npm install -g pnpm@10.24.0
       - run:
           name: Add Scalingo to known_hosts
           command: ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
