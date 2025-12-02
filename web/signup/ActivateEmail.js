@@ -5,7 +5,7 @@ import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import Typography from "@mui/material/Typography";
-import jwt_decode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { currentUserId } from "common/utils/cookie";
 
 import { useSnackbarAlerts } from "../common/Snackbar";
@@ -33,7 +33,7 @@ export function ActivateEmail() {
     else {
       let userId;
       try {
-        const decodedToken = jwt_decode(token);
+        const decodedToken = jwtDecode(token);
         userId = decodedToken["user_id"];
       } catch (err) {
         captureSentryException(err);

@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import { LoadingButton } from "common/components/LoadingButton";
 import Box from "@mui/material/Box";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
-import jwt_decode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import Grid from "@mui/material/Grid";
 import { useLoadingScreen } from "common/utils/loading";
 import { Header } from "../common/Header";
@@ -68,7 +68,7 @@ export function ResetPassword() {
       const tok = queryString.get("token");
       setToken(tok);
       try {
-        const decodedToken = jwt_decode(tok);
+        const decodedToken = jwtDecode(tok);
         // eslint-disable-next-line no-prototype-builtins
         if (!decodedToken.user_id || !decodedToken.hasOwnProperty("hash")) {
           throw Error;

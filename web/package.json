@@ -2,6 +2,9 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "pnpm": ">=10.0.0"
+  },
   "dependencies": {
     "global": "^4.4.0",
     "react-app-polyfill": "^3.0.0"

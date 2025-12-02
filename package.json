@@ -36,7 +36,7 @@
     "camelcase": "^5.3.1",
     "case-sensitive-paths-webpack-plugin": "^2.2.0",
     "classnames": "^2.2.6",
-    "common": "0.1.0",
+    "common": "workspace:*",
     "core-js": "^3.8.1",
     "crisp-sdk-web": "^1.0.18",
     "css-loader": "^6.0.0",
@@ -62,9 +62,11 @@
     "jest": "^30.0.0",
     "jest-resolve": "^26.5.0",
     "jest-watch-typeahead": "^0.5.0",
+    "jwt-decode": "^2.2.0",
     "libphonenumber-js": "^1.11.1",
     "lodash": "^4.17.19",
     "mini-css-extract-plugin": "^2.9.0",
+    "minimist": "^1.2.8",
     "moment": "^2.29.4",
     "pnp-webpack-plugin": "^1.5.0",
     "postcss": "^8.4.0",
@@ -105,21 +107,21 @@
     "workbox-webpack-plugin": "^6.0.2"
   },
   "scripts": {
+    "preinstall": "npx -y only-allow pnpm",
+    "postinstall": "react-dsfr copy-static-assets",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "node scripts/start.js",
-    "start-clean": "rm -rf node_modules/.cache && node scripts/start.js",
-    "build": "node scripts/build.js",
-    "build-analyze": "INLINE_RUNTIME_CHUNK=false node scripts/build.js --analyze",
-    "build-with-nginx": "yarn build && scripts/start_nginx.sh",
+    "start": "react-dsfr update-icons && node scripts/start.js",
+    "start-clean": "react-dsfr update-icons && rm -rf node_modules/.cache && node scripts/start.js",
+    "build": "react-dsfr update-icons && node scripts/build.js",
+    "build-analyze": "react-dsfr update-icons && INLINE_RUNTIME_CHUNK=false node scripts/build.js --analyze",
+    "build-with-nginx": "pnpm build && scripts/start_nginx.sh",
     "test": "node scripts/test.js --passWithNoTests",
     "lint": "NODE_ENV=development eslint --config eslint.config.mjs --ext .js,.jsx ./",
-    "postinstall": "react-dsfr copy-static-assets",
-    "predev": "react-dsfr update-icons",
-    "prebuild": "react-dsfr update-icons"
+    "check-pm": "node common/utils/check-package-manager.mjs"
   },
   "engines": {
     "node": ">=16",
-    "yarn": ">=1.19 <2"
+    "pnpm": ">=10.0.0"
   },
   "browserslist": {
     "production": [
