@@ -121,7 +121,8 @@
     "copy-assets": "react-dsfr copy-static-assets"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=16",
+    "pnpm": ">=10"
   },
   "browserslist": {
     "production": [

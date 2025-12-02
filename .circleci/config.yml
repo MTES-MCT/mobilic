@@ -28,6 +28,7 @@ jobs:
           keys:
             - v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
       - run: pnpm install --frozen-lockfile
+      - run: pnpm run copy-assets
       - save_cache:
           paths:
             - node_modules
