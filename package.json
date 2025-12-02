@@ -111,15 +111,15 @@
     "workbox-webpack-plugin": "^6.0.2"
   },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "node scripts/start.js",
     "start-clean": "rm -rf node_modules/.cache && node scripts/start.js",
-    "build": "react-dsfr update-icons && node scripts/build.js",
+    "build": "react-dsfr copy-static-assets && react-dsfr update-icons && node scripts/build.js",
     "build-analyze": "INLINE_RUNTIME_CHUNK=false node scripts/build.js --analyze",
     "build-with-nginx": "pnpm build && scripts/start_nginx.sh",
     "test": "node scripts/test.js --passWithNoTests",
-    "lint": "NODE_ENV=development eslint --config eslint.config.mjs --ext .js,.jsx ./",
-    "copy-assets": "react-dsfr copy-static-assets"
+    "lint": "NODE_ENV=development eslint --config eslint.config.mjs --ext .js,.jsx ./"
   },
   "engines": {
     "node": "20.x"
