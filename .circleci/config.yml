@@ -34,7 +34,7 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
-      - run: pnpm run test
+      - run: npx pnpm@10.24.0 run test
 
   deploy:
     docker:

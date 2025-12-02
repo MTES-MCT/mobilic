@@ -68,6 +68,7 @@
     "libphonenumber-js": "^1.11.1",
     "lodash": "^4.17.19",
     "mini-css-extract-plugin": "^2.9.0",
+    "minimist": "^1.2.8",
     "moment": "^2.29.4",
     "pnp-webpack-plugin": "^1.5.0",
     "postcss": "^8.4.0",
