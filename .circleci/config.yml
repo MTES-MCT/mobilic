@@ -9,13 +9,25 @@ jobs:
           method: full
       - restore_cache:
           keys:
-            - v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
-      - run: yarn install --frozen-lockfile
+            - v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
+      - run:
+          name: Install pnpm
+          shell : bash
+          command: |
+            curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION=10.0.0 sh -
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
+      - run:
+          name: Install dependencies
+          command: |
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
+            pnpm install --frozen-lockfile
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
-      - run: yarn run lint
+          key: v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
+      - run: pnpm run lint
 
   build:
     docker:
@@ -26,13 +38,25 @@ jobs:
           method: full
       - restore_cache:
           keys:
-            - v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
-      - run: yarn install --frozen-lockfile
+            - v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
+      - run:
+          name: Install pnpm
+          shell : bash
+          command: |
+            curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION=10.0.0 sh -
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
+      - run:
+          name: Install dependencies
+          command: |
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
+            pnpm install --frozen-lockfile
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
-      - run: yarn test
+          key: v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
+      - run: pnpm run test
 
   deploy:
     docker:
@@ -69,4 +93,3 @@ workflows:
               only:
                 - master
                 - prod
-

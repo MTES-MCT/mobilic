@@ -1,6 +1,5 @@
 import React from "react";
 import { ApolloClient, ApolloLink, HttpLink } from "@apollo/client";
-import ApolloLinkTimeout from "apollo-link-timeout";
 import { InMemoryCache } from "@apollo/client/cache";
 import { onError } from "@apollo/client/link/error";
 import * as Sentry from "@sentry/browser";
@@ -47,7 +46,7 @@ class Api {
   }
 
   initApolloClientIfNeeded() {
-    if (!this.apolloClient)
+    if (!this.apolloClient) {
       this.apolloClient = new ApolloClient({
         uri: this.uri,
         link: ApolloLink.from([
@@ -56,7 +55,6 @@ class Api {
               this.logout({});
             }
           }),
-          new ApolloLinkTimeout(0),
           new ApolloLink((operation, forward) => {
             operation.setContext(({ headers = {} }) => ({
               headers: {
@@ -68,9 +66,7 @@ class Api {
             return forward(operation);
           }),
           ApolloLink.split(
-            (operation) => {
-              return !!operation.getContext().nonPublicApi;
-            },
+            (operation) => !!operation.getContext().nonPublicApi,
             new HttpLink({
               uri: this.nonPublicUri,
               credentials: "same-origin"
@@ -80,6 +76,7 @@ class Api {
         ]),
         cache: new InMemoryCache()
       });
+    }
   }
 
   async graphQlQuery(query, variables, other) {
