@@ -110,7 +110,7 @@
     "start-clean": "rm -rf node_modules/.cache && node scripts/start.js",
     "build": "node scripts/build.js",
     "build-analyze": "INLINE_RUNTIME_CHUNK=false node scripts/build.js --analyze",
-    "build-with-nginx": "yarn build && scripts/start_nginx.sh",
+    "build-with-nginx": "pnpm build && scripts/start_nginx.sh",
     "test": "node scripts/test.js --passWithNoTests",
     "lint": "NODE_ENV=development eslint --config eslint.config.mjs --ext .js,.jsx ./",
     "postinstall": "react-dsfr copy-static-assets",
