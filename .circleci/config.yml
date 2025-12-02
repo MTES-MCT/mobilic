@@ -20,18 +20,16 @@ jobs:
 
   build:
     docker:
-      - image: cimg/node:18.18.0
+      - image: cimg/node:20.18.1
 
     steps:
       - checkout:
           method: full
-      - run: corepack enable
-      - run: corepack prepare pnpm@10.24.0 --activate
       - restore_cache:
           keys:
             - v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run copy-assets
+      - run: npx pnpm@10.24.0 install --frozen-lockfile
+      - run: npx pnpm@10.24.0 run copy-assets
       - save_cache:
           paths:
             - node_modules
