@@ -25,7 +25,8 @@ jobs:
     steps:
       - checkout:
           method: full
-      - run: npm install -g pnpm@10.24.0
+      - run: corepack enable
+      - run: corepack prepare pnpm@10.24.0 --activate
       - restore_cache:
           keys:
             - v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
