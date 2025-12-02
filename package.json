@@ -122,8 +122,7 @@
     "copy-assets": "react-dsfr copy-static-assets"
   },
   "engines": {
-    "node": "18.x",
-    "pnpm": "10.x"
+    "node": "20.x"
   },
   "packageManager": "pnpm@10.1.0",
   "browserslist": {
