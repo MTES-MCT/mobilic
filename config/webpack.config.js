@@ -279,7 +279,9 @@ module.exports = function(webpackEnv) {
           "react-dom$": "react-dom/profiling",
           "scheduler/tracing": "scheduler/tracing-profiling"
         }),
-        ...(modules.webpackAliases || {})
+        ...(modules.webpackAliases || {}),
+        common: path.resolve(__dirname, "../common"),
+        web: path.resolve(__dirname, "../web")
       },
       fallback: {
         module: false,
