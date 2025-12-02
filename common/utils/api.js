@@ -1,6 +1,5 @@
 import React from "react";
-import { ApolloClient, ApolloLink, HttpLink } from "@apollo/client";
-import ApolloLinkTimeout from "apollo-link-timeout";
+import { ApolloClient, ApolloLink, HttpLink, Observable } from "@apollo/client";
 import { InMemoryCache } from "@apollo/client/cache";
 import { onError } from "@apollo/client/link/error";
 import * as Sentry from "@sentry/browser";
@@ -47,7 +46,33 @@ class Api {
   }
 
   initApolloClientIfNeeded() {
-    if (!this.apolloClient)
+    if (!this.apolloClient) {
+      const timeoutLink = (ms) =>
+        new ApolloLink((operation, forward) => {
+          return new Observable((observer) => {
+            const timer = setTimeout(() => {
+              observer.error(new Error(`Timeout after ${ms}ms`));
+            }, ms);
+
+            const subscription = forward(operation).subscribe({
+              next: (result) => {
+                clearTimeout(timer);
+                observer.next(result);
+                observer.complete();
+              },
+              error: (err) => {
+                clearTimeout(timer);
+                observer.error(err);
+              }
+            });
+
+            // Cleanup function
+            return () => {
+              clearTimeout(timer);
+              subscription.unsubscribe();
+            };
+          });
+        });
       this.apolloClient = new ApolloClient({
         uri: this.uri,
         link: ApolloLink.from([
@@ -56,7 +81,7 @@ class Api {
               this.logout({});
             }
           }),
-          new ApolloLinkTimeout(0),
+          timeoutLink(2000),
           new ApolloLink((operation, forward) => {
             operation.setContext(({ headers = {} }) => ({
               headers: {
@@ -68,9 +93,7 @@ class Api {
             return forward(operation);
           }),
           ApolloLink.split(
-            (operation) => {
-              return !!operation.getContext().nonPublicApi;
-            },
+            (operation) => !!operation.getContext().nonPublicApi,
             new HttpLink({
               uri: this.nonPublicUri,
               credentials: "same-origin"
@@ -80,6 +103,7 @@ class Api {
         ]),
         cache: new InMemoryCache()
       });
+    }
   }
 
   async graphQlQuery(query, variables, other) {
