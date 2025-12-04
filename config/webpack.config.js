@@ -307,8 +307,11 @@ module.exports = function(webpackEnv) {
       strictExportPresence: true,
       rules: [
         // Handle problematic ES modules that need process polyfill
+        // Disable fullySpecified for node_modules to fix 'process/browser' resolution issues
+        // See: https://github.com/webpack/webpack.js.org/issues/3975
         {
-          test: /node_modules\/barcode-detector/,
+          test: /\.m?js$/,
+          include: /node_modules/,
           resolve: {
             fullySpecified: false
           }
@@ -358,7 +361,8 @@ module.exports = function(webpackEnv) {
               test: /\.(js|mjs|jsx|ts|tsx)$/,
               include: [
                 paths.appSrc,
-                paths.commonSrc
+                paths.commonSrc,
+                paths.playgroundSrc
               ].filter(Boolean),
               loader: require.resolve("babel-loader"),
               options: {
