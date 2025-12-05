@@ -1,5 +1,5 @@
 module.exports = {
-  presets: ["babel-preset-react-app"],
+  presets: ["babel-preset-react-app", "@babel/preset-react"],
   plugins: [
     ["@babel/plugin-proposal-private-property-in-object", { loose: "true" }],
     // React Fast Refresh automatique en développement
@@ -7,6 +7,5 @@ module.exports = {
       "react-refresh/babel",
       { skipEnvCheck: true }
     ]
-  ].filter(Boolean),
-  ignore: ["**/playground/**", "**/node_modules/**"]
+  ].filter(Boolean)
 };

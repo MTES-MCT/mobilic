@@ -327,7 +327,7 @@ importers:
         specifier: ^7.23.2
         version: 7.28.5(@babel/core@7.28.5)
       "@babel/preset-react":
-        specifier: ^7.22.15
+        specifier: ^7.28.5
         version: 7.28.5(@babel/core@7.28.5)
       "@babel/preset-typescript":
         specifier: ^7.23.2
