@@ -358,7 +358,8 @@ module.exports = function(webpackEnv) {
               test: /\.(js|mjs|jsx|ts|tsx)$/,
               include: [
                 paths.appSrc,
-                paths.commonSrc
+                paths.commonSrc,
+                paths.playgroundSrc
               ].filter(Boolean),
               loader: require.resolve("babel-loader"),
               options: {

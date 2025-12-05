@@ -9,7 +9,6 @@ import { formatApiError } from "common/utils/errors";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import Grid from "@mui/material/Grid";
 import { DAY, isoFormatLocalDate } from "common/utils/time";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { DateOrDateTimeRangeSelectionContext } from "common/components/DateOrDateTimeRangeSelectionContext";
 import SignFilesCheckbox from "../../common/SignFiles";
 import {
@@ -23,6 +22,7 @@ import { CompanyFilter } from "../components/CompanyFilter";
 import Modal, { modalStyles } from "../../common/Modal";
 import { syncUsers } from "./ExcelExportModal";
 import Notice from "../../common/Notice";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 
 export default function C1BExportModal({
   open,
@@ -77,7 +77,7 @@ export default function C1BExportModal({
 
   React.useEffect(() => {
     setCompanies(
-      companies.map(c => {
+      companies.map((c) => {
         return { ...c, selected: c.id === defaultCompany.id };
       })
     );
@@ -92,13 +92,13 @@ export default function C1BExportModal({
     setMaxDate(defaultMaxDate);
   }, [open]);
 
-  const handleUserFilterChange = newUsers => {
+  const handleUserFilterChange = (newUsers) => {
     const unselectedTeams = unselectAndGetAllTeams(teams);
     setTeams(unselectedTeams);
     setUsers(newUsers);
   };
 
-  const handleTeamFilterChange = newTeams => {
+  const handleTeamFilterChange = (newTeams) => {
     const usersToSelect = getUsersToSelectFromTeamSelection(newTeams, users);
     setUsers(usersToSelect);
     setTeams(newTeams);
@@ -222,7 +222,7 @@ export default function C1BExportModal({
                   disableCloseOnSelect={false}
                   disableMaskedInput={true}
                   maxDate={today}
-                  renderInput={props => (
+                  renderInput={(props) => (
                     <TextField
                       {...props}
                       required
@@ -248,7 +248,7 @@ export default function C1BExportModal({
                   disableCloseOnSelect={false}
                   disableMaskedInput={true}
                   maxDate={today}
-                  renderInput={props => (
+                  renderInput={(props) => (
                     <TextField
                       {...props}
                       required
@@ -275,17 +275,17 @@ export default function C1BExportModal({
         <>
           <LoadingButton
             disabled={!minDate || !maxDate || dateRangeError}
-            onClick={async e => {
-              let selectedCompanies = _companies.filter(c => c.selected);
+            onClick={async (e) => {
+              let selectedCompanies = _companies.filter((c) => c.selected);
               if (selectedCompanies.length === 0)
                 selectedCompanies = _companies;
-              let selectedUsers = users.filter(u => u.selected);
+              let selectedUsers = users.filter((u) => u.selected);
               const options = {
-                company_ids: selectedCompanies.map(c => c.id),
+                company_ids: selectedCompanies.map((c) => c.id),
                 employee_version: employeeVersion
               };
               if (selectedUsers.length > 0)
-                options["user_ids"] = selectedUsers.map(u => u.id);
+                options["user_ids"] = selectedUsers.map((u) => u.id);
               if (minDate) options["min_date"] = isoFormatLocalDate(minDate);
               if (maxDate) options["max_date"] = isoFormatLocalDate(maxDate);
               options["with_digital_signatures"] = sign;

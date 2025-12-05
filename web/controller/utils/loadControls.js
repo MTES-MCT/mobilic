@@ -1,9 +1,9 @@
 import React from "react";
 import { useApi } from "common/utils/api";
 
-import { CONTROLLER_USER_CONTROLS_QUERY } from "common/utils/apiQueries";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { isoFormatLocalDate } from "common/utils/time";
+import { CONTROLLER_USER_CONTROLS_QUERY } from "common/utils/apiQueries/controller";
 
 export const useLoadControls = () => {
   const api = useApi();

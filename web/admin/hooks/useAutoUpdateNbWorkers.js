@@ -1,8 +1,8 @@
 import React from "react";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import { UPDATE_COMPANY_DETAILS } from "common/utils/apiQueries";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
+import { UPDATE_COMPANY_DETAILS } from "common/utils/apiQueries/admin";
 
 export function useAutoUpdateNbWorkers(company, validEmployments, adminStore) {
   const api = useApi();

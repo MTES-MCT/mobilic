@@ -10,13 +10,12 @@ import {
 import { formatApiError } from "common/utils/errors";
 import Typography from "@mui/material/Typography";
 import { currentUserId } from "common/utils/cookie";
-
+import { captureSentryException } from "common/utils/sentry";
+import { usePageTitle } from "../common/UsePageTitle";
 import {
   GET_EMPLOYMENT_QUERY,
   REDEEM_INVITE_QUERY
-} from "common/utils/apiQueries";
-import { captureSentryException } from "common/utils/sentry";
-import { usePageTitle } from "../common/UsePageTitle";
+} from "common/utils/apiQueries/employments";
 
 export function RedeemInvite() {
   usePageTitle("Lien d'activation - Mobilic");

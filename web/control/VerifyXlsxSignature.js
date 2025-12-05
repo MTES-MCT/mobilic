@@ -11,11 +11,11 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useApi } from "common/utils/api";
 
 import { useSnackbarAlerts } from "../common/Snackbar";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";
 import { usePageTitle } from "../common/UsePageTitle";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 
 const STATUS_MAP = {
   SUCCESS: {
@@ -24,8 +24,7 @@ const STATUS_MAP = {
   },
   INTERNAL_ERROR: {
     title: "erreur interne",
-    desc:
-      "La vérification d'intégrité n'a pas pu être effectuée à cause d'une erreur interne. Veuillez réessayer plus tard."
+    desc: "La vérification d'intégrité n'a pas pu être effectuée à cause d'une erreur interne. Veuillez réessayer plus tard."
   },
   NETWORK_ERROR: {
     title: "erreur de connexion",
@@ -49,12 +48,11 @@ const STATUS_MAP = {
   },
   UNAVAILABLE: {
     title: "service non disponible",
-    desc:
-      "Impossible d'effectuer la vérification d'intégrité, veuillez réessayer plus tard."
+    desc: "Impossible d'effectuer la vérification d'intégrité, veuillez réessayer plus tard."
   }
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     paddingBottom: theme.spacing(2)
   },
@@ -86,8 +84,8 @@ const useStyles = makeStyles(theme => ({
           ? theme.palette.success.main
           : theme.palette.error.main
         : isDragActive || fileName
-        ? theme.palette.primary.main
-        : theme.palette.grey[500],
+          ? theme.palette.primary.main
+          : theme.palette.grey[500],
     borderStyle: "dashed",
     backgroundColor: ({ verifyResponse }) =>
       verifyResponse
@@ -137,7 +135,7 @@ export function XlsxVerifier() {
   const [verifyResponse, setVerifyResponse] = React.useState(null);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    validator: file => {
+    validator: (file) => {
       if (!file.name.endsWith(".xlsx"))
         return {
           code: "bad-extension",
@@ -145,7 +143,7 @@ export function XlsxVerifier() {
         };
     },
     accept: ".xlsx",
-    onDropAccepted: async files => {
+    onDropAccepted: async (files) => {
       const file = files[0];
       setFileName(file.name);
       setLoading(true);
@@ -169,7 +167,7 @@ export function XlsxVerifier() {
       }
       setLoading(false);
     },
-    onDropRejected: fileRejections => {
+    onDropRejected: (fileRejections) => {
       alerts.error(
         "Fichier invalide. Seuls les fichiers avec extension .xlsx sont acceptés",
         "rejection",

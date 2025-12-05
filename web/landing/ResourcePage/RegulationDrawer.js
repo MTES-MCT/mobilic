@@ -11,7 +11,7 @@ import { RegulationArticlesBlock } from "./RegulationLegalArticle";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 import { Stack } from "@mui/material";
 
-export const useStyles = makeStyles(theme => ({
+export const useStyles = makeStyles((theme) => ({
   container: {
     paddingTop: theme.spacing(2),
     paddingLeft: 0,
@@ -81,10 +81,8 @@ export const RegulationDrawerContextProvider = ({ children }) => {
   const classes = useStyles();
 
   const [rule, setRule] = React.useState(null);
-  const [
-    displayComputationDetails,
-    setDisplayComputationDetails
-  ] = React.useState(false);
+  const [displayComputationDetails, setDisplayComputationDetails] =
+    React.useState(false);
 
   function openDrawer(rule_, shouldDisplayComputationDetails = false) {
     setRule(rule_);
@@ -102,6 +100,7 @@ export const RegulationDrawerContextProvider = ({ children }) => {
         onOpen={() => {}}
         onClose={() => setRule(null)}
         PaperProps={{ sx: { width: { xs: "100vw", sm: 400 } } }}
+        ModalProps={{ sx: { zIndex: 1510 } }}
       >
         {rule && (
           <Container maxWidth={false} className={classes.container}>

@@ -5,10 +5,6 @@ import { useApi } from "common/utils/api";
 import { Header } from "../common/Header";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
-import {
-  THIRD_PARTY_CLIENT_EMPLOYMENT_ACCEPT,
-  THIRD_PARTY_CLIENT_EMPLOYMENT_QUERY
-} from "common/utils/apiQueries";
 import { useLocation } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import { useModals } from "common/utils/modals";
@@ -17,8 +13,12 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import { usePageTitle } from "../common/UsePageTitle";
 import Notice from "../common/Notice";
+import {
+  THIRD_PARTY_CLIENT_EMPLOYMENT_ACCEPT,
+  THIRD_PARTY_CLIENT_EMPLOYMENT_QUERY
+} from "common/utils/apiQueries/auth";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     textAlign: "left",
     paddingRight: theme.spacing(12),
@@ -55,19 +55,13 @@ export function SyncEmployeeValidation() {
   const [clientName, setClientName] = React.useState("");
   const [companyName, setCompanyName] = React.useState("");
   const [email, setEmail] = React.useState("");
-  const [
-    mustAcceptAccountCreation,
-    setMustAcceptAccountCreation
-  ] = React.useState(false);
+  const [mustAcceptAccountCreation, setMustAcceptAccountCreation] =
+    React.useState(false);
   const [hasCreatedAccount, setHasCreatedAccount] = React.useState(false);
-  const [
-    mustAcceptEmploymentCreation,
-    setMustAcceptEmploymentCreation
-  ] = React.useState(false);
-  const [
-    hasAcceptedTokenGeneration,
-    setHasAcceptedTokenGeneration
-  ] = React.useState(false);
+  const [mustAcceptEmploymentCreation, setMustAcceptEmploymentCreation] =
+    React.useState(false);
+  const [hasAcceptedTokenGeneration, setHasAcceptedTokenGeneration] =
+    React.useState(false);
 
   React.useEffect(() => {
     const queryString = new URLSearchParams(location.search);
@@ -100,7 +94,7 @@ export function SyncEmployeeValidation() {
           !user?.hasConfirmedEmail || !user?.hasActivatedEmail
         );
       } catch (err) {
-        const errorMessage = formatApiError(err, gqlError => {
+        const errorMessage = formatApiError(err, (gqlError) => {
           if (graphQLErrorMatchesCode(gqlError, "AUTHORIZATION_ERROR")) {
             return "Paramètres invalides. Veuillez suivre le lien d'activation inclus dans le mail reçu. Si le problème persiste, contactez votre éditeur de logiciel.";
           }
@@ -240,7 +234,7 @@ export function SyncEmployeeValidation() {
                     disabled={mustAcceptAccountCreation}
                     size="small"
                     className={classes.validationButton}
-                    onClick={async e => {
+                    onClick={async (e) => {
                       e.stopPropagation();
                       await confirmTokenGeneration();
                     }}

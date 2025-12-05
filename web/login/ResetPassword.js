@@ -8,16 +8,12 @@ import Typography from "@mui/material/Typography";
 import { LoadingButton } from "common/components/LoadingButton";
 import Box from "@mui/material/Box";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
-import jwt_decode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import Grid from "@mui/material/Grid";
 import { useLoadingScreen } from "common/utils/loading";
 import { Header } from "../common/Header";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
-import {
-  REQUEST_RESET_PASSWORD_MUTATION,
-  RESET_PASSWORD_MUTATION
-} from "common/utils/apiQueries";
 import { EmailField } from "../common/EmailField";
 import Emoji from "../common/Emoji";
 import { NewPasswordBlock } from "../common/NewPasswordBlock";
@@ -25,8 +21,12 @@ import { getPasswordErrors } from "common/utils/passwords";
 import { usePageTitle } from "../common/UsePageTitle";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Main } from "../common/semantics/Main";
+import {
+  REQUEST_RESET_PASSWORD_MUTATION,
+  RESET_PASSWORD_MUTATION
+} from "common/utils/apiQueries/loginSignup";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   introText: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
@@ -68,7 +68,7 @@ export function ResetPassword() {
       const tok = queryString.get("token");
       setToken(tok);
       try {
-        const decodedToken = jwt_decode(tok);
+        const decodedToken = jwtDecode(tok);
         // eslint-disable-next-line no-prototype-builtins
         if (!decodedToken.user_id || !decodedToken.hasOwnProperty("hash")) {
           throw Error;
@@ -88,7 +88,7 @@ export function ResetPassword() {
     });
   }, []);
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     await alerts.withApiErrorHandling(
@@ -105,7 +105,7 @@ export function ResetPassword() {
         setDidSubmitForm(true);
       },
       "reset-password",
-      gqlError => {
+      (gqlError) => {
         if (graphQLErrorMatchesCode(gqlError, "INVALID_TOKEN")) {
           return "Le lien de réinitialisation est invalide.";
         }
@@ -210,7 +210,7 @@ export function RequestResetPassword() {
   const [didSubmitForm, setDidSubmitForm] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     await alerts.withApiErrorHandling(async () => {

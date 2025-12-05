@@ -7,8 +7,8 @@ import Typography from "@mui/material/Typography";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { useApi } from "common/utils/api";
-import { DISABLE_WARNING_MUTATION } from "common/utils/apiQueries";
 import Modal from "./Modal";
+import { DISABLE_WARNING_MUTATION } from "common/utils/apiQueries/misc";
 
 export default function ConfirmationModal({
   title,
@@ -61,7 +61,9 @@ export default function ConfirmationModal({
                     <Checkbox
                       color="primary"
                       checked={shouldDisableWarning}
-                      onChange={e => setShouldDisableWarning(e.target.checked)}
+                      onChange={(e) =>
+                        setShouldDisableWarning(e.target.checked)
+                      }
                       size="small"
                     />
                   }

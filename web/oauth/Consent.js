@@ -9,9 +9,9 @@ import Container from "@mui/material/Container";
 import { Section } from "../common/Section";
 import { LoadingButton } from "common/components/LoadingButton";
 import Grid from "@mui/material/Grid";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   title: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(2),

@@ -140,7 +140,6 @@ export function ControllerHome() {
             text={"LIC papier présenté"}
             icon={"fr-icon-edit-box-fill"}
             onClick={() => setOpenNewLicPapier(true)}
-            isNew
           />
           <ControllerHomeCard
             text={"Pas de LIC à bord"}

@@ -3,12 +3,12 @@ import { useLoadingScreen } from "common/utils/loading";
 import React from "react";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useModals } from "common/utils/modals";
-import { CONTROLLER_SAVE_REPORTED_INFRACTIONS } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import { getAlertsGroupedByDay } from "common/utils/regulation/groupAlertsByDay";
 import { isoFormatLocalDate, strToUnixTimestamp } from "common/utils/time";
+import { CONTROLLER_SAVE_REPORTED_INFRACTIONS } from "common/utils/apiQueries/controller";
 
-export const useReportInfractions = controlData => {
+export const useReportInfractions = (controlData) => {
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
@@ -19,12 +19,10 @@ export const useReportInfractions = controlData => {
   ] = React.useState(controlData.reportedInfractionsLastUpdateTime);
   const [observedInfractions, setObservedInfractions] = React.useState([]);
 
-  const [isReportingInfractions, setIsReportingInfractions] = React.useState(
-    false
-  );
-  const [hasModifiedInfractions, setHasModifiedInfractions] = React.useState(
-    false
-  );
+  const [isReportingInfractions, setIsReportingInfractions] =
+    React.useState(false);
+  const [hasModifiedInfractions, setHasModifiedInfractions] =
+    React.useState(false);
 
   React.useEffect(() => {
     setReportedInfractionsLastUpdateTime(
@@ -50,7 +48,7 @@ export const useReportInfractions = controlData => {
           {
             controlId: controlData?.id,
             reportedInfractions: observedInfractions
-              .filter(infraction => infraction.isReported)
+              .filter((infraction) => infraction.isReported)
               .map(({ date, sanction, unit, type }) => ({
                 dateStr: isoFormatLocalDate(date),
                 sanction,
@@ -61,14 +59,15 @@ export const useReportInfractions = controlData => {
           { context: { nonPublicApi: true } }
         );
         const {
-          reportedInfractionsLastUpdateTime: newReportedInfractionsLastUpdateTime,
+          reportedInfractionsLastUpdateTime:
+            newReportedInfractionsLastUpdateTime,
           observedInfractions: newObservedInfractions
         } = apiResponse.data.controllerSaveReportedInfractions;
         setReportedInfractionsLastUpdateTime(
           newReportedInfractionsLastUpdateTime
         );
         const newObservedInfractionsWithDates = newObservedInfractions.map(
-          o => ({
+          (o) => ({
             ...o,
             date: o.date ? strToUnixTimestamp(o.date) : null
           })
@@ -116,8 +115,8 @@ export const useReportInfractions = controlData => {
   };
 
   const onUpdateInfraction = (sanction, date, checked) => {
-    setObservedInfractions(currentObservedInfractions =>
-      currentObservedInfractions.map(infraction =>
+    setObservedInfractions((currentObservedInfractions) =>
+      currentObservedInfractions.map((infraction) =>
         infraction.date === date && infraction.sanction === sanction
           ? { ...infraction, isReported: checked }
           : infraction
@@ -129,8 +128,8 @@ export const useReportInfractions = controlData => {
 
   const onAddInfraction = (sanction, date) => {
     let hasInsertedNewOne = false;
-    setObservedInfractions(currentObservedInfractions =>
-      currentObservedInfractions.flatMap(infraction => {
+    setObservedInfractions((currentObservedInfractions) =>
+      currentObservedInfractions.flatMap((infraction) => {
         if (infraction.sanction !== sanction) {
           return [infraction];
         }
@@ -157,10 +156,11 @@ export const useReportInfractions = controlData => {
 
   const onRemoveInfraction = (sanction, date) => {
     const isOnlyOne =
-      observedInfractions.filter(infraction => infraction.sanction === sanction)
-        .length === 1;
-    setObservedInfractions(currentObservedInfractions =>
-      currentObservedInfractions.flatMap(infraction => {
+      observedInfractions.filter(
+        (infraction) => infraction.sanction === sanction
+      ).length === 1;
+    setObservedInfractions((currentObservedInfractions) =>
+      currentObservedInfractions.flatMap((infraction) => {
         if (infraction.sanction !== sanction) {
           return [infraction];
         }
@@ -189,7 +189,7 @@ export const useReportInfractions = controlData => {
       groupedAlerts
         ? groupedAlerts.reduce(
             (curr, alertsGroup) =>
-              curr + alertsGroup.alerts.filter(alert => alert.checked).length,
+              curr + alertsGroup.alerts.filter((alert) => alert.checked).length,
             0
           )
         : 0,
@@ -202,7 +202,7 @@ export const useReportInfractions = controlData => {
         ? groupedAlerts.reduce(
             (curr, alertsGroup) =>
               curr +
-              alertsGroup.alerts.filter(alert => alert.reportable).length,
+              alertsGroup.alerts.filter((alert) => alert.reportable).length,
             0
           )
         : 0,
