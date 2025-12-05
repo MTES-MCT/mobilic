@@ -2,7 +2,7 @@ version: 2
 jobs:
   lint:
     docker:
-      - image: cimg/node:20.18.1
+      - image: cimg/node:24.11.0
 
     steps:
       - checkout:
@@ -12,7 +12,7 @@ jobs:
             - v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
       - run:
           name: Install pnpm
-          shell : bash
+          shell: bash
           command: |
             curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION=10.0.0 sh -
             export PNPM_HOME="$HOME/.local/share/pnpm"
@@ -31,7 +31,7 @@ jobs:
 
   build:
     docker:
-      - image: cimg/node:20.18.1
+      - image: cimg/node:24.11.0
 
     steps:
       - checkout:
@@ -41,7 +41,7 @@ jobs:
             - v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
       - run:
           name: Install pnpm
-          shell : bash
+          shell: bash
           command: |
             curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION=10.0.0 sh -
             export PNPM_HOME="$HOME/.local/share/pnpm"
@@ -60,7 +60,7 @@ jobs:
 
   deploy:
     docker:
-      - image: cimg/node:20.18.1
+      - image: cimg/node:24.11.0
     steps:
       - checkout:
           method: full
