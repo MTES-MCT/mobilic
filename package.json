@@ -115,7 +115,7 @@
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "node scripts/start.js",
     "start-clean": "rm -rf node_modules/.cache && node scripts/start.js",
-    "build": "react-dsfr copy-static-assets && react-dsfr update-icons && node scripts/build.js",
+    "build": "react-dsfr copy-static-assets && react-dsfr update-icons && babel-node scripts/build.js",
     "build-analyze": "INLINE_RUNTIME_CHUNK=false node scripts/build.js --analyze",
     "build-with-nginx": "pnpm build && scripts/start_nginx.sh",
     "test": "node scripts/test.js --passWithNoTests",
@@ -153,6 +153,7 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.15",
+    "@babel/node": "^7.28.0",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
