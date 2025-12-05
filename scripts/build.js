@@ -1,3 +1,7 @@
+require("@babel/register")({
+  extensions: [".js", ".jsx"]
+});
+
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = "production";
 process.env.NODE_ENV = "production";
@@ -5,7 +9,7 @@ process.env.NODE_ENV = "production";
 // Makes the script crash on unhandled rejections instead of silently
 // ignoring them. In the future, promise rejections that are not handled will
 // terminate the Node.js process with a non-zero exit code.
-process.on("unhandledRejection", err => {
+process.on("unhandledRejection", (err) => {
   throw err;
 });
 
@@ -25,8 +29,8 @@ const FileSizeReporter = require("react-dev-utils/FileSizeReporter");
 const printBuildError = require("react-dev-utils/printBuildError");
 const parseArgs = require("minimist");
 
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-  .BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin =
+  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 const measureFileSizesBeforeBuild =
   FileSizeReporter.measureFileSizesBeforeBuild;
@@ -56,7 +60,7 @@ checkBrowsers(paths.appPath, isInteractive)
     // This lets us display how much they changed later.
     return measureFileSizesBeforeBuild(paths.appBuild);
   })
-  .then(previousFileSizes => {
+  .then((previousFileSizes) => {
     // Remove all content but keep the directory so that
     // if you're in it, you don't end up in Trash
     fs.emptyDirSync(paths.appBuild);
@@ -106,7 +110,7 @@ checkBrowsers(paths.appPath, isInteractive)
         useYarn
       );
     },
-    err => {
+    (err) => {
       const tscCompileOnError = process.env.TSC_COMPILE_ON_ERROR === "true";
       if (tscCompileOnError) {
         console.log(
@@ -122,7 +126,7 @@ checkBrowsers(paths.appPath, isInteractive)
       }
     }
   )
-  .catch(err => {
+  .catch((err) => {
     if (err && err.message) {
       console.log(err.message);
     }
@@ -213,6 +217,6 @@ function build(previousFileSizes) {
 function copyPublicFolder() {
   fs.copySync(paths.appPublic, paths.appBuild, {
     dereference: true,
-    filter: file => file !== paths.appHtml
+    filter: (file) => file !== paths.appHtml
   });
 }
