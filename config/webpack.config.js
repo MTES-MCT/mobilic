@@ -141,8 +141,8 @@ module.exports = function(webpackEnv) {
     main: paths.appIndexJs
   };
 
-  // Ne PAS ajouter playground en mode développement par défaut
-  if (process.env.REACT_APP_BUILD_TARGET === 'playground' && isEnvProduction) {
+  // Add playground entry if requested (dev or prod)
+  if (process.env.REACT_APP_BUILD_TARGET === 'playground') {
     entries.playground = paths.playgroundIndexJs;
   }
 
@@ -464,8 +464,8 @@ module.exports = function(webpackEnv) {
       ]
     },
     plugins: [
-      // Seulement générer playground.html si demandé
-      ...(process.env.REACT_APP_BUILD_TARGET === 'playground' && isEnvProduction ? [
+      // Generate playground.html if requested (dev or prod)
+      ...(process.env.REACT_APP_BUILD_TARGET === 'playground' ? [
         new HtmlWebpackPlugin(
           Object.assign(
             {},
