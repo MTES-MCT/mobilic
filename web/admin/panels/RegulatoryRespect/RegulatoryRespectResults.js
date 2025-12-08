@@ -18,7 +18,7 @@ export default function RegulatoryRespectResults() {
 
   const { summary } = useRegulatoryAlertsSummaryContext();
 
-  if (!summary) {
+  if (!summary.hasAnyComputation) {
     return (
       <Typography sx={{ margin: "auto" }} className={classes.text}>
         Aucun temps de travail sur la période sélectionnée.
