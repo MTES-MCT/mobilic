@@ -113,7 +113,7 @@
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "node scripts/start.js",
     "start-clean": "rm -rf node_modules/.cache && node scripts/start.js",
-    "build": "react-dsfr copy-static-assets && react-dsfr update-icons && babel-node scripts/build.js",
+    "build": "NODE_ENV=production react-dsfr copy-static-assets && react-dsfr update-icons && babel-node scripts/build.js",
     "build-analyze": "INLINE_RUNTIME_CHUNK=false node scripts/build.js --analyze",
     "build-with-nginx": "pnpm build && scripts/start_nginx.sh",
     "test": "node scripts/test.js --passWithNoTests",
