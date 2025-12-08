@@ -37,3 +37,5 @@ nginx/
 # yarn
 .yarn/releases
 .yarnrc
+
+.env
