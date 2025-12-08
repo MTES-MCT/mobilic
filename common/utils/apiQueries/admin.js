@@ -599,6 +599,7 @@ export const ADMIN_COMPANY_REGULATORY_ALERTS_SUMMARY_QUERY = gql`
           teamId: $teamId
         ) {
           month
+          hasAnyComputation
           totalNbAlerts
           totalNbAlertsPreviousMonth
           dailyAlerts {
