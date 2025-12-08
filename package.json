@@ -111,7 +111,6 @@
     "workbox-webpack-plugin": "^6.0.2"
   },
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "node scripts/start.js",
     "start-clean": "rm -rf node_modules/.cache && node scripts/start.js",
