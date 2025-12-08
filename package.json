@@ -122,7 +122,7 @@
     "lint": "NODE_ENV=development eslint --config eslint.config.mjs --ext .js,.jsx ./"
   },
   "engines": {
-    "node": "24.x"
+    "node": "22.x"
   },
   "packageManager": "pnpm@10.1.0",
   "browserslist": {
