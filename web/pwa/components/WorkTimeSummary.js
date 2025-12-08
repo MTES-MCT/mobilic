@@ -1,5 +1,4 @@
 import React from "react";
-import Typography from "@mui/material/Typography";
 import {
   DAY,
   formatDateTime,
@@ -10,7 +9,6 @@ import {
   LONG_BREAK_DURATION,
   now
 } from "common/utils/time";
-import Box from "@mui/material/Box";
 import { computeTotalActivityDurations } from "common/utils/metrics";
 import Grid from "@mui/material/Grid";
 import omit from "lodash/omit";
