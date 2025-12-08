@@ -11,23 +11,18 @@ jobs:
           keys:
             - v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
       - run:
-          name: Install pnpm
-          shell: bash
-          command: |
-            curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION=10.0.0 sh -
-            export PNPM_HOME="$HOME/.local/share/pnpm"
-            export PATH="$PNPM_HOME:$PATH"
+          name: Enable pnpm via corepack
+          command: corepack enable
       - run:
           name: Install dependencies
-          command: |
-            export PNPM_HOME="$HOME/.local/share/pnpm"
-            export PATH="$PNPM_HOME:$PATH"
-            pnpm install --frozen-lockfile
+          command: pnpm install --frozen-lockfile
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
-      - run: pnpm run lint
+      - run:
+          name: Run linting
+          command: pnpm run lint
 
   build:
     docker:
@@ -40,23 +35,18 @@ jobs:
           keys:
             - v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
       - run:
-          name: Install pnpm
-          shell: bash
-          command: |
-            curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION=10.0.0 sh -
-            export PNPM_HOME="$HOME/.local/share/pnpm"
-            export PATH="$PNPM_HOME:$PATH"
+          name: Enable pnpm via corepack
+          command: corepack enable
       - run:
           name: Install dependencies
-          command: |
-            export PNPM_HOME="$HOME/.local/share/pnpm"
-            export PATH="$PNPM_HOME:$PATH"
-            pnpm install --frozen-lockfile
+          command: pnpm install --frozen-lockfile
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
-      - run: pnpm run test
+      - run:
+          name: Run tests
+          command: pnpm run test
 
   deploy:
     docker:
