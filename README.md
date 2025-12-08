@@ -18,10 +18,8 @@ Ce `README` s'adresse aux développeurs informatiques du projet. Pour plus d'inf
 Le projet est divisé en 2 grandes briques distinctes :
 
 - le front (= le site web Mobilic)
-
   - Single Page App React.js servie par Nginx (statique)
   - le dépôt est organisé par outil
-
     - `web/pwa` : PWA de saisie des temps pour les salariés (sur mobile)
     - `web/admin` : dashboard de suivi pour les gestionnaires (sur Desktop)
     - `web/control` : divers services pour les corps de contrôle
@@ -62,16 +60,17 @@ La partie suivante couvre uniquement le front. Pour le back il faut se rendre da
 
 ### Pré-requis
 
-- [Node](https://nodejs.org/en/) >= 14
-- [Yarn](https://yarnpkg.com/) >=1.19
+- [Node](https://nodejs.org/en/) 24.x LTS
+- [pnpm](https://pnpm.io/) 10.24.0 (installé automatiquement via [corepack](https://nodejs.org/api/corepack.html))
 - Eventuellement [Nginx](https://fr.wikipedia.org/wiki/NGINX) pour reproduire à l'identique l'environnement de production. Facultatif pour le développement local.
 
 ### Installation
 
-Exécuter la commande suivante depuis la racine du projet (sur un shell UNIX).
+Activer corepack puis installer les dépendances (sur un shell UNIX) :
 
 ```sh
-yarn install
+corepack enable
+pnpm install
 ```
 
 ### Variables d'environnement
@@ -85,7 +84,7 @@ Une seule variable pertinente pour le développement local :
 Pour lancer le serveur de développement qui recompile à la volée :
 
 ```sh
-REACT_APP_API_HOST=http://localhost:5000 yarn start
+REACT_APP_API_HOST=http://localhost:5000 pnpm start
 ```
 
 Le serveur sera accessible à l'adresse http://localhost:3000.
@@ -95,7 +94,13 @@ Le serveur sera accessible à l'adresse http://localhost:3000.
 Pour créer une image de production :
 
 ```sh
-REACT_APP_API_HOST=http://localhost:5000 yarn build
+REACT_APP_API_HOST=http://localhost:5000 pnpm build
+```
+
+Pour créer une image de production avec le playground GraphQL :
+
+```sh
+REACT_APP_BUILD_TARGET=playground REACT_APP_API_HOST=http://localhost:5000 pnpm build
 ```
 
 Cela va générer un dossier `build` à la racine du projet, prêt à être servi par n'importe quel serveur statique. Par exemple avec un serveur statique Python, en exécutant la commande suivante depuis la racine du projet
@@ -113,7 +118,7 @@ L'intérêt d'utiliser une image de production plutôt que le serveur de dévelo
 
 ### Tester dans des conditions identiques à la production
 
-En production l'image générée par `yarn build` est servie par un serveur nginx qui effectue en plus les choses suivantes :
+En production l'image générée par `pnpm build` est servie par un serveur nginx qui effectue en plus les choses suivantes :
 
 - force le `https`
 - ajoute les en-tête de réponse, notamment concernant la gestion de cache et la sécurité
@@ -124,7 +129,7 @@ Cette couche Nginx est ajoutée via un [buildpack Scalingo](https://doc.scalingo
 En développement local il est possible d'ajouter cette couche Nginx (avec la même configuration sauf la partie https). La commande suivante permet de créer une image de production puis de la servir via un serveur Nginx :
 
 ```sh
-REACT_APP_API_HOST=... yarn build-with-nginx
+REACT_APP_API_HOST=... pnpm build-with-nginx
 ```
 
 Cette commande nécessite comme pré-requis :
