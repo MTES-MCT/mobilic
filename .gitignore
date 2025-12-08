@@ -27,6 +27,7 @@ yarn-error.log*
 # IDE
 .idea
 .vscode
+.zed
 
 # Misc infra scripts
 devops

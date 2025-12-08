@@ -59,7 +59,6 @@
     "graphql-tag": "^2.12.6",
     "html-webpack-plugin": "^5.6.0",
     "http-proxy-middleware": "^3.0.5",
-    "husky": "^4.2.5",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.0.0",
     "jest-resolve": "^26.5.0",
@@ -111,20 +110,20 @@
     "workbox-webpack-plugin": "^6.0.2"
   },
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "node scripts/start.js",
     "start-clean": "rm -rf node_modules/.cache && node scripts/start.js",
-    "build": "react-dsfr copy-static-assets && react-dsfr update-icons && babel-node scripts/build.js",
+    "build": "NODE_ENV=production react-dsfr copy-static-assets && react-dsfr update-icons && babel-node scripts/build.js",
     "build-analyze": "INLINE_RUNTIME_CHUNK=false node scripts/build.js --analyze",
     "build-with-nginx": "pnpm build && scripts/start_nginx.sh",
     "test": "node scripts/test.js --passWithNoTests",
-    "lint": "NODE_ENV=development eslint --config eslint.config.mjs --ext .js,.jsx ./"
+    "lint": "NODE_ENV=development eslint --config eslint.config.mjs --ext .js,.jsx ./",
+    "prepare": "husky"
   },
   "engines": {
     "node": "24.x"
   },
-  "packageManager": "pnpm@10.1.0",
+  "packageManager": "pnpm@10.24.0",
   "browserslist": {
     "production": [
       ">0.2%",
@@ -137,11 +136,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "lint-staged": {
     "*.{html,json,md,mdx,css,yaml}": [
@@ -175,6 +169,7 @@
     "eslint-webpack-plugin": "^5.0.2",
     "globals": "^15.12.0",
     "graceful-fs": "^4.2.10",
+    "husky": "^9.1.7",
     "jest-environment-jsdom": "^30.1.2",
     "jest-enzyme": "^7.1.2",
     "lint-staged": "^10.0.7",
