@@ -71,10 +71,20 @@ server {
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
         add_header X-Frame-Options "deny";
         add_header X-Content-Type-Options "nosniff";
-        add_header Content-Security-Policy "script-src 'self' https://buttons.github.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com";
+
+        add_header Content-Security-Policy "
+            default-src 'self';
+            script-src 'self' 'unsafe-inline' 'unsafe-eval' https://buttons.github.io;
+            style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+            font-src 'self' data: https://fonts.gstatic.com;
+            img-src 'self' data:;
+            connect-src 'self';
+        ";
+
         add_header X-XSS-Protection "1; mode=block";
         add_header Cache-Control "no-cache; max-age=0";
-      try_files /api-playground.html @404;
+
+        try_files /api-playground.html @404;
     }
 
     location ~ ^/developers.*$ {

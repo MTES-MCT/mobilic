@@ -453,6 +453,13 @@ module.exports = function(webpackEnv) {
               )
             },
             {
+              test: /\.(woff|woff2|eot|ttf|otf)$/i,
+              type: "asset/resource",
+              generator: {
+                filename: "static/fonts/[name].[contenthash:8][ext]"
+              }
+            },
+            {
               loader: require.resolve("file-loader"),
               exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
               options: {
