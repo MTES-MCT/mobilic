@@ -7,7 +7,12 @@ module.exports = setup({
     client: {
       overlay: false
     },
-    historyApiFallback: true,
+    historyApiFallback: {
+      rewrites: [
+        { from: /^\/developers\/playground/, to: "/api-playground.html" },
+        { from: /./, to: "/index.html" }
+      ]
+    },
     proxy: {
       "/api": {
         target: "http://localhost:5000",

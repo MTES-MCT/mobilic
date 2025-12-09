@@ -11,12 +11,12 @@ import { parseMissionPayloadFromBackend } from "common/utils/mission";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { formatApiError } from "common/utils/errors";
 import { makeStyles } from "@mui/styles";
-import { MISSION_QUERY } from "common/utils/apiQueries";
 import { parseActivityPayloadFromBackend } from "common/utils/activities";
 import { captureSentryException } from "common/utils/sentry";
 import { Header } from "../../common/Header";
+import { MISSION_QUERY } from "common/utils/apiQueries/missions";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   overview: {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
@@ -63,7 +63,7 @@ export default function EditPastMission({
       if (dayTimestamp) setDay(dayTimestamp);
       let missionMatch;
       if (missionId) {
-        missionMatch = missions.find(m => m.id.toString() === missionId);
+        missionMatch = missions.find((m) => m.id.toString() === missionId);
         const submittedMissionId = parseInt(missionId);
         if (!missionMatch && submittedMissionId) {
           try {
@@ -104,7 +104,7 @@ export default function EditPastMission({
 
   React.useEffect(() => {
     if (mission) {
-      const missionMatch = missions.find(m => m.id === mission.id);
+      const missionMatch = missions.find((m) => m.id === mission.id);
       if (missionMatch) setMission(missionMatch);
     }
   }, [missions]);
@@ -144,7 +144,7 @@ export default function EditPastMission({
         logComment={logComment}
         cancelComment={cancelComment}
         hideValidations={mission.activities.length === 0}
-        validateMission={async m => {
+        validateMission={async (m) => {
           await validateMission(m);
           if (parseInt(mission.id)) openHistory(mission.id);
         }}
@@ -152,7 +152,7 @@ export default function EditPastMission({
         createActivity={createActivity}
         isMissionEnded={true}
         editKilometerReading={registerKilometerReading}
-        editVehicle={vehicle => editVehicle({ mission, vehicle })}
+        editVehicle={(vehicle) => editVehicle({ mission, vehicle })}
         defaultTime={day}
         disableEmptyActivitiesPlaceHolder
         forceDisplayEndLocation

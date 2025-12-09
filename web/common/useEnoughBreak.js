@@ -2,7 +2,7 @@ import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import React from "react";
 import { useSnackbarAlerts } from "./Snackbar";
 import { useApi } from "common/utils/api";
-import { USER_QUERY_ENOUGH_BREAK } from "common/utils/apiQueries";
+import { USER_QUERY_ENOUGH_BREAK } from "common/utils/apiQueries/misc";
 
 export const useEnoughBreak = () => {
   const store = useStoreSyncedWithLocalStorage();

@@ -3,9 +3,9 @@ import React from "react";
 import { Input } from "../../../common/forms/Input";
 import { useApi } from "common/utils/api";
 import { formatApiError } from "common/utils/errors";
-import { SIREN_QUERY } from "common/utils/apiQueries";
 import { sirenValidationErrorMessage } from "../../../common/utils/siren";
 import { SirenFieldset } from "../../../common/forms/SirenFieldset";
+import { SIREN_QUERY } from "common/utils/apiQueries/misc";
 
 export function CompanyControlData({
   siren,
@@ -20,7 +20,7 @@ export function CompanyControlData({
 
   const [sirenError, setSirenError] = React.useState(null);
 
-  const validateSiren = async e => {
+  const validateSiren = async (e) => {
     const input = e.target.value;
     const looksLikeASiren = /^[0-9]/.test(input);
     if (looksLikeASiren) {
@@ -63,12 +63,12 @@ export function CompanyControlData({
           nativeInputProps={{
             value: siren,
             name: "siren",
-            onChange: e => {
+            onChange: (e) => {
               const cleanSiren = e.target.value.replace(/\s/g, "");
               setSiren(cleanSiren);
               setSirenError(null);
             },
-            onBlur: e => validateSiren(e)
+            onBlur: (e) => validateSiren(e)
           }}
           state={sirenError ? "error" : "default"}
           stateRelatedMessage={sirenError}
@@ -80,7 +80,7 @@ export function CompanyControlData({
         label="Nom de l'entreprise"
         nativeInputProps={{
           value: companyName,
-          onChange: e => setCompanyName(e.target.value),
+          onChange: (e) => setCompanyName(e.target.value),
           name: "companyName"
         }}
         state={!companyName && showErrors ? "error" : "default"}
@@ -91,7 +91,7 @@ export function CompanyControlData({
         label="Adresse de l'entreprise"
         nativeInputProps={{
           value: companyAddress,
-          onChange: e => setCompanyAddress(e.target.value),
+          onChange: (e) => setCompanyAddress(e.target.value),
           name: "companyAddress"
         }}
         state={!companyAddress && showErrors ? "error" : "default"}

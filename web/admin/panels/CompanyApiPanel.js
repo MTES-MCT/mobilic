@@ -2,11 +2,6 @@ import React from "react";
 import { useApi } from "common/utils/api";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import {
-  GENERATE_THIRD_PARTY_COMPANY_TOKEN_MUTATION,
-  OAUTH_CLIENT_QUERY,
-  THIRD_PARTY_CLIENTS_COMPANY_QUERY
-} from "common/utils/apiQueries";
 import { usePanelStyles } from "./Company";
 import { currentUserId } from "common/utils/cookie";
 import Skeleton from "@mui/material/Skeleton";
@@ -18,6 +13,11 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useModals } from "common/utils/modals";
 import Notice from "../../common/Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { THIRD_PARTY_CLIENTS_COMPANY_QUERY } from "common/utils/apiQueries/admin";
+import {
+  GENERATE_THIRD_PARTY_COMPANY_TOKEN_MUTATION,
+  OAUTH_CLIENT_QUERY
+} from "common/utils/apiQueries/auth";
 
 export default function CompanyApiPanel({ company }) {
   const api = useApi();
@@ -26,13 +26,10 @@ export default function CompanyApiPanel({ company }) {
 
   const [authorizedClients, setAuthorizedClients] = React.useState([]);
   const [newClientId, setNewClientId] = React.useState("");
-  const [
-    loadingAuthorizedClients,
-    setLoadingAuthorizedClients
-  ] = React.useState(false);
-  const [newTokenSectionVisible, setNewTokenSectionVisible] = React.useState(
-    false
-  );
+  const [loadingAuthorizedClients, setLoadingAuthorizedClients] =
+    React.useState(false);
+  const [newTokenSectionVisible, setNewTokenSectionVisible] =
+    React.useState(false);
   React.useEffect(() => {
     const loadData = async () => {
       const apiResponse = await api.graphQlQuery(
@@ -78,7 +75,9 @@ export default function CompanyApiPanel({ company }) {
   const onValidateNewClientId = async () => {
     if (isNaN(newClientId)) {
       alerts.error("Le client id renseigné n'est pas correct", "", 6000);
-    } else if (authorizedClients.some(ac => ac.id === parseInt(newClientId))) {
+    } else if (
+      authorizedClients.some((ac) => ac.id === parseInt(newClientId))
+    ) {
       alerts.info(
         "Le client id renseigné est déjà associé à votre entreprise",
         "",
@@ -176,7 +175,7 @@ export default function CompanyApiPanel({ company }) {
             size="small"
             style={{ width: "100%" }}
             value={newClientId}
-            onChange={e => {
+            onChange={(e) => {
               setNewClientId(e.target.value);
             }}
             className={classes.newClientIdField}
@@ -187,7 +186,7 @@ export default function CompanyApiPanel({ company }) {
             type="submit"
             size="small"
             disabled={!newClientId}
-            onClick={async e => {
+            onClick={async (e) => {
               e.stopPropagation();
               await onValidateNewClientId();
             }}
@@ -212,7 +211,7 @@ export default function CompanyApiPanel({ company }) {
       <Skeleton key={2} variant="rectangular" width="100%" height={100} />
     ) : (
       <Box key={2} mt={4}>
-        {authorizedClients.map(ac => (
+        {authorizedClients.map((ac) => (
           <CompanyClientCard
             key={ac.id}
             authorizedClient={ac}

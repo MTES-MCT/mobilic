@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 common/node_modules
+web/node_modules
 /.pnp
 .pnp.js
 
@@ -26,6 +27,7 @@ yarn-error.log*
 # IDE
 .idea
 .vscode
+.zed
 
 # Misc infra scripts
 devops

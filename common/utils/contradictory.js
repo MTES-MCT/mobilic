@@ -1,12 +1,10 @@
 import maxBy from "lodash/maxBy";
 import flatMap from "lodash/flatMap";
-import {
-  ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY,
-  CONTROLLER_READ_MISSION_DETAILS
-} from "./apiQueries";
 import { ADMIN_ACTIONS } from "../../web/admin/store/reducers/root";
 import { useStoreSyncedWithLocalStorage } from "../store/store";
 import { useAdminStore } from "../../web/admin/store/store";
+import { ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY } from "./apiQueries/admin";
+import { CONTROLLER_READ_MISSION_DETAILS } from "./apiQueries/controller";
 
 const DIFFERENT_RESOURCES_EVENT_TYPE_ORDER = {
   DELETE: 1,
@@ -128,8 +126,8 @@ function versionOfResourceAt(resource, time) {
   ) {
     const versionAtTime =
       maxBy(
-        resource.versions.filter(v => v.receptionTime <= time),
-        v => v.receptionTime
+        resource.versions.filter((v) => v.receptionTime <= time),
+        (v) => v.receptionTime
       ) || {};
     return { ...resource, ...versionAtTime };
   }
@@ -186,37 +184,37 @@ export async function getResourcesAndHistoryForMission(
 
     let resources = [];
     resources.push(
-      ...apiResponse.activities.map(a => ({
+      ...apiResponse.activities.map((a) => ({
         resource: a,
         type: MISSION_RESOURCE_TYPES.activity
       }))
     );
     resources.push(
-      ...apiResponse.expenditures.map(e => ({
+      ...apiResponse.expenditures.map((e) => ({
         resource: e,
         type: MISSION_RESOURCE_TYPES.expenditure
       }))
     );
     resources.push(
       ...apiResponse.validations
-        .filter(v => !v.isAuto)
-        .map(v => ({
+        .filter((v) => !v.isAuto)
+        .map((v) => ({
           resource: v,
           type: MISSION_RESOURCE_TYPES.validation
         }))
     );
     resources.push(
       ...apiResponse.validations
-        .filter(v => v.isAuto && !v.isAdmin)
-        .map(v => ({
+        .filter((v) => v.isAuto && !v.isAdmin)
+        .map((v) => ({
           resource: v,
           type: MISSION_RESOURCE_TYPES.autoValidationEmployee
         }))
     );
     resources.push(
       ...apiResponse.validations
-        .filter(v => v.isAuto && v.isAdmin)
-        .map(v => ({
+        .filter((v) => v.isAuto && v.isAdmin)
+        .map((v) => ({
           resource: v,
           type: MISSION_RESOURCE_TYPES.autoValidationAdmin
         }))

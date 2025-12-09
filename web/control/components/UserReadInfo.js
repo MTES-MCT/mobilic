@@ -3,7 +3,6 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { useControl } from "../../controller/utils/contextControl";
 import { currentControllerId } from "common/utils/cookie";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { formatApiError } from "common/utils/errors";
 import Stack from "@mui/material/Stack";
 import { ControllerControlEmployeeInfo } from "../../controller/components/details/ControllerControlEmployeeInfo";
@@ -16,8 +15,9 @@ import { LoadingButton } from "common/components/LoadingButton";
 import { formatPersonName } from "common/utils/coworkers";
 import { makeStyles } from "@mui/styles";
 import { useInfractions } from "../../controller/utils/contextInfractions";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   exportButton: {
     textAlign: "center",
     marginTop: theme.spacing(2)

@@ -7,7 +7,6 @@ import { Footer } from "./footer";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import Grid from "@mui/material/Grid";
-import { HTTP_QUERIES } from "common/utils/apiQueries";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { captureSentryException } from "common/utils/sentry";
@@ -20,8 +19,9 @@ import { CertificationImage } from "../common/certification";
 import { TextBadge } from "../common/hooks/useCompanyCertification";
 import { Stack } from "@mui/material";
 import { ExternalLink } from "../common/ExternalLink";
+import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   searchBar: {
     marginRight: "auto",
     marginLeft: "auto",
@@ -108,7 +108,7 @@ export function Certificate() {
                   label=""
                   required
                   nativeInputProps={{
-                    onChange: e => {
+                    onChange: (e) => {
                       setSearchInput(e.target.value);
                     },
                     placeholder: "Rechercher un nom d'entreprise ou un SIREN"
@@ -169,7 +169,7 @@ export function Certificate() {
                     "Date de certification",
                     "Certification"
                   ]}
-                  data={searchResults.map(r => [
+                  data={searchResults.map((r) => [
                     r.company_name,
                     r.siren,
                     r.siret,

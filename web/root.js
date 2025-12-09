@@ -59,6 +59,7 @@ import merge from "lodash/merge";
 import { useScroll } from "./common/hooks/useScroll";
 import { useIsAdmin } from "./common/hooks/useIsAdmin";
 import ChangeGenderModal from "./pwa/modals/ChangeGenderModal";
+import { ExportsProvider } from "./admin/utils/contextExports";
 
 const matomo = createInstance({
   urlBase: "https://stats.beta.gouv.fr",
@@ -101,11 +102,13 @@ export default function Root() {
                   >
                     <SnackbarProvider>
                       <LoadingScreenContextProvider>
-                        <ModalProvider modalDict={MODAL_DICT}>
-                          <RegulationDrawerContextProvider>
-                            <RootComponent />
-                          </RegulationDrawerContextProvider>
-                        </ModalProvider>
+                        <ExportsProvider>
+                          <ModalProvider modalDict={MODAL_DICT}>
+                            <RegulationDrawerContextProvider>
+                              <RootComponent />
+                            </RegulationDrawerContextProvider>
+                          </ModalProvider>
+                        </ExportsProvider>
                       </LoadingScreenContextProvider>
                     </SnackbarProvider>
                   </LocalizationProvider>
@@ -351,7 +354,7 @@ function RootComponent() {
       />
       {store.userId() && shouldUpdatePassword() && <UpdatePasswordModal />}
       <Switch>
-        {routes.map(route => (
+        {routes.map((route) => (
           <Route
             key={route.path}
             exact={route.exact || false}

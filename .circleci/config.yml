@@ -2,41 +2,55 @@ version: 2
 jobs:
   lint:
     docker:
-      - image: cimg/node:20.18.1
+      - image: cimg/node:24.11.0
 
     steps:
       - checkout:
           method: full
       - restore_cache:
           keys:
-            - v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
-      - run: yarn install --frozen-lockfile
+            - v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
+      - run:
+          name: Enable pnpm via corepack
+          command: corepack enable
+      - run:
+          name: Install dependencies
+          command: pnpm install --frozen-lockfile
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
-      - run: yarn run lint
+          key: v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
+      - run:
+          name: Run linting
+          command: pnpm run lint
 
   build:
     docker:
-      - image: cimg/node:20.18.1
+      - image: cimg/node:24.11.0
 
     steps:
       - checkout:
           method: full
       - restore_cache:
           keys:
-            - v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
-      - run: yarn install --frozen-lockfile
+            - v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
+      - run:
+          name: Enable pnpm via corepack
+          command: corepack enable
+      - run:
+          name: Install dependencies
+          command: pnpm install --frozen-lockfile
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
-      - run: yarn test
+          key: v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
+      - run:
+          name: Run tests
+          command: pnpm run test
 
   deploy:
     docker:
-      - image: cimg/node:20.18.1
+      - image: cimg/node:24.11.0
     steps:
       - checkout:
           method: full
@@ -69,4 +83,3 @@ workflows:
               only:
                 - master
                 - prod
-

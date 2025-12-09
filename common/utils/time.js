@@ -16,7 +16,7 @@ export const SHORT_MONTHS = [
   "nov",
   "déc"
 ];
-const MONTHS = [
+export const MONTHS = [
   "janvier",
   "février",
   "mars",
@@ -137,6 +137,10 @@ export function prettyFormatDay(unixTimestamp, withYear = false) {
 
 export function prettyFormatMonth(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
+  return prettyFormatMonth_Date(date);
+}
+
+export function prettyFormatMonth_Date(date) {
   return `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
 }
 
@@ -294,6 +298,10 @@ export function startOfMonthAsDate(date) {
   return date;
 }
 
+export function lastMonth() {
+  return addDaysToDate(startOfMonthAsDate(new Date()), -1);
+}
+
 export function startOfWeekAsDate(date) {
   return new Date(getStartOfWeek(date.getTime() / 1000) * 1000);
 }
@@ -373,5 +381,5 @@ export function isDateBeforeNbDays(dateToTest, nbDays) {
 export const isMoreOrLessTheSameDay = (time1, time2) =>
   Math.abs(time1 - time2) < HOUR * 3;
 
-export const strToUnixTimestamp = dateStr =>
+export const strToUnixTimestamp = (dateStr) =>
   jsToUnixTimestamp(startOfDayAsDate(new Date(dateStr)).getTime());

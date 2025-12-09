@@ -3,12 +3,12 @@ import {
   useStoreSyncedWithLocalStorage
 } from "common/store/store";
 import { useApi } from "common/utils/api";
-import { CHANGE_GENDER_MUTATION } from "common/utils/apiQueries";
+import { CHANGE_GENDER_MUTATION } from "common/utils/apiQueries/userInfo";
 
 export const useUpdateGender = () => {
   const store = useStoreSyncedWithLocalStorage();
   const api = useApi();
-  const updateGender = async newGender => {
+  const updateGender = async (newGender) => {
     const apiResponse = await api.graphQlMutate(
       CHANGE_GENDER_MUTATION,
       { gender: newGender },

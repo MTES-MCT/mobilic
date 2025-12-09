@@ -1,6 +1,5 @@
 import React from "react";
 import { useLoadingScreen } from "common/utils/loading";
-import { CONTROLLER_SAVE_CONTROL_BULLETIN } from "common/utils/apiQueries";
 import { useApi } from "common/utils/api";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -16,6 +15,7 @@ import { CONTROL_TYPES } from "../../utils/useReadControlData";
 import { COUNTRIES } from "../../utils/country";
 import { BUSINESS_TYPES } from "common/utils/businessTypes";
 import { CompanyControlData } from "../forms/CompanyControlData";
+import { CONTROLLER_SAVE_CONTROL_BULLETIN } from "common/utils/apiQueries/controller";
 
 export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
   const api = useApi();
@@ -30,10 +30,8 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
   const [companyName, setCompanyName] = React.useState("");
   const [companyAddress, setCompanyAddress] = React.useState("");
   const [businessType, setBusinessType] = React.useState("");
-  const [
-    vehicleRegistrationNumber,
-    setVehicleRegistrationNumber
-  ] = React.useState("");
+  const [vehicleRegistrationNumber, setVehicleRegistrationNumber] =
+    React.useState("");
   const [isDayPageFilled, setIsDayPageFilled] = React.useState(null);
 
   const canSubmitForm = React.useMemo(
@@ -99,7 +97,7 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
         <Input
           nativeInputProps={{
             value: userLastName,
-            onChange: e => setUserLastName(e.target.value),
+            onChange: (e) => setUserLastName(e.target.value),
             name: "userLastName"
           }}
           label="Nom du salarié"
@@ -109,7 +107,7 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
         <Input
           nativeInputProps={{
             value: userFirstName,
-            onChange: e => setUserFirstName(e.target.value),
+            onChange: (e) => setUserFirstName(e.target.value),
             name: "userFirstName"
           }}
           label="Prénom du salarié"
@@ -125,13 +123,13 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
         <Select
           label="Nationalité du salarié"
           nativeSelectProps={{
-            onChange: e => setUserNationality(e.target.value),
+            onChange: (e) => setUserNationality(e.target.value),
             value: userNationality,
             name: "userNationality"
           }}
           required
         >
-          {COUNTRIES.map(option => (
+          {COUNTRIES.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
@@ -151,7 +149,7 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
         <Select
           label="Type d'activité"
           nativeSelectProps={{
-            onChange: e => setBusinessType(e.target.value),
+            onChange: (e) => setBusinessType(e.target.value),
             value: businessType
           }}
           required
@@ -161,7 +159,7 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
               Non renseigné
             </option>
           )}
-          {BUSINESS_TYPES.map(businessType => (
+          {BUSINESS_TYPES.map((businessType) => (
             <option key={businessType.value} value={businessType.value}>
               {businessType.label}
             </option>
@@ -171,7 +169,7 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
         <Input
           nativeInputProps={{
             value: vehicleRegistrationNumber,
-            onChange: e => setVehicleRegistrationNumber(e.target.value),
+            onChange: (e) => setVehicleRegistrationNumber(e.target.value),
             name: "vehicleRegistrationNumber"
           }}
           label="Immatriculation du véhicule"

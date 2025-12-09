@@ -6,11 +6,11 @@ import { Link } from "../../../common/LinkButton";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { DISMISSABLE_WARNINGS } from "../../utils/dismissableWarnings";
 import { useWarningModificationMissionStyles } from "./WarningModificationMissionStyle";
-import { DISABLE_WARNING_MUTATION } from "common/utils/apiQueries";
 import { captureSentryException } from "common/utils/sentry";
 import { useApi } from "common/utils/api";
 import Emoji from "../../../common/Emoji";
 import Notice from "../../../common/Notice";
+import { DISABLE_WARNING_MUTATION } from "common/utils/apiQueries/misc";
 
 export function WarningModificationMission() {
   const store = useStoreSyncedWithLocalStorage();
@@ -77,7 +77,7 @@ export function WarningModificationMission() {
               className={classes.dismissModificationAlert}
               to="/#"
               data-testid="dismissMissionModificationWarningLink"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 handleDismissWarning();
               }}

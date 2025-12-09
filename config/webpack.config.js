@@ -141,8 +141,8 @@ module.exports = function(webpackEnv) {
     main: paths.appIndexJs
   };
 
-  // Ne PAS ajouter playground en mode développement par défaut
-  if (process.env.REACT_APP_BUILD_TARGET === 'playground' && isEnvProduction) {
+  // Add playground entry if requested (dev or prod)
+  if (process.env.REACT_APP_BUILD_TARGET === 'playground') {
     entries.playground = paths.playgroundIndexJs;
   }
 
@@ -307,8 +307,11 @@ module.exports = function(webpackEnv) {
       strictExportPresence: true,
       rules: [
         // Handle problematic ES modules that need process polyfill
+        // Disable fullySpecified for node_modules to fix 'process/browser' resolution issues
+        // See: https://github.com/webpack/webpack.js.org/issues/3975
         {
-          test: /node_modules\/barcode-detector/,
+          test: /\.m?js$/,
+          include: /node_modules/,
           resolve: {
             fullySpecified: false
           }
@@ -358,7 +361,8 @@ module.exports = function(webpackEnv) {
               test: /\.(js|mjs|jsx|ts|tsx)$/,
               include: [
                 paths.appSrc,
-                paths.commonSrc
+                paths.commonSrc,
+                paths.playgroundSrc
               ].filter(Boolean),
               loader: require.resolve("babel-loader"),
               options: {
@@ -449,6 +453,13 @@ module.exports = function(webpackEnv) {
               )
             },
             {
+              test: /\.(woff|woff2|eot|ttf|otf)$/i,
+              type: "asset/resource",
+              generator: {
+                filename: "static/fonts/[name].[contenthash:8][ext]"
+              }
+            },
+            {
               loader: require.resolve("file-loader"),
               exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
               options: {
@@ -460,8 +471,8 @@ module.exports = function(webpackEnv) {
       ]
     },
     plugins: [
-      // Seulement générer playground.html si demandé
-      ...(process.env.REACT_APP_BUILD_TARGET === 'playground' && isEnvProduction ? [
+      // Generate playground.html if requested (dev or prod)
+      ...(process.env.REACT_APP_BUILD_TARGET === 'playground' ? [
         new HtmlWebpackPlugin(
           Object.assign(
             {},

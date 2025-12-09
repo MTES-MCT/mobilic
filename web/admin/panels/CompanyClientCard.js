@@ -5,10 +5,10 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
-import { DISMISS_THIRD_PARTY_COMPANY_TOKEN_MUTATION } from "common/utils/apiQueries";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { DISMISS_THIRD_PARTY_COMPANY_TOKEN_MUTATION } from "common/utils/apiQueries/auth";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   companyClientLine: {
     display: "flex"
   },
