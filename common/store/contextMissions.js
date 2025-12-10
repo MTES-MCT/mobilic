@@ -61,17 +61,27 @@ export function StoreMissionsContextProvider({ children }) {
     [latestActivity, currentMission]
   );
 
+  const contextValue = React.useMemo(
+    () => ({
+      unfilteredMissions,
+      missions,
+      latestActivity,
+      currentMission,
+      previousMissionEnd,
+      displayCurrentMission
+    }),
+    [
+      unfilteredMissions,
+      missions,
+      latestActivity,
+      currentMission,
+      previousMissionEnd,
+      displayCurrentMission
+    ]
+  );
+
   return (
-    <StoreMissionsContext.Provider
-      value={{
-        unfilteredMissions,
-        missions,
-        latestActivity,
-        currentMission,
-        previousMissionEnd,
-        displayCurrentMission
-      }}
-    >
+    <StoreMissionsContext.Provider value={contextValue}>
       {children}
     </StoreMissionsContext.Provider>
   );
