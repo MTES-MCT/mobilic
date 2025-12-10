@@ -67,7 +67,7 @@ export function computeTeamChanges(allMissionSortedActivities, selfId) {
     ];
     if (
       userTimes.endTime &&
-      userId !== selfId.toString() &&
+      userId !== (selfId?.toString() ?? "") &&
       (!missionEnd || userTimes.endTime < missionEnd)
     ) {
       statuses.push({
