@@ -60,6 +60,7 @@ import { useScroll } from "./common/hooks/useScroll";
 import { useIsAdmin } from "./common/hooks/useIsAdmin";
 import ChangeGenderModal from "./pwa/modals/ChangeGenderModal";
 import { ExportsProvider } from "./admin/utils/contextExports";
+import { StoreMissionsContextProvider } from "common/store/contextMissions";
 
 const matomo = createInstance({
   urlBase: "https://stats.beta.gouv.fr",
@@ -91,28 +92,30 @@ export default function Root() {
             <MuiDsfrThemeProvider>
               <CssBaseline />
               <ErrorBoundary>
-                <ApiContextProvider>
-                  <LocalizationProvider
-                    dateAdapter={AdapterDateFns}
-                    adapterLocale={frLocale}
-                    localeText={
-                      frFR.components.MuiLocalizationProvider.defaultProps
-                        .localeText
-                    }
-                  >
-                    <SnackbarProvider>
-                      <LoadingScreenContextProvider>
-                        <ExportsProvider>
-                          <ModalProvider modalDict={MODAL_DICT}>
-                            <RegulationDrawerContextProvider>
-                              <RootComponent />
-                            </RegulationDrawerContextProvider>
-                          </ModalProvider>
-                        </ExportsProvider>
-                      </LoadingScreenContextProvider>
-                    </SnackbarProvider>
-                  </LocalizationProvider>
-                </ApiContextProvider>
+                <StoreMissionsContextProvider>
+                  <ApiContextProvider>
+                    <LocalizationProvider
+                      dateAdapter={AdapterDateFns}
+                      adapterLocale={frLocale}
+                      localeText={
+                        frFR.components.MuiLocalizationProvider.defaultProps
+                          .localeText
+                      }
+                    >
+                      <SnackbarProvider>
+                        <LoadingScreenContextProvider>
+                          <ExportsProvider>
+                            <ModalProvider modalDict={MODAL_DICT}>
+                              <RegulationDrawerContextProvider>
+                                <RootComponent />
+                              </RegulationDrawerContextProvider>
+                            </ModalProvider>
+                          </ExportsProvider>
+                        </LoadingScreenContextProvider>
+                      </SnackbarProvider>
+                    </LocalizationProvider>
+                  </ApiContextProvider>
+                </StoreMissionsContextProvider>
               </ErrorBoundary>
             </MuiDsfrThemeProvider>
           </StyledEngineProvider>

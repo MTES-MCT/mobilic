@@ -61,12 +61,13 @@ export function computeTeamChanges(allMissionSortedActivities, selfId) {
         time: userTimes.startTime,
         isEnrollment: true,
         isInStartingTeam:
-          userId === selfId.toString() || userTimes.startTime === missionStart
+          userId === (selfId?.toString() ?? "") ||
+          userTimes.startTime === missionStart
       }
     ];
     if (
       userTimes.endTime &&
-      userId !== selfId.toString() &&
+      userId !== (selfId?.toString() ?? "") &&
       (!missionEnd || userTimes.endTime < missionEnd)
     ) {
       statuses.push({
