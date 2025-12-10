@@ -1,14 +1,15 @@
 import React from "react";
-import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import { sortActivities } from "common/utils/activities";
-import { sortEvents } from "common/utils/events";
+import { useStoreSyncedWithLocalStorage } from "./store";
+import { sortActivities } from "../utils/activities";
+import { sortEvents } from "../utils/events";
+import values from "lodash/values";
 import {
   augmentAndSortMissions,
   linkMissionsWithRelations
-} from "common/utils/mission";
-import { values } from "lodash";
+} from "../utils/mission";
+const StoreMissionsContext = React.createContext(() => {});
 
-export const useStoreMissions = () => {
+export function StoreMissionsContextProvider({ children }) {
   const store = useStoreSyncedWithLocalStorage();
 
   const activities = sortActivities(values(store.getEntity("activities")));
@@ -25,8 +26,8 @@ export const useStoreMissions = () => {
     store.companies()
   );
 
-  const missions = unfilteredMissions.filter(m => m.activities.length > 0);
-  const notDeletedMissions = missions.filter(m => !m.deletedAt);
+  const missions = unfilteredMissions.filter((m) => m.activities.length > 0);
+  const notDeletedMissions = missions.filter((m) => !m.deletedAt);
 
   const currentMission =
     notDeletedMissions.length > 0
@@ -60,12 +61,20 @@ export const useStoreMissions = () => {
     [latestActivity, currentMission]
   );
 
-  return {
-    unfilteredMissions,
-    missions,
-    latestActivity,
-    currentMission,
-    previousMissionEnd,
-    displayCurrentMission
-  };
-};
+  return (
+    <StoreMissionsContext.Provider
+      value={{
+        unfilteredMissions,
+        missions,
+        latestActivity,
+        currentMission,
+        previousMissionEnd,
+        displayCurrentMission
+      }}
+    >
+      {children}
+    </StoreMissionsContext.Provider>
+  );
+}
+
+export const useStoreMissions = () => React.useContext(StoreMissionsContext);

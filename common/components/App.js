@@ -8,9 +8,9 @@ import { useApi } from "../utils/api";
 import EditPastMission from "../../web/pwa/components/EditPastMission";
 import { makeStyles } from "@mui/styles";
 import { Main } from "../../web/common/semantics/Main";
-import { useStoreMissions } from "../../web/common/hooks/useStoreMissions";
+import { useStoreMissions } from "../store/contextMissions";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   appContainer: {
     width: "100%",
     flexGrow: 1,
@@ -59,7 +59,7 @@ function AppComponent({ ScreenComponent }) {
           <History
             handleBack={() => history.push(path)}
             missions={missions}
-            createActivity={args =>
+            createActivity={(args) =>
               actions.pushNewTeamActivityEvent({ ...args, switchMode: false })
             }
             createMission={actions.beginNewMission}
@@ -77,7 +77,7 @@ function AppComponent({ ScreenComponent }) {
         <Route path={`${path}/edit_mission`}>
           <EditPastMission
             missions={unfilteredMissions}
-            createActivity={args =>
+            createActivity={(args) =>
               actions.pushNewTeamActivityEvent({ ...args, switchMode: false })
             }
             editActivityEvent={actions.editActivityEvent}

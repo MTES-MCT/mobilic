@@ -38,9 +38,9 @@ import classNames from "classnames";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Navigation } from "./Navigation";
 import { useModals } from "common/utils/modals";
-import { useStoreMissions } from "./hooks/useStoreMissions";
+import { useStoreMissions } from "common/store/contextMissions";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   navItemButton: {
     borderRadius: 2
   },
@@ -129,7 +129,7 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies }) {
     useAdminStore(),
     companyWithInfo,
     shouldDisplayBadge
-  ).find(br => br.path === route.path)?.badge;
+  ).find((br) => br.path === route.path)?.badge;
 
   const selected = route.exact
     ? location.pathname === route.path
@@ -152,11 +152,11 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies }) {
       >
         {route.subRoutes
           .filter(
-            subRoute =>
+            (subRoute) =>
               !subRoute.accessible ||
               subRoute.accessible({ userInfo, companies })
           )
-          .map(subRoute => (
+          .map((subRoute) => (
             <ListRouteItem
               key={subRoute.path || subRoute.label}
               route={{ ...subRoute, path: `${route.path}${subRoute.path}` }}
@@ -169,15 +169,16 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies }) {
   ) : (
     <ListItem key={route.path || route.label} disableGutters>
       <Link
-        className={`${classes.navListItem} ${selected &&
-          classes.selectedNavListItem}`}
+        className={`${classes.navListItem} ${
+          selected && classes.selectedNavListItem
+        }`}
         variant="body1"
         color="inherit"
         to={route.path}
         href={route.href}
         target={route.target}
         underline="none"
-        onClick={e => {
+        onClick={(e) => {
           if (!route.href && !route.target) {
             e.preventDefault();
             if (!selected) history.push(route.path);
@@ -255,9 +256,10 @@ export function NavigationMenu({ open, setOpen }) {
       <List dense>
         {routes
           .filter(
-            r => !r.menuItemFilter || r.menuItemFilter({ userInfo, companies })
+            (r) =>
+              !r.menuItemFilter || r.menuItemFilter({ userInfo, companies })
           )
-          .map(route => (
+          .map((route) => (
             <ListRouteItem
               userInfo={userInfo}
               companies={companies}
@@ -289,14 +291,14 @@ const HeaderCompaniesDropdown = () => {
       className={classes.companyDrowndown}
       select
       value={company ? company.id : 0}
-      onChange={e => {
+      onChange={(e) => {
         adminStore.dispatch({
           type: ADMIN_ACTIONS.updateCompanyId,
           payload: { companyId: e.target.value }
         });
       }}
     >
-      {companies.map(c => (
+      {companies.map((c) => (
         <MenuItem key={c.id} value={c.id}>
           {c.name}
         </MenuItem>
@@ -339,7 +341,7 @@ function DesktopHeader({ disableMenu }) {
   const classes = useStyles();
   const userInfo = store.userInfo();
   const companies = store.companies();
-  const company = companies.find(c => c.id === adminStore.companyId);
+  const company = companies.find((c) => c.id === adminStore.companyId);
   const companyName = company ? company.name : null;
   const routes = getAccessibleRoutes({ userInfo, companies });
 
@@ -415,16 +417,16 @@ function DesktopHeader({ disableMenu }) {
             >
               {routes
                 .filter(
-                  r =>
+                  (r) =>
                     r.accessible({ userInfo, companies }) &&
                     (!r.menuItemFilter ||
                       r.menuItemFilter({ userInfo, companies })) &&
                     !r.subRoutes
                 )
-                .map(route => {
+                .map((route) => {
                   const ButtonComponent = route.mainCta
                     ? LoadingButton
-                    : props => <Button priority="secondary" {...props} />;
+                    : (props) => <Button priority="secondary" {...props} />;
                   return (
                     <Grid item key={route.path}>
                       <ButtonComponent
@@ -432,7 +434,7 @@ function DesktopHeader({ disableMenu }) {
                         value={route.path}
                         href={route.path}
                         className={classes.navItemButton}
-                        onClick={e => {
+                        onClick={(e) => {
                           e.preventDefault();
                           if (!location.pathname.startsWith(route.path))
                             history.push(route.path);
