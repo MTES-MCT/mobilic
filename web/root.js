@@ -87,12 +87,12 @@ export default function Root() {
   return (
     <MatomoProvider value={matomo}>
       <StoreSyncedWithLocalStorageProvider storage={localStorage}>
-        <StoreMissionsContextProvider>
-          <Router>
-            <StyledEngineProvider injectFirst>
-              <MuiDsfrThemeProvider>
-                <CssBaseline />
-                <ErrorBoundary>
+        <Router>
+          <StyledEngineProvider injectFirst>
+            <MuiDsfrThemeProvider>
+              <CssBaseline />
+              <ErrorBoundary>
+                <StoreMissionsContextProvider>
                   <ApiContextProvider>
                     <LocalizationProvider
                       dateAdapter={AdapterDateFns}
@@ -115,11 +115,11 @@ export default function Root() {
                       </SnackbarProvider>
                     </LocalizationProvider>
                   </ApiContextProvider>
-                </ErrorBoundary>
-              </MuiDsfrThemeProvider>
-            </StyledEngineProvider>
-          </Router>
-        </StoreMissionsContextProvider>
+                </StoreMissionsContextProvider>
+              </ErrorBoundary>
+            </MuiDsfrThemeProvider>
+          </StyledEngineProvider>
+        </Router>
       </StoreSyncedWithLocalStorageProvider>
     </MatomoProvider>
   );
