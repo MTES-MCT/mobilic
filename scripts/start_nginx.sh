@@ -2,7 +2,7 @@
 
 set -e
 
-ROOT_PROJECT_DIR=`dirname "$(python -c 'import os,sys;print(os.path.realpath(sys.argv[1]))' "${BASH_SOURCE[0]}")"`/..
+ROOT_PROJECT_DIR=`dirname "$(python3 -c 'import os,sys;print(os.path.realpath(sys.argv[1]))' "${BASH_SOURCE[0]}")"`/..
 cd ${ROOT_PROJECT_DIR}
 
 export API_HOST=${REACT_APP_API_HOST}

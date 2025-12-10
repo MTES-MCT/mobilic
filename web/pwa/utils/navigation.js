@@ -3,7 +3,7 @@ import { CurrentActivity } from "../screens/CurrentActivity";
 import React from "react";
 import { MissionReview } from "../screens/MissionReview";
 import App from "common/components/App";
-import { useStoreMissions } from "../../common/hooks/useStoreMissions";
+import { useStoreMissions } from "common/store/contextMissions";
 
 function InnerAppScreen(props) {
   const { displayCurrentMission } = useStoreMissions();
