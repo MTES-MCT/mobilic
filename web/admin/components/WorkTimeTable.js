@@ -45,6 +45,38 @@ const InfractionsNumber = ({ nbAlerts }) => (
   </Badge>
 );
 
+const formatInfractions = (_, entry) => {
+  if (!entry.totalWork) {
+    return null;
+  }
+  if (!entry.regulationComputations) {
+    return <InfractionsWaiting />;
+  }
+  return (
+    <InfractionsNumber
+      nbAlerts={entry.regulationComputations.nbAlertsDailyAdmin}
+    />
+  );
+};
+
+const formatDailyInfractions = (_, entry) => {
+  if (!entry.totalWork) {
+    return null;
+  }
+  return <InfractionsNumber nbAlerts={entry.dailyAlerts} />;
+};
+
+const formatWeeklyInfractions = (_, entry) => {
+  if (!entry.totalWork) {
+    return null;
+  }
+  return <InfractionsNumber nbAlerts={entry.weeklyAlerts} />;
+};
+
+const formatPicto = () => (
+  <span className={cx("fr-icon--sm", "fr-icon-arrow-right-line")} />
+);
+
 export function WorkTimeTable({
   period,
   workTimeEntries,
@@ -82,43 +114,21 @@ export function WorkTimeTable({
     label: "Infractions",
     name: "infractions",
     minWidth: 120,
-    format: (_, entry) => {
-      if (!entry.totalWork) {
-        return null;
-      }
-      if (!entry.regulationComputations) {
-        return <InfractionsWaiting />;
-      }
-      return (
-        <InfractionsNumber
-          nbAlerts={entry.regulationComputations.nbAlertsDailyAdmin}
-        />
-      );
-    },
+    format: formatInfractions,
     align: "center"
   };
   const dailyInfractionsCol = {
     label: "Infractions journalières",
     name: "dailyInfractions",
     minWidth: 120,
-    format: (_, entry) => {
-      if (!entry.totalWork) {
-        return null;
-      }
-      return <InfractionsNumber nbAlerts={entry.dailyAlerts} />;
-    },
+    format: formatDailyInfractions,
     align: "center"
   };
   const weeklyInfractionsCol = {
     label: "Infractions hebdomadaires",
     name: "weeklyInfractions",
     minWidth: 140,
-    format: (_, entry) => {
-      if (!entry.totalWork) {
-        return null;
-      }
-      return <InfractionsNumber nbAlerts={entry.weeklyAlerts} />;
-    },
+    format: formatWeeklyInfractions,
     align: "center"
   };
   const startTimeCol = {
@@ -183,9 +193,7 @@ export function WorkTimeTable({
   const pictoCol = {
     label: "+ d'infos",
     name: "id",
-    format: () => (
-      <span className={cx("fr-icon--sm", "fr-icon-arrow-right-line")} />
-    ),
+    format: formatPicto,
     sortable: false,
     align: "center",
     overflowTooltip: true
