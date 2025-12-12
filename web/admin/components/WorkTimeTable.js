@@ -9,15 +9,16 @@ import {
 } from "common/utils/time";
 import { formatPersonName } from "common/utils/coworkers";
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
-import { AugmentedTable } from "./AugmentedTable";
 import { makeStyles } from "@mui/styles";
-import { ChevronRight } from "@mui/icons-material";
 import { MissionNamesList } from "./MissionNamesList";
 import { useMissionDrawer } from "../drawers/MissionDrawer";
 import { WorkDayEndTime } from "./WorkDayEndTime";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
-import { OPEN_WORKDAY_DRAWER } from "common/utils/matomoTags";
 import { useDayDrawer } from "../drawers/DayDrawer";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
+import { cx } from "@codegouvfr/react-dsfr/tools/cx";
+import { OPEN_WORKDAY_DRAWER } from "common/utils/matomoTags";
+import { AugmentedTable } from "./AugmentedTable";
 
 const useStyles = makeStyles((theme) => ({
   expenditures: {
@@ -30,6 +31,51 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(4)
   }
 }));
+
+const InfractionsWaiting = () => (
+  <span
+    className={cx("fr-icon--sm", "fr-icon-time-line")}
+    style={{ color: "var(--background-flat-blue-france)" }}
+  />
+);
+
+const InfractionsNumber = ({ nbAlerts }) => (
+  <Badge severity={nbAlerts ? "warning" : "success"} noIcon>
+    {nbAlerts}
+  </Badge>
+);
+
+const formatInfractions = (_, entry) => {
+  if (!entry.totalWork) {
+    return null;
+  }
+  if (!entry.regulationComputations) {
+    return <InfractionsWaiting />;
+  }
+  return (
+    <InfractionsNumber
+      nbAlerts={entry.regulationComputations.nbAlertsDailyAdmin}
+    />
+  );
+};
+
+const formatDailyInfractions = (_, entry) => {
+  if (!entry.totalWork) {
+    return null;
+  }
+  return <InfractionsNumber nbAlerts={entry.dailyAlerts} />;
+};
+
+const formatWeeklyInfractions = (_, entry) => {
+  if (!entry.totalWork) {
+    return null;
+  }
+  return <InfractionsNumber nbAlerts={entry.weeklyAlerts} />;
+};
+
+const formatPicto = () => (
+  <span className={cx("fr-icon--sm", "fr-icon-arrow-right-line")} />
+);
 
 export function WorkTimeTable({
   period,
@@ -64,11 +110,32 @@ export function WorkTimeTable({
     align: "left",
     overflowTooltip: true
   };
+  const infractionsCol = {
+    label: "Infractions",
+    name: "infractions",
+    minWidth: 120,
+    format: formatInfractions,
+    align: "center"
+  };
+  const dailyInfractionsCol = {
+    label: "Infractions journalières",
+    name: "dailyInfractions",
+    minWidth: 120,
+    format: formatDailyInfractions,
+    align: "center"
+  };
+  const weeklyInfractionsCol = {
+    label: "Infractions hebdomadaires",
+    name: "weeklyInfractions",
+    minWidth: 140,
+    format: formatWeeklyInfractions,
+    align: "center"
+  };
   const startTimeCol = {
     label: "Début",
     name: "startTime",
-    format: (time) => (time ? formatTimeOfDay(time) : null),
-    align: "right",
+    format: (time) => (time ? formatTimeOfDay(time, false) : null),
+    align: "left",
     minWidth: 80
   };
   const endTimeCol = {
@@ -81,7 +148,7 @@ export function WorkTimeTable({
         openMission={openMission}
       />
     ),
-    align: "right",
+    align: "left",
     minWidth: 100
   };
   const workTimeCol = {
@@ -89,14 +156,14 @@ export function WorkTimeTable({
     name: "totalWork",
     sortable: true,
     format: formatTimer,
-    align: "right",
+    align: "left",
     minWidth: 120
   };
   const restTimeCol = {
     label: "Repos",
     name: "rest",
-    format: (time) => (time ? formatTimer(time) : null),
-    align: "right",
+    format: (time) => (time ? formatTimer(time, false) : null),
+    align: "left",
     minWidth: 100
   };
   const expenditureCol = {
@@ -126,7 +193,7 @@ export function WorkTimeTable({
   const pictoCol = {
     label: "+ d'infos",
     name: "id",
-    format: () => <ChevronRight color="primary" />,
+    format: formatPicto,
     sortable: false,
     align: "center",
     overflowTooltip: true
@@ -137,6 +204,7 @@ export function WorkTimeTable({
     columns = [
       employeeCol,
       showMissionName && missionNamesCol,
+      infractionsCol,
       startTimeCol,
       endTimeCol,
       workTimeCol,
@@ -146,6 +214,8 @@ export function WorkTimeTable({
   } else {
     columns = [
       employeeCol,
+      dailyInfractionsCol,
+      weeklyInfractionsCol,
       workTimeCol,
       workedDaysCol,
       showExpenditures && expenditureCol

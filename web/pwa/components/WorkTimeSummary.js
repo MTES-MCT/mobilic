@@ -60,7 +60,7 @@ export function computeTimesAndDurationsFromActivities(
   fromTime = null,
   untilTime = null
 ) {
-  const notDismissedActivities = activities.filter(a => !a.isMissionDeleted);
+  const notDismissedActivities = activities.filter((a) => !a.isMissionDeleted);
   const filteredActivities = filterActivitiesOverlappingPeriod(
     notDismissedActivities,
     fromTime,
@@ -124,7 +124,7 @@ export function computeTimesAndDurationsFromActivities(
   };
 }
 
-const diffSecondsToText = diffInS =>
+const diffSecondsToText = (diffInS) =>
   diffInS === 0
     ? ""
     : `${diffInS > 0 ? "+" : "-"}${formatMinutesFromSeconds(
@@ -227,7 +227,7 @@ export function splitByLongBreaksAndComputePeriodStats(
 
   const [workActivities, offActivities] = partition(
     activities,
-    activity => activity.type !== "off"
+    (activity) => activity.type !== "off"
   );
 
   const workedDays = getNbDistinctDays(fromTime, untilTime, workActivities);
@@ -248,8 +248,8 @@ export function splitByLongBreaksAndComputePeriodStats(
 
   const expendituresCount = {};
   if (missions)
-    missions.forEach(m => {
-      m.expenditures.forEach(e => {
+    missions.forEach((m) => {
+      m.expenditures.forEach((e) => {
         if (e.receptionTime >= fromTime && e.receptionTime < untilTime) {
           expendituresCount[e.type] = (expendituresCount[e.type] || 0) + 1;
         }
@@ -338,7 +338,7 @@ export function renderPeriodKpis(
 
   formattedKpis.push(workTimeKpis);
   if (Object.keys(kpis.expendituresCount).length > 0) {
-    Object.keys(kpis.expendituresCount).forEach(type => {
+    Object.keys(kpis.expendituresCount).forEach((type) => {
       const label = EXPENDITURES[type].plural;
       formattedKpis.push({
         name: `expenditure-${type}`,

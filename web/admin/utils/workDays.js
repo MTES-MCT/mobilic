@@ -15,8 +15,10 @@ function computeWorkDayGroupAggregates(workDayGroup) {
   let offDuration = 0;
   let minStartTime;
   let maxEndTime;
-  workDayGroup.forEach(wd => {
-    Object.keys(wd.activityDurations).forEach(key => {
+  let dailyAlerts = 0;
+  let weeklyAlerts = 0;
+  workDayGroup.forEach((wd) => {
+    Object.keys(wd.activityDurations).forEach((key) => {
       aggregateTimers[key] =
         (aggregateTimers[key] || 0) + wd.activityDurations[key];
     });
@@ -25,7 +27,7 @@ function computeWorkDayGroupAggregates(workDayGroup) {
     transferDuration = aggregateTimers[ACTIVITIES.transfer.name] || 0;
     offDuration = aggregateTimers[ACTIVITIES.off.name] || 0;
     if (wd.expenditures) {
-      Object.keys(wd.expenditures).forEach(exp => {
+      Object.keys(wd.expenditures).forEach((exp) => {
         aggregateExpenditures[exp] =
           (aggregateExpenditures[exp] || 0) + wd.expenditures[exp];
       });
@@ -34,6 +36,10 @@ function computeWorkDayGroupAggregates(workDayGroup) {
       ? Math.min(wd.startTime, minStartTime)
       : wd.startTime;
     maxEndTime = maxEndTime ? Math.max(wd.endTime, maxEndTime) : wd.endTime;
+    dailyAlerts =
+      dailyAlerts + wd.regulationComputations?.nbAlertsDailyAdmin || 0;
+    weeklyAlerts =
+      weeklyAlerts + wd.regulationComputations?.nbAlertsWeeklyAdmin || 0;
   });
   return {
     user: workDayGroup[0].user,
@@ -42,17 +48,21 @@ function computeWorkDayGroupAggregates(workDayGroup) {
     periodActualEnd: maxEndTime,
     workedDays: workDayGroup.length,
     service: serviceDuration,
-    totalWork: totalWorkDuration,
+    totalWork: maxEndTime ? totalWorkDuration : null,
     transferDuration,
-    rest: serviceDuration - totalWorkDuration - transferDuration - offDuration,
+    rest: maxEndTime
+      ? serviceDuration - totalWorkDuration - transferDuration - offDuration
+      : null,
     timers: aggregateTimers,
-    companyIds: uniq(workDayGroup.map(wd => wd.companyId)),
+    companyIds: uniq(workDayGroup.map((wd) => wd.companyId)),
     missionNames: workDayGroup.reduce(
       (acc, wd) => Object.assign(acc, wd.missionNames),
       {}
     ),
     expenditureAggs: aggregateExpenditures,
-    lastActivityStartTime: workDayGroup[0].lastActivityStartTime
+    lastActivityStartTime: workDayGroup[0].lastActivityStartTime,
+    dailyAlerts,
+    weeklyAlerts
   };
 }
 
@@ -65,7 +75,7 @@ export function aggregateWorkDayPeriods(workDays, period) {
   if (period === "month") {
     periodFunction = getStartOfMonth;
   }
-  workDays.forEach(wd => {
+  workDays.forEach((wd) => {
     const periodStart = periodFunction(wd.startTime);
     const key = `${wd.user.id}${periodStart}`;
     if (!workDaysGroupedByUserAndPeriod[key])
@@ -75,7 +85,7 @@ export function aggregateWorkDayPeriods(workDays, period) {
   });
   const flatAggregatedWorkDays = Object.values(
     workDaysGroupedByUserAndPeriod
-  ).map(group => {
+  ).map((group) => {
     const aggregateMetrics = computeWorkDayGroupAggregates(group);
     return period === "day"
       ? { ...group[0], ...aggregateMetrics }

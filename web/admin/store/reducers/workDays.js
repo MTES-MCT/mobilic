@@ -5,7 +5,7 @@ export function addWorkDaysReducer(
   { companiesPayload, minDate, reset = false }
 ) {
   let actualMinCursor = minDate;
-  companiesPayload.forEach(c => {
+  companiesPayload.forEach((c) => {
     const wds = c.workDays;
     if (wds.pageInfo.hasNextPage) {
       const oldestWorkDay = wds.edges[wds.edges.length - 1].node;
@@ -26,18 +26,40 @@ export function addWorkDaysReducer(
       ? state.minWorkDaysCursor.slice(10)
       : null;
 
-  const workDaysToAdd = flatMap(
-    companiesPayload.map(c =>
-      c.workDays.edges.map(wd => ({ ...wd.node, companyId: c.id }))
+  let workDaysToAdd = flatMap(
+    companiesPayload.map((c) =>
+      c.workDays.edges.map((wd) => ({ ...wd.node, companyId: c.id }))
     )
   ).filter(
-    wd =>
+    (wd) =>
       (!actualMaxDate ||
         wd.day < actualMaxDate ||
         (wd.day === actualMaxDate && wd.user.id.toString() < actualMaxUser)) &&
       (wd.day > actualMinDate ||
         (wd.day === actualMinDate && wd.user.id.toString() >= actualMinUser))
   );
+
+  const regulationComputationsByUserAndByDay = flatMap(
+    companiesPayload.map((c) => c.adminRegulationComputationsByUserAndByDay)
+  );
+
+  workDaysToAdd = workDaysToAdd.map((wd) => {
+    const userId = wd.user.id;
+    const day = wd.day;
+    const computation = regulationComputationsByUserAndByDay.find(
+      (rc) => rc.day === day && rc.userId === userId
+    );
+
+    return {
+      ...wd,
+      regulationComputations: computation
+        ? {
+            nbAlertsDailyAdmin: computation.nbAlertsDailyAdmin,
+            nbAlertsWeeklyAdmin: computation.nbAlertsWeeklyAdmin
+          }
+        : undefined
+    };
+  });
 
   return {
     ...state,
