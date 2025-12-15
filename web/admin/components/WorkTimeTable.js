@@ -19,6 +19,7 @@ import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { OPEN_WORKDAY_DRAWER } from "common/utils/matomoTags";
 import { AugmentedTable } from "./AugmentedTable";
+import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
 
 const useStyles = makeStyles((theme) => ({
   expenditures: {
@@ -33,10 +34,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const InfractionsWaiting = () => (
-  <span
-    className={cx("fr-icon--sm", "fr-icon-time-line")}
-    style={{ color: "var(--background-flat-blue-france)" }}
-  />
+  <Tooltip title="Mission(s) en attente de validation">
+    <span
+      className={cx("fr-icon--sm", "fr-icon-time-line")}
+      style={{ color: "var(--background-flat-blue-france)" }}
+    />
+  </Tooltip>
 );
 
 const InfractionsNumber = ({ nbAlerts }) => (
