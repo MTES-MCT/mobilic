@@ -37,9 +37,9 @@ function computeWorkDayGroupAggregates(workDayGroup) {
       : wd.startTime;
     maxEndTime = maxEndTime ? Math.max(wd.endTime, maxEndTime) : wd.endTime;
     dailyAlerts =
-      dailyAlerts + wd.regulationComputations?.nbAlertsDailyAdmin || 0;
+      dailyAlerts + (wd.regulationComputations?.nbAlertsDailyAdmin || 0);
     weeklyAlerts =
-      weeklyAlerts + wd.regulationComputations?.nbAlertsWeeklyAdmin || 0;
+      weeklyAlerts + (wd.regulationComputations?.nbAlertsWeeklyAdmin || 0);
   });
   return {
     user: workDayGroup[0].user,
