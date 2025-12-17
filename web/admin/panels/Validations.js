@@ -448,7 +448,7 @@ function ValidationPanel() {
               entriesToValidateByAdmin={entriesToValidateByAdmin}
             />
           ),
-          groupProps: ["name", "startTime", "isHoliday"]
+          groupProps: ["name", "startTime", "isHoliday", "endTime"]
         }}
         headerClassName={`${classes.header} ${classes.row}`}
       />
