@@ -270,12 +270,14 @@ export const ADMIN_REFRESH_REGULATION_COMPUTATIONS_QUERY = gql`
     $fromDate: Date
     $toDate: Date
     $companyIds: [Int]
+    $userIds: [Int]
   ) {
     user(id: $userId) {
       adminedCompanies(companyIds: $companyIds) {
         adminRegulationComputationsByUserAndByDay(
           fromDate: $fromDate
           toDate: $toDate
+          userIds: $userIds
         ) {
           day
           userId

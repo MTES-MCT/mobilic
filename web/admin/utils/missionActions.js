@@ -222,7 +222,8 @@ async function validateMission(
       fromDate: isoFormatLocalDate(mission.startTime),
       toDate: isoFormatLocalDate(
         mission.endTime ? mission.endTime : mission.startTime
-      )
+      ),
+      userIds: usersToValidate
     }
   );
   const computationRegulationsPayload =
