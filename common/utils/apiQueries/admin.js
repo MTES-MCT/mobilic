@@ -264,6 +264,29 @@ export const ADMIN_COMPANIES_QUERY = gql`
   }
 `;
 
+export const ADMIN_REFRESH_REGULATION_COMPUTATIONS_QUERY = gql`
+  query refreshRegulationComputations(
+    $userId: Int!
+    $fromDate: Date
+    $toDate: Date
+    $companyIds: [Int]
+  ) {
+    user(id: $userId) {
+      adminedCompanies(companyIds: $companyIds) {
+        adminRegulationComputationsByUserAndByDay(
+          fromDate: $fromDate
+          toDate: $toDate
+        ) {
+          day
+          userId
+          nbAlertsDailyAdmin
+          nbAlertsWeeklyAdmin
+        }
+      }
+    }
+  }
+`;
+
 export const ADMIN_DELETED_MISSIONS_QUERY = gql`
   ${FRAGMENT_LOCATION_FULL}
   ${FRAGMENT_ACTIVITY}
