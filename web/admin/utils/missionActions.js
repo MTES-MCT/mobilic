@@ -296,7 +296,7 @@ const missionActionWrapper =
     setShouldRefreshActivityPanel,
     setMission
   ) =>
-  (action, shouldRefreshActivityPanel = true) =>
+  (action, shouldRefreshActivityPanel = true, alertVerb = "") =>
   async (...args) => {
     await alerts.withApiErrorHandling(async () => {
       if (shouldRefreshActivityPanel && setShouldRefreshActivityPanel) {
@@ -310,13 +310,15 @@ const missionActionWrapper =
         type: ADMIN_ACTIONS.update,
         payload: { id: mission.id, entity: "missions", update: mission }
       });
-      alerts.success(
-        `La mission${
-          mission.name ? " " + mission.name : ""
-        } a été validée avec succès !`,
-        mission.id,
-        6000
-      );
+      if (alertVerb) {
+        alerts.success(
+          `La mission${
+            mission.name ? " " + mission.name : ""
+          } a été ${alertVerb} avec succès !`,
+          mission.id,
+          6000
+        );
+      }
     });
   };
 
@@ -342,7 +344,7 @@ export function useMissionActions(
     severalActionsActivity: missionActionsDecorator(severalActionsActivity),
     createExpenditure: missionActionsDecorator(createExpenditure),
     cancelExpenditure: missionActionsDecorator(cancelExpenditure),
-    validateMission: missionActionsDecorator(validateMission),
+    validateMission: missionActionsDecorator(validateMission, true, "validée"),
     cancelMission: missionActionsDecorator(cancelMission),
     createComment: missionActionsDecorator(createComment, false),
     deleteComment: missionActionsDecorator(deleteComment, false),
