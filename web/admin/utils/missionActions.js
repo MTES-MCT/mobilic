@@ -299,15 +299,24 @@ const missionActionWrapper =
   (action, shouldRefreshActivityPanel = true) =>
   async (...args) => {
     await alerts.withApiErrorHandling(async () => {
-      if (shouldRefreshActivityPanel) {
+      if (shouldRefreshActivityPanel && setShouldRefreshActivityPanel) {
         setShouldRefreshActivityPanel(true);
       }
       await action(api, mission, adminStore, ...args);
-      setMission({ ...mission });
+      if (setMission) {
+        setMission({ ...mission });
+      }
       adminStore.dispatch({
         type: ADMIN_ACTIONS.update,
         payload: { id: mission.id, entity: "missions", update: mission }
       });
+      alerts.success(
+        `La mission${
+          mission.name ? " " + mission.name : ""
+        } a été validée avec succès !`,
+        mission.id,
+        6000
+      );
     });
   };
 
