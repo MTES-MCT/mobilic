@@ -1,13 +1,17 @@
+const getKeyComputation = (rc) => `${rc.day}_${rc.userId}`;
+const getKeyWorkDay = (wd) => `${wd.day}_${wd.user.id}`;
+
 export function updateRegulationComputationsReducer(
   state,
   { computationRegulationsPayload }
 ) {
+  const computationsMap = new Map(
+    computationRegulationsPayload.map((rc) => [getKeyComputation(rc), rc])
+  );
   return {
     ...state,
     workDays: state.workDays.map((wd) => {
-      const computation = computationRegulationsPayload.find(
-        (rc) => rc.day === wd.day && rc.userId === wd.user.id
-      );
+      const computation = computationsMap.get(getKeyWorkDay(wd));
       if (!computation) {
         return wd;
       }

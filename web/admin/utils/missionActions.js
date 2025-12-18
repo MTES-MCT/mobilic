@@ -193,7 +193,7 @@ async function validateMission(
   usersToValidate,
   overrideValidationJustification
 ) {
-  //Update mission in backend
+  // update mission in backend
   const apiResponse = await api.graphQlMutate(VALIDATE_MISSION_MUTATION, {
     missionId: mission.id,
     usersIds: usersToValidate,
@@ -227,8 +227,8 @@ async function validateMission(
     }
   );
   const computationRegulationsPayload =
-    apiResponseRegulations.data.user.adminedCompanies[0]
-      .adminRegulationComputationsByUserAndByDay;
+    apiResponseRegulations.data.user.adminedCompanies?.[0]
+      .adminRegulationComputationsByUserAndByDay ?? [];
   adminStore.dispatch({
     type: ADMIN_ACTIONS.updateRegulationComputations,
     payload: { computationRegulationsPayload }
