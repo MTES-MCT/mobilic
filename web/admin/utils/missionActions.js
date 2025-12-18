@@ -214,25 +214,29 @@ async function validateMission(
   mission.validations = [...missionResponse.validations];
 
   // refresh regulation computations
-  const apiResponseRegulations = await api.graphQlQuery(
-    ADMIN_REFRESH_REGULATION_COMPUTATIONS_QUERY,
-    {
-      userId: adminStore.userId,
-      companyIds: [adminStore.companyId],
-      fromDate: isoFormatLocalDate(mission.startTime),
-      toDate: isoFormatLocalDate(
-        mission.endTime ? mission.endTime : mission.startTime
-      ),
-      userIds: usersToValidate
-    }
-  );
-  const computationRegulationsPayload =
-    apiResponseRegulations.data.user.adminedCompanies?.[0]
-      .adminRegulationComputationsByUserAndByDay ?? [];
-  adminStore.dispatch({
-    type: ADMIN_ACTIONS.updateRegulationComputations,
-    payload: { computationRegulationsPayload }
-  });
+  try {
+    const apiResponseRegulations = await api.graphQlQuery(
+      ADMIN_REFRESH_REGULATION_COMPUTATIONS_QUERY,
+      {
+        userId: adminStore.userId,
+        companyIds: [adminStore.companyId],
+        fromDate: isoFormatLocalDate(mission.startTime),
+        toDate: isoFormatLocalDate(
+          mission.endTime ? mission.endTime : mission.startTime
+        ),
+        userIds: usersToValidate
+      }
+    );
+    const computationRegulationsPayload =
+      apiResponseRegulations.data.user.adminedCompanies?.[0]
+        .adminRegulationComputationsByUserAndByDay ?? [];
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateRegulationComputations,
+      payload: { computationRegulationsPayload }
+    });
+  } catch (err) {
+    console.err(err);
+  }
 }
 
 async function cancelMission(api, mission, adminStore, args) {
