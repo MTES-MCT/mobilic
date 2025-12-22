@@ -1,12 +1,10 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { useApi } from "common/utils/api";
 import { useAdminStore } from "../store/store";
 import size from "lodash/size";
 import { AugmentedTable } from "../components/AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import {
   formatDateTime,
@@ -18,12 +16,9 @@ import {
 import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { useSnackbarAlerts } from "../../common/Snackbar";
-import { formatApiError } from "common/utils/errors";
 import { useStyles } from "../components/styles/ValidationsStyle";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMissionDrawer } from "../drawers/MissionDrawer";
-import { LoadingButton } from "common/components/LoadingButton";
 import {
   entryToBeValidatedByAdmin,
   entryToBeValidatedByWorker,
@@ -33,8 +28,7 @@ import groupBy from "lodash/groupBy";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
   CHANGE_VALIDATION_TAB,
-  OPEN_MISSION_DRAWER_IN_VALIDATION_PANEL,
-  VALIDATE_MISSION_IN_VALIDATION_PANEL
+  OPEN_MISSION_DRAWER_IN_VALIDATION_PANEL
 } from "common/utils/matomoTags";
 import Badge from "@mui/material/Badge";
 import Grid from "@mui/material/Grid";
@@ -47,7 +41,7 @@ import {
 import { usePageTitle } from "../../common/UsePageTitle";
 import { Explanation } from "../../common/typography/Explanation";
 import { useRefreshDeletedMissions } from "../hooks/useRefreshDeletedMissions";
-import { VALIDATE_MISSION_MUTATION } from "common/utils/apiQueries/missions";
+import ValidationMission from "./ValidationMission";
 
 const VALIDATION_TABS = [
   {
@@ -75,16 +69,9 @@ const VALIDATION_TABS = [
   }
 ];
 
-const formatMissionName = (mission) =>
-  `${mission.isHoliday ? "" : "Mission "}${mission.name} du ${formatDay(
-    mission.startTime
-  )}`;
-
 function ValidationPanel() {
   usePageTitle("Validation Saisie(s) - Mobilic");
-  const api = useApi();
   const adminStore = useAdminStore();
-  const alerts = useSnackbarAlerts();
   const location = useLocation();
   const { trackEvent } = useMatomo();
 
@@ -455,61 +442,13 @@ function ValidationPanel() {
           label: "Mission",
           name: "missionId",
           format: (value, entry) => (
-            <Box className="flex-row-space-between">
-              <Typography
-                variant="h6"
-                component="span"
-                className={classes.missionTitle}
-              >
-                {formatMissionName(entry)}
-              </Typography>
-              {tab === 0 && (
-                <LoadingButton
-                  size="small"
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    trackEvent(VALIDATE_MISSION_IN_VALIDATION_PANEL);
-                    try {
-                      const usersToValidate = entriesToValidateByAdmin
-                        .filter(
-                          (entryToValidate) =>
-                            entryToValidate.missionId === entry.id
-                        )
-                        .map(
-                          (workerEntryToValidate) =>
-                            workerEntryToValidate.user.id
-                        );
-                      const apiResponse = await api.graphQlMutate(
-                        VALIDATE_MISSION_MUTATION,
-                        {
-                          missionId: entry.id,
-                          usersIds: usersToValidate
-                        }
-                      );
-                      const missionResponse =
-                        apiResponse.data.activities.validateMission;
-                      adminStore.dispatch({
-                        type: ADMIN_ACTIONS.validateMission,
-                        payload: { missionResponse }
-                      });
-                      alerts.success(
-                        `La mission${
-                          entry.name ? " " + entry.name : ""
-                        } a été validée avec succès !`,
-                        entry.id,
-                        6000
-                      );
-                    } catch (err) {
-                      alerts.error(formatApiError(err), entry.id, 6000);
-                    }
-                  }}
-                >
-                  Valider
-                </LoadingButton>
-              )}
-            </Box>
+            <ValidationMission
+              tab={tab}
+              mission={entry}
+              entriesToValidateByAdmin={entriesToValidateByAdmin}
+            />
           ),
-          groupProps: ["name", "startTime", "isHoliday"]
+          groupProps: ["name", "startTime", "isHoliday", "endTime"]
         }}
         headerClassName={`${classes.header} ${classes.row}`}
       />

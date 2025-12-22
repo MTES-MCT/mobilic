@@ -253,6 +253,37 @@ export const ADMIN_COMPANIES_QUERY = gql`
           shouldSeeCertificateInfo
           shouldForceNbWorkerInfo
         }
+        adminRegulationComputationsByUserAndByDay(fromDate: $activityAfter) {
+          day
+          userId
+          nbAlertsDailyAdmin
+          nbAlertsWeeklyAdmin
+        }
+      }
+    }
+  }
+`;
+
+export const ADMIN_REFRESH_REGULATION_COMPUTATIONS_QUERY = gql`
+  query refreshRegulationComputations(
+    $userId: Int!
+    $fromDate: Date
+    $toDate: Date
+    $companyIds: [Int]
+    $userIds: [Int]
+  ) {
+    user(id: $userId) {
+      adminedCompanies(companyIds: $companyIds) {
+        adminRegulationComputationsByUserAndByDay(
+          fromDate: $fromDate
+          toDate: $toDate
+          userIds: $userIds
+        ) {
+          day
+          userId
+          nbAlertsDailyAdmin
+          nbAlertsWeeklyAdmin
+        }
       }
     }
   }
@@ -339,6 +370,15 @@ export const ADMIN_WORK_DAYS_QUERY = gql`
         }
         workDays(fromDate: $activityAfter, untilDate: $activityBefore) {
           ...WorkDayData
+        }
+        adminRegulationComputationsByUserAndByDay(
+          fromDate: $activityAfter
+          toDate: $activityBefore
+        ) {
+          day
+          userId
+          nbAlertsDailyAdmin
+          nbAlertsWeeklyAdmin
         }
       }
     }

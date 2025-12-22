@@ -15,7 +15,10 @@ import {
   getPayloadFromVirtualExpenditures,
   getPayloadUpdateActivity
 } from "./virtualPayloads";
-import { BULK_ACTIVITY_QUERY } from "common/utils/apiQueries/admin";
+import {
+  ADMIN_REFRESH_REGULATION_COMPUTATIONS_QUERY,
+  BULK_ACTIVITY_QUERY
+} from "common/utils/apiQueries/admin";
 import {
   buildLogLocationPayloadFromAddress,
   CANCEL_COMMENT_MUTATION,
@@ -27,6 +30,7 @@ import {
   UPDATE_MISSION_VEHICLE_MUTATION,
   VALIDATE_MISSION_MUTATION
 } from "common/utils/apiQueries/missions";
+import { isoFormatLocalDate } from "common/utils/time";
 
 const testBulkActivities = async (api, virtualActivities) => {
   if (virtualActivities.length > 0) {
@@ -189,6 +193,7 @@ async function validateMission(
   usersToValidate,
   overrideValidationJustification
 ) {
+  // update mission in backend
   const apiResponse = await api.graphQlMutate(VALIDATE_MISSION_MUTATION, {
     missionId: mission.id,
     usersIds: usersToValidate,
@@ -207,6 +212,31 @@ async function validateMission(
   mission.activities = [...missionResponse.activities];
   mission.expenditures = [...missionResponse.expenditures];
   mission.validations = [...missionResponse.validations];
+
+  // refresh regulation computations
+  try {
+    const apiResponseRegulations = await api.graphQlQuery(
+      ADMIN_REFRESH_REGULATION_COMPUTATIONS_QUERY,
+      {
+        userId: adminStore.userId,
+        companyIds: [adminStore.companyId],
+        fromDate: isoFormatLocalDate(mission.startTime),
+        toDate: isoFormatLocalDate(
+          mission.endTime ? mission.endTime : mission.startTime
+        ),
+        userIds: usersToValidate
+      }
+    );
+    const computationRegulationsPayload =
+      apiResponseRegulations.data.user.adminedCompanies?.[0]
+        .adminRegulationComputationsByUserAndByDay ?? [];
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updateRegulationComputations,
+      payload: { computationRegulationsPayload }
+    });
+  } catch (err) {
+    console.err(err);
+  }
 }
 
 async function cancelMission(api, mission, adminStore, args) {
@@ -296,18 +326,29 @@ const missionActionWrapper =
     setShouldRefreshActivityPanel,
     setMission
   ) =>
-  (action, shouldRefreshActivityPanel = true) =>
+  (action, shouldRefreshActivityPanel = true, alertVerb = "") =>
   async (...args) => {
     await alerts.withApiErrorHandling(async () => {
-      if (shouldRefreshActivityPanel) {
+      if (shouldRefreshActivityPanel && setShouldRefreshActivityPanel) {
         setShouldRefreshActivityPanel(true);
       }
       await action(api, mission, adminStore, ...args);
-      setMission({ ...mission });
+      if (setMission) {
+        setMission({ ...mission });
+      }
       adminStore.dispatch({
         type: ADMIN_ACTIONS.update,
         payload: { id: mission.id, entity: "missions", update: mission }
       });
+      if (alertVerb) {
+        alerts.success(
+          `La mission${
+            mission.name ? " " + mission.name : ""
+          } a été ${alertVerb} avec succès !`,
+          mission.id,
+          6000
+        );
+      }
     });
   };
 
@@ -333,7 +374,7 @@ export function useMissionActions(
     severalActionsActivity: missionActionsDecorator(severalActionsActivity),
     createExpenditure: missionActionsDecorator(createExpenditure),
     cancelExpenditure: missionActionsDecorator(cancelExpenditure),
-    validateMission: missionActionsDecorator(validateMission),
+    validateMission: missionActionsDecorator(validateMission, true, "validée"),
     cancelMission: missionActionsDecorator(cancelMission),
     createComment: missionActionsDecorator(createComment, false),
     deleteComment: missionActionsDecorator(deleteComment, false),
