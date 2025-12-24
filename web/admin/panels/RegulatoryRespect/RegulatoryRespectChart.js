@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import { useRegulatoryAlertsSummaryContext } from "../../utils/contextRegulatoryAlertsSummary";
 import { SegmentedControl } from "@codegouvfr/react-dsfr/SegmentedControl";
+import { Table } from "@codegouvfr/react-dsfr/Table";
 
 const ALERTS_DATA = {
   maximumWorkedDaysInWeek: {
@@ -78,18 +79,6 @@ const renderActiveShape = ({
 export const Chart = () => {
   const { summary } = useRegulatoryAlertsSummaryContext();
   const [selectedView, setSelectedView] = useState("chart");
-
-  console.log("summary", summary);
-  // const data = [
-  //   { name: "Group A", value: 400 },
-  //   { name: "Group B", value: 300 },
-  //   { name: "Group C", value: 300 },
-  //   { name: "Group D", value: 200 }
-  // ];
-  console.log("[...summary.dailyAlerts, ...summary.weeklyAlerts]", [
-    ...summary.dailyAlerts,
-    ...summary.weeklyAlerts
-  ]);
   const data = [...summary.dailyAlerts, ...summary.weeklyAlerts]
     .filter((alert) => alert.alertsType in ALERTS_DATA)
     .map((alert) => ({
@@ -130,7 +119,11 @@ export const Chart = () => {
           </PieChart>
         </ResponsiveContainer>
       ) : (
-        <>table</>
+        <Table
+          caption="Résumé du tableau (accessibilité)"
+          data={data.map((d) => [d.name, d.value])}
+          headers={["Alerte", "#"]}
+        />
       )}
       <SegmentedControl
         segments={[
