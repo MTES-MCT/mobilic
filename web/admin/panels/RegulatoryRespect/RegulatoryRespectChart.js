@@ -1,5 +1,5 @@
-import React from "react";
-import { Box } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Typography } from "@mui/material";
 import {
   Pie,
   PieChart,
@@ -9,6 +9,7 @@ import {
   Legend
 } from "recharts";
 import { useRegulatoryAlertsSummaryContext } from "../../utils/contextRegulatoryAlertsSummary";
+import { SegmentedControl } from "@codegouvfr/react-dsfr/SegmentedControl";
 
 const ALERTS_DATA = {
   maximumWorkedDaysInWeek: {
@@ -76,6 +77,8 @@ const renderActiveShape = ({
 
 export const Chart = () => {
   const { summary } = useRegulatoryAlertsSummaryContext();
+  const [selectedView, setSelectedView] = useState("chart");
+
   console.log("summary", summary);
   // const data = [
   //   { name: "Group A", value: 400 },
@@ -96,34 +99,60 @@ export const Chart = () => {
     }))
     .filter((d) => d.value > 0);
   return (
-    <Box>
-      <ResponsiveContainer width="100%" aspect={1}>
-        <PieChart
-        // margin={{
-        //   top: 50,
-        //   right: 120,
-        //   bottom: 0,
-        //   left: 120
-        // }}
-        >
-          <Pie
-            activeShape={renderActiveShape}
-            data={data}
-            cx="50%"
-            cy="50%"
-            innerRadius="50%"
-            outerRadius="70%"
-            fill="#8884d8"
-            dataKey="value"
-            isAnimationActive={true}
-          />
-          <Tooltip
-            content={() => null}
-            // defaultIndex={defaultIndex}
-          />
-          <Legend />
-        </PieChart>
-      </ResponsiveContainer>
+    <Box className="fr-tile">
+      <Typography
+        fontWeight="bold"
+        fontSize="1.2rem"
+        textAlign="left"
+        lineHeight="1.75rem"
+      >
+        Répartition des dépassements de seuils
+      </Typography>
+      {selectedView === "chart" ? (
+        <ResponsiveContainer width="100%" aspect={1}>
+          <PieChart>
+            <Pie
+              activeShape={renderActiveShape}
+              data={data}
+              cx="50%"
+              cy="50%"
+              innerRadius="50%"
+              outerRadius="70%"
+              fill="#8884d8"
+              dataKey="value"
+              isAnimationActive={true}
+            />
+            <Tooltip
+              content={() => null}
+              // defaultIndex={defaultIndex}
+            />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      ) : (
+        <>table</>
+      )}
+      <SegmentedControl
+        segments={[
+          {
+            iconId: "fr-icon-pie-chart-2-fill",
+            label: "Graphe",
+            nativeInputProps: {
+              value: "chart",
+              defaultChecked: true,
+              onChange: () => setSelectedView("chart")
+            }
+          },
+          {
+            iconId: "fr-icon-table-line",
+            label: "Tableau",
+            nativeInputProps: {
+              value: "table",
+              onChange: () => setSelectedView("table")
+            }
+          }
+        ]}
+      />
     </Box>
   );
 };
