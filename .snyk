@@ -1,0 +1,5 @@
+# Snyk (https://snyk.io) policy file
+version: v1.25.0
+language-settings:
+  javascript:
+    packageManager: pnpm
