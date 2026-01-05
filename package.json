@@ -2,6 +2,12 @@
   "name": "mobilic",
   "version": "0.1.0",
   "private": true,
+  "workspaces": {
+    "packages": [
+      "web",
+      "common"
+    ]
+  },
   "dependencies": {
     "@apollo/client": "^4.0.9",
     "@babel/core": "^7.26.10",
