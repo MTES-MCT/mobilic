@@ -1,16 +1,9 @@
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
-import {
-  Pie,
-  PieChart,
-  Sector,
-  Tooltip,
-  ResponsiveContainer,
-  Legend
-} from "recharts";
 import { useRegulatoryAlertsSummaryContext } from "../../utils/contextRegulatoryAlertsSummary";
 import { SegmentedControl } from "@codegouvfr/react-dsfr/SegmentedControl";
 import { Table } from "@codegouvfr/react-dsfr/Table";
+import { Chart } from "./Chart";
 
 const ALERTS_DATA = {
   maximumWorkedDaysInWeek: {
@@ -39,44 +32,7 @@ const ALERTS_DATA = {
   }
 };
 
-const renderActiveShape = ({
-  cx,
-  cy,
-  innerRadius,
-  outerRadius,
-  startAngle,
-  endAngle,
-  fill,
-  payload
-}) => {
-  return (
-    <g>
-      <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
-        {payload.value}
-      </text>
-      <Sector
-        cx={cx}
-        cy={cy}
-        innerRadius={innerRadius}
-        outerRadius={outerRadius}
-        startAngle={startAngle}
-        endAngle={endAngle}
-        fill={fill}
-      />
-      <Sector
-        cx={cx}
-        cy={cy}
-        startAngle={startAngle}
-        endAngle={endAngle}
-        innerRadius={(outerRadius ?? 0) + 6}
-        outerRadius={(outerRadius ?? 0) + 10}
-        fill={fill}
-      />
-    </g>
-  );
-};
-
-export const Chart = () => {
+export const RegulatoryRespectChart = () => {
   const { summary } = useRegulatoryAlertsSummaryContext();
   const [selectedView, setSelectedView] = useState("chart");
   const data = [...summary.dailyAlerts, ...summary.weeklyAlerts]
@@ -88,64 +44,50 @@ export const Chart = () => {
     }))
     .filter((d) => d.value > 0);
   return (
-    <Box className="fr-tile">
+    <Box className="fr-tile alerts-chart">
       <Typography
         fontWeight="bold"
         fontSize="1.2rem"
         textAlign="left"
         lineHeight="1.75rem"
+        paddingX={4}
       >
         Répartition des dépassements de seuils
       </Typography>
       {selectedView === "chart" ? (
-        <ResponsiveContainer width="100%" aspect={1}>
-          <PieChart>
-            <Pie
-              activeShape={renderActiveShape}
-              data={data}
-              cx="50%"
-              cy="50%"
-              innerRadius="50%"
-              outerRadius="70%"
-              fill="#8884d8"
-              dataKey="value"
-              isAnimationActive={true}
-            />
-            <Tooltip
-              content={() => null}
-              // defaultIndex={defaultIndex}
-            />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
+        <Chart data={data} />
       ) : (
-        <Table
-          caption="Résumé du tableau (accessibilité)"
-          data={data.map((d) => [d.name, d.value])}
-          headers={["Alerte", "#"]}
-        />
+        <Box paddingX={4}>
+          <Table
+            caption="Résumé du tableau (accessibilité)"
+            data={data.map((d) => [d.name, d.value])}
+            headers={["Alerte", "#"]}
+          />
+        </Box>
       )}
-      <SegmentedControl
-        segments={[
-          {
-            iconId: "fr-icon-pie-chart-2-fill",
-            label: "Graphe",
-            nativeInputProps: {
-              value: "chart",
-              defaultChecked: true,
-              onChange: () => setSelectedView("chart")
+      <Box paddingX={4} mt={2}>
+        <SegmentedControl
+          segments={[
+            {
+              iconId: "fr-icon-pie-chart-2-fill",
+              label: "Graphe",
+              nativeInputProps: {
+                value: "chart",
+                defaultChecked: true,
+                onChange: () => setSelectedView("chart")
+              }
+            },
+            {
+              iconId: "fr-icon-table-line",
+              label: "Tableau",
+              nativeInputProps: {
+                value: "table",
+                onChange: () => setSelectedView("table")
+              }
             }
-          },
-          {
-            iconId: "fr-icon-table-line",
-            label: "Tableau",
-            nativeInputProps: {
-              value: "table",
-              onChange: () => setSelectedView("table")
-            }
-          }
-        ]}
-      />
+          ]}
+        />
+      </Box>
     </Box>
   );
 };
