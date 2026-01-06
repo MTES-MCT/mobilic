@@ -44,7 +44,7 @@ export const RegulatoryRespectChart = () => {
     }))
     .filter((d) => d.value > 0);
   return (
-    <Box className="fr-tile alerts-chart">
+    <Box className="fr-tile alerts-chart" minHeight="470px">
       <Typography
         fontWeight="bold"
         fontSize="1.2rem"
