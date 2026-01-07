@@ -45,14 +45,14 @@ export const RESOURCES_DOCUMENT = {
       slideshare:
         "https://www.slideshare.net/slideshow/embed_code/key/A1Ygyj7EIa6gfj",
       download:
-        "https://drive.google.com/uc?export=download&id=16PJFABFEqf4-wy_UYcH8jE8ATbtLz_Qg",
-    },
+        "https://drive.google.com/uc?export=download&id=16PJFABFEqf4-wy_UYcH8jE8ATbtLz_Qg"
+    }
   },
   brochure: {
     slideshare:
-      "https://www.slideshare.net/slideshow/embed_code/key/cK7t047QZRs3QH",
+      "https://www.slideshare.net/slideshow/embed_code/key/rEp8tLHepYoNiT",
     download:
-      "https://drive.google.com/uc?id=1tdO2GjJqai5sFjc22rVQdrut03evepa5&export=download"
+      "https://drive.google.com/uc?id=1PqT645T1tzaHGwIbbBg6l0VeOfxrd02t&export=download"
   }
 };
 
