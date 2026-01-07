@@ -70,7 +70,7 @@ export const RegulatoryRespectChart = () => {
           segments={[
             {
               iconId: "fr-icon-pie-chart-2-fill",
-              label: "Graphe",
+              label: "Graphique",
               nativeInputProps: {
                 value: "chart",
                 defaultChecked: true,
