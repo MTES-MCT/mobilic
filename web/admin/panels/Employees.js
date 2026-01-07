@@ -48,6 +48,8 @@ import {
   SEND_INVITATIONS_REMINDERS,
   TERMINATE_EMPLOYMENT_MUTATION
 } from "common/utils/apiQueries/employments";
+import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -66,6 +68,10 @@ const useStyles = makeStyles((theme) => ({
   },
   hideButton: {
     marginLeft: theme.spacing(2)
+  },
+  badgeDetache: {
+    backgroundColor: "#E5E5E5 !important",
+    color: "#929292 !important"
   }
 }));
 
@@ -329,22 +335,61 @@ export function Employees({ company, containerRef }) {
     format: (remindButton) => remindButton
   });
 
+  const isInactiveMoreThan3Months = (lastActiveAt) => {
+    if (!lastActiveAt) return false;
+    return now() - lastActiveAt > DAY * 90;
+  };
+
+  const formatLastActiveDate = (lastActiveAt) => {
+    if (!lastActiveAt) return "";
+    return frenchFormatDateStringOrTimeStamp(lastActiveAt * 1000);
+  };
+
+  const EmployeeStatusBadge = ({ isDetached, isInactive, lastActiveAt }) => {
+    if (isDetached) {
+      return (
+        <Badge noIcon small className={classes.badgeDetache}>
+          {"détaché".toUpperCase()}
+        </Badge>
+      );
+    }
+    if (isInactive) {
+      return (
+          <Tooltip title={`Inactif depuis le ${formatLastActiveDate(lastActiveAt)}. Pensez à détacher ce salarié.`}>
+            <Badge severity="warning" noIcon small>
+              {"inactif".toUpperCase()}
+            </Badge>
+          </Tooltip>
+      );
+    }
+    return null;
+  };
+
   const validEmploymentColumns = [
     {
-      label: "Nom",
+      label: "Salarié",
       name: "lastName",
       align: "left",
       sortable: true,
-      minWidth: 120,
-      overflowTooltip: true
+      minWidth: 200,
+      overflowTooltip: true,
+      format: (lastName, entry) => 
+          `${entry.firstName} ${lastName}`
     },
     {
-      label: "Prénom",
-      name: "firstName",
-      align: "left",
+      label: "",
+      name: "statusBadge",
+      align: "right",
       sortable: true,
-      minWidth: 120,
-      overflowTooltip: true
+      minWidth: 80,
+      baseWidth: 80,
+      format: (_, entry) => (
+        <EmployeeStatusBadge
+          isDetached={entry.isDetached}
+          isInactive={entry.isInactive}
+          lastActiveAt={entry.lastActiveAt}
+        />
+      )
     },
     {
       label: "Identifiant",
@@ -511,23 +556,32 @@ export function Employees({ company, containerRef }) {
           );
         })
         .filter((e) => e.isAcknowledged)
-        .map((e) => ({
-          pending: false,
-          id: e.user.id,
-          email: e.user.email,
-          employmentId: e.id,
-          lastName: e.user.lastName,
-          firstName: e.user.firstName,
-          name: formatPersonName(e.user),
-          startDate: e.startDate,
-          endDate: e.endDate,
-          active: !e.endDate || e.endDate >= today,
-          hasAdminRights: e.hasAdminRights ? 1 : 0,
-          teamId: e.teamId,
-          userId: e.user.id,
-          companyId: e.company.id,
-          business: e.business
-        })),
+        .map((e) => {
+          const isDetached = !!e.endDate;
+          const isInactive = !isDetached && isInactiveMoreThan3Months(e.lastActiveAt);
+          const statusBadge = isDetached ? 2 : isInactive ? 1 : 0;
+          return {
+            pending: false,
+            id: e.user.id,
+            email: e.user.email,
+            employmentId: e.id,
+            lastName: e.user.lastName,
+            firstName: e.user.firstName,
+            name: formatPersonName(e.user),
+            startDate: e.startDate,
+            endDate: e.endDate,
+            active: !e.endDate || e.endDate >= today,
+            hasAdminRights: e.hasAdminRights ? 1 : 0,
+            teamId: e.teamId,
+            userId: e.user.id,
+            companyId: e.company.id,
+            business: e.business,
+            lastActiveAt: e.lastActiveAt,
+            isDetached,
+            isInactive,
+            statusBadge
+          };
+        }),
     [companyEmployments, selectedTeamIds]
   );
 
