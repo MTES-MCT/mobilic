@@ -1,0 +1,16 @@
+.alerts-chart {
+    .recharts-legend-item-text {
+        font-size: 0.75rem;
+        color: var(--background-flat-grey) !important;
+        font-weight: 700;
+    }
+    .inner-text {
+        font-weight: 400;
+        font-size: 2rem;
+    }
+}
+
+.fr-tile.alerts-chart {
+    padding-left: 0px;
+    padding-right: 0px;
+}
