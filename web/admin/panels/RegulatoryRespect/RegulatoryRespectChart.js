@@ -43,6 +43,10 @@ export const RegulatoryRespectChart = () => {
       fill: ALERTS_DATA[alert.alertsType].color
     }))
     .filter((d) => d.value > 0);
+
+  if (data.length === 0) {
+    return;
+  }
   return (
     <Box className="fr-tile alerts-chart" minHeight="470px">
       <Typography
@@ -59,7 +63,7 @@ export const RegulatoryRespectChart = () => {
       ) : (
         <Box paddingX={4}>
           <Table
-            caption="Résumé du tableau (accessibilité)"
+            caption="Répartition des dépassements de seuils"
             data={data.map((d) => [d.name, d.value])}
             headers={["Alerte", "#"]}
           />
