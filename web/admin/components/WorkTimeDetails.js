@@ -136,156 +136,158 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
     })();
   }, [workTimeEntry]);
 
-  return [
-    <Box key={0} className={classes.workTimeDetailsTitleContainer}>
-      <Typography
-        variant="h3"
-        component="h1"
-        className={classes.workTimeDetailsTitle}
-      >
-        Détail de la journée du{" "}
-        {prettyFormatDay(workTimeEntry.periodActualStart, true)}
-      </Typography>
-      <CloseButton onClick={handleClose} />
-    </Box>,
-    <Box key={1} marginTop={1} marginBottom={3}>
-      <Typography variant="h6" component="p" className={classes.employeeName}>
-        {workTimeEntry.workerName}
-      </Typography>
-    </Box>,
-    <Grid container key={2} spacing={3} direction="column" wrap="nowrap">
-      <Grid item container spacing={2} justifyContent="space-between">
-        <Grid
-          item
-          sm={4}
-          container
-          spacing={2}
-          direction="column"
-          wrap="nowrap"
+  return (
+    <>
+      <Box className={classes.workTimeDetailsTitleContainer}>
+        <Typography
+          variant="h3"
+          component="h1"
+          className={classes.workTimeDetailsTitle}
         >
-          <Grid item className={classes.cardRecapKPIContainer}>
-            <MetricCard
-              loading={loading}
-              className={`${classes.cardRecapKPI}`}
-              textAlign="center"
-              py={2}
-              variant="outlined"
-              titleProps={{ variant: "h6", component: "h2" }}
-              title="Amplitude"
-              value={formatTimer(workTimeEntry.service)}
-              valueProps={{
-                className: `${classes.amplitudeText} ${
-                  !workTimeEntry.endTime ? classes.runningMissionText : ""
-                }`,
-                variant: "h1",
-                component: "p"
-              }}
-              subText={
-                <span>
-                  de {formatTimeOfDay(workTimeEntry.startTime)} à{" "}
-                  {formatTimeOfDay(workTimeEntry.endTime)}{" "}
-                  {!workTimeEntry.endTime ? (
-                    <span className={classes.runningMissionText}>
-                      (en cours)
-                    </span>
+          Détail de la journée du{" "}
+          {prettyFormatDay(workTimeEntry.periodActualStart, true)}
+        </Typography>
+        <CloseButton onClick={handleClose} />
+      </Box>
+      <Box marginTop={1} marginBottom={3}>
+        <Typography variant="h6" component="p" className={classes.employeeName}>
+          {workTimeEntry.workerName}
+        </Typography>
+      </Box>
+      <Grid container spacing={3} direction="column" wrap="nowrap">
+        <Grid item container spacing={2} justifyContent="space-between">
+          <Grid
+            item
+            sm={4}
+            container
+            spacing={2}
+            direction="column"
+            wrap="nowrap"
+          >
+            <Grid item className={classes.cardRecapKPIContainer}>
+              <MetricCard
+                loading={loading}
+                className={`${classes.cardRecapKPI}`}
+                textAlign="center"
+                py={2}
+                variant="outlined"
+                titleProps={{ variant: "h6", component: "h2" }}
+                title="Amplitude"
+                value={formatTimer(workTimeEntry.service)}
+                valueProps={{
+                  className: `${classes.amplitudeText} ${
+                    !workTimeEntry.endTime ? classes.runningMissionText : ""
+                  }`,
+                  variant: "h1",
+                  component: "p"
+                }}
+                subText={
+                  <span>
+                    de {formatTimeOfDay(workTimeEntry.startTime)} à{" "}
+                    {formatTimeOfDay(workTimeEntry.endTime)}{" "}
+                    {!workTimeEntry.endTime ? (
+                      <span className={classes.runningMissionText}>
+                        (en cours)
+                      </span>
+                    ) : (
+                      ""
+                    )}
+                  </span>
+                }
+              />
+            </Grid>
+            <Grid item className={classes.cardRecapKPIContainer}>
+              <MetricCard
+                className={classes.cardRecapKPI}
+                loading={loading}
+                textAlign="center"
+                py={2}
+                variant="outlined"
+                titleProps={{ variant: "h6", component: "h2" }}
+                title="Temps de travail"
+                value={formatTimer(workTimeEntry.totalWork)}
+                valueProps={{
+                  className: `${classes.amplitudeText} ${
+                    !workTimeEntry.endTime ? classes.runningMissionText : ""
+                  }`,
+                  variant: "h1",
+                  component: "p"
+                }}
+                subText={
+                  !workTimeEntry.endTime ? (
+                    <span className={classes.runningMissionText}>En cours</span>
                   ) : (
                     ""
-                  )}
-                </span>
-              }
-            />
+                  )
+                }
+              />
+            </Grid>
           </Grid>
-          <Grid item className={classes.cardRecapKPIContainer}>
-            <MetricCard
-              className={classes.cardRecapKPI}
-              loading={loading}
-              textAlign="center"
-              py={2}
-              variant="outlined"
-              titleProps={{ variant: "h6", component: "h2" }}
-              title="Temps de travail"
-              value={formatTimer(workTimeEntry.totalWork)}
-              valueProps={{
-                className: `${classes.amplitudeText} ${
-                  !workTimeEntry.endTime ? classes.runningMissionText : ""
-                }`,
-                variant: "h1",
-                component: "p"
-              }}
-              subText={
-                !workTimeEntry.endTime ? (
-                  <span className={classes.runningMissionText}>En cours</span>
-                ) : (
-                  ""
-                )
-              }
-            />
+          <Grid item xs={12} sm={8}>
+            <MissionInfoCard
+              title="Seuils réglementaires"
+              className={classes.regulatoryAlertCard}
+              titleProps={{ component: "h2", variant: "h6" }}
+            >
+              <div>Alertes quotidiennes</div>
+              <DayRegulatoryAlerts
+                userId={workTimeEntry.user.id}
+                day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
+              />
+              {getStartOfWeek(workTimeEntry.periodStart) ===
+                workTimeEntry.periodStart && (
+                <>
+                  <br></br>
+                  <div>Alertes hebdomadaires</div>
+                  <WeekRegulatoryAlerts
+                    userId={workTimeEntry.user.id}
+                    day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
+                  />
+                </>
+              )}
+            </MissionInfoCard>
           </Grid>
         </Grid>
-        <Grid item xs={12} sm={8}>
+        <Grid item xs={12}>
+          <ExpendituresCard
+            title="Frais de la journée"
+            loading={loading}
+            expenditures={workTimeEntry.expenditures}
+            titleProps={{ component: "h2", variant: "h6" }}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <ActivitiesCard
+            activities={dayActivities}
+            title="Activités de la journée"
+            loading={loading}
+            fromTime={workTimeEntry.periodStart}
+            untilTime={periodEnd.getTime() / 1000}
+            titleProps={{
+              variant: "h6",
+              component: "h2"
+            }}
+          />
+        </Grid>
+        <Grid item xs={12}>
           <MissionInfoCard
-            title="Seuils réglementaires"
-            className={classes.regulatoryAlertCard}
+            title="Missions de la journée"
+            extraPaddingBelowTitle
             titleProps={{ component: "h2", variant: "h6" }}
           >
-            <div>Alertes quotidiennes</div>
-            <DayRegulatoryAlerts
-              userId={workTimeEntry.user.id}
-              day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
-            />
-            {getStartOfWeek(workTimeEntry.periodStart) ===
-              workTimeEntry.periodStart && (
-              <>
-                <br></br>
-                <div>Alertes hebdomadaires</div>
-                <WeekRegulatoryAlerts
-                  userId={workTimeEntry.user.id}
-                  day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
-                />
-              </>
+            {missions.length > 0 && (
+              <AugmentedTable
+                columns={missionTableColumns}
+                entries={missions}
+                onRowClick={(entry) => {
+                  trackEvent(OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL);
+                  openMission(entry.id);
+                }}
+              />
             )}
           </MissionInfoCard>
         </Grid>
       </Grid>
-      <Grid item xs={12}>
-        <ExpendituresCard
-          title="Frais de la journée"
-          loading={loading}
-          expenditures={workTimeEntry.expenditures}
-          titleProps={{ component: "h2", variant: "h6" }}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <ActivitiesCard
-          activities={dayActivities}
-          title="Activités de la journée"
-          loading={loading}
-          fromTime={workTimeEntry.periodStart}
-          untilTime={periodEnd.getTime() / 1000}
-          titleProps={{
-            variant: "h6",
-            component: "h2"
-          }}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <MissionInfoCard
-          title="Missions de la journée"
-          extraPaddingBelowTitle
-          titleProps={{ component: "h2", variant: "h6" }}
-        >
-          {missions.length > 0 && (
-            <AugmentedTable
-              columns={missionTableColumns}
-              entries={missions}
-              onRowClick={(entry) => {
-                trackEvent(OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL);
-                openMission(entry.id);
-              }}
-            />
-          )}
-        </MissionInfoCard>
-      </Grid>
-    </Grid>
-  ];
+    </>
+  );
 }
