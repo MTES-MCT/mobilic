@@ -8,7 +8,6 @@ import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { Typography } from "@mui/material";
 import {
   formatCompleteDayOfWeek,
-  getStartOfWeek,
   isoFormatLocalDate,
   prettyFormatDay
 } from "common/utils/time";
@@ -44,7 +43,7 @@ export const DrawerHeader = ({
   const classes = useStyles();
   const formattedDay = `${formatCompleteDayOfWeek(periodStart)} ${prettyFormatDay(periodStart, true)}`;
   const alertsDay = isoFormatLocalDate(periodStart);
-  const isStartOfWeek = getStartOfWeek(periodStart) === periodStart;
+  const isStartOfWeek = new Date(periodStart * 1000).getDay() === 1;
   return (
     <Box className={classes.container}>
       <Stack direction="column" alignItems="center" rowGap={1} mb={4}>
