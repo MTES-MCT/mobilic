@@ -10,15 +10,16 @@ import {
 } from "common/utils/regulation/alertVersions";
 import {
   ALERT_TYPE_PROPS_SIMPLER,
+  ALERT_TYPES,
   SubmitterType
 } from "common/utils/regulation/alertTypes";
 import { USER_READ_REGULATION_COMPUTATIONS_QUERY } from "common/utils/apiQueries/user";
-import { Tag } from "@codegouvfr/react-dsfr/Tag";
 import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
+import { Tag } from "@codegouvfr/react-dsfr/Tag";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 
 const tagsStyles = makeStyles((theme) => ({
@@ -107,7 +108,36 @@ export function GenericRegulatoryAlerts({
         ?.filter((regulationCheck) =>
           includeWeeklyAlerts ? true : regulationCheck.unit === PERIOD_UNITS.DAY
         )
-        .filter((regulationCheck) => !!regulationCheck.alert) ?? [],
+        .filter((regulationCheck) => !!regulationCheck.alert)
+        .map((regulationCheck) => ({
+          type: regulationCheck.type,
+          rule: regulationCheck.regulationRule,
+          unit: regulationCheck.unit,
+          alert: regulationCheck.alert
+        }))
+        .reduce((acc, curr) => {
+          if (curr.type === ALERT_TYPES.enoughBreak) {
+            const extra = curr.alert?.extra ? JSON.parse(curr.alert.extra) : {};
+            const notEnoughBreak = extra.not_enough_break;
+            const tooMuchUninterruptedWorkTime =
+              extra.too_much_uninterrupted_work_time;
+            if (notEnoughBreak) {
+              acc.push({
+                ...curr,
+                type: ALERT_TYPES.minimumWorkDayBreak
+              });
+            }
+            if (tooMuchUninterruptedWorkTime) {
+              acc.push({
+                ...curr,
+                type: ALERT_TYPES.maximumUninterruptedWorkTime
+              });
+            }
+            return acc;
+          }
+          acc.push(curr);
+          return acc;
+        }, []) ?? [],
     [regulationComputations, includeWeeklyAlerts]
   );
 
@@ -145,9 +175,6 @@ export function GenericRegulatoryAlerts({
             renderRegulationCheck(regulationCheck)
           )}
         </Stack>
-      )}
-      {!loading && !regulationComputations && (
-        <RegulatoryTextNotCalculatedYet />
       )}
     </>
   );
