@@ -65,7 +65,7 @@ export const RegulatoryRespectChart = () => {
           <Table
             caption="Répartition des dépassements de seuils"
             data={data.map((d) => [d.name, d.value])}
-            headers={["Alerte", "#"]}
+            headers={["Alerte", "Nombre"]}
           />
         </Box>
       )}
