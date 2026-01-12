@@ -31,12 +31,26 @@ const tagsStyles = makeStyles((theme) => ({
   waiting: {
     color: fr.colors.decisions.background.flat.blueFrance.default,
     backgroundColor: fr.colors.decisions.background.contrast.blueFrance.default
+  },
+  toValidate: {
+    color: fr.colors.decisions.background.flat.yellowTournesol.default,
+    backgroundColor:
+      fr.colors.decisions.background.contrast.yellowTournesol.default
   }
 }));
 
 const RunningTag = () => {
   const classes = tagsStyles();
   return <Tag className={classes.running}>Mission en cours</Tag>;
+};
+
+const ToValidateTag = () => {
+  const classes = tagsStyles();
+  return (
+    <Tag iconId="fr-icon-warning-line" className={classes.toValidate}>
+      Saisies à valider
+    </Tag>
+  );
 };
 
 const WaitingTag = () => {
@@ -52,6 +66,7 @@ export function GenericRegulatoryAlerts({
   userId,
   day,
   stillRunning = false,
+  noAdminValidation = false,
   includeWeeklyAlerts = false,
   shouldDisplayInitialEmployeeVersion = false
 }) {
@@ -146,6 +161,15 @@ export function GenericRegulatoryAlerts({
     return (
       <Stack direction="column" rowGap={3} alignItems="center">
         <RunningTag />
+        <RegulatoryTextNotCalculatedYet />
+      </Stack>
+    );
+  }
+
+  if (noAdminValidation) {
+    return (
+      <Stack direction="column" rowGap={3} alignItems="center">
+        <ToValidateTag />
         <RegulatoryTextNotCalculatedYet />
       </Stack>
     );

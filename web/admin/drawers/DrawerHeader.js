@@ -38,6 +38,7 @@ export const DrawerHeader = ({
   periodStart,
   userId,
   stillRunning,
+  noAdminValidation,
   onClose
 }) => {
   const classes = useStyles();
@@ -80,6 +81,7 @@ export const DrawerHeader = ({
           day={alertsDay}
           includeWeeklyAlerts={isStartOfWeek}
           stillRunning={stillRunning}
+          noAdminValidation={noAdminValidation}
         />
       </Stack>
     </Box>

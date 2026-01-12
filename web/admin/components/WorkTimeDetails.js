@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { AugmentedTable } from "./AugmentedTable";
 import Box from "@mui/material/Box";
 import { useApi } from "common/utils/api";
@@ -87,7 +87,8 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
     missions.map((m) => ({
       ...m,
       startLocationName: m.startLocation?.name,
-      endLocationName: m.endLocation?.name
+      endLocationName: m.endLocation?.name,
+      validatedByAdmin: m.validations.filter((v) => v.isAdmin).length > 0
     }));
 
   React.useEffect(() => {
@@ -133,6 +134,11 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
     })();
   }, [workTimeEntry]);
 
+  const atLeastOneMissionNotValidatedByAdmin = useMemo(
+    () => missions.filter((m) => !m.validatedByAdmin).length > 0,
+    [missions]
+  );
+
   return (
     <>
       <DrawerHeader
@@ -141,6 +147,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
         periodStart={workTimeEntry.periodActualStart}
         userId={workTimeEntry.user.id}
         stillRunning={stillRunning}
+        noAdminValidation={atLeastOneMissionNotValidatedByAdmin}
       />
       <Box className={classes.container}>
         <Stack direction="column" rowGap={4}>
