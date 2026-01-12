@@ -65,14 +65,18 @@ export const ALERT_TYPE_PROPS_SIMPLER = {
     rule: REGULATION_RULES.weeklyRest,
     title: PRETTY_LABELS.maximumWorkedDaysInWeek,
     getTag: (extra) => {
-      return "";
+      const { rest_duration_s } = extra;
+      return `inférieur à ${formatMinutesFromSeconds(rest_duration_s)}`;
     }
   },
   [ALERT_TYPES.maximumWorkInCalendarWeek]: {
     rule: REGULATION_RULES.weeklyWork,
     title: PRETTY_LABELS.maximumWorkInCalendarWeek,
     getTag: (extra) => {
-      return "";
+      const { max_weekly_work_in_seconds, work_duration_in_seconds } = extra;
+
+      const diff = work_duration_in_seconds - max_weekly_work_in_seconds;
+      return `dépassée de ${formatMinutesFromSeconds(diff)}`;
     }
   },
   [ALERT_TYPES.enoughBreak]: {
