@@ -3,14 +3,14 @@ import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Stack, Typography } from "@mui/material";
 import { SummaryCard } from "./RegulatoryRespectSummaryCard";
-import { Chart } from "./RegulatoryRespectChart";
+import { RegulatoryRespectChart } from "./RegulatoryRespectChart";
 import { AlertsRecap } from "./RegulatoryRespectAlertsRecap";
 import { useRegulatoryAlertsSummaryContext } from "../../utils/contextRegulatoryAlertsSummary";
 
 const useStyles = makeStyles((theme) => ({
   text: {
-    color: fr.colors.decisions.background.flat.grey.default,
-  },
+    color: fr.colors.decisions.background.flat.grey.default
+  }
 }));
 
 export default function RegulatoryRespectResults() {
@@ -30,7 +30,7 @@ export default function RegulatoryRespectResults() {
     <Stack direction="row" width="100%" p={4} columnGap={8}>
       <Stack direction="column" rowGap={4} sx={{ width: "380px" }}>
         <SummaryCard />
-        <Chart />
+        <RegulatoryRespectChart />
       </Stack>
       <AlertsRecap sx={{ flexGrow: 1 }} />
     </Stack>
