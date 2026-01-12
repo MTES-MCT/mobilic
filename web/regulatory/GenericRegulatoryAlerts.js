@@ -21,6 +21,7 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
+import { NoAlerts } from "./NoAlerts";
 
 const tagsStyles = makeStyles((theme) => ({
   running: {
@@ -161,21 +162,25 @@ export function GenericRegulatoryAlerts({
   return (
     <>
       {loading && <Skeleton variant="rectangular" width="100%" height={300} />}
-      {!loading && regulationComputations && (
-        <Stack direction="column" width="100%" rowGap={2} mt={2}>
-          <Stack direction="row" columnGap={1}>
-            <Typography variant="h4" fontSize="1.25rem">
-              Infractions
-            </Typography>
-            <Badge noIcon severity="error">
-              {checksWithAlerts.length}
-            </Badge>
+      {!loading &&
+        regulationComputations &&
+        (checksWithAlerts.length === 0 ? (
+          <NoAlerts />
+        ) : (
+          <Stack direction="column" width="100%" rowGap={2} mt={2}>
+            <Stack direction="row" columnGap={1}>
+              <Typography variant="h4" fontSize="1.25rem">
+                Infractions
+              </Typography>
+              <Badge noIcon severity="error">
+                {checksWithAlerts.length}
+              </Badge>
+            </Stack>
+            {checksWithAlerts.map((regulationCheck) =>
+              renderRegulationCheck(regulationCheck)
+            )}
           </Stack>
-          {checksWithAlerts.map((regulationCheck) =>
-            renderRegulationCheck(regulationCheck)
-          )}
-        </Stack>
-      )}
+        ))}
     </>
   );
 }
