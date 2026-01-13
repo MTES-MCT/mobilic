@@ -63,7 +63,6 @@ export const RegulatoryRespectChart = () => {
       ) : (
         <Box paddingX={4}>
           <Table
-            caption="Répartition des dépassements de seuils"
             data={data.map((d) => [d.name, d.value])}
             headers={["Alerte", "Nombre"]}
           />
@@ -71,6 +70,7 @@ export const RegulatoryRespectChart = () => {
       )}
       <Box paddingX={4} mt={2}>
         <SegmentedControl
+          small
           segments={[
             {
               iconId: "fr-icon-pie-chart-2-fill",
