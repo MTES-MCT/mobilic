@@ -38,7 +38,9 @@ import {
   INVITE_NEW_EMPLOYEE_SUBMIT,
   INVITE_EMAIL_LIST_CLICK,
   INVITE_MISSING_EMPLOYEES_CLICK,
-  INVITE_NEW_EMPLOYEE_CLICK
+  INVITE_NEW_EMPLOYEE_CLICK,
+  INACTIVE_EMPLOYEES_BANNER_VIEW,
+  INACTIVE_EMPLOYEES_BANNER_CLICK
 } from "common/utils/matomoTags";
 import {
   BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
@@ -72,6 +74,11 @@ const useStyles = makeStyles((theme) => ({
   badgeDetache: {
     backgroundColor: "#E5E5E5 !important",
     color: "#929292 !important"
+  },
+  inactiveBadgeTooltip: {
+    "& .fr-tooltip": {
+      zIndex: 1100
+    }
   }
 }));
 
@@ -355,11 +362,13 @@ export function Employees({ company, containerRef }) {
     }
     if (isInactive) {
       return (
+        <span className={classes.inactiveBadgeTooltip}>
           <Tooltip title={`Inactif depuis le ${formatLastActiveDate(lastActiveAt)}. Pensez à détacher ce salarié.`}>
             <Badge severity="warning" noIcon small>
               {"inactif".toUpperCase()}
             </Badge>
           </Tooltip>
+        </span>
       );
     }
     return null;
@@ -595,6 +604,32 @@ export function Employees({ company, containerRef }) {
     [validEmployments]
   );
 
+  const inactiveEmployees = React.useMemo(
+    () => activeValidEmployments.filter((e) => e.isInactive),
+    [activeValidEmployments]
+  );
+
+  const [isBannerDismissed, setIsBannerDismissed] = React.useState(false);
+  const shouldShowInactiveBanner =
+    inactiveEmployees.length >= 3 && !isBannerDismissed;
+
+  const [hasTrackedBannerView, setHasTrackedBannerView] = React.useState(false);
+
+  React.useEffect(() => {
+    if (shouldShowInactiveBanner && !hasTrackedBannerView) {
+      trackEvent(INACTIVE_EMPLOYEES_BANNER_VIEW(inactiveEmployees.length));
+      setHasTrackedBannerView(true);
+    }
+  }, [shouldShowInactiveBanner, hasTrackedBannerView, inactiveEmployees.length]);
+
+  const handleOpenBatchTerminateModal = () => {
+    trackEvent(INACTIVE_EMPLOYEES_BANNER_CLICK);
+    modals.open("terminateEmployment", {
+      inactiveEmployees,
+      terminateEmployment
+    });
+  };
+
   const employeeProgressData = useEmployeeProgress(
     company,
     activeValidEmployments
@@ -769,9 +804,8 @@ export function Employees({ company, containerRef }) {
           `Mettre fin au rattachement du gestionnaire ${employment.name}`,
           () =>
             modals.open("terminateEmployment", {
-              minDate: new Date(empl.startDate),
-              terminateEmployment: async (endDate) =>
-                terminateEmployment(empl.employmentId, endDate)
+              inactiveEmployees: [empl],
+              terminateEmployment
             }),
           true
         )
@@ -1005,6 +1039,31 @@ export function Employees({ company, containerRef }) {
           <Notice
             description="Certains salariés n'ont pas de type d'activité de transport
             renseigné. Veuillez en sélectionner un pour chaque salarié actif."
+          />
+        )}
+        {shouldShowInactiveBanner && (
+          <Notice
+            type="warning"
+            onClose={() => setIsBannerDismissed(true)}
+            description={
+              <>
+                {formatPersonName(inactiveEmployees[0])} et{" "}
+                {inactiveEmployees.length - 1} autres salariés n'ont pas
+                enregistré de temps de travail depuis 3 mois. Pensez à détacher
+                ces salariés s'ils ne font plus partie de votre entreprise, en
+                sélectionnant l'option "mettre fin au rattachement", ou{" "}
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleOpenBatchTerminateModal();
+                  }}
+                  style={{ textDecoration: "underline", color: "inherit" }}
+                >
+                  en cliquant ici →
+                </a>
+              </>
+            }
           />
         )}
         <Grid container>
