@@ -395,3 +395,17 @@ video:not([href])[controls] {
 main {
   scroll-margin-top: 200px;
 }
+
+// DSFR tooltip z-index and overflow fix for ReactVirtualized tables
+.fr-tooltip {
+  z-index: 1100 !important;
+}
+
+// Allow tooltip to overflow from table cells
+.ReactVirtualized__Table__rowColumn:has(.fr-tooltip) {
+  overflow: visible !important;
+}
+
+.ReactVirtualized__Table__row:has(.fr-tooltip) {
+  overflow: visible !important;
+}
