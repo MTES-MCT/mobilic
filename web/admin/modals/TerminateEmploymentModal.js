@@ -131,24 +131,40 @@ export default function TerminateEmploymentModal({
               </>
             }
           />
-          <form id="terminate-employment-form" onSubmit={handleSubmit}>
+          <form
+            id="terminate-employment-form"
+            onSubmit={handleSubmit}
+            style={{ width: "100%" }}
+          >
             <div
               className="fr-table fr-table--bordered fr-table--layout-fixed"
-              style={{ marginTop: "1rem" }}
+              style={{ marginTop: "1rem", width: "100%" }}
             >
-              <table>
-                <thead>
+              <table style={{ width: "100%" }}>
+                <thead style={{ width: "100%" }}>
                   <tr>
-                    <th scope="col" style={{ width: "50px" }}></th>
-                    <th scope="col">Salarié</th>
-                    <th scope="col">Date de fin de rattachement</th>
+                    <th
+                      scope="col"
+                      style={{
+                        width: "10%",
+                        minWidth: "auto",
+                        borderRight: "1px solid #929292"
+                      }}
+                    ></th>
+                    <th scope="col" style={{ width: "45%" }}>Salarié</th>
+                    <th scope="col" style={{ width: "45%" }}>Date de fin de rattachement</th>
                   </tr>
                 </thead>
                 <tbody>
                   {selectedEmployees.map(emp => (
                     <tr key={emp.employmentId}>
                       <td
-                        style={{ textAlign: "center", verticalAlign: "middle" }}
+                        style={{
+                          textAlign: "center",
+                          verticalAlign: "middle",
+                          backgroundColor: "#F6F6F6",
+                          borderRight: "1px solid #929292"
+                        }}
                       >
                         <Checkbox
                           checked={emp.selected}
@@ -166,7 +182,7 @@ export default function TerminateEmploymentModal({
                         <Input
                           label={null}
                           hideLabel
-                          style={{ marginBottom: 0 }}
+                          style={{ marginBottom: 0, maxWidth: "200px" }}
                           state={emp.error ? "error" : "default"}
                           stateRelatedMessage={emp.error}
                           nativeInputProps={{
