@@ -74,11 +74,6 @@ const useStyles = makeStyles((theme) => ({
   badgeDetache: {
     backgroundColor: "#E5E5E5 !important",
     color: "#929292 !important"
-  },
-  inactiveBadgeTooltip: {
-    "& .fr-tooltip": {
-      zIndex: 1100
-    }
   }
 }));
 
@@ -362,13 +357,11 @@ export function Employees({ company, containerRef }) {
     }
     if (isInactive) {
       return (
-        <span className={classes.inactiveBadgeTooltip}>
-          <Tooltip title={`Inactif depuis le ${formatLastActiveDate(lastActiveAt)}. Pensez à détacher ce salarié.`}>
-            <Badge severity="warning" noIcon small>
-              {"inactif".toUpperCase()}
-            </Badge>
-          </Tooltip>
-        </span>
+        <Tooltip title={`Inactif depuis le ${formatLastActiveDate(lastActiveAt)}. Pensez à détacher ce salarié.`}>
+          <Badge severity="warning" noIcon small>
+            {"inactif".toUpperCase()}
+          </Badge>
+        </Tooltip>
       );
     }
     return null;
