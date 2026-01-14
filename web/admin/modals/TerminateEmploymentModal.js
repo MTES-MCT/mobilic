@@ -21,16 +21,21 @@ export default function TerminateEmploymentModal({
 }) {
   const { trackEvent } = useMatomo();
   const alerts = useSnackbarAlerts();
-  const today = new Date();
   const formatDateForInput = date =>
     date ? date.toISOString().split("T")[0] : "";
 
+  const todayForMaxDate = React.useMemo(() => new Date(), []);
   const [selectedEmployees, setSelectedEmployees] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const hasTrackedOpen = React.useRef(false);
 
   React.useEffect(() => {
     if (open && inactiveEmployees?.length > 0) {
-      trackEvent(BATCH_TERMINATE_MODAL_OPEN);
+      const today = new Date();
+      if (!hasTrackedOpen.current) {
+        trackEvent(BATCH_TERMINATE_MODAL_OPEN);
+        hasTrackedOpen.current = true;
+      }
       setSelectedEmployees(
         inactiveEmployees.map(emp => ({
           ...emp,
@@ -40,7 +45,10 @@ export default function TerminateEmploymentModal({
         }))
       );
     }
-  }, [open, inactiveEmployees]);
+    if (!open) {
+      hasTrackedOpen.current = false;
+    }
+  }, [open, inactiveEmployees, trackEvent]);
 
   const toggleEmployee = employmentId => {
     setSelectedEmployees(prev =>
@@ -141,7 +149,7 @@ export default function TerminateEmploymentModal({
                       style={{
                         width: "10%",
                         minWidth: "auto",
-                        borderRight: "1px solid #929292"
+                        borderRight: "1px solid var(--border-default-grey)"
                       }}
                     ></th>
                     <th scope="col" style={{ width: "45%" }}>Salarié</th>
@@ -156,8 +164,8 @@ export default function TerminateEmploymentModal({
                       <td
                         style={{
                           textAlign: "center",
-                          backgroundColor: "#F6F6F6",
-                          borderRight: "1px solid #929292"
+                          backgroundColor: "var(--background-alt-grey)",
+                          borderRight: "1px solid var(--border-default-grey)"
                         }}
                       >
                         <Checkbox
@@ -186,7 +194,7 @@ export default function TerminateEmploymentModal({
                                 emp.employmentId,
                                 e.target.value ? new Date(e.target.value) : null
                               ),
-                            max: formatDateForInput(today),
+                            max: formatDateForInput(todayForMaxDate),
                             min: emp.startDate
                               ? formatDateForInput(new Date(emp.startDate))
                               : undefined
