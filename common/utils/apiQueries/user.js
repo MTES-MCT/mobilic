@@ -117,6 +117,9 @@ export const USER_WORK_DAY_QUERY = gql`
             endLocation {
               name
             }
+            validations {
+              isAdmin
+            }
           }
         }
       }

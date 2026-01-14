@@ -15,7 +15,7 @@ import { Button } from "@codegouvfr/react-dsfr/Button";
 import { ADMIN_QUERY_USER_WORK_DAY } from "common/utils/apiQueries/admin";
 import { useApi } from "common/utils/api";
 
-const PRETTY_LABELS = {
+export const PRETTY_LABELS = {
   maximumWorkedDaysInWeek: "Repos hebdomadaire",
   maximumWorkInCalendarWeek: "Durée du travail hebdomadaire",
   minimumDailyRest: "Repos journalier",

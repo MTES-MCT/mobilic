@@ -4,10 +4,10 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import CheckIcon from "@mui/icons-material/Check";
 import { makeStyles } from "@mui/styles";
-import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   green: {
     color: theme.palette.success.main
   },
@@ -31,7 +31,8 @@ export function EditableMissionInfo({
   onEdit,
   disabledEdit,
   fullWidth,
-  typographyProps = {}
+  typographyProps = {},
+  ...otherProps
 }) {
   const [isEditing, setIsEditing] = React.useState(false);
   const [newValue, setNewValue] = React.useState(value);
@@ -41,7 +42,13 @@ export function EditableMissionInfo({
   const disabled = isEditing && disabledEdit && disabledEdit(newValue);
 
   return (
-    <Grid container spacing={2} wrap="nowrap" alignItems="center">
+    <Grid
+      container
+      spacing={2}
+      wrap="nowrap"
+      alignItems="center"
+      {...otherProps}
+    >
       <Grid item className={classes.value}>
         {isEditing ? (
           renderEditMode(newValue, setNewValue)
@@ -80,15 +87,15 @@ export function EditableMissionInfo({
               </IconButton>
             </>
           ) : (
-            <IconButton
-              color="primary"
-              className="no-margin-no-padding"
+            <Button
+              priority="tertiary no outline"
+              size="small"
+              iconId="fr-icon-edit-line"
               onClick={() => {
                 setIsEditing(true);
               }}
-            >
-              <EditIcon />
-            </IconButton>
+              title="Modifier"
+            />
           )}
         </Grid>
       )}
