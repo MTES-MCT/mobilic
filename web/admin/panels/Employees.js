@@ -18,6 +18,10 @@ import {
   isoFormatLocalDate,
   now
 } from "common/utils/time";
+import {
+  isInactiveMoreThan3Months,
+  formatLastActiveDate
+} from "common/utils/employeeStatus";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { EMPLOYMENT_ROLE } from "common/utils/employments";
 import { TeamFilter } from "../components/TeamFilter";
@@ -336,16 +340,6 @@ export function Employees({ company, containerRef }) {
     baseWidth: 140,
     format: (remindButton) => remindButton
   });
-
-  const isInactiveMoreThan3Months = (lastActiveAt) => {
-    if (!lastActiveAt) return false;
-    return now() - lastActiveAt > DAY * 90;
-  };
-
-  const formatLastActiveDate = (lastActiveAt) => {
-    if (!lastActiveAt) return "";
-    return frenchFormatDateStringOrTimeStamp(lastActiveAt * 1000);
-  };
 
   const EmployeeStatusBadge = ({ isDetached, isInactive, lastActiveAt }) => {
     if (isDetached) {
@@ -1045,16 +1039,21 @@ export function Employees({ company, containerRef }) {
                 enregistré de temps de travail depuis 3 mois. Pensez à détacher
                 ces salariés s'ils ne font plus partie de votre entreprise, en
                 sélectionnant l'option "mettre fin au rattachement", ou{" "}
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleOpenBatchTerminateModal();
+                <button
+                  type="button"
+                  onClick={handleOpenBatchTerminateModal}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    font: "inherit",
+                    color: "inherit",
+                    textDecoration: "underline",
+                    cursor: "pointer"
                   }}
-                  style={{ textDecoration: "underline", color: "inherit" }}
                 >
                   en cliquant ici →
-                </a>
+                </button>
               </>
             }
           />
