@@ -51,7 +51,7 @@
     "file-loader": "^6.2.0",
     "file-saver": "^2.0.5",
     "fs-extra": "^8.1.0",
-    "gh-pages": "^5.0.0",
+    "gh-pages": "^6.2.0",
     "graphiql": "^3.0.0",
     "graphql": "^16.12.0",
     "graphql-tag": "^2.12.6",
@@ -99,7 +99,7 @@
     "typescript": "^4.9.5",
     "uuid": "^13.0.0",
     "webpack": "^5.94.0",
-    "webpack-dev-server": "4.15.2",
+    "webpack-dev-server": "5.0.0",
     "webpack-manifest-plugin": "^5.0.1",
     "workbox-webpack-plugin": "^6.0.2"
   },
