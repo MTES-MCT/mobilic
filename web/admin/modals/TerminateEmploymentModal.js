@@ -97,7 +97,7 @@ export default function TerminateEmploymentModal({
     if (successCount > 0) {
       trackEvent(BATCH_TERMINATE_MODAL_SUBMIT(successCount));
       alerts.success(
-        `${successCount} rattachement(s) terminé(s)`,
+        `${successCount} détachement(s) terminé(s)`,
         "batch-terminate-success",
         6000
       );
