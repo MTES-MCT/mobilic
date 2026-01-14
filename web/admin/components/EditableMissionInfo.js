@@ -7,7 +7,7 @@ import { makeStyles } from "@mui/styles";
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   green: {
     color: theme.palette.success.main
   },
@@ -31,7 +31,8 @@ export function EditableMissionInfo({
   onEdit,
   disabledEdit,
   fullWidth,
-  typographyProps = {}
+  typographyProps = {},
+  ...otherProps
 }) {
   const [isEditing, setIsEditing] = React.useState(false);
   const [newValue, setNewValue] = React.useState(value);
@@ -41,7 +42,13 @@ export function EditableMissionInfo({
   const disabled = isEditing && disabledEdit && disabledEdit(newValue);
 
   return (
-    <Grid container spacing={2} wrap="nowrap" alignItems="center">
+    <Grid
+      container
+      spacing={2}
+      wrap="nowrap"
+      alignItems="center"
+      {...otherProps}
+    >
       <Grid item className={classes.value}>
         {isEditing ? (
           renderEditMode(newValue, setNewValue)

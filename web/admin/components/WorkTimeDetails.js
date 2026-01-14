@@ -25,7 +25,7 @@ import { ActivitiesCard } from "./ActivitiesCard";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL } from "common/utils/matomoTags";
 import { USER_WORK_DAY_QUERY } from "common/utils/apiQueries/user";
-import { DrawerHeader } from "../drawers/DrawerHeader";
+import { DayDrawerHeader } from "../drawers/DrawerHeader";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 
@@ -141,7 +141,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
 
   return (
     <>
-      <DrawerHeader
+      <DayDrawerHeader
         onClose={handleClose}
         workerName={workTimeEntry.workerName}
         periodStart={workTimeEntry.periodActualStart}
