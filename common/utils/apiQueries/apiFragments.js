@@ -225,6 +225,7 @@ export const FULL_EMPLOYMENT_FRAGMENT = gql`
     email
     hasAdminRights
     latestInviteEmailTime
+    lastActiveAt
     teamId
     business {
       transportType
