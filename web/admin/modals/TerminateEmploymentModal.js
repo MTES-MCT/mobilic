@@ -131,17 +131,10 @@ export default function TerminateEmploymentModal({
               </>
             }
           />
-          <form
-            id="terminate-employment-form"
-            onSubmit={handleSubmit}
-            style={{ width: "100%" }}
-          >
-            <div
-              className="fr-table fr-table--bordered fr-table--layout-fixed"
-              style={{ marginTop: "1rem", width: "100%" }}
-            >
-              <table style={{ width: "100%" }}>
-                <thead style={{ width: "100%" }}>
+          <form id="terminate-employment-form" onSubmit={handleSubmit}>
+            <div className="fr-table fr-table--bordered fr-table--layout-fixed">
+              <table>
+                <thead>
                   <tr>
                     <th
                       scope="col"
@@ -152,7 +145,9 @@ export default function TerminateEmploymentModal({
                       }}
                     ></th>
                     <th scope="col" style={{ width: "45%" }}>Salarié</th>
-                    <th scope="col" style={{ width: "45%" }}>Date de fin de rattachement</th>
+                    <th scope="col" style={{ width: "45%" }}>
+                      Date de fin de rattachement
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -161,7 +156,6 @@ export default function TerminateEmploymentModal({
                       <td
                         style={{
                           textAlign: "center",
-                          verticalAlign: "middle",
                           backgroundColor: "#F6F6F6",
                           borderRight: "1px solid #929292"
                         }}
@@ -175,13 +169,12 @@ export default function TerminateEmploymentModal({
                           sx={{ padding: 0 }}
                         />
                       </td>
-                      <td style={{ verticalAlign: "middle" }}>
-                        {formatPersonName(emp)}
-                      </td>
-                      <td style={{ verticalAlign: "middle" }}>
+                      <td>{formatPersonName(emp)}</td>
+                      <td>
                         <Input
                           label={null}
                           hideLabel
+                          disabled={!emp.selected}
                           style={{ marginBottom: 0, maxWidth: "200px" }}
                           state={emp.error ? "error" : "default"}
                           stateRelatedMessage={emp.error}
@@ -193,7 +186,6 @@ export default function TerminateEmploymentModal({
                                 emp.employmentId,
                                 e.target.value ? new Date(e.target.value) : null
                               ),
-                            disabled: !emp.selected,
                             max: formatDateForInput(today),
                             min: emp.startDate
                               ? formatDateForInput(new Date(emp.startDate))
