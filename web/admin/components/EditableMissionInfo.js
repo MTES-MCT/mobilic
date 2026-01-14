@@ -4,8 +4,8 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import CheckIcon from "@mui/icons-material/Check";
 import { makeStyles } from "@mui/styles";
-import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles((theme) => ({
   green: {
@@ -87,15 +87,15 @@ export function EditableMissionInfo({
               </IconButton>
             </>
           ) : (
-            <IconButton
-              color="primary"
-              className="no-margin-no-padding"
+            <Button
+              priority="tertiary no outline"
+              size="small"
+              iconId="fr-icon-edit-line"
               onClick={() => {
                 setIsEditing(true);
               }}
-            >
-              <EditIcon />
-            </IconButton>
+              title="Modifier"
+            />
           )}
         </Grid>
       )}
