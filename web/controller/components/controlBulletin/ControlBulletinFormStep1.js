@@ -1,66 +1,24 @@
-import React, { useMemo } from "react";
+import React from "react";
 
 import Stack from "@mui/material/Stack";
 import { COUNTRIES } from "../../utils/country";
 import { DEPARTMENTS } from "../../utils/departments";
-import { useApi } from "common/utils/api";
 import { DsfrAutocomplete } from "../utils/DsfrAutocomplete";
 import { MandatoryField } from "../../../common/MandatoryField";
 import { Input } from "../../../common/forms/Input";
 import { Select } from "../../../common/forms/Select";
 import { BirthDate } from "../../../common/forms/BirthDate";
-import { CONTROL_LOCATION_QUERY } from "common/utils/apiQueries/controller";
+import { 
+  MunicipalityAutocomplete,
+  LocationAutocomplete 
+} from "../../../common/LocationAutocomplete";
 
 export function ControlBulletinFormStep1({
   handleEditControlBulletin,
   controlBulletin,
   showErrors
 }) {
-  const [departmentLocations, setDepartmentLocations] = React.useState([]);
-
-  const api = useApi();
-
-  React.useEffect(() => {
-    const loadData = async () => {
-      if (controlBulletin.locationDepartment) {
-        const departmentCode = DEPARTMENTS.find(
-          (d) => d.label === controlBulletin.locationDepartment
-        )?.code;
-        if (departmentCode) {
-          const apiResponse = await api.graphQlQuery(
-            CONTROL_LOCATION_QUERY,
-            {
-              department: departmentCode
-            },
-            { context: { nonPublicApi: true } }
-          );
-          setDepartmentLocations(apiResponse.data.controlLocation);
-        }
-      }
-    };
-    loadData();
-  }, [controlBulletin.locationDepartment]);
-
-  const controlLocationCommunes = useMemo(() => {
-    if (departmentLocations) {
-      const allCommunes = departmentLocations
-        .map((location) => location.commune)
-        .sort((a, b) => a.localeCompare(b));
-      return [...new Set(allCommunes)];
-    } else {
-      return [];
-    }
-  }, [departmentLocations]);
-
-  const controlLocationLabels = useMemo(() => {
-    if (controlBulletin.locationCommune && departmentLocations) {
-      return departmentLocations
-        .filter((depLoc) => depLoc.commune === controlBulletin.locationCommune)
-        .sort((a, b) => a.label.localeCompare(b.label));
-    } else {
-      return [];
-    }
-  }, [controlBulletin.locationCommune, departmentLocations]);
+  const [departmentCode, setDepartmentCode] = React.useState(null);
 
   function editControlBulletinField(newValue, fieldName) {
     handleEditControlBulletin({
@@ -81,32 +39,41 @@ export function ControlBulletinFormStep1({
         showErrors={showErrors}
         searchByCodeAndLabel={true}
         onChange={(_, newValue) => {
-          editControlBulletinField(newValue.label, "locationDepartment");
+          // Save the entire department object as JSON string
+          editControlBulletinField(JSON.stringify(newValue), "locationDepartment");
           editControlBulletinField("", "locationCommune");
           editControlBulletinField("", "locationLieu");
+          setDepartmentCode(newValue?.code);
         }}
       />
-      <DsfrAutocomplete
-        field={controlBulletin.locationCommune}
-        fieldLabel="Commune du contrôle"
-        disabled={!controlBulletin.locationDepartment}
-        options={controlLocationCommunes}
-        showErrors={showErrors}
-        onChange={(_, newValue) => {
+      
+      {/* Municipality autocomplete with Géoplateforme API */}
+      <MunicipalityAutocomplete
+        value={controlBulletin.locationCommune || ""}
+        onChange={(newValue) => {
           editControlBulletinField(newValue, "locationCommune");
-          editControlBulletinField("", "locationLieu");
+          if (!newValue) {
+            editControlBulletinField("", "locationLieu");
+          }
         }}
-      />
-      <DsfrAutocomplete
-        field={controlBulletin.locationLieu}
-        fieldLabel="Lieu du contrôle"
-        disabled={!controlBulletin.locationCommune}
-        options={controlLocationLabels}
+        departmentCode={departmentCode}
+        label="Commune du contrôle"
+        required={true}
+        disabled={!controlBulletin.locationDepartment}
         showErrors={showErrors}
-        onChange={(_, newValue) => {
-          editControlBulletinField(newValue.label, "locationLieu");
-          editControlBulletinField(newValue.id, "locationId");
+      />
+      
+      {/* Location autocomplete with Géoplateforme API (POI and addresses) */}
+      <LocationAutocomplete
+        value={controlBulletin.locationLieu || ""}
+        onChange={(newValue) => {
+          editControlBulletinField(newValue, "locationLieu");
         }}
+        departmentCode={departmentCode}
+        label="Lieu du contrôle"
+        required={true}
+        disabled={!controlBulletin.locationCommune}
+        showErrors={showErrors}
       />
       <Input
         nativeInputProps={{

@@ -8,22 +8,21 @@ import {
   formatAddressSubText,
   formatKey
 } from "common/utils/addresses";
-import { captureSentryException } from "common/utils/sentry";
 import { makeStyles } from "@mui/styles";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Notice from "./Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import {
+  isInputSearchable,
+  fetchGeoplateforme
+} from "./utils/geoplateforme";
 
 const useStyles = makeStyles(theme => ({
   geolocationButton: {
     marginLeft: theme.spacing(3)
   }
 }));
-
-const API_ADRESSE_MIN_SEARCHABLE_CHARACTER = 3;
-const isInputSearchable = input =>
-  input?.trim()?.length >= API_ADRESSE_MIN_SEARCHABLE_CHARACTER;
 
 const fetchPlaces = throttle((input, currentPosition = null, callback) => {
   let queryArgs = new URLSearchParams();
@@ -34,20 +33,13 @@ const fetchPlaces = throttle((input, currentPosition = null, callback) => {
   }
 
   if (Array.from(queryArgs).length > 0) {
-    fetch(
-      `https://api-adresse.data.gouv.fr/${
-        !isInputSearchable(input) && currentPosition ? "reverse" : "search"
-      }/?${queryArgs.toString()}`
-    )
-      .then(
-        response => response.json(),
-        err => {
-          captureSentryException(err);
-          return null;
-        }
-      )
-      .then(json => (json ? json.features || [] : []))
-      .then(places => (places ? callback(places) : callback([])));
+    const endpoint = !isInputSearchable(input) && currentPosition ? "reverse" : "search";
+    fetchGeoplateforme(
+      endpoint,
+      queryArgs,
+      callback,
+      (json) => json.features || []
+    );
   } else {
     callback([]);
   }
