@@ -65,10 +65,31 @@ import {
   LOG_HOLIDAY_MUTATION,
   LOG_LOCATION_MUTATION
 } from "common/utils/apiQueries/missions";
+import { InactiveEmployeesDropdown } from "../components/InactiveEmployeesDropdown";
 
 const useStyles = makeStyles((theme) => ({
-  filterGrid: {
+  pageHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingTop: theme.spacing(2),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    paddingBottom: theme.spacing(1)
+  },
+  pageHeaderLeft: {
+    display: "flex",
+    alignItems: "center",
+    gap: theme.spacing(2)
+  },
+  pageTitle: {
+    fontSize: "1.5rem",
+    fontWeight: 700,
+    margin: 0,
+    lineHeight: "2.5rem"
+  },
+  filterGrid: {
+    paddingTop: theme.spacing(1),
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
     flexShrink: 0
@@ -309,6 +330,37 @@ function ActivitiesPanel() {
       key={0}
       ref={ref}
     >
+      <Box className={classes.pageHeader}>
+        <Box className={classes.pageHeaderLeft}>
+          <Typography component="h1" className={classes.pageTitle}>
+            Activités
+          </Typography>
+          <LoadingButton
+            priority="secondary"
+            size="medium"
+            style={{ whiteSpace: "nowrap" }}
+            onClick={() => {
+              trackEvent(ADMIN_ADD_MISSION);
+              setOpenNewMission(true);
+            }}
+          >
+            Ajouter des activités
+          </LoadingButton>
+          <LogHolidayButton
+            priority="secondary"
+            size="medium"
+            style={{ whiteSpace: "nowrap" }}
+            onClick={() => {
+              trackEvent(ADMIN_ADD_HOLIDAY);
+              setOpenLogHoliday(true);
+            }}
+          />
+        </Box>
+        <InactiveEmployeesDropdown
+          employments={adminStore.employments}
+          workDays={adminStore.workDays}
+        />
+      </Box>
       <Grid
         spacing={2}
         container
@@ -468,32 +520,6 @@ function ActivitiesPanel() {
               : "."
           }`}
         </Typography>
-        <Box
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "space-between"
-          }}
-        >
-          <LoadingButton
-            style={{ marginTop: 8, alignSelf: "flex-start" }}
-            size="small"
-            className={classes.subButton}
-            onClick={() => {
-              trackEvent(ADMIN_ADD_MISSION);
-              setOpenNewMission(true);
-            }}
-          >
-            Ajouter des activités
-          </LoadingButton>
-          <LogHolidayButton
-            onClick={() => {
-              trackEvent(ADMIN_ADD_HOLIDAY);
-              setOpenLogHoliday(true);
-            }}
-          />
-        </Box>
         <WorkTimeTable
           className={classes.workTimeTable}
           period={period}
