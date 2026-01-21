@@ -221,6 +221,8 @@ export const FULL_EMPLOYMENT_FRAGMENT = gql`
     id
     startDate
     endDate
+    dismissedAt
+    validationStatus
     isAcknowledged
     email
     hasAdminRights
