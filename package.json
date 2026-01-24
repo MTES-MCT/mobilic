@@ -59,7 +59,7 @@
     "http-proxy-middleware": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "libphonenumber-js": "^1.11.1",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.23",
     "mini-css-extract-plugin": "^2.9.0",
     "minimist": "^1.2.8",
     "moment": "^2.29.4",
@@ -101,7 +101,7 @@
     "webpack": "^5.94.0",
     "webpack-dev-server": "4.15.2",
     "webpack-manifest-plugin": "^5.0.1",
-    "workbox-webpack-plugin": "^6.0.2"
+    "workbox-webpack-plugin": "^7.0.0"
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
@@ -172,6 +172,6 @@
     "sass": "^1.55.0",
     "url": "^0.11.4",
     "url-loader": "^4.1.0",
-    "webpack-bundle-analyzer": "^4.4.0"
+    "webpack-bundle-analyzer": "^5.2.0"
   }
 }
