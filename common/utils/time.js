@@ -2,6 +2,7 @@ export const DAY = 86400;
 export const WEEK = 7 * 86400;
 export const HOUR = 3600;
 export const MINUTE = 60;
+export const MONDAY = 1
 export const SHORT_MONTHS = [
   "jan",
   "fév",

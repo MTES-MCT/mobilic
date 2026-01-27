@@ -9,6 +9,7 @@ import { Typography } from "@mui/material";
 import {
   formatCompleteDayOfWeek,
   isoFormatLocalDate,
+  MONDAY,
   prettyFormatDay
 } from "common/utils/time";
 import { GenericRegulatoryAlerts } from "../../regulatory/GenericRegulatoryAlerts";
@@ -85,7 +86,7 @@ export const DayDrawerHeader = ({
   const classes = useStyles();
   const formattedDay = `${formatCompleteDayOfWeek(periodStart)} ${prettyFormatDay(periodStart, true)}`;
   const alertsDay = isoFormatLocalDate(periodStart);
-  const isStartOfWeek = new Date(periodStart * 1000).getDay() === 1;
+  const isStartOfWeek = new Date(periodStart * 1000).getDay() === MONDAY;
   return (
     <DrawerHeader workerName={workerName} onClose={onClose}>
       <>
