@@ -2,6 +2,7 @@ export const DAY = 86400;
 export const WEEK = 7 * 86400;
 export const HOUR = 3600;
 export const MINUTE = 60;
+export const MONDAY = 1
 export const SHORT_MONTHS = [
   "jan",
   "fév",
@@ -119,6 +120,10 @@ export function formatDayOfWeek(unixTimestamp) {
 export function formatCompleteDayOfWeek(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000);
   return DAYS[date.getDay()];
+}
+
+export function formatCompleteDayOfWeekAndDay(unixTimestamp) {
+  return `${formatCompleteDayOfWeek(unixTimestamp)} ${prettyFormatDay(unixTimestamp, true)}`
 }
 
 export function getPrettyDateByperiod(date, period) {

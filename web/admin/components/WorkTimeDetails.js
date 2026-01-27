@@ -1,9 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { AugmentedTable } from "./AugmentedTable";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { useApi } from "common/utils/api";
-import Typography from "@mui/material/Typography";
 import { useStyles } from "./styles/WorkTimeDetailsStyle";
 import {
   addBreaksToActivityList,
@@ -17,9 +15,7 @@ import {
   formatTimeOfDay,
   formatTimer,
   getStartOfWeek,
-  isoFormatLocalDate,
   now,
-  prettyFormatDay,
   WEEK
 } from "common/utils/time";
 import { MetricCard } from "../../common/InfoCard";
@@ -28,10 +24,10 @@ import { ExpendituresCard } from "./ExpendituresCard";
 import { ActivitiesCard } from "./ActivitiesCard";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL } from "common/utils/matomoTags";
-import { DayRegulatoryAlerts } from "../../regulatory/DayRegulatoryAlerts";
-import { WeekRegulatoryAlerts } from "../../regulatory/WeekRegulatoryAlerts";
-import CloseButton from "../../common/CloseButton";
 import { USER_WORK_DAY_QUERY } from "common/utils/apiQueries/user";
+import { DayDrawerHeader } from "../drawers/DrawerHeader";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
 
 export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
   const classes = useStyles();
@@ -42,6 +38,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
   const { trackEvent } = useMatomo();
 
   const periodEnd = new Date(workTimeEntry.periodStart * 1000 + DAY * 1000);
+  const stillRunning = !workTimeEntry.endTime;
 
   const nameMissionCol = {
     label: "Nom",
@@ -90,7 +87,8 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
     missions.map((m) => ({
       ...m,
       startLocationName: m.startLocation?.name,
-      endLocationName: m.endLocation?.name
+      endLocationName: m.endLocation?.name,
+      validatedByAdmin: m.validations.filter((v) => v.isAdmin).length > 0
     }));
 
   React.useEffect(() => {
@@ -136,34 +134,27 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
     })();
   }, [workTimeEntry]);
 
-  return [
-    <Box key={0} className={classes.workTimeDetailsTitleContainer}>
-      <Typography
-        variant="h3"
-        component="h1"
-        className={classes.workTimeDetailsTitle}
-      >
-        Détail de la journée du{" "}
-        {prettyFormatDay(workTimeEntry.periodActualStart, true)}
-      </Typography>
-      <CloseButton onClick={handleClose} />
-    </Box>,
-    <Box key={1} marginTop={1} marginBottom={3}>
-      <Typography variant="h6" component="p" className={classes.employeeName}>
-        {workTimeEntry.workerName}
-      </Typography>
-    </Box>,
-    <Grid container key={2} spacing={3} direction="column" wrap="nowrap">
-      <Grid item container spacing={2} justifyContent="space-between">
-        <Grid
-          item
-          sm={4}
-          container
-          spacing={2}
-          direction="column"
-          wrap="nowrap"
-        >
-          <Grid item className={classes.cardRecapKPIContainer}>
+  const atLeastOneMissionNotValidatedByAdmin = useMemo(
+    () => missions.filter((m) => !m.validatedByAdmin).length > 0,
+    [missions]
+  );
+
+  return (
+    <>
+      <DayDrawerHeader
+        onClose={handleClose}
+        workerName={workTimeEntry.workerName}
+        periodStart={workTimeEntry.periodActualStart}
+        userId={workTimeEntry.user.id}
+        stillRunning={stillRunning}
+        noAdminValidation={atLeastOneMissionNotValidatedByAdmin}
+      />
+      <Box className={classes.container}>
+        <Stack direction="column" rowGap={4}>
+          <Typography component="h2" variant="h4" fontSize="1.25rem">
+            Déroulé de la journée
+          </Typography>
+          <Stack direction="row" columnGap={4}>
             <MetricCard
               loading={loading}
               className={`${classes.cardRecapKPI}`}
@@ -175,7 +166,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
               value={formatTimer(workTimeEntry.service)}
               valueProps={{
                 className: `${classes.amplitudeText} ${
-                  !workTimeEntry.endTime ? classes.runningMissionText : ""
+                  stillRunning ? classes.runningMissionText : ""
                 }`,
                 variant: "h1",
                 component: "p"
@@ -184,7 +175,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
                 <span>
                   de {formatTimeOfDay(workTimeEntry.startTime)} à{" "}
                   {formatTimeOfDay(workTimeEntry.endTime)}{" "}
-                  {!workTimeEntry.endTime ? (
+                  {stillRunning ? (
                     <span className={classes.runningMissionText}>
                       (en cours)
                     </span>
@@ -194,8 +185,6 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
                 </span>
               }
             />
-          </Grid>
-          <Grid item className={classes.cardRecapKPIContainer}>
             <MetricCard
               className={classes.cardRecapKPI}
               loading={loading}
@@ -207,85 +196,55 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
               value={formatTimer(workTimeEntry.totalWork)}
               valueProps={{
                 className: `${classes.amplitudeText} ${
-                  !workTimeEntry.endTime ? classes.runningMissionText : ""
+                  stillRunning ? classes.runningMissionText : ""
                 }`,
                 variant: "h1",
                 component: "p"
               }}
               subText={
-                !workTimeEntry.endTime ? (
+                stillRunning ? (
                   <span className={classes.runningMissionText}>En cours</span>
                 ) : (
                   ""
                 )
               }
             />
-          </Grid>
-        </Grid>
-        <Grid item xs={12} sm={8}>
+          </Stack>
+          <ExpendituresCard
+            title="Frais de la journée"
+            loading={loading}
+            expenditures={workTimeEntry.expenditures}
+            titleProps={{ component: "h2", variant: "h6" }}
+          />
+          <ActivitiesCard
+            activities={dayActivities}
+            title="Activités de la journée"
+            loading={loading}
+            fromTime={workTimeEntry.periodStart}
+            untilTime={periodEnd.getTime() / 1000}
+            titleProps={{
+              variant: "h6",
+              component: "h2"
+            }}
+          />
           <MissionInfoCard
-            title="Seuils réglementaires"
-            className={classes.regulatoryAlertCard}
+            title="Missions de la journée"
+            extraPaddingBelowTitle
             titleProps={{ component: "h2", variant: "h6" }}
           >
-            <div>Alertes quotidiennes</div>
-            <DayRegulatoryAlerts
-              userId={workTimeEntry.user.id}
-              day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
-            />
-            {getStartOfWeek(workTimeEntry.periodStart) ===
-              workTimeEntry.periodStart && (
-              <>
-                <br></br>
-                <div>Alertes hebdomadaires</div>
-                <WeekRegulatoryAlerts
-                  userId={workTimeEntry.user.id}
-                  day={isoFormatLocalDate(workTimeEntry.periodActualStart)}
-                />
-              </>
+            {missions.length > 0 && (
+              <AugmentedTable
+                columns={missionTableColumns}
+                entries={missions}
+                onRowClick={(entry) => {
+                  trackEvent(OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL);
+                  openMission(entry.id);
+                }}
+              />
             )}
           </MissionInfoCard>
-        </Grid>
-      </Grid>
-      <Grid item xs={12}>
-        <ExpendituresCard
-          title="Frais de la journée"
-          loading={loading}
-          expenditures={workTimeEntry.expenditures}
-          titleProps={{ component: "h2", variant: "h6" }}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <ActivitiesCard
-          activities={dayActivities}
-          title="Activités de la journée"
-          loading={loading}
-          fromTime={workTimeEntry.periodStart}
-          untilTime={periodEnd.getTime() / 1000}
-          titleProps={{
-            variant: "h6",
-            component: "h2"
-          }}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <MissionInfoCard
-          title="Missions de la journée"
-          extraPaddingBelowTitle
-          titleProps={{ component: "h2", variant: "h6" }}
-        >
-          {missions.length > 0 && (
-            <AugmentedTable
-              columns={missionTableColumns}
-              entries={missions}
-              onRowClick={(entry) => {
-                trackEvent(OPEN_MISSION_DRAWER_IN_WORKDAY_PANEL);
-                openMission(entry.id);
-              }}
-            />
-          )}
-        </MissionInfoCard>
-      </Grid>
-    </Grid>
-  ];
+        </Stack>
+      </Box>
+    </>
+  );
 }
