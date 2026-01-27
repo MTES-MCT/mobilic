@@ -8,6 +8,7 @@ import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { Typography } from "@mui/material";
 import {
   formatCompleteDayOfWeek,
+  formatCompleteDayOfWeekAndDay,
   isoFormatLocalDate,
   MONDAY,
   prettyFormatDay
@@ -84,7 +85,7 @@ export const DayDrawerHeader = ({
   onClose
 }) => {
   const classes = useStyles();
-  const formattedDay = `${formatCompleteDayOfWeek(periodStart)} ${prettyFormatDay(periodStart, true)}`;
+  const formattedDay = formatCompleteDayOfWeekAndDay(periodStart)
   const alertsDay = isoFormatLocalDate(periodStart);
   const isStartOfWeek = new Date(periodStart * 1000).getDay() === MONDAY;
   return (
@@ -115,7 +116,7 @@ export const MissionDrawerHeader = ({
 }) => {
   const stillRunning = !mission.isComplete;
   const { name: missionName, isHoliday, startTime } = mission;
-  const formattedDay = `${formatCompleteDayOfWeek(startTime)} ${prettyFormatDay(startTime, true)}`;
+  const formattedDay = formatCompleteDayOfWeekAndDay(startTime)
 
   const workerName = useMemo(() => {
     if (!mission?.userStats) {
