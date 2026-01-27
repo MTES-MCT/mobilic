@@ -48,17 +48,15 @@ export const ALERT_TYPE_PROPS_SIMPLER = {
     rule: REGULATION_RULES.dailyRest,
     title: PRETTY_LABELS.too_much_uninterrupted_work_time,
     getTag: (extra) => {
-      {
-        const {
-          max_uninterrupted_work_in_hours,
-          longest_uninterrupted_work_in_seconds
-        } = extra;
+      const {
+        max_uninterrupted_work_in_hours,
+        longest_uninterrupted_work_in_seconds
+      } = extra;
 
-        const diff =
-          longest_uninterrupted_work_in_seconds -
-          max_uninterrupted_work_in_hours * HOUR;
-        return `dépassée de ${formatMinutesFromSeconds(diff)}`;
-      }
+      const diff =
+        longest_uninterrupted_work_in_seconds -
+        max_uninterrupted_work_in_hours * HOUR;
+      return `dépassée de ${formatMinutesFromSeconds(diff)}`;
     }
   },
   [ALERT_TYPES.maximumWorkedDaysInWeek]: {
