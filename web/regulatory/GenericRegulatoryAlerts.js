@@ -22,6 +22,14 @@ import { NoAlerts } from "./NoAlerts";
 import { RunningTag, ToValidateTag, WaitingTag } from "../admin/drawers/Tags";
 import { useIsWidthDown } from "common/utils/useWidth";
 
+const TagWrapper = ({ children }) => {
+  return (
+    <Stack direction="column" rowGap={3} alignItems="center" mt={1}>
+      {children}
+      <RegulatoryTextNotCalculatedYet />
+    </Stack>
+  );
+}
 export function GenericRegulatoryAlerts({
   userId,
   day,
@@ -119,29 +127,24 @@ export function GenericRegulatoryAlerts({
   );
 
   if (stillRunning) {
-    return (
-      <Stack direction="column" rowGap={3} alignItems="center">
-        <RunningTag />
-        <RegulatoryTextNotCalculatedYet />
-      </Stack>
-    );
+    return <TagWrapper>
+      <RunningTag />
+    </TagWrapper>
   }
 
   if (noAdminValidation) {
     return (
-      <Stack direction="column" rowGap={3} alignItems="center">
+      <TagWrapper>
         <ToValidateTag />
-        <RegulatoryTextNotCalculatedYet />
-      </Stack>
+      </TagWrapper>
     );
   }
 
   if (!loading && !regulationComputations) {
     return (
-      <Stack direction="column" rowGap={3} alignItems="center">
+      <TagWrapper>
         <WaitingTag />
-        <RegulatoryTextNotCalculatedYet />
-      </Stack>
+      </TagWrapper>
     );
   }
   return (
