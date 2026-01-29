@@ -6,6 +6,7 @@ import { Stack, Typography } from "@mui/material";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
 import { fr } from "@codegouvfr/react-dsfr";
+import { useIsWidthDown } from "common/utils/useWidth";
 
 const useStyles = makeStyles((theme) => ({
   linkButton: {
@@ -21,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
     color: fr.colors.decisions.background.flat.warning.default,
     backgroundColor: fr.colors.decisions.background.contrast.warning.default,
     fontSize: "0.75rem"
+  },
+  coloredBackground: {
+    backgroundColor: "#FEF4F4"
   }
 }));
 
@@ -37,6 +41,27 @@ export function SimplerRegulationCheck({ regulationCheck }) {
 function Check({ title, rule, tag }) {
   const openRegulationDrawer = useRegulationDrawer();
   const classes = useStyles();
+
+  const isMobile = useIsWidthDown("sm");
+
+  if (isMobile) {
+    return (
+      <Stack direction="column" justifyContent="space-between" className={classes.coloredBackground} alignItems="start" p={2} rowGap={1}>
+        <Typography fontWeight={500} textAlign="left">{title}</Typography>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" width="100%">
+          {tag && <Tag className={classes.warningTag} style={{ paddingRight: "0.5rem", paddingLeft: "0.5rem" }}>{tag}</Tag>}
+          <Button
+            priority="tertiary no outline"
+            onClick={() => openRegulationDrawer(rule, true)}
+            size="small"
+            iconId="fr-icon-arrow-right-line"
+            iconPosition="right"
+            className={classes.linkButton}
+          />
+        </Stack>
+      </Stack>
+    )
+  }
 
   return (
     <Stack

@@ -20,6 +20,7 @@ import Stack from "@mui/material/Stack";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { NoAlerts } from "./NoAlerts";
 import { RunningTag, ToValidateTag, WaitingTag } from "../admin/drawers/Tags";
+import { useIsWidthDown } from "common/utils/useWidth";
 
 export function GenericRegulatoryAlerts({
   userId,
@@ -33,6 +34,7 @@ export function GenericRegulatoryAlerts({
     []
   );
   const [loading, setLoading] = React.useState(false);
+  const isMobile = useIsWidthDown("sm");
 
   const api = useApi();
   const alerts = useSnackbarAlerts();
@@ -150,9 +152,9 @@ export function GenericRegulatoryAlerts({
         (checksWithAlerts.length === 0 ? (
           <NoAlerts />
         ) : (
-          <Stack direction="column" width="100%" rowGap={2} mt={2}>
-            <Stack direction="row" columnGap={1}>
-              <Typography variant="h4" fontSize="1.25rem">
+          <Stack direction="column" width="100%" rowGap={isMobile ? 1 : 2}>
+            <Stack direction="row" columnGap={1} mb={1}>
+              <Typography variant="h4" fontSize="1.25rem" >
                 Infractions
               </Typography>
               <Badge noIcon severity="error">

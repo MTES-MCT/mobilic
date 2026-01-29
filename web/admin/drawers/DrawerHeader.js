@@ -92,7 +92,7 @@ export const DayDrawerHeader = ({
     <DrawerHeader workerName={workerName} onClose={onClose}>
       <>
         <Typography>Journée du</Typography>
-        <Typography className={classes.day} mb={1}>
+        <Typography className={classes.day} mb={2}>
           {formattedDay}
         </Typography>
         <GenericRegulatoryAlerts
