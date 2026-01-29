@@ -9,7 +9,11 @@ import { Typography } from "@mui/material";
 import { GenericRegulatoryAlerts } from "../../regulatory/GenericRegulatoryAlerts";
 import { MissionTitle } from "../components/MissionTitle";
 import { RunningTag, ToValidateTag, WaitingTag } from "./Tags";
-import { formatCompleteDayOfWeekAndDay, MONDAY } from "common/utils/time";
+import {
+  formatCompleteDayOfWeekAndDay,
+  isoFormatLocalDate,
+  MONDAY,
+} from "common/utils/time";
 
 const useStyles = makeStyles((theme) => ({
   container: {
