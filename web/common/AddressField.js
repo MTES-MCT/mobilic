@@ -1,6 +1,5 @@
 import React from "react";
 import TextField from "common/utils/TextField";
-import throttle from "lodash/throttle";
 import ListItemText from "@mui/material/ListItemText";
 import Autocomplete from "@mui/material/Autocomplete";
 import {
@@ -13,37 +12,14 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Notice from "./Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import {
-  isInputSearchable,
-  fetchGeoplateforme
-} from "./utils/geoplateforme";
+import { isInputSearchable } from "./utils/geoplateforme";
+import { useGeoplateforme, useGeoplateforme_Reverse } from "./utils/useGeoplateforme";
 
 const useStyles = makeStyles(theme => ({
   geolocationButton: {
     marginLeft: theme.spacing(3)
   }
 }));
-
-const fetchPlaces = throttle((input, currentPosition = null, callback) => {
-  let queryArgs = new URLSearchParams();
-  if (isInputSearchable(input)) queryArgs.append("q", input);
-  if (currentPosition && currentPosition.coords) {
-    queryArgs.append("lat", currentPosition.coords.latitude);
-    queryArgs.append("lon", currentPosition.coords.longitude);
-  }
-
-  if (Array.from(queryArgs).length > 0) {
-    const endpoint = !isInputSearchable(input) && currentPosition ? "reverse" : "search";
-    fetchGeoplateforme(
-      endpoint,
-      queryArgs,
-      callback,
-      (json) => json.features || []
-    );
-  } else {
-    callback([]);
-  }
-}, 300);
 
 export function AddressField({
   value,
@@ -70,25 +46,33 @@ export function AddressField({
   };
 
   const [inputValue, setInputValue] = React.useState("");
-  const [options, setOptions] = React.useState(detaultOptions());
-  const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
-  React.useEffect(() => {
+  const { options: searchOptions, loading: searchLoading } = useGeoplateforme({
+    endpoint: "search",
+    inputValue,
+    params: {},
+    resultMapper: (json) => json.features || [],
+    enabled: isInputSearchable(inputValue)
+  });
+
+  const { options: reverseOptions, loading: reverseLoading } = useGeoplateforme_Reverse({
+    position: currentPosition,
+    resultMapper: (json) => json.features || [],
+    enabled: !!currentPosition && !isInputSearchable(inputValue)
+  });
+
+  const options = React.useMemo(() => {
     if (inputValue === "" && !currentPosition) {
-      setOptions(value ? [value] : detaultOptions());
-    } else {
-      setLoading(true);
-      fetchPlaces(inputValue, currentPosition, results => {
-        if (!isInputSearchable(inputValue)) {
-          setOptions(results?.concat(detaultOptions()));
-        } else {
-          setOptions(results);
-        }
-        setLoading(false);
-      });
+      return value ? [value] : detaultOptions();
     }
-  }, [value, inputValue, currentPosition, defaultAddresses]);
+    if (!isInputSearchable(inputValue)) {
+      return reverseOptions.concat(detaultOptions());
+    }
+    return searchOptions;
+  }, [inputValue, currentPosition, searchOptions, reverseOptions, value, defaultAddresses]);
+
+  const loading = searchLoading || reverseLoading;
 
   const classes = useStyles();
 
@@ -100,8 +84,7 @@ export function AddressField({
       groupBy={
         isInputSearchable(inputValue)
           ? null
-          : option =>
-              option.default ? "Adresses enregistrées" : "Adresses proches"
+          : option => option.default ? "Adresses enregistrées" : "Adresses proches"
       }
       getOptionLabel={option =>
         typeof option === "string"
@@ -120,7 +103,6 @@ export function AddressField({
       size={small ? "small" : "medium"}
       filterOptions={(options, params) => {
         const filtered = [...options];
-        // Suggest the creation of a new value
         if (params.inputValue !== "") {
           filtered.push({
             manual: true,
@@ -142,9 +124,6 @@ export function AddressField({
         if (typeof newValue === "string") {
           cleanNewValue = { manual: true, name: newValue };
         }
-        setOptions(options =>
-          cleanNewValue ? [cleanNewValue, ...options] : options
-        );
         onChange(cleanNewValue);
       }}
       onInputChange={(event, newInputValue) => {
@@ -176,8 +155,7 @@ export function AddressField({
                   iconPosition="left"
                   priority="secondary"
                   className={classes.geolocationButton}
-                  onClick={e => {
-                    setLoading(true);
+                  onClick={() => {
                     askCurrentPosition();
                   }}
                 >

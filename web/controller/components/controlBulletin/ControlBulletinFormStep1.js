@@ -39,7 +39,6 @@ export function ControlBulletinFormStep1({
         showErrors={showErrors}
         searchByCodeAndLabel={true}
         onChange={(_, newValue) => {
-          // Save the entire department object as JSON string
           editControlBulletinField(JSON.stringify(newValue), "locationDepartment");
           editControlBulletinField("", "locationCommune");
           editControlBulletinField("", "locationLieu");
@@ -47,7 +46,6 @@ export function ControlBulletinFormStep1({
         }}
       />
       
-      {/* Municipality autocomplete with Géoplateforme API */}
       <MunicipalityAutocomplete
         value={controlBulletin.locationCommune || ""}
         onChange={(newValue) => {
@@ -59,20 +57,18 @@ export function ControlBulletinFormStep1({
         departmentCode={departmentCode}
         label="Commune du contrôle"
         required={true}
-        disabled={!controlBulletin.locationDepartment}
         showErrors={showErrors}
       />
       
-      {/* Location autocomplete with Géoplateforme API (POI and addresses) */}
       <LocationAutocomplete
         value={controlBulletin.locationLieu || ""}
         onChange={(newValue) => {
           editControlBulletinField(newValue, "locationLieu");
         }}
         departmentCode={departmentCode}
+        commune={controlBulletin.locationCommune}
         label="Lieu du contrôle"
         required={true}
-        disabled={!controlBulletin.locationCommune}
         showErrors={showErrors}
       />
       <Input
