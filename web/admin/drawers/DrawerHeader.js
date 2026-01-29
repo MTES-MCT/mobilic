@@ -6,14 +6,10 @@ import Stack from "@mui/material/Stack";
 import { fr } from "@codegouvfr/react-dsfr";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { Typography } from "@mui/material";
-import {
-  formatCompleteDayOfWeekAndDay,
-  isoFormatLocalDate,
-  MONDAY,
-  prettyFormatDay
 import { GenericRegulatoryAlerts } from "../../regulatory/GenericRegulatoryAlerts";
 import { MissionTitle } from "../components/MissionTitle";
 import { RunningTag, ToValidateTag, WaitingTag } from "./Tags";
+import { formatCompleteDayOfWeekAndDay, MONDAY } from "common/utils/time";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -142,9 +138,11 @@ export const MissionDrawerHeader = ({
           missionPrefix={!isHoliday}
           mb={1}
         />
-        {noEmployeeValidation && <WaitingTag />}
-        {!noEmployeeValidation && toBeValidatedByAdmin && <ToValidateTag />}
-        {stillRunning && <RunningTag />}
+        {noEmployeeValidation && !isHoliday && <WaitingTag />}
+        {!noEmployeeValidation && toBeValidatedByAdmin && !isHoliday && (
+          <ToValidateTag />
+        )}
+        {stillRunning && !isHoliday && <RunningTag />}
       </>
     </DrawerHeader>
   );
