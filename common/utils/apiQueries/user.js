@@ -120,6 +120,7 @@ export const USER_WORK_DAY_QUERY = gql`
             validations {
               isAdmin
             }
+            isHoliday
           }
         }
       }

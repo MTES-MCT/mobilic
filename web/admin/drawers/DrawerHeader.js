@@ -7,12 +7,10 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { Typography } from "@mui/material";
 import {
-  formatCompleteDayOfWeek,
   formatCompleteDayOfWeekAndDay,
   isoFormatLocalDate,
   MONDAY,
   prettyFormatDay
-} from "common/utils/time";
 import { GenericRegulatoryAlerts } from "../../regulatory/GenericRegulatoryAlerts";
 import { MissionTitle } from "../components/MissionTitle";
 import { RunningTag, ToValidateTag, WaitingTag } from "./Tags";
@@ -82,7 +80,8 @@ export const DayDrawerHeader = ({
   userId,
   stillRunning,
   noAdminValidation,
-  onClose
+  isDayHoliday = false,
+  onClose,
 }) => {
   const classes = useStyles();
   const formattedDay = formatCompleteDayOfWeekAndDay(periodStart)
@@ -95,6 +94,7 @@ export const DayDrawerHeader = ({
         <Typography className={classes.day} mb={2}>
           {formattedDay}
         </Typography>
+        {!isDayHoliday && (
         <GenericRegulatoryAlerts
           userId={userId}
           day={alertsDay}
@@ -102,6 +102,7 @@ export const DayDrawerHeader = ({
           stillRunning={stillRunning}
           noAdminValidation={noAdminValidation}
         />
+        )}
       </>
     </DrawerHeader>
   );

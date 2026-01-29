@@ -136,7 +136,12 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
 
   const atLeastOneMissionNotValidatedByAdmin = useMemo(
     () => missions.filter((m) => !m.validatedByAdmin).length > 0,
-    [missions]
+    [missions],
+  );
+
+  const isDayHoliday = useMemo(
+    () => missions.every((m) => m.isHoliday),
+    [missions],
   );
 
   return (
@@ -148,6 +153,7 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
         userId={workTimeEntry.user.id}
         stillRunning={stillRunning}
         noAdminValidation={atLeastOneMissionNotValidatedByAdmin}
+        isDayHoliday={isDayHoliday}
       />
       <Box className={classes.container}>
         <Stack direction="column" rowGap={4}>
