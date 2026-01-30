@@ -31,24 +31,24 @@ export default function TerminateEmploymentModal({
 
   React.useEffect(() => {
     if (open && inactiveEmployees?.length > 0) {
-      const today = new Date();
       if (!hasTrackedOpen.current) {
         trackEvent(BATCH_TERMINATE_MODAL_OPEN);
         hasTrackedOpen.current = true;
+        // Initialize selected employees only once when modal opens
+        setSelectedEmployees(
+          inactiveEmployees.map(emp => ({
+            ...emp,
+            selected: true,
+            endDate: todayForMaxDate,
+            error: null
+          }))
+        );
       }
-      setSelectedEmployees(
-        inactiveEmployees.map(emp => ({
-          ...emp,
-          selected: true,
-          endDate: today,
-          error: null
-        }))
-      );
     }
     if (!open) {
       hasTrackedOpen.current = false;
     }
-  }, [open, inactiveEmployees, trackEvent]);
+  }, [open, inactiveEmployees, trackEvent, todayForMaxDate]);
 
   const toggleEmployee = employmentId => {
     setSelectedEmployees(prev =>
