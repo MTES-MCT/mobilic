@@ -24,22 +24,25 @@ export default function TerminateEmploymentModal({
   const formatDateForInput = date =>
     date ? date.toISOString().split("T")[0] : "";
 
-  const todayForMaxDate = React.useMemo(() => new Date(), []);
   const [selectedEmployees, setSelectedEmployees] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const hasTrackedOpen = React.useRef(false);
+  const todayForMaxDate = React.useRef(null);
 
   React.useEffect(() => {
     if (open && inactiveEmployees?.length > 0) {
       if (!hasTrackedOpen.current) {
         trackEvent(BATCH_TERMINATE_MODAL_OPEN);
         hasTrackedOpen.current = true;
+        // Create a fresh date when modal opens
+        const today = new Date();
+        todayForMaxDate.current = today;
         // Initialize selected employees only once when modal opens
         setSelectedEmployees(
           inactiveEmployees.map(emp => ({
             ...emp,
             selected: true,
-            endDate: todayForMaxDate,
+            endDate: today,
             error: null
           }))
         );
@@ -48,7 +51,7 @@ export default function TerminateEmploymentModal({
     if (!open) {
       hasTrackedOpen.current = false;
     }
-  }, [open, inactiveEmployees, trackEvent, todayForMaxDate]);
+  }, [open, inactiveEmployees, trackEvent]);
 
   const toggleEmployee = employmentId => {
     setSelectedEmployees(prev =>
@@ -194,7 +197,7 @@ export default function TerminateEmploymentModal({
                                 emp.employmentId,
                                 e.target.value ? new Date(e.target.value) : null
                               ),
-                            max: formatDateForInput(todayForMaxDate),
+                            max: formatDateForInput(todayForMaxDate.current),
                             min: emp.startDate
                               ? formatDateForInput(new Date(emp.startDate))
                               : undefined
