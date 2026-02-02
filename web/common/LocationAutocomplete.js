@@ -236,7 +236,7 @@ export function LocationAutocomplete({
   const getSearchQuery = React.useCallback((input) => {
     if (!input) return "";
     if (!commune) return input;
-    const communeName = commune.replace(/\s*\(\d{5}\)\s*$/, "");
+    const communeName = commune.replace(/ ?\(\d{5}\)$/, "");
     return `${input} ${communeName}`;
   }, [commune]);
 
