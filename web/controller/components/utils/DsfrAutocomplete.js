@@ -13,9 +13,8 @@ export function DsfrAutocomplete({
   onChange,
   showErrors,
   options,
-  searchByCodeAndLabel = false // Nouveau prop pour activer la recherche par code et label
+  searchByCodeAndLabel = false
 }) {
-  // Filtre personnalisé pour rechercher par code OU par label
   const filterOptions = createFilterOptions({
     matchFrom: "start",
     stringify: searchByCodeAndLabel
@@ -23,10 +22,8 @@ export function DsfrAutocomplete({
       : undefined
   });
 
-  // Fonction pour afficher les options avec code + label si activé
   const getOptionLabel = option => {
     if (typeof option === "string") {
-      // Si c'est une chaîne (valeur sélectionnée), chercher l'objet correspondant pour affichage
       if (searchByCodeAndLabel) {
         const foundOption = options.find(opt => opt.label === option);
         if (foundOption) {
@@ -42,12 +39,23 @@ export function DsfrAutocomplete({
     return option.label || option;
   };
 
-  // Trouver l'option correspondante pour la valeur actuelle
   const getCurrentValue = () => {
     if (!field) return null;
 
     if (searchByCodeAndLabel) {
-      return options.find(opt => opt.label === field) || null;
+      let fieldValue = field;
+      if (typeof field === "string" && field.startsWith("{")) {
+        try {
+          fieldValue = JSON.parse(field);
+        } catch {
+          // Ignore JSON parse errors
+        }
+      }
+      
+      if (typeof fieldValue === "object" && fieldValue.label) {
+        return options.find(opt => opt.label === fieldValue.label) || null;
+      }
+      return options.find(opt => opt.label === fieldValue) || null;
     }
 
     return field;
