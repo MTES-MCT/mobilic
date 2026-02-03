@@ -51,8 +51,7 @@ import {
   CANCEL_EMPLOYMENT_MUTATION,
   CHANGE_EMPLOYEE_ROLE,
   CREATE_EMPLOYMENT_MUTATION,
-  SEND_INVITATIONS_REMINDERS,
-  TERMINATE_EMPLOYMENT_MUTATION
+  SEND_INVITATIONS_REMINDERS
 } from "common/utils/apiQueries/employments";
 import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
@@ -195,27 +194,6 @@ export function Employees({ company, containerRef }) {
 
   async function giveWorkerPermission(employmentId) {
     await changeEmployeeRole(employmentId, false);
-  }
-
-  async function terminateEmployment(employmentId, endDate) {
-    const employmentResponse = await api.graphQlMutate(
-      TERMINATE_EMPLOYMENT_MUTATION,
-      {
-        employmentId,
-        endDate: isoFormatLocalDate(endDate)
-      }
-    );
-    await adminStore.dispatch({
-      type: ADMIN_ACTIONS.update,
-      payload: {
-        id: employmentId,
-        entity: "employments",
-        update: {
-          ...employmentResponse.data.employments.terminateEmployment,
-          companyId
-        }
-      }
-    });
   }
 
   async function sendInvitationsReminders(employmentIds) {
