@@ -583,11 +583,31 @@ export function Employees({ company, containerRef }) {
     }
   }, [shouldShowInactiveBanner, hasTrackedBannerView, inactiveEmployees.length]);
 
+  const handleBatchTerminateSuccess = async (terminatedEmploymentIds) => {
+    for (const employmentId of terminatedEmploymentIds) {
+      const employment = companyEmployments.find(e => e.id === employmentId);
+      if (employment) {
+        await adminStore.dispatch({
+          type: ADMIN_ACTIONS.update,
+          payload: {
+            id: employmentId,
+            entity: "employments",
+            update: {
+              ...employment,
+              endDate: isoFormatLocalDate(new Date()),
+              companyId
+            }
+          }
+        });
+      }
+    }
+  };
+
   const handleOpenBatchTerminateModal = () => {
     trackEvent(INACTIVE_EMPLOYEES_BANNER_CLICK);
     modals.open("terminateEmployment", {
       inactiveEmployees,
-      terminateEmployment
+      onSuccess: handleBatchTerminateSuccess
     });
   };
 
@@ -766,7 +786,7 @@ export function Employees({ company, containerRef }) {
           () =>
             modals.open("terminateEmployment", {
               inactiveEmployees: [empl],
-              terminateEmployment
+              onSuccess: handleBatchTerminateSuccess
             }),
           true
         )
