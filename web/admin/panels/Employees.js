@@ -18,6 +18,10 @@ import {
   isoFormatLocalDate,
   now
 } from "common/utils/time";
+import {
+  isInactiveMoreThan3Months,
+  formatLastActiveDate
+} from "common/utils/employeeStatus";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { EMPLOYMENT_ROLE } from "common/utils/employments";
 import { TeamFilter } from "../components/TeamFilter";
@@ -38,25 +42,25 @@ import {
   INVITE_NEW_EMPLOYEE_SUBMIT,
   INVITE_EMAIL_LIST_CLICK,
   INVITE_MISSING_EMPLOYEES_CLICK,
-  INVITE_NEW_EMPLOYEE_CLICK
+  INVITE_NEW_EMPLOYEE_CLICK,
+  INACTIVE_EMPLOYEES_BANNER_VIEW,
+  INACTIVE_EMPLOYEES_BANNER_CLICK
 } from "common/utils/matomoTags";
 import {
   BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
   CANCEL_EMPLOYMENT_MUTATION,
   CHANGE_EMPLOYEE_ROLE,
   CREATE_EMPLOYMENT_MUTATION,
-  SEND_INVITATIONS_REMINDERS,
-  TERMINATE_EMPLOYMENT_MUTATION
+  SEND_INVITATIONS_REMINDERS
 } from "common/utils/apiQueries/employments";
+import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
 
 const useStyles = makeStyles((theme) => ({
   title: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center"
-  },
-  successText: {
-    color: theme.palette.success.main
   },
   augmentedTable: {
     marginRight: theme.spacing(10)
@@ -66,6 +70,10 @@ const useStyles = makeStyles((theme) => ({
   },
   hideButton: {
     marginLeft: theme.spacing(2)
+  },
+  badgeDetache: {
+    backgroundColor: "#E5E5E5 !important",
+    color: "#929292 !important"
   }
 }));
 
@@ -188,27 +196,6 @@ export function Employees({ company, containerRef }) {
     await changeEmployeeRole(employmentId, false);
   }
 
-  async function terminateEmployment(employmentId, endDate) {
-    const employmentResponse = await api.graphQlMutate(
-      TERMINATE_EMPLOYMENT_MUTATION,
-      {
-        employmentId,
-        endDate: isoFormatLocalDate(endDate)
-      }
-    );
-    await adminStore.dispatch({
-      type: ADMIN_ACTIONS.update,
-      payload: {
-        id: employmentId,
-        entity: "employments",
-        update: {
-          ...employmentResponse.data.employments.terminateEmployment,
-          companyId
-        }
-      }
-    });
-  }
-
   async function sendInvitationsReminders(employmentIds) {
     try {
       const res = await api.graphQlMutate(SEND_INVITATIONS_REMINDERS, {
@@ -329,22 +316,51 @@ export function Employees({ company, containerRef }) {
     format: (remindButton) => remindButton
   });
 
+  const EmployeeStatusBadge = ({ isDetached, isInactive, lastActiveAt }) => {
+    if (isDetached) {
+      return (
+        <Badge noIcon small className={classes.badgeDetache}>
+          {"détaché".toUpperCase()}
+        </Badge>
+      );
+    }
+    if (isInactive) {
+      return (
+        <Tooltip title={`Inactif depuis le ${formatLastActiveDate(lastActiveAt)}. Pensez à détacher ce salarié.`}>
+          <Badge severity="warning" noIcon small>
+            {"inactif".toUpperCase()}
+          </Badge>
+        </Tooltip>
+      );
+    }
+    return null;
+  };
+
   const validEmploymentColumns = [
     {
-      label: "Nom",
+      label: "Salarié",
       name: "lastName",
       align: "left",
       sortable: true,
-      minWidth: 120,
-      overflowTooltip: true
+      minWidth: 200,
+      overflowTooltip: true,
+      format: (lastName, entry) => 
+          `${entry.firstName} ${lastName}`
     },
     {
-      label: "Prénom",
-      name: "firstName",
-      align: "left",
+      label: "",
+      name: "statusBadge",
+      align: "right",
       sortable: true,
-      minWidth: 120,
-      overflowTooltip: true
+      minWidth: 80,
+      baseWidth: 80,
+      format: (_, entry) => (
+        <EmployeeStatusBadge
+          isDetached={entry.isDetached}
+          isInactive={entry.isInactive}
+          lastActiveAt={entry.lastActiveAt}
+        />
+      )
     },
     {
       label: "Identifiant",
@@ -376,29 +392,6 @@ export function Employees({ company, containerRef }) {
       format: (startDate) => frenchFormatDateStringOrTimeStamp(startDate),
       sortable: true,
       minWidth: 150
-    },
-    {
-      label: "Fin rattachement",
-      name: "endDate",
-      format: (endDate) =>
-        endDate ? frenchFormatDateStringOrTimeStamp(endDate) : null,
-      align: "left",
-      minWidth: 150
-    },
-    {
-      label: "Statut",
-      name: "active",
-      format: (active) => (
-        <Typography
-          className={`bold ${
-            active ? classes.successText : classes.terminatedEmployment
-          }`}
-        >
-          {active ? "Actif" : "Terminé"}
-        </Typography>
-      ),
-      align: "left",
-      minWidth: 80
     }
   ];
 
@@ -511,23 +504,32 @@ export function Employees({ company, containerRef }) {
           );
         })
         .filter((e) => e.isAcknowledged)
-        .map((e) => ({
-          pending: false,
-          id: e.user.id,
-          email: e.user.email,
-          employmentId: e.id,
-          lastName: e.user.lastName,
-          firstName: e.user.firstName,
-          name: formatPersonName(e.user),
-          startDate: e.startDate,
-          endDate: e.endDate,
-          active: !e.endDate || e.endDate >= today,
-          hasAdminRights: e.hasAdminRights ? 1 : 0,
-          teamId: e.teamId,
-          userId: e.user.id,
-          companyId: e.company.id,
-          business: e.business
-        })),
+        .map((e) => {
+          const isDetached = !!e.endDate;
+          const isInactive = !isDetached && isInactiveMoreThan3Months(e.lastActiveAt);
+          const statusBadge = isDetached ? 2 : isInactive ? 1 : 0;
+          return {
+            pending: false,
+            id: e.user.id,
+            email: e.user.email,
+            employmentId: e.id,
+            lastName: e.user.lastName,
+            firstName: e.user.firstName,
+            name: formatPersonName(e.user),
+            startDate: e.startDate,
+            endDate: e.endDate,
+            active: !e.endDate || e.endDate >= today,
+            hasAdminRights: e.hasAdminRights ? 1 : 0,
+            teamId: e.teamId,
+            userId: e.user.id,
+            companyId: e.company.id,
+            business: e.business,
+            lastActiveAt: e.lastActiveAt,
+            isDetached,
+            isInactive,
+            statusBadge
+          };
+        }),
     [companyEmployments, selectedTeamIds]
   );
 
@@ -540,6 +542,52 @@ export function Employees({ company, containerRef }) {
     () => validEmployments.filter((e) => e.active),
     [validEmployments]
   );
+
+  const inactiveEmployees = React.useMemo(
+    () => activeValidEmployments.filter((e) => e.isInactive),
+    [activeValidEmployments]
+  );
+
+  const [isBannerDismissed, setIsBannerDismissed] = React.useState(false);
+  const shouldShowInactiveBanner =
+    inactiveEmployees.length >= 3 && !isBannerDismissed;
+
+  const hasTrackedBannerView = React.useRef(false);
+
+  React.useEffect(() => {
+    if (shouldShowInactiveBanner && !hasTrackedBannerView.current) {
+      trackEvent(INACTIVE_EMPLOYEES_BANNER_VIEW(inactiveEmployees.length));
+      hasTrackedBannerView.current = true;
+    }
+  }, [shouldShowInactiveBanner, inactiveEmployees.length]);
+
+  const handleBatchTerminateSuccess = async (terminatedEmploymentIds) => {
+    for (const employmentId of terminatedEmploymentIds) {
+      const employment = companyEmployments.find(e => e.id === employmentId);
+      if (employment) {
+        await adminStore.dispatch({
+          type: ADMIN_ACTIONS.update,
+          payload: {
+            id: employmentId,
+            entity: "employments",
+            update: {
+              ...employment,
+              endDate: isoFormatLocalDate(new Date()),
+              companyId
+            }
+          }
+        });
+      }
+    }
+  };
+
+  const handleOpenBatchTerminateModal = () => {
+    trackEvent(INACTIVE_EMPLOYEES_BANNER_CLICK);
+    modals.open("terminateEmployment", {
+      inactiveEmployees,
+      onSuccess: handleBatchTerminateSuccess
+    });
+  };
 
   const employeeProgressData = useEmployeeProgress(
     company,
@@ -715,9 +763,8 @@ export function Employees({ company, containerRef }) {
           `Mettre fin au rattachement du gestionnaire ${employment.name}`,
           () =>
             modals.open("terminateEmployment", {
-              minDate: new Date(empl.startDate),
-              terminateEmployment: async (endDate) =>
-                terminateEmployment(empl.employmentId, endDate)
+              inactiveEmployees: [empl],
+              onSuccess: handleBatchTerminateSuccess
             }),
           true
         )
@@ -951,6 +998,36 @@ export function Employees({ company, containerRef }) {
           <Notice
             description="Certains salariés n'ont pas de type d'activité de transport
             renseigné. Veuillez en sélectionner un pour chaque salarié actif."
+          />
+        )}
+        {shouldShowInactiveBanner && (
+          <Notice
+            type="warning"
+            onClose={() => setIsBannerDismissed(true)}
+            description={
+              <>
+                {formatPersonName(inactiveEmployees[0])} et{" "}
+                {inactiveEmployees.length - 1} autres salariés n'ont pas
+                enregistré de temps de travail depuis 3 mois. Pensez à détacher
+                ces salariés s'ils ne font plus partie de votre entreprise, en
+                sélectionnant l'option "mettre fin au rattachement", ou{" "}
+                <button
+                  type="button"
+                  onClick={handleOpenBatchTerminateModal}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    font: "inherit",
+                    color: "inherit",
+                    textDecoration: "underline",
+                    cursor: "pointer"
+                  }}
+                >
+                  en cliquant ici →
+                </button>
+              </>
+            }
           />
         )}
         <Grid container>
