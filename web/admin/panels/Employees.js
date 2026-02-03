@@ -63,9 +63,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
     alignItems: "center"
   },
-  successText: {
-    color: theme.palette.success.main
-  },
   augmentedTable: {
     marginRight: theme.spacing(10)
   },
@@ -417,29 +414,6 @@ export function Employees({ company, containerRef }) {
       format: (startDate) => frenchFormatDateStringOrTimeStamp(startDate),
       sortable: true,
       minWidth: 150
-    },
-    {
-      label: "Fin rattachement",
-      name: "endDate",
-      format: (endDate) =>
-        endDate ? frenchFormatDateStringOrTimeStamp(endDate) : null,
-      align: "left",
-      minWidth: 150
-    },
-    {
-      label: "Statut",
-      name: "active",
-      format: (active) => (
-        <Typography
-          className={`bold ${
-            active ? classes.successText : classes.terminatedEmployment
-          }`}
-        >
-          {active ? "Actif" : "Terminé"}
-        </Typography>
-      ),
-      align: "left",
-      minWidth: 80
     }
   ];
 
