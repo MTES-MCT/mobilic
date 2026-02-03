@@ -58,6 +58,20 @@ export const TERMINATE_EMPLOYMENT_MUTATION = gql`
   }
 `;
 
+export const BATCH_TERMINATE_EMPLOYMENTS_MUTATION = gql`
+  mutation batchTerminateEmployments(
+    $employments: [TerminateEmploymentInput]!
+  ) {
+    employments {
+      batchTerminateEmployments(employments: $employments) {
+        employmentId
+        success
+        error
+      }
+    }
+  }
+`;
+
 export const SEND_INVITATIONS_REMINDERS = gql`
   mutation sendInvitationsReminders($employmentIds: [Int]!) {
     employments {

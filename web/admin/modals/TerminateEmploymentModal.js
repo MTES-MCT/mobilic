@@ -2,14 +2,16 @@ import React from "react";
 import Checkbox from "@mui/material/Checkbox";
 import { Input } from "@codegouvfr/react-dsfr/Input";
 import { LoadingButton } from "common/components/LoadingButton";
+import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import { formatApiError, graphQLErrorMatchesCode } from "common/utils/errors";
 import { formatPersonName } from "common/utils/coworkers";
+import { isoFormatLocalDate } from "common/utils/time";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
   BATCH_TERMINATE_MODAL_OPEN,
   BATCH_TERMINATE_MODAL_SUBMIT
 } from "common/utils/matomoTags";
+import { BATCH_TERMINATE_EMPLOYMENTS_MUTATION } from "common/utils/apiQueries/employments";
 import Notice from "../../common/Notice";
 import Modal from "../../common/Modal";
 
@@ -17,8 +19,9 @@ export default function TerminateEmploymentModal({
   open,
   handleClose,
   inactiveEmployees,
-  terminateEmployment
+  onSuccess
 }) {
+  const api = useApi();
   const { trackEvent } = useMatomo();
   const alerts = useSnackbarAlerts();
   const formatDateForInput = date =>
@@ -86,35 +89,57 @@ export default function TerminateEmploymentModal({
     if (toTerminate.length === 0) return;
 
     setLoading(true);
-    let successCount = 0;
-    let errorCount = 0;
 
-    for (const emp of toTerminate) {
-      try {
-        await terminateEmployment(emp.employmentId, emp.endDate);
-        successCount++;
-      } catch (err) {
-        errorCount++;
-        const errorMessage = graphQLErrorMatchesCode(err, "INVALID_INPUTS")
-          ? "La date de fin doit être postérieure à la date de début."
-          : formatApiError(err);
-        setEmployeeError(emp.employmentId, errorMessage);
+    try {
+      const response = await api.graphQlMutate(
+        BATCH_TERMINATE_EMPLOYMENTS_MUTATION,
+        {
+          employments: toTerminate.map(emp => ({
+            employmentId: emp.employmentId,
+            endDate: isoFormatLocalDate(emp.endDate)
+          }))
+        }
+      );
+
+      const results =
+        response.data.employments.batchTerminateEmployments || [];
+
+      let successCount = 0;
+      let errorCount = 0;
+
+      results.forEach(result => {
+        if (result.success) {
+          successCount++;
+        } else {
+          errorCount++;
+          setEmployeeError(result.employmentId, result.error);
+        }
+      });
+
+      if (successCount > 0) {
+        trackEvent(BATCH_TERMINATE_MODAL_SUBMIT(successCount));
+        alerts.success(
+          `${successCount} détachement(s) effectué(s)`,
+          "batch-terminate-success",
+          6000
+        );
+        if (onSuccess) {
+          onSuccess(results.filter(r => r.success).map(r => r.employmentId));
+        }
       }
-    }
 
-    if (successCount > 0) {
-      trackEvent(BATCH_TERMINATE_MODAL_SUBMIT(successCount));
-      alerts.success(
-        `${successCount} détachement(s) terminé(s)`,
-        "batch-terminate-success",
+      if (errorCount === 0) {
+        handleClose();
+      }
+    } catch (err) {
+      alerts.error(
+        "Une erreur est survenue lors du détachement",
+        "batch-terminate-error",
         6000
       );
     }
 
     setLoading(false);
-    if (errorCount === 0) {
-      handleClose();
-    }
   };
 
   return (
