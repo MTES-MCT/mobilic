@@ -552,14 +552,14 @@ export function Employees({ company, containerRef }) {
   const shouldShowInactiveBanner =
     inactiveEmployees.length >= 3 && !isBannerDismissed;
 
-  const [hasTrackedBannerView, setHasTrackedBannerView] = React.useState(false);
+  const hasTrackedBannerView = React.useRef(false);
 
   React.useEffect(() => {
-    if (shouldShowInactiveBanner && !hasTrackedBannerView) {
+    if (shouldShowInactiveBanner && !hasTrackedBannerView.current) {
       trackEvent(INACTIVE_EMPLOYEES_BANNER_VIEW(inactiveEmployees.length));
-      setHasTrackedBannerView(true);
+      hasTrackedBannerView.current = true;
     }
-  }, [shouldShowInactiveBanner, hasTrackedBannerView, inactiveEmployees.length]);
+  }, [shouldShowInactiveBanner, inactiveEmployees.length]);
 
   const handleBatchTerminateSuccess = async (terminatedEmploymentIds) => {
     for (const employmentId of terminatedEmploymentIds) {
