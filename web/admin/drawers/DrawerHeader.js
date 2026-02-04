@@ -115,6 +115,7 @@ export const MissionDrawerHeader = ({
   toBeValidatedByAdmin,
   onEditMissionName,
   doesMissionSpanOnMultipleDays = false,
+  day,
   onClose,
 }) => {
   const stillRunning = !mission.isComplete;

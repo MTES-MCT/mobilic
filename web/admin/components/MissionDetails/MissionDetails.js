@@ -260,6 +260,7 @@ export function MissionDetails({
         noEmployeeValidation={entriesToValidateByWorker?.length > 0}
         toBeValidatedByAdmin={entriesToValidateByAdmin?.length > 0}
         doesMissionSpanOnMultipleDays={doesMissionSpanOnMultipleDays}
+        day={day}
       />
       <Box px={4} pt={2}>
         {isMissionDeleted && (
