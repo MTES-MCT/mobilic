@@ -29,6 +29,7 @@ import EmployeesTeamRevisionModal from "./admin/modals/EmployeesTeamRevisionModa
 import CompanyTeamCreationRevisionModal from "./admin/modals/CompanyTeamCreationRevisionModal";
 import SelectEmployeeModal from "./admin/modals/SelectEmployeeModal";
 import TerminateEmploymentModal from "./admin/modals/TerminateEmploymentModal";
+import ReattachEmploymentModal from "./admin/modals/ReattachEmploymentModal";
 import BatchInviteModal from "./admin/modals/BatchInviteModal";
 import SuccessMessageModal from "./admin/modals/SuccessMessage";
 import WebinarsModal from "./admin/modals/WebinarsModal";
@@ -79,6 +80,7 @@ export const MODAL_DICT = {
   changeTimezone: ChangeTimezoneModal,
   changeGender: ChangeGenderModal,
   terminateEmployment: TerminateEmploymentModal,
+  reattachEmployment: ReattachEmploymentModal,
   userReadQRCode: UserReadQRCodeModal,
   unavailableOfflineMode: UnavailableOfflineModeModal,
   kilometerReading: KilometerReadingModal,
