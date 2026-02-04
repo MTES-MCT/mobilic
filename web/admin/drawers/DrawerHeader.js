@@ -13,6 +13,7 @@ import {
   formatCompleteDayOfWeekAndDay,
   isoFormatLocalDate,
   MONDAY,
+  textualPrettyFormatDay,
 } from "common/utils/time";
 
 const useStyles = makeStyles((theme) => ({
@@ -113,11 +114,18 @@ export const MissionDrawerHeader = ({
   noEmployeeValidation,
   toBeValidatedByAdmin,
   onEditMissionName,
-  onClose
+  doesMissionSpanOnMultipleDays = false,
+  onClose,
 }) => {
   const stillRunning = !mission.isComplete;
   const { name: missionName, isHoliday, startTime } = mission;
-  const formattedDay = formatCompleteDayOfWeekAndDay(startTime)
+  const formattedDay =
+    mission.name &&
+    (mission.startTime || day) &&
+    doesMissionSpanOnMultipleDays &&
+    !(mission.isDeleted && !mission.isComplete)
+      ? `Du ${textualPrettyFormatDay(mission.startTime || day)} au ${textualPrettyFormatDay(mission.endTimeOrNow)}`
+      : formatCompleteDayOfWeekAndDay(startTime);
 
   const workerName = useMemo(() => {
     if (!mission?.userStats) {

@@ -6,8 +6,7 @@ import {
   formatTimeOfDay,
   frenchFormatDateStringOrTimeStamp,
   getStartOfDay,
-  textualPrettyFormatDay,
-  unixTimestampToDate
+  unixTimestampToDate,
 } from "common/utils/time";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../../store/store";
@@ -260,35 +259,9 @@ export function MissionDetails({
         }
         noEmployeeValidation={entriesToValidateByWorker?.length > 0}
         toBeValidatedByAdmin={entriesToValidateByAdmin?.length > 0}
+        doesMissionSpanOnMultipleDays={doesMissionSpanOnMultipleDays}
       />
-      <Box px={4}>
-        <Box pb={2} style={{ paddingBottom: "30px" }}>
-          {mission.name &&
-            (mission.startTime || day) &&
-            doesMissionSpanOnMultipleDays &&
-            !(mission.isDeleted && !mission.isComplete) && (
-              <Typography
-                variant="h6"
-                component="span"
-                className={classes.missionSubTitle}
-              >
-                Du {textualPrettyFormatDay(mission.startTime || day)}{" "}
-                {
-                  <span>
-                    {" "}
-                    au {textualPrettyFormatDay(mission.endTimeOrNow)}{" "}
-                    {mission.isComplete ? (
-                      ""
-                    ) : (
-                      <span className={classes.runningMissionText}>
-                        (en cours)
-                      </span>
-                    )}
-                  </span>
-                }
-              </Typography>
-            )}
-        </Box>
+      <Box px={4} pt={2}>
         {isMissionDeleted && (
           <Notice
             type="info"
@@ -296,7 +269,7 @@ export function MissionDetails({
               <>
                 Cette mission a été supprimée le{" "}
                 {frenchFormatDateStringOrTimeStamp(
-                  unixTimestampToDate(mission?.deletedAt)
+                  unixTimestampToDate(mission?.deletedAt),
                 )}{" "}
                 par {mission?.deletedBy}.
               </>
