@@ -3,7 +3,7 @@ import { Select } from "@codegouvfr/react-dsfr/Select";
 import { useUpdateEmployeeBusinessType } from "../../common/useUpdateBusiness";
 import { BUSINESS_TYPES } from "common/utils/businessTypes";
 
-export function BusinessDropdown({ employmentId, companyId, business }) {
+export function BusinessDropdown({ employmentId, companyId, business, disabled = false }) {
   const { udpateEmployeeBusinessType } = useUpdateEmployeeBusinessType(
     employmentId,
     companyId
@@ -11,6 +11,7 @@ export function BusinessDropdown({ employmentId, companyId, business }) {
 
   return (
     <Select
+      disabled={disabled}
       nativeSelectProps={{
         onChange: e => udpateEmployeeBusinessType(e.target.value),
         value: business?.businessType || ""
