@@ -12,14 +12,7 @@ import { WorkTimeTable } from "../components/WorkTimeTable";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
 import { useAdminStore, useAdminCompanies } from "../store/store";
 import { useModals } from "common/utils/modals";
-import uniq from "lodash/uniq";
-import min from "lodash/min";
-import max from "lodash/max";
-import {
-  formatDay,
-  isoFormatLocalDate,
-  startOfDayAsDate
-} from "common/utils/time";
+import { isoFormatLocalDate, startOfDayAsDate } from "common/utils/time";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
@@ -502,24 +495,6 @@ function ActivitiesPanel() {
         style={{ maxHeight: ref.current ? ref.current.clientHeight : 0 }}
         sx={{ marginTop: 1 }}
       >
-        <Typography
-          align="left"
-          variant="h6"
-          component="span"
-          style={{ fontSize: "1rem" }}
-        >
-          {`${periodAggregates.length} résultats${
-            periodAggregates.length > 0
-              ? ` pour ${
-                  uniq(periodAggregates.map((pa) => pa.user.id)).length
-                } salarié(s) entre le ${formatDay(
-                  min(periodAggregates.map((pa) => pa.periodActualStart))
-                )} et le ${formatDay(
-                  max(periodAggregates.map((pa) => pa.periodActualEnd))
-                )} (uniquement les plus récents).`
-              : "."
-          }`}
-        </Typography>
         <WorkTimeTable
           className={classes.workTimeTable}
           period={period}

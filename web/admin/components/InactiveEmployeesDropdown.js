@@ -2,7 +2,11 @@ import React, { useMemo } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import { makeStyles } from "@mui/styles";
 import { formatPersonName } from "common/utils/coworkers";
-import { DAY, isoFormatLocalDate } from "common/utils/time";
+import {
+  DAY,
+  isoFormatLocalDate,
+  unixToJSTimestamp
+} from "common/utils/time";
 import { DropdownMenu } from "common/components/DropdownMenu";
 
 const THRESHOLD_30_DAYS = DAY * 30;
@@ -43,7 +47,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 function formatLastActiveAt(lastActiveAt) {
-  const date = new Date(lastActiveAt);
+  const date = new Date(unixToJSTimestamp(lastActiveAt));
   const dateStr = date.toLocaleDateString("fr-FR", {
     day: "2-digit",
     month: "2-digit",
@@ -63,26 +67,22 @@ function getInactiveEmployeesToday(employments, workDays) {
   const now = Date.now();
   const today = isoFormatLocalDate(new Date());
 
-  // 1. Employees who have activity today (based on workDays)
   const activeUserIdsToday = new Set(
     (workDays || [])
       .filter(wd => wd.day === today && wd.user?.id)
       .map(wd => wd.user.id)
   );
 
-  // 2. Filter inactive employees
-  const result = employments
+  return employments
     .filter(emp => {
       if (!emp?.user?.id) return false;
-      if (emp.endDate) return false; // Contract ended
-      if (emp.dismissedAt) return false; // Employment dismissed
-      if (emp.validationStatus !== "approved") return false; // Not approved (pending, rejected, etc.)
-      if (!emp.lastActiveAt) return false; // Never had activity
-      if (activeUserIdsToday.has(emp.user.id)) return false; // Active today
+      if (emp.endDate && emp.endDate < today) return false;
+      if (emp.validationStatus !== "approved") return false;
+      if (!emp.lastActiveAt) return false;
+      if (activeUserIdsToday.has(emp.user.id)) return false;
 
-      // Exclude employees inactive > 30 days
-      const lastActiveTimestamp = new Date(emp.lastActiveAt).getTime();
-      if (now - lastActiveTimestamp > THRESHOLD_30_DAYS * 1000) return false;
+      const lastActiveTimestampMs = unixToJSTimestamp(emp.lastActiveAt);
+      if (now - lastActiveTimestampMs > THRESHOLD_30_DAYS * 1000) return false;
 
       return true;
     })
@@ -93,14 +93,11 @@ function getInactiveEmployeesToday(employments, workDays) {
       lastActiveAt: emp.lastActiveAt
     }))
     .sort((a, b) => {
-      // Sort by lastActiveAt (most recent first)
       if (!a.lastActiveAt && !b.lastActiveAt) return 0;
       if (!a.lastActiveAt) return 1;
       if (!b.lastActiveAt) return -1;
-      return new Date(b.lastActiveAt) - new Date(a.lastActiveAt);
+      return b.lastActiveAt - a.lastActiveAt;
     });
-
-  return result;
 }
 
 export function InactiveEmployeesDropdown({ employments, workDays }) {
