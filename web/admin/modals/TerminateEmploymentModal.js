@@ -131,7 +131,7 @@ export default function TerminateEmploymentModal({
       if (errorCount === 0) {
         handleClose();
       }
-    } catch (err) {
+    } catch {
       alerts.error(
         "Une erreur est survenue lors du détachement",
         "batch-terminate-error",

@@ -7,11 +7,9 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { Typography } from "@mui/material";
 import {
-  formatCompleteDayOfWeek,
   formatCompleteDayOfWeekAndDay,
   isoFormatLocalDate,
-  MONDAY,
-  prettyFormatDay
+  MONDAY
 } from "common/utils/time";
 import { GenericRegulatoryAlerts } from "../../regulatory/GenericRegulatoryAlerts";
 import { MissionTitle } from "../components/MissionTitle";
