@@ -150,11 +150,17 @@ export const MissionDrawerHeader = ({
           missionPrefix={!isHoliday}
           mb={1}
         />
-        {noEmployeeValidation && !isHoliday && <WaitingTag />}
-        {!noEmployeeValidation && toBeValidatedByAdmin && !isHoliday && (
+        {!isHoliday &&
+          (stillRunning ? (
+            <RunningTag />
+          ) : (
+            <>
+              {noEmployeeValidation && <WaitingTag />}
+              {!noEmployeeValidation && toBeValidatedByAdmin && (
           <ToValidateTag />
         )}
-        {stillRunning && !isHoliday && <RunningTag />}
+            </>
+          ))}
       </>
     </DrawerHeader>
   );
