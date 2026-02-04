@@ -2,7 +2,7 @@ import React from "react";
 import Grid from "@mui/material/Grid";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 
-export function LogHolidayButton({ onClick, priority, size, style }) {
+export function LogHolidayButton({ onClick, priority, size = "medium", style }) {
   return (
     <Grid
       container
