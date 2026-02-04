@@ -5,7 +5,7 @@ import { GenericRegulatoryAlerts } from "./GenericRegulatoryAlerts";
 export function DayRegulatoryAlerts({
   userId,
   day,
-  shouldDisplayInitialEmployeeVersion = false
+  shouldDisplayInitialEmployeeVersion = false,
 }) {
   return (
     <GenericRegulatoryAlerts
@@ -13,6 +13,7 @@ export function DayRegulatoryAlerts({
       day={day}
       shouldDisplayInitialEmployeeVersion={shouldDisplayInitialEmployeeVersion}
       regulationCheckUnit={PERIOD_UNITS.DAY}
+      employeeView={true}
     />
   );
 }

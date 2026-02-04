@@ -19,8 +19,7 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { NoAlerts } from "./NoAlerts";
-import { RunningTag, ToValidateTag, WaitingTag } from "../admin/drawers/Tags";
-import { useIsWidthDown } from "common/utils/useWidth";
+import { RunningTag, ToValidateTag } from "../admin/drawers/Tags";
 
 const TagWrapper = ({ children }) => {
   return (
@@ -36,13 +35,13 @@ export function GenericRegulatoryAlerts({
   stillRunning = false,
   noAdminValidation = false,
   includeWeeklyAlerts = false,
-  shouldDisplayInitialEmployeeVersion = false
+  shouldDisplayInitialEmployeeVersion = false,
+  employeeView = false,
 }) {
   const [regulationComputations, setRegulationComputations] = React.useState(
     []
   );
   const [loading, setLoading] = React.useState(false);
-  const isMobile = useIsWidthDown("sm");
 
   const api = useApi();
   const alerts = useSnackbarAlerts();
@@ -127,9 +126,11 @@ export function GenericRegulatoryAlerts({
   );
 
   if (stillRunning) {
-    return <TagWrapper>
+    return (
+      <TagWrapper>
       <RunningTag />
     </TagWrapper>
+    );
   }
 
   if (noAdminValidation) {
@@ -140,24 +141,17 @@ export function GenericRegulatoryAlerts({
     );
   }
 
-  if (!loading && !regulationComputations) {
-    return (
-      <TagWrapper>
-        <WaitingTag />
-      </TagWrapper>
-    );
-  }
   return (
     <>
       {loading && <Skeleton variant="rectangular" width="100%" height={300} />}
       {!loading &&
         regulationComputations &&
         (checksWithAlerts.length === 0 ? (
-          <NoAlerts />
+          <NoAlerts employeeView={employeeView} />
         ) : (
-          <Stack direction="column" width="100%" rowGap={isMobile ? 1 : 2}>
+          <Stack direction="column" width="100%" rowGap={employeeView ? 1 : 2}>
             <Stack direction="row" columnGap={1} mb={1}>
-              <Typography variant="h4" fontSize="1.25rem" >
+              <Typography variant="h4" fontSize="1.25rem">
                 Infractions
               </Typography>
               <Badge noIcon severity="error">
@@ -165,7 +159,7 @@ export function GenericRegulatoryAlerts({
               </Badge>
             </Stack>
             {checksWithAlerts.map((regulationCheck) =>
-              renderRegulationCheck(regulationCheck)
+              renderRegulationCheck(regulationCheck, employeeView),
             )}
           </Stack>
         ))}
