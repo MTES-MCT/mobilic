@@ -1,5 +1,34 @@
 import React from "react";
-import TableSortLabel from "@mui/material/TableSortLabel";
+import Box from "@mui/material/Box";
+
+function SortIcon({ sorted, desc, alwaysShow }) {
+  if (!sorted) {
+    if (!alwaysShow) return null;
+    return (
+      <span
+        className="fr-icon-arrow-up-down-line fr-icon--sm"
+        aria-hidden="true"
+        style={{ color: "var(--text-action-high-blue-france)" }}
+      />
+    );
+  }
+  if (desc === "asc") {
+    return (
+      <span
+        className="fr-icon-arrow-up-s-line fr-icon--sm"
+        aria-hidden="true"
+        style={{ color: "var(--text-action-high-blue-france)" }}
+      />
+    );
+  }
+  return (
+    <span
+      className="fr-icon-arrow-down-s-line fr-icon--sm"
+      aria-hidden="true"
+      style={{ color: "var(--text-action-high-blue-france)" }}
+    />
+  );
+}
 
 export function AugmentedTableHeaderCellContent({
   column,
@@ -9,17 +38,24 @@ export function AugmentedTableHeaderCellContent({
 }) {
   if (column.sortable)
     return (
-      <TableSortLabel
-        active={sorted}
-        direction={sorted ? desc : "desc"}
+      <Box
+        component="span"
         onClick={onSortTypeChange(column.propertyForSorting || column.name)}
-        style={{
+        sx={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 1,
+          cursor: "pointer",
           flexDirection: column.align === "right" ? "row-reverse" : "row"
         }}
-        hideSortIcon={false}
       >
         {column.renderLabel ? column.renderLabel() : column.label}
-      </TableSortLabel>
+        <SortIcon
+          sorted={sorted}
+          desc={desc}
+          alwaysShow={column.alwaysShowSortIcon}
+        />
+      </Box>
     );
 
   return (

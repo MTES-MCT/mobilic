@@ -29,7 +29,7 @@ export function EmployeeProgressBar({ progressData }) {
   return (
     <Box sx={{ marginBottom: 3, maxWidth: 400 }}>
       <Typography mb={1}>
-        Salariés inscrits sur Mobilic : {progressData.registeredEmployees} sur{" "}
+        Inscrits sur Mobilic : {progressData.registeredEmployees} sur{" "}
         {progressData.declaredNbWorkers}
       </Typography>
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
