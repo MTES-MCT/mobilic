@@ -151,7 +151,10 @@ export function GenericRegulatoryAlerts({
         ) : (
           <Stack direction="column" width="100%" rowGap={employeeView ? 1 : 2}>
             <Stack direction="row" columnGap={1} mb={1}>
-              <Typography variant="h4" fontSize="1.25rem">
+              <Typography
+                variant={employeeView ? "h6" : "h4"}
+                fontSize={employeeView ? "1.125rem" : "1.25rem"}
+              >
                 Infractions
               </Typography>
               <Badge noIcon severity="error">
