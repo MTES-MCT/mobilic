@@ -72,6 +72,17 @@ export const BATCH_TERMINATE_EMPLOYMENTS_MUTATION = gql`
   }
 `;
 
+export const REATTACH_EMPLOYMENT_MUTATION = gql`
+  ${FULL_EMPLOYMENT_FRAGMENT}
+  mutation reattachEmployment($userId: Int!, $companyId: Int!) {
+    employments {
+      reattachEmployment(userId: $userId, companyId: $companyId) {
+        ...FullEmploymentData
+      }
+    }
+  }
+`;
+
 export const SEND_INVITATIONS_REMINDERS = gql`
   mutation sendInvitationsReminders($employmentIds: [Int]!) {
     employments {
