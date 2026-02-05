@@ -88,7 +88,8 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
       ...m,
       startLocationName: m.startLocation?.name,
       endLocationName: m.endLocation?.name,
-      validatedByAdmin: m.validations.filter((v) => v.isAdmin).length > 0
+      validatedByAdmin: m.validations.filter((v) => v.isAdmin).length > 0,
+      validatedByEmployee: m.validations.filter((v) => !v.isAdmin).length > 0,
     }));
 
   React.useEffect(() => {
@@ -135,7 +136,9 @@ export function WorkTimeDetails({ workTimeEntry, handleClose, openMission }) {
   }, [workTimeEntry]);
 
   const atLeastOneMissionNotValidatedByAdmin = useMemo(
-    () => missions.filter((m) => !m.validatedByAdmin).length > 0,
+    () =>
+      missions.filter((m) => !m.validatedByAdmin && m.validatedByEmployee)
+        .length > 0,
     [missions],
   );
 
