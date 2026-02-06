@@ -49,6 +49,7 @@ import {
 } from "common/utils/matomoTags";
 import {
   BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
+  CANCEL_EMPLOYMENT_MUTATION,
   CREATE_EMPLOYMENT_MUTATION,
   SEND_INVITATIONS_REMINDERS
 } from "common/utils/apiQueries/employments";
@@ -288,6 +289,14 @@ export function Employees({ company, containerRef }) {
     format: (remindButton) => remindButton
   });
 
+  pendingEmploymentColumns.push({
+    label: "",
+    name: "cancelButton",
+    minWidth: 120,
+    baseWidth: 120,
+    format: (cancelButton) => cancelButton
+  });
+
   const EmployeeStatusBadge = ({ isDetached, isInactive, lastActiveAt, endDate }) => {
     if (isDetached) {
       return (
@@ -429,7 +438,8 @@ export function Employees({ company, containerRef }) {
           onClick={() =>
             modals.open("reattachEmployment", {
               employee: entry,
-              onSuccess: handleReattachSuccess
+              onSuccess: (newEmployment) =>
+                handleReattachSuccess(newEmployment, entry.id)
             })
           }
         >
@@ -503,6 +513,27 @@ export function Employees({ company, containerRef }) {
               }}
             >
               Relancer
+            </Button>
+          ),
+          cancelButton: (
+            <Button
+              priority="tertiary no outline"
+              size="small"
+              iconPosition="left"
+              iconId="fr-icon-close-line"
+              onClick={() =>
+                modals.open("confirmation", {
+                  textButtons: true,
+                  title: "Confirmer l'annulation du rattachement",
+                  handleConfirm: async () =>
+                    alerts.withApiErrorHandling(
+                      async () => cancelEmployment(e),
+                      "cancel-employment"
+                    )
+                })
+              }
+            >
+              Annuler
             </Button>
           )
         })),
@@ -632,7 +663,13 @@ export function Employees({ company, containerRef }) {
     }
   };
 
-  const handleReattachSuccess = async (newEmployment) => {
+  const handleReattachSuccess = async (newEmployment, oldEmploymentId) => {
+    if (oldEmploymentId && oldEmploymentId !== newEmployment.id) {
+      await adminStore.dispatch({
+        type: ADMIN_ACTIONS.delete,
+        payload: { id: oldEmploymentId, entity: "employments" }
+      });
+    }
     await adminStore.dispatch({
       type: ADMIN_ACTIONS.create,
       payload: {
@@ -640,6 +677,25 @@ export function Employees({ company, containerRef }) {
         entity: "employments"
       }
     });
+  };
+
+  const cancelEmployment = async (employment) => {
+    try {
+      await api.graphQlMutate(CANCEL_EMPLOYMENT_MUTATION, {
+        employmentId: employment.id
+      });
+      await adminStore.dispatch({
+        type: ADMIN_ACTIONS.delete,
+        payload: { id: employment.id, entity: "employments" }
+      });
+      alerts.success(
+        `Le rattachement de ${formatPersonName(employment)} a été annulé`,
+        "cancel-employment",
+        6000
+      );
+    } catch (err) {
+      alerts.error(formatApiError(err), "cancel-employment", 6000);
+    }
   };
 
   const handleOpenBatchTerminateModal = () => {
@@ -998,7 +1054,7 @@ export function Employees({ company, containerRef }) {
           virtualizedMaxHeight={"100%"}
           ref={validEmploymentsTableRef}
           defaultSortBy="lastName"
-          alwaysSortBy={[["active", "desc"]]}
+          alwaysSortBy={[["isDetached", "asc"]]}
           virtualizedAttachScrollTo={containerRef.current}
           rowClassName={(row) =>
             !row.active ? classes.terminatedEmployment : ""
