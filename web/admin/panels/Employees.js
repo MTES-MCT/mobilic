@@ -17,10 +17,7 @@ import {
   isoFormatLocalDate,
   now
 } from "common/utils/time";
-import {
-  isInactiveMoreThan3Months,
-  formatLastActiveDate
-} from "common/utils/employeeStatus";
+import { formatLastActiveDate } from "common/utils/employeeStatus";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { EMPLOYMENT_ROLE } from "common/utils/employments";
 import { TeamFilter } from "../components/TeamFilter";
@@ -55,6 +52,12 @@ import {
 } from "common/utils/apiQueries/employments";
 import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
+
+const STATUS_BADGE = {
+  ACTIVE: 0,
+  INACTIVE: 1,
+  DETACHED: 2
+};
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -565,8 +568,8 @@ export function Employees({ company, containerRef }) {
   const today = isoFormatLocalDate(new Date());
 
   const validEmployments = React.useMemo(
-    () => {
-      const allEmployments = companyEmployments
+    () =>
+      companyEmployments
         .filter((e) => {
           return (
             selectedTeamIds.length === 0 ||
@@ -577,8 +580,12 @@ export function Employees({ company, containerRef }) {
         .filter((e) => e.isAcknowledged)
         .map((e) => {
           const isDetached = !!e.endDate;
-          const isInactive = !isDetached && isInactiveMoreThan3Months(e.lastActiveAt);
-          const statusBadge = isDetached ? 2 : isInactive ? 1 : 0;
+          const isInactive = !isDetached && e.isInactive;
+          const statusBadge = isDetached
+            ? STATUS_BADGE.DETACHED
+            : isInactive
+              ? STATUS_BADGE.INACTIVE
+              : STATUS_BADGE.ACTIVE;
           return {
             pending: false,
             id: e.user.id,
@@ -596,22 +603,12 @@ export function Employees({ company, containerRef }) {
             companyId: e.company.id,
             business: e.business,
             lastActiveAt: e.lastActiveAt,
+            status: e.status,
             isDetached,
             isInactive,
             statusBadge
           };
-        });
-
-      // Keep only the most recent employment per user
-      const latestByUser = new Map();
-      allEmployments.forEach((e) => {
-        const existing = latestByUser.get(e.userId);
-        if (!existing || e.startDate > existing.startDate) {
-          latestByUser.set(e.userId, e);
-        }
-      });
-      return Array.from(latestByUser.values());
-    },
+        }),
     [companyEmployments, selectedTeamIds]
   );
 
