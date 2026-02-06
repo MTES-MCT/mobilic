@@ -100,7 +100,12 @@ const useStyles = makeStyles((theme) => ({
   workTimeTable: {
     overflowY: "hidden",
     flexGrow: 1,
-    paddingTop: theme.spacing(1)
+    paddingTop: theme.spacing(1),
+    "& .ReactVirtualized__Table__headerRow": {
+      backgroundColor: fr.colors.decisions.background.contrastRaised.grey.default,
+      borderTop: "none",
+      borderBottom: `2px solid ${fr.colors.decisions.border.plain.grey.default}`
+    }
   },
   workTimeTableContainer: {
     padding: theme.spacing(2),
@@ -113,16 +118,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center"
-  },
-  groupFilter: {
-    "& .MuiOutlinedInput-root": {
-      backgroundColor: fr.colors.decisions.background.contrast.grey.default,
-      borderBottom: `2px solid ${fr.colors.decisions.border.plain.grey.default}`,
-      borderRadius: "4px 4px 0 0"
-    },
-    "& .MuiOutlinedInput-notchedOutline": {
-      border: "none"
-    }
   }
 }));
 
@@ -374,11 +369,7 @@ function ActivitiesPanel() {
       >
         {teams?.length > 0 && (
           <Grid item>
-            <TeamFilter
-              teams={teams}
-              setTeams={handleTeamFilterChange}
-              className={classes.groupFilter}
-            />
+            <TeamFilter teams={teams} setTeams={handleTeamFilterChange} />
           </Grid>
         )}
         <Grid item>

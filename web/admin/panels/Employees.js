@@ -97,16 +97,6 @@ const useStyles = makeStyles((theme) => ({
   badgeDetache: {
     backgroundColor: fr.colors.decisions.background.contrast.grey.default,
     color: fr.colors.decisions.text.mention.grey.default
-  },
-  groupFilter: {
-    "& .MuiOutlinedInput-root": {
-      backgroundColor: fr.colors.decisions.background.contrast.grey.default,
-      borderBottom: `2px solid ${fr.colors.decisions.border.plain.grey.default}`,
-      borderRadius: "4px 4px 0 0"
-    },
-    "& .MuiOutlinedInput-notchedOutline": {
-      border: "none"
-    }
   }
 }));
 
@@ -999,7 +989,6 @@ export function Employees({ company, containerRef }) {
               teams={teams}
               setTeams={setTeams}
               orderByProperty="rankName"
-              className={classes.groupFilter}
             />
           )}
           <Box sx={{ flexGrow: 1 }}>

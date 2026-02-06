@@ -6,21 +6,22 @@ import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
     minWidth: 200,
     maxWidth: 500
   },
-  chips: {
-    display: "flex",
-    flexWrap: "wrap"
-  },
-  chip: {
-    margin: 2
-  },
-  noLabel: {
-    marginTop: theme.spacing(3)
+  dsfrInput: {
+    "& .MuiOutlinedInput-root": {
+      backgroundColor: fr.colors.decisions.background.contrastRaised.grey.default,
+      borderBottom: `2px solid ${fr.colors.decisions.border.plain.grey.default}`,
+      borderRadius: "4px 4px 0 0"
+    },
+    "& .MuiOutlinedInput-notchedOutline": {
+      border: "none"
+    }
   }
 }));
 
@@ -80,6 +81,7 @@ export function EmployeeFilter({
 
   return (
     <Autocomplete
+      className={classes.dsfrInput}
       multiple={multiple}
       id="employee-filter"
       options={orderBy(
