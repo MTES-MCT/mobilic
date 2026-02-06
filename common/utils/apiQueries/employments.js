@@ -109,7 +109,7 @@ export const CHANGE_EMPLOYEE_ROLE = gql`
         teams {
           ...FullTeamData
         }
-        employments {
+        employments(latestPerUser: true) {
           ...FullEmploymentData
         }
       }
@@ -132,7 +132,7 @@ export const CHANGE_EMPLOYEE_BUSINESS_TYPE = gql`
         teams {
           ...FullTeamData
         }
-        employments {
+        employments(latestPerUser: true) {
           ...FullEmploymentData
         }
       }
@@ -159,7 +159,7 @@ export const CHANGE_EMPLOYEE_TEAM = gql`
         teams {
           ...FullTeamData
         }
-        employments {
+        employments(latestPerUser: true) {
           ...FullEmploymentData
         }
       }

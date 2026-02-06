@@ -49,6 +49,7 @@ import { graphQLErrorMatchesCode } from "common/utils/errors";
 import { usePageTitle } from "../../common/UsePageTitle";
 import { useGetUsersSinceDate } from "../../common/hooks/useGetUsersSinceDate";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { fr } from "@codegouvfr/react-dsfr";
 import CloseButton from "../../common/CloseButton";
 import { PickersDay } from "@mui/x-date-pickers/PickersDay";
 import { ADMIN_WORK_DAYS_QUERY } from "common/utils/apiQueries/admin";
@@ -112,6 +113,16 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center"
+  },
+  groupFilter: {
+    "& .MuiOutlinedInput-root": {
+      backgroundColor: fr.colors.decisions.background.contrast.grey.default,
+      borderBottom: `2px solid ${fr.colors.decisions.border.plain.grey.default}`,
+      borderRadius: "4px 4px 0 0"
+    },
+    "& .MuiOutlinedInput-notchedOutline": {
+      border: "none"
+    }
   }
 }));
 
@@ -363,7 +374,11 @@ function ActivitiesPanel() {
       >
         {teams?.length > 0 && (
           <Grid item>
-            <TeamFilter teams={teams} setTeams={handleTeamFilterChange} />
+            <TeamFilter
+              teams={teams}
+              setTeams={handleTeamFilterChange}
+              className={classes.groupFilter}
+            />
           </Grid>
         )}
         <Grid item>
