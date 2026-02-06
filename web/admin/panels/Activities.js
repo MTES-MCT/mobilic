@@ -12,14 +12,7 @@ import { WorkTimeTable } from "../components/WorkTimeTable";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
 import { useAdminStore, useAdminCompanies } from "../store/store";
 import { useModals } from "common/utils/modals";
-import uniq from "lodash/uniq";
-import min from "lodash/min";
-import max from "lodash/max";
-import {
-  formatDay,
-  isoFormatLocalDate,
-  startOfDayAsDate
-} from "common/utils/time";
+import { isoFormatLocalDate, startOfDayAsDate } from "common/utils/time";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
@@ -56,6 +49,7 @@ import { graphQLErrorMatchesCode } from "common/utils/errors";
 import { usePageTitle } from "../../common/UsePageTitle";
 import { useGetUsersSinceDate } from "../../common/hooks/useGetUsersSinceDate";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { fr } from "@codegouvfr/react-dsfr";
 import CloseButton from "../../common/CloseButton";
 import { PickersDay } from "@mui/x-date-pickers/PickersDay";
 import { ADMIN_WORK_DAYS_QUERY } from "common/utils/apiQueries/admin";
@@ -65,10 +59,31 @@ import {
   LOG_HOLIDAY_MUTATION,
   LOG_LOCATION_MUTATION
 } from "common/utils/apiQueries/missions";
+import { InactiveEmployeesDropdown } from "../components/InactiveEmployeesDropdown";
 
 const useStyles = makeStyles((theme) => ({
-  filterGrid: {
+  pageHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingTop: theme.spacing(2),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    paddingBottom: theme.spacing(1)
+  },
+  pageHeaderLeft: {
+    display: "flex",
+    alignItems: "center",
+    gap: theme.spacing(2)
+  },
+  pageTitle: {
+    fontSize: "1.5rem",
+    fontWeight: 700,
+    margin: 0,
+    lineHeight: "2.5rem"
+  },
+  filterGrid: {
+    paddingTop: theme.spacing(1),
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
     flexShrink: 0
@@ -85,7 +100,12 @@ const useStyles = makeStyles((theme) => ({
   workTimeTable: {
     overflowY: "hidden",
     flexGrow: 1,
-    paddingTop: theme.spacing(1)
+    paddingTop: theme.spacing(1),
+    "& .ReactVirtualized__Table__headerRow": {
+      backgroundColor: fr.colors.decisions.background.contrastRaised.grey.default,
+      borderTop: "none",
+      borderBottom: `2px solid ${fr.colors.decisions.border.plain.grey.default}`
+    }
   },
   workTimeTableContainer: {
     padding: theme.spacing(2),
@@ -309,6 +329,37 @@ function ActivitiesPanel() {
       key={0}
       ref={ref}
     >
+      <Box className={classes.pageHeader}>
+        <Box className={classes.pageHeaderLeft}>
+          <Typography component="h1" className={classes.pageTitle}>
+            Activités
+          </Typography>
+          <LoadingButton
+            priority="secondary"
+            size="medium"
+            style={{ whiteSpace: "nowrap" }}
+            onClick={() => {
+              trackEvent(ADMIN_ADD_MISSION);
+              setOpenNewMission(true);
+            }}
+          >
+            Ajouter des activités
+          </LoadingButton>
+          <LogHolidayButton
+            priority="secondary"
+            size="medium"
+            style={{ whiteSpace: "nowrap" }}
+            onClick={() => {
+              trackEvent(ADMIN_ADD_HOLIDAY);
+              setOpenLogHoliday(true);
+            }}
+          />
+        </Box>
+        <InactiveEmployeesDropdown
+          employments={adminStore.employments}
+          workDays={adminStore.workDays}
+        />
+      </Box>
       <Grid
         spacing={2}
         container
@@ -450,50 +501,6 @@ function ActivitiesPanel() {
         style={{ maxHeight: ref.current ? ref.current.clientHeight : 0 }}
         sx={{ marginTop: 1 }}
       >
-        <Typography
-          align="left"
-          variant="h6"
-          component="span"
-          style={{ fontSize: "1rem" }}
-        >
-          {`${periodAggregates.length} résultats${
-            periodAggregates.length > 0
-              ? ` pour ${
-                  uniq(periodAggregates.map((pa) => pa.user.id)).length
-                } salarié(s) entre le ${formatDay(
-                  min(periodAggregates.map((pa) => pa.periodActualStart))
-                )} et le ${formatDay(
-                  max(periodAggregates.map((pa) => pa.periodActualEnd))
-                )} (uniquement les plus récents).`
-              : "."
-          }`}
-        </Typography>
-        <Box
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "space-between"
-          }}
-        >
-          <LoadingButton
-            style={{ marginTop: 8, alignSelf: "flex-start" }}
-            size="small"
-            className={classes.subButton}
-            onClick={() => {
-              trackEvent(ADMIN_ADD_MISSION);
-              setOpenNewMission(true);
-            }}
-          >
-            Ajouter des activités
-          </LoadingButton>
-          <LogHolidayButton
-            onClick={() => {
-              trackEvent(ADMIN_ADD_HOLIDAY);
-              setOpenLogHoliday(true);
-            }}
-          />
-        </Box>
         <WorkTimeTable
           className={classes.workTimeTable}
           period={period}

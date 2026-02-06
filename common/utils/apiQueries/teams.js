@@ -21,7 +21,7 @@ export const DELETE_TEAM_MUTATION = gql`
         teams {
           ...FullTeamData
         }
-        employments {
+        employments(latestPerUser: true) {
           ...FullEmploymentData
         }
       }
@@ -52,7 +52,7 @@ export const CREATE_TEAM_MUTATION = gql`
         teams {
           ...FullTeamData
         }
-        employments {
+        employments(latestPerUser: true) {
           ...FullEmploymentData
         }
       }
@@ -83,7 +83,7 @@ export const UPDATE_TEAM_MUTATION = gql`
         teams {
           ...FullTeamData
         }
-        employments {
+        employments(latestPerUser: true) {
           ...FullEmploymentData
         }
       }

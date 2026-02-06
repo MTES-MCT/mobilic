@@ -19,7 +19,11 @@ export const MATOMO_ACTIONS = {
   INVITE_NEW_EMPLOYEE: "invite-new-employee",
   INVITE_NEW_EMPLOYEE_SUBMIT: "invite-new-employee-submit",
   INVITE_MISSING_EMPLOYEES: "invite-missing-employees",
-  INVITE_EMAIL_LIST: "invite-email-list"
+  INVITE_EMAIL_LIST: "invite-email-list",
+  INACTIVE_EMPLOYEES_BANNER_VIEW: "inactive-employees-banner-view",
+  INACTIVE_EMPLOYEES_BANNER_CLICK: "inactive-employees-banner-click",
+  BATCH_TERMINATE_MODAL_OPEN: "batch-terminate-modal-open",
+  BATCH_TERMINATE_MODAL_SUBMIT: "batch-terminate-modal-submit"
 };
 
 export const EDIT_ACTIVITY_IN_MISSION_PANEL = {
@@ -248,3 +252,29 @@ export const INVITE_NEW_EMPLOYEE_SUBMIT = {
   action: MATOMO_ACTIONS.INVITE_NEW_EMPLOYEE_SUBMIT,
   name: "Soumission invitation nouveau salarié"
 };
+
+export const INACTIVE_EMPLOYEES_BANNER_VIEW = inactiveCount => ({
+  category: MATOMO_CATEGORIES.ADMIN_EMPLOYEE_INVITATION,
+  action: MATOMO_ACTIONS.INACTIVE_EMPLOYEES_BANNER_VIEW,
+  name: "Affichage bandeau salariés inactifs",
+  value: inactiveCount
+});
+
+export const INACTIVE_EMPLOYEES_BANNER_CLICK = {
+  category: MATOMO_CATEGORIES.ADMIN_EMPLOYEE_INVITATION,
+  action: MATOMO_ACTIONS.INACTIVE_EMPLOYEES_BANNER_CLICK,
+  name: "Clic sur lien bandeau salariés inactifs"
+};
+
+export const BATCH_TERMINATE_MODAL_OPEN = {
+  category: MATOMO_CATEGORIES.ADMIN_EMPLOYEE_INVITATION,
+  action: MATOMO_ACTIONS.BATCH_TERMINATE_MODAL_OPEN,
+  name: "Ouverture modale détachement en masse"
+};
+
+export const BATCH_TERMINATE_MODAL_SUBMIT = terminatedCount => ({
+  category: MATOMO_CATEGORIES.ADMIN_EMPLOYEE_INVITATION,
+  action: MATOMO_ACTIONS.BATCH_TERMINATE_MODAL_SUBMIT,
+  name: "Soumission détachement en masse (nb détachements)",
+  value: terminatedCount
+});
