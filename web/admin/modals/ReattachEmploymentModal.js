@@ -28,13 +28,22 @@ export default function ReattachEmploymentModal({
         companyId: employee.companyId
       });
 
-      const newEmployment = response.data.employments.reattachEmployment;
+      const { employment: newEmployment, emailSent } =
+        response.data.employments.reattachEmployment;
 
-      alerts.success(
-        `${formatPersonName(employee)} a été rattaché(e) à l'entreprise`,
-        "reattach-success",
-        6000
-      );
+      if (emailSent) {
+        alerts.success(
+          `${formatPersonName(employee)} a été rattaché(e) à l'entreprise`,
+          "reattach-success",
+          6000
+        );
+      } else {
+        alerts.warning(
+          `${formatPersonName(employee)} a été rattaché(e), mais l'email de notification n'a pas pu être envoyé`,
+          "reattach-warning",
+          6000
+        );
+      }
 
       if (onSuccess) {
         onSuccess(newEmployment);
