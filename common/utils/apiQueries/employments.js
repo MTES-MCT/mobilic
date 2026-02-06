@@ -77,7 +77,10 @@ export const REATTACH_EMPLOYMENT_MUTATION = gql`
   mutation reattachEmployment($userId: Int!, $companyId: Int!) {
     employments {
       reattachEmployment(userId: $userId, companyId: $companyId) {
-        ...FullEmploymentData
+        employment {
+          ...FullEmploymentData
+        }
+        emailSent
       }
     }
   }
