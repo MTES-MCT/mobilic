@@ -32,9 +32,10 @@ const useStyles = makeStyles((theme) => ({
   },
   day: {
     color: fr.colors.decisions.background.flat.blueFrance.default,
-    fontSize: "1.375rem",
-    fontWeight: "bold"
-  }
+    marginTop: theme.spacing(1),
+    fontSize: "1.75rem",
+    fontWeight: "bold",
+  },
 }));
 
 const WorkerName = ({ name }) => {
@@ -125,7 +126,7 @@ export const MissionDrawerHeader = ({
     (mission.startTime || day) &&
     doesMissionSpanOnMultipleDays &&
     !(mission.isDeleted && !mission.isComplete)
-      ? `Du ${textualPrettyFormatDay(mission.startTime || day)} au ${textualPrettyFormatDay(mission.endTimeOrNow)}`
+      ? `du ${textualPrettyFormatDay(mission.startTime || day)} au ${textualPrettyFormatDay(mission.endTimeOrNow)}`
       : formatCompleteDayOfWeekAndDay(startTime);
 
   const workerName = useMemo(() => {
