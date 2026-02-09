@@ -21,7 +21,7 @@ export function NoAlerts({ employeeView = false }) {
       direction="row"
       className={classes.card}
       columnGap={1}
-      mt={1}
+      mt={employeeView ? 0 : 1}
       alignItems="center"
     >
       <span className={"fr-icon-success-line"} style={{ color: "#18753C" }} />

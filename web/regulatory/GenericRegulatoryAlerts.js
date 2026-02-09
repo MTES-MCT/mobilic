@@ -144,12 +144,9 @@ export function GenericRegulatoryAlerts({
   return (
     <>
       {loading && <Skeleton variant="rectangular" width="100%" height={300} />}
-      {!loading &&
-        regulationComputations &&
-        (checksWithAlerts.length === 0 ? (
-          <NoAlerts employeeView={employeeView} />
-        ) : (
+      {!loading && regulationComputations && (
           <Stack direction="column" width="100%" rowGap={employeeView ? 1 : 2}>
+          {(employeeView || checksWithAlerts.length > 0) && (
             <Stack direction="row" columnGap={1} mb={1}>
               <Typography
                 variant={employeeView ? "h6" : "h4"}
@@ -157,15 +154,24 @@ export function GenericRegulatoryAlerts({
               >
                 Infractions
               </Typography>
+              {checksWithAlerts.length > 0 && (
               <Badge noIcon severity="error">
                 {checksWithAlerts.length}
               </Badge>
+              )}
             </Stack>
+          )}
+          {checksWithAlerts.length === 0 ? (
+            <NoAlerts employeeView={employeeView} />
+          ) : (
+            <>
             {checksWithAlerts.map((regulationCheck) =>
               renderRegulationCheck(regulationCheck, employeeView),
+              )}
+            </>
             )}
           </Stack>
-        ))}
+      )}
     </>
   );
 }
