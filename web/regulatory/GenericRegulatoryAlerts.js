@@ -149,7 +149,7 @@ export function GenericRegulatoryAlerts({
           {(employeeView || checksWithAlerts.length > 0) && (
             <Stack direction="row" columnGap={1} mb={1}>
               <Typography
-                variant={employeeView ? "h6" : "h4"}
+                variant="h6"
                 fontSize={employeeView ? "1.125rem" : "1.25rem"}
               >
                 Infractions
