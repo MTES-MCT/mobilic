@@ -124,8 +124,7 @@ const useStyles = makeStyles(() => ({
     fontSize: "0.875rem",
     lineHeight: "1.5rem",
     color: "#666666",
-    whiteSpace: "normal",
-    wordBreak: "break-word"
+    whiteSpace: "nowrap"
   }
 }));
 
