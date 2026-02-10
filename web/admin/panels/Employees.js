@@ -66,7 +66,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center"
   },
   augmentedTable: {
-    marginRight: theme.spacing(10),
     "& .ReactVirtualized__Table__headerRow": {
       backgroundColor: fr.colors.decisions.background.contrastRaised.grey.default,
       borderTop: "none",
@@ -318,6 +317,7 @@ export function Employees({ company, containerRef }) {
       name: "lastName",
       align: "left",
       sortable: true,
+      alwaysShowSortIcon: true,
       minWidth: 180,
       overflowTooltip: true,
       format: (lastName, entry) => `${entry.firstName} ${lastName}`
@@ -327,7 +327,6 @@ export function Employees({ company, containerRef }) {
       name: "statusBadge",
       align: "left",
       sortable: true,
-      alwaysShowSortIcon: true,
       propertyForSorting: "statusBadge",
       minWidth: 90,
       baseWidth: 90,
@@ -349,15 +348,16 @@ export function Employees({ company, containerRef }) {
       overflowTooltip: true
     },
     {
-      label: "Début rattachement",
+      label: (<>Début<br />rattachement</>),
       name: "startDate",
       align: "left",
       format: (startDate) => frenchFormatDateStringOrTimeStamp(startDate),
       sortable: true,
-      minWidth: 115
+      minWidth: 90,
+      baseWidth: 135
     },
     {
-      label: "Accès gestionnaire",
+      label: (<>Accès<br />gestionnaire</>),
       name: "hasAdminRights",
       format: (hasAdminRights, entry) => (
         <AdminRightsDropdown
@@ -371,13 +371,13 @@ export function Employees({ company, containerRef }) {
       align: "left",
       sortable: true,
       minWidth: 140,
-      baseWidth: 140
+      baseWidth: 135
     }
   ];
 
   if (adminStore?.teams?.length > 0) {
     validEmploymentColumns.push({
-      label: "Groupe d'affectation",
+      label: (<>Groupe<br />d'affectation</>),
       name: "teamId",
       align: "left",
       format: (teamId, entry) => (
@@ -388,7 +388,8 @@ export function Employees({ company, containerRef }) {
           disabled={entry.isDetached}
         />
       ),
-      minWidth: 140
+      minWidth: 140,
+      baseWidth: 135
     });
   }
 
@@ -432,7 +433,7 @@ export function Employees({ company, containerRef }) {
             modals.open("reattachEmployment", {
               employee: entry,
               onSuccess: (newEmployment) =>
-                handleReattachSuccess(newEmployment, entry.id)
+                handleReattachSuccess(newEmployment, entry.employmentId)
             })
           }
         >
@@ -569,7 +570,7 @@ export function Employees({ company, containerRef }) {
         })
         .filter((e) => e.isAcknowledged)
         .map((e) => {
-          const isDetached = !!e.endDate;
+          const isDetached = e.endDate ? e.endDate <= today : false;
           const isInactive = !isDetached && e.isInactive;
           const statusBadge = isDetached
             ? STATUS_BADGE.DETACHED
@@ -617,7 +618,20 @@ export function Employees({ company, containerRef }) {
     [activeValidEmployments]
   );
 
-  const [isBannerDismissed, setIsBannerDismissed] = React.useState(false);
+  const INACTIVE_BANNER_COOKIE = "dismissInactiveBanner";
+  const [isBannerDismissed, setIsBannerDismissed] = React.useState(() => {
+    const dismissedAt = readCookie(INACTIVE_BANNER_COOKIE);
+    if (!dismissedAt) return false;
+    const dismissedTime = parseInt(dismissedAt, 10);
+    const oneDayMs = 24 * 60 * 60 * 1000;
+    return Date.now() - dismissedTime < oneDayMs;
+  });
+
+  const handleDismissBanner = () => {
+    setCookie(INACTIVE_BANNER_COOKIE, Date.now().toString(), 1);
+    setIsBannerDismissed(true);
+  };
+
   const shouldShowInactiveBanner =
     inactiveEmployees.length >= 3 && !isBannerDismissed;
 
@@ -630,8 +644,8 @@ export function Employees({ company, containerRef }) {
     }
   }, [shouldShowInactiveBanner, inactiveEmployees.length]);
 
-  const handleBatchTerminateSuccess = async (terminatedEmploymentIds) => {
-    for (const employmentId of terminatedEmploymentIds) {
+  const handleBatchTerminateSuccess = async (terminatedEmployments) => {
+    for (const { employmentId, endDate } of terminatedEmployments) {
       const employment = companyEmployments.find(e => e.id === employmentId);
       if (employment) {
         await adminStore.dispatch({
@@ -641,7 +655,7 @@ export function Employees({ company, containerRef }) {
             entity: "employments",
             update: {
               ...employment,
-              endDate: isoFormatLocalDate(new Date()),
+              endDate: endDate || isoFormatLocalDate(new Date()),
               companyId
             }
           }
@@ -1005,14 +1019,14 @@ export function Employees({ company, containerRef }) {
         {shouldShowInactiveBanner && (
           <Notice
             type="warning"
-            onClose={() => setIsBannerDismissed(true)}
+            onClose={handleDismissBanner}
             description={
               <>
                 {formatPersonName(inactiveEmployees[0])} et{" "}
                 {inactiveEmployees.length - 1} autres salariés n'ont pas
                 enregistré de temps de travail depuis 3 mois. Pensez à détacher
                 ces salariés s'ils ne font plus partie de votre entreprise, en
-                sélectionnant l'option "mettre fin au rattachement", ou{" "}
+                sélectionnant l'option "détacher", ou{" "}
                 <button
                   type="button"
                   onClick={handleOpenBatchTerminateModal}
@@ -1023,10 +1037,12 @@ export function Employees({ company, containerRef }) {
                     font: "inherit",
                     color: "inherit",
                     textDecoration: "underline",
-                    cursor: "pointer"
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center"
                   }}
                 >
-                  en cliquant ici →
+                  en cliquant ici&nbsp;→
                 </button>
               </>
             }

@@ -27,7 +27,7 @@ export function EmployeeProgressBar({ progressData }) {
   const colorProps = getProgressColor(progressData.color);
 
   return (
-    <Box sx={{ marginBottom: 3, maxWidth: 400 }}>
+    <Box sx={{ maxWidth: 400 }}>
       <Typography mb={1}>
         Inscrits sur Mobilic : {progressData.registeredEmployees} sur{" "}
         {progressData.declaredNbWorkers}

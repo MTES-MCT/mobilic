@@ -129,8 +129,9 @@ export function InactiveEmployeesDropdown({ employments, workDays }) {
       label="Salariés inactifs aujourd'hui"
       icon="fr-icon-user-search-line"
       items={inactiveEmployees}
-      size="medium"
+      size="small"
       menuWidth={314}
+      maxHeight={220}
       emptyMessage="Tous vos salariés ont utilisé Mobilic aujourd'hui"
       renderItem={renderEmployeeItem}
     />

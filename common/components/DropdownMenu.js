@@ -75,9 +75,9 @@ const useStyles = makeStyles(() => ({
     backgroundColor: DSFR_COLORS.backgroundOpen,
     border: `1px solid ${DSFR_COLORS.borderOpen}`
   },
-  menuPaper: ({ menuWidth }) => ({
+  menuPaper: ({ menuWidth, maxHeight }) => ({
     width: menuWidth || 282,
-    maxHeight: 430,
+    maxHeight: maxHeight || 430,
     marginTop: 0,
     background: DSFR_COLORS.menuBackground,
     borderTop: `1px solid ${DSFR_COLORS.menuBorderTop}`,
@@ -119,6 +119,13 @@ const useStyles = makeStyles(() => ({
     fontSize: 12,
     lineHeight: "20px",
     color: "#666666"
+  },
+  emptyMessage: {
+    fontSize: "0.875rem",
+    lineHeight: "1.5rem",
+    color: "#666666",
+    whiteSpace: "normal",
+    wordBreak: "break-word"
   }
 }));
 
@@ -129,11 +136,12 @@ export function DropdownMenu({
   size = "sm",
   disabled = false,
   menuWidth,
+  maxHeight,
   emptyMessage,
   onItemClick,
   renderItem
 }) {
-  const classes = useStyles({ size, disabled, menuWidth });
+  const classes = useStyles({ size, disabled, menuWidth, maxHeight });
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -195,7 +203,7 @@ export function DropdownMenu({
       >
         {items.length === 0 && emptyMessage ? (
           <MenuItem disabled className={classes.menuItem}>
-            <span className={classes.menuItemPrimary}>{emptyMessage}</span>
+            <span className={classes.emptyMessage}>{emptyMessage}</span>
           </MenuItem>
         ) : (
           items.map((item, index) =>
