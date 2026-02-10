@@ -336,7 +336,7 @@ function ActivitiesPanel() {
           </Typography>
           <LoadingButton
             priority="secondary"
-            size="medium"
+            size="small"
             style={{ whiteSpace: "nowrap" }}
             onClick={() => {
               trackEvent(ADMIN_ADD_MISSION);
@@ -347,7 +347,7 @@ function ActivitiesPanel() {
           </LoadingButton>
           <LogHolidayButton
             priority="secondary"
-            size="medium"
+            size="small"
             style={{ whiteSpace: "nowrap" }}
             onClick={() => {
               trackEvent(ADMIN_ADD_HOLIDAY);
@@ -365,6 +365,7 @@ function ActivitiesPanel() {
         container
         alignItems="center"
         justifyContent="space-between"
+        wrap="nowrap"
         className={classes.filterGrid}
       >
         {teams?.length > 0 && (
@@ -439,7 +440,7 @@ function ActivitiesPanel() {
         <Grid item>
           <Button
             onClick={(e) => setExportMenuAnchorEl(e.currentTarget)}
-            size="small"
+            size="medium"
           >
             Exporter
           </Button>

@@ -124,7 +124,16 @@ export default function TerminateEmploymentModal({
           6000
         );
         if (onSuccess) {
-          onSuccess(results.filter(r => r.success).map(r => r.employmentId));
+          const successfulTerminations = results
+            .filter(r => r.success)
+            .map(r => {
+              const emp = toTerminate.find(e => e.employmentId === r.employmentId);
+              return {
+                employmentId: r.employmentId,
+                endDate: emp ? isoFormatLocalDate(emp.endDate) : null
+              };
+            });
+          onSuccess(successfulTerminations);
         }
       }
 
@@ -165,9 +174,22 @@ export default function TerminateEmploymentModal({
             }
           />
           <form id="terminate-employment-form" onSubmit={handleSubmit}>
-            <div className="fr-table fr-table--bordered fr-table--layout-fixed">
+            <div
+              className="fr-table fr-table--bordered fr-table--layout-fixed"
+              style={{
+                maxHeight: selectedEmployees.length > 3 ? "280px" : "none",
+                overflowY: selectedEmployees.length > 3 ? "auto" : "visible"
+              }}
+            >
               <table>
-                <thead>
+                <thead
+                  style={{
+                    position: selectedEmployees.length > 3 ? "sticky" : "static",
+                    top: 0,
+                    zIndex: 1,
+                    backgroundColor: "var(--background-default-grey)"
+                  }}
+                >
                   <tr>
                     <th
                       scope="col"
