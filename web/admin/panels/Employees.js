@@ -417,7 +417,7 @@ export function Employees({ company, containerRef }) {
   });
 
   validEmploymentColumns.push({
-    label: "Action",
+    label: "",
     name: "action",
     align: "left",
     minWidth: 100,
