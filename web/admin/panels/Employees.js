@@ -420,8 +420,8 @@ export function Employees({ company, containerRef }) {
     label: "",
     name: "action",
     align: "left",
-    minWidth: 100,
-    baseWidth: 100,
+    minWidth: 120,
+    baseWidth: 120,
     format: (_, entry) =>
       entry.isDetached ? (
         <Button
@@ -587,7 +587,7 @@ export function Employees({ company, containerRef }) {
             name: formatPersonName(e.user),
             startDate: e.startDate,
             endDate: e.endDate,
-            active: !e.endDate || e.endDate >= today,
+            active: !e.endDate || e.endDate > today,
             hasAdminRights: e.hasAdminRights ? 1 : 0,
             teamId: e.teamId,
             userId: e.user.id,
