@@ -76,7 +76,8 @@ const useStyles = makeStyles(() => ({
     border: `1px solid ${DSFR_COLORS.borderOpen}`
   },
   menuPaper: ({ menuWidth, maxHeight }) => ({
-    width: menuWidth || 282,
+    width: menuWidth || "fit-content",
+    minWidth: menuWidth ? undefined : 200,
     maxHeight: maxHeight || 430,
     marginTop: 0,
     background: DSFR_COLORS.menuBackground,
@@ -124,7 +125,9 @@ const useStyles = makeStyles(() => ({
     fontSize: "0.875rem",
     lineHeight: "1.5rem",
     color: "#666666",
-    whiteSpace: "nowrap"
+    whiteSpace: "nowrap",
+    width: "100%",
+    textAlign: "center"
   }
 }));
 
