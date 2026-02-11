@@ -95,7 +95,11 @@ const useStyles = makeStyles((theme) => ({
   },
   badgeDetache: {
     backgroundColor: fr.colors.decisions.background.contrast.grey.default,
-    color: fr.colors.decisions.text.mention.grey.default
+    color: fr.colors.decisions.text.mention.grey.default,
+    cursor: "default"
+  },
+  badgeCursor: {
+    cursor: "default"
   }
 }));
 
@@ -302,7 +306,7 @@ export function Employees({ company, containerRef }) {
     if (isInactive) {
       return (
         <Tooltip title={`Inactif depuis le ${formatLastActiveDate(lastActiveAt)}. Pensez à détacher ce salarié.`}>
-          <Badge severity="warning" noIcon small>
+          <Badge severity="warning" noIcon small className={classes.badgeCursor}>
             {"inactif".toUpperCase()}
           </Badge>
         </Tooltip>

@@ -22,6 +22,7 @@ const useStyles = makeStyles(() => ({
     fontFamily: "Marianne, sans-serif",
     borderBottom: "1px solid #CECECE",
     borderRadius: 0,
+    cursor: "default",
     "&:last-child": {
       borderBottom: "none"
     },
@@ -130,7 +131,7 @@ export function InactiveEmployeesDropdown({ employments, workDays }) {
       icon="fr-icon-user-search-line"
       items={inactiveEmployees}
       size="small"
-      menuWidth={314}
+      menuWidth={inactiveEmployees.length > 0 ? 314 : undefined}
       maxHeight={220}
       emptyMessage="Tous vos salariés ont utilisé Mobilic"
       renderItem={renderEmployeeItem}
