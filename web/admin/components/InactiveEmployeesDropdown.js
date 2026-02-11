@@ -132,7 +132,7 @@ export function InactiveEmployeesDropdown({ employments, workDays }) {
       size="small"
       menuWidth={314}
       maxHeight={220}
-      emptyMessage="Tous vos salariés ont utilisé Mobilic aujourd'hui"
+      emptyMessage="Tous vos salariés ont utilisé Mobilic"
       renderItem={renderEmployeeItem}
     />
   );
