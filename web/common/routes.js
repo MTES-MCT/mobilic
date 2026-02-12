@@ -20,6 +20,7 @@ import { DriverResourcePage } from "../landing/ResourcePage/DriverResourcePage";
 import { RegulationPage } from "../landing/ResourcePage/RegulationPage";
 import { ResourcePage } from "../landing/ResourcePage/ResourcePage";
 import Accessibility from "../landing/accessibility";
+import Compatibility from "../landing/compatibility";
 import { Certificate } from "../landing/certificate";
 // Import normal pour Navigation (pas de lazy loading pour éviter les problèmes Redux)
 import Navigation from "../pwa/utils/navigation";
@@ -216,6 +217,13 @@ export const ROUTES = [
     label: "Déclaration d'accessibilité",
     accessible: () => true,
     component: <Accessibility />,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/compatibility",
+    label: "Configuration requise",
+    accessible: () => true,
+    component: <Compatibility />,
     menuItemFilter: () => false
   },
   {
