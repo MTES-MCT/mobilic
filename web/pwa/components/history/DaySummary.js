@@ -29,7 +29,7 @@ export function DaySummary({
       {hasWorkMissions && (
         <>
           {!controlId && (
-            <InfoCard elevation={0}>
+            <InfoCard elevation={0} py={0} px={1}>
               {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (
                 <DayRegulatoryAlerts
                   day={isoFormatLocalDate(dayStart)}

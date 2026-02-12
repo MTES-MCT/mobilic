@@ -58,6 +58,34 @@ export const TERMINATE_EMPLOYMENT_MUTATION = gql`
   }
 `;
 
+export const BATCH_TERMINATE_EMPLOYMENTS_MUTATION = gql`
+  mutation batchTerminateEmployments(
+    $employments: [TerminateEmploymentInput]!
+  ) {
+    employments {
+      batchTerminateEmployments(employments: $employments) {
+        employmentId
+        success
+        error
+      }
+    }
+  }
+`;
+
+export const REATTACH_EMPLOYMENT_MUTATION = gql`
+  ${FULL_EMPLOYMENT_FRAGMENT}
+  mutation reattachEmployment($userId: Int!, $companyId: Int!) {
+    employments {
+      reattachEmployment(userId: $userId, companyId: $companyId) {
+        employment {
+          ...FullEmploymentData
+        }
+        emailSent
+      }
+    }
+  }
+`;
+
 export const SEND_INVITATIONS_REMINDERS = gql`
   mutation sendInvitationsReminders($employmentIds: [Int]!) {
     employments {
@@ -81,7 +109,7 @@ export const CHANGE_EMPLOYEE_ROLE = gql`
         teams {
           ...FullTeamData
         }
-        employments {
+        employments(latestPerUser: true) {
           ...FullEmploymentData
         }
       }
@@ -104,7 +132,7 @@ export const CHANGE_EMPLOYEE_BUSINESS_TYPE = gql`
         teams {
           ...FullTeamData
         }
-        employments {
+        employments(latestPerUser: true) {
           ...FullEmploymentData
         }
       }
@@ -131,7 +159,7 @@ export const CHANGE_EMPLOYEE_TEAM = gql`
         teams {
           ...FullTeamData
         }
-        employments {
+        employments(latestPerUser: true) {
           ...FullEmploymentData
         }
       }

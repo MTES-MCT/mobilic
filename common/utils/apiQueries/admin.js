@@ -248,7 +248,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
           registrationNumber
           alias
         }
-        employments {
+        employments(latestPerUser: true) {
           ...FullEmploymentData
           shouldSeeCertificateInfo
           shouldForceNbWorkerInfo
@@ -615,7 +615,7 @@ export const UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE = gql`
         businessType
         transportType
       }
-      employments {
+      employments(latestPerUser: true) {
         ...FullEmploymentData
       }
     }

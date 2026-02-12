@@ -51,15 +51,15 @@
     "file-loader": "^6.2.0",
     "file-saver": "^2.0.5",
     "fs-extra": "^8.1.0",
-    "gh-pages": "^5.0.0",
-    "graphiql": "^3.0.0",
+    "gh-pages": "^6.2.0",
+    "graphiql": "^5.0.0",
     "graphql": "^16.12.0",
     "graphql-tag": "^2.12.6",
     "html-webpack-plugin": "^5.6.0",
     "http-proxy-middleware": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "libphonenumber-js": "^1.11.1",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.23",
     "mini-css-extract-plugin": "^2.9.0",
     "minimist": "^1.2.8",
     "moment": "^2.29.4",
@@ -83,7 +83,7 @@
     "react-multi-date-picker": "^4.5.2",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.3.3",
-    "react-syntax-highlighter": "^15.6.1",
+    "react-syntax-highlighter": "^16.0.0",
     "react-virtualized": "^9.22.2",
     "react-world-flags": "^1.6.0",
     "recharts": "^2.15.4",
@@ -98,10 +98,10 @@
     "ts-pnp": "^1.1.5",
     "typescript": "^4.9.5",
     "uuid": "^13.0.0",
-    "webpack": "^5.94.0",
-    "webpack-dev-server": "4.15.2",
+    "webpack": "^5.104.0",
+    "webpack-dev-server": "5.1.0",
     "webpack-manifest-plugin": "^5.0.1",
-    "workbox-webpack-plugin": "^6.0.2"
+    "workbox-webpack-plugin": "^7.0.0"
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
@@ -172,6 +172,6 @@
     "sass": "^1.55.0",
     "url": "^0.11.4",
     "url-loader": "^4.1.0",
-    "webpack-bundle-analyzer": "^4.4.0"
+    "webpack-bundle-analyzer": "^5.2.0"
   }
 }

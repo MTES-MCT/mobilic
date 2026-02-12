@@ -1,4 +1,6 @@
+import { PRETTY_LABELS } from "../../../web/admin/panels/RegulatoryRespect/RegulatoryRespectAlertsRecap";
 import { REGULATION_RULES } from "../../../web/landing/ResourcePage/RegulationRules";
+import { formatMinutesFromSeconds, HOUR, MINUTE } from "../time";
 
 export const SubmitterType = {
   EMPLOYEE: "employee",
@@ -18,34 +20,62 @@ export const ALERT_TYPES = {
 
 export const ALERT_TYPE_PROPS_SIMPLER = {
   [ALERT_TYPES.minimumDailyRest]: {
-    successMessage: () => "Repos journalier respecté",
-    errorMessage: (_, label) => label,
-    rule: REGULATION_RULES.dailyRest
+    rule: REGULATION_RULES.dailyRest,
+    title: PRETTY_LABELS.minimumDailyRest,
+    getTag: (extra) => {
+      const { min_daily_break_in_hours } = extra;
+      return `inférieur à ${formatMinutesFromSeconds(min_daily_break_in_hours * HOUR)}`;
+    }
   },
   [ALERT_TYPES.maximumWorkDayTime]: {
-    successMessage: () => "Durée du travail quotidien respectée",
-    errorMessage: (_, label) => label,
-    rule: REGULATION_RULES.dailyWork
+    rule: REGULATION_RULES.dailyWork,
+    title: PRETTY_LABELS.maximumWorkDayTime,
+    getTag: (extra) => {
+      const { max_work_range_in_hours, work_range_in_seconds } = extra;
+      const diff = work_range_in_seconds - max_work_range_in_hours * HOUR;
+      return `dépassée de ${formatMinutesFromSeconds(diff)}`;
+    }
   },
   [ALERT_TYPES.minimumWorkDayBreak]: {
-    successMessage: () => "Temps de pause respecté",
-    errorMessage: (_, label) => label,
-    rule: REGULATION_RULES.dailyRest
+    rule: REGULATION_RULES.dailyRest,
+    title: PRETTY_LABELS.not_enough_break,
+    getTag: (extra) => {
+      const { min_break_time_in_minutes } = extra;
+      return `inférieur à ${formatMinutesFromSeconds(min_break_time_in_minutes * MINUTE)}`;
+    }
   },
   [ALERT_TYPES.maximumUninterruptedWorkTime]: {
-    successMessage: () => "Durée maximale de travail ininterrompu respectée",
-    errorMessage: (_, label) => label,
-    rule: REGULATION_RULES.dailyRest
+    rule: REGULATION_RULES.dailyRest,
+    title: PRETTY_LABELS.too_much_uninterrupted_work_time,
+    getTag: (extra) => {
+      const {
+        max_uninterrupted_work_in_hours,
+        longest_uninterrupted_work_in_seconds
+      } = extra;
+
+      const diff =
+        longest_uninterrupted_work_in_seconds -
+        max_uninterrupted_work_in_hours * HOUR;
+      return `dépassée de ${formatMinutesFromSeconds(diff)}`;
+    }
   },
   [ALERT_TYPES.maximumWorkedDaysInWeek]: {
-    successMessage: () => "Repos hebdomadaire respecté",
-    errorMessage: (_, label) => label,
-    rule: REGULATION_RULES.weeklyRest
+    rule: REGULATION_RULES.weeklyRest,
+    title: PRETTY_LABELS.maximumWorkedDaysInWeek,
+    getTag: (extra) => {
+      const { rest_duration_s } = extra;
+      return `inférieur à ${formatMinutesFromSeconds(rest_duration_s)}`;
+    }
   },
   [ALERT_TYPES.maximumWorkInCalendarWeek]: {
-    successMessage: () => "Durée maximale de travail hebdomadaire respectée",
-    errorMessage: (_, label) => label,
-    rule: REGULATION_RULES.weeklyWork
+    rule: REGULATION_RULES.weeklyWork,
+    title: PRETTY_LABELS.maximumWorkInCalendarWeek,
+    getTag: (extra) => {
+      const { max_weekly_work_in_seconds, work_duration_in_seconds } = extra;
+
+      const diff = work_duration_in_seconds - max_weekly_work_in_seconds;
+      return `dépassée de ${formatMinutesFromSeconds(diff)}`;
+    }
   },
   [ALERT_TYPES.enoughBreak]: {
     rule: REGULATION_RULES.dailyRest

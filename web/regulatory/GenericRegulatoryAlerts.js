@@ -1,10 +1,6 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { renderRegulationCheck } from "./RegulatoryAlertRender";
-import {
-  RegulatoryTextDayBeforeAndAfter,
-  RegulatoryTextNotCalculatedYet,
-  RegulatoryTextWeekBeforeAndAfter
-} from "./RegulatoryText";
+import { RegulatoryTextNotCalculatedYet } from "./RegulatoryText";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import Skeleton from "@mui/material/Skeleton";
@@ -14,17 +10,33 @@ import {
 } from "common/utils/regulation/alertVersions";
 import {
   ALERT_TYPE_PROPS_SIMPLER,
+  ALERT_TYPES,
   SubmitterType
 } from "common/utils/regulation/alertTypes";
-import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
-import { SectionTitle } from "../common/typography/SectionTitle";
 import { USER_READ_REGULATION_COMPUTATIONS_QUERY } from "common/utils/apiQueries/user";
+import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
+import { NoAlerts } from "./NoAlerts";
+import { RunningTag, ToValidateTag } from "../admin/drawers/Tags";
 
+const TagWrapper = ({ children }) => {
+  return (
+    <Stack direction="column" rowGap={3} alignItems="center" mt={1}>
+      {children}
+      <RegulatoryTextNotCalculatedYet />
+    </Stack>
+  );
+}
 export function GenericRegulatoryAlerts({
   userId,
   day,
-  regulationCheckUnit,
-  shouldDisplayInitialEmployeeVersion = false
+  stillRunning = false,
+  noAdminValidation = false,
+  includeWeeklyAlerts = false,
+  shouldDisplayInitialEmployeeVersion = false,
+  employeeView = false,
 }) {
   const [regulationComputations, setRegulationComputations] = React.useState(
     []
@@ -71,30 +83,94 @@ export function GenericRegulatoryAlerts({
     loadData();
   }, [day, userId, shouldDisplayInitialEmployeeVersion]);
 
+  const checksWithAlerts = useMemo(
+    () =>
+      regulationComputations?.regulationChecks
+        ?.filter(
+          (regulationCheck) => regulationCheck.type in ALERT_TYPE_PROPS_SIMPLER
+        )
+        ?.filter((regulationCheck) =>
+          includeWeeklyAlerts ? true : regulationCheck.unit === PERIOD_UNITS.DAY
+        )
+        .filter((regulationCheck) => !!regulationCheck.alert)
+        .map((regulationCheck) => ({
+          type: regulationCheck.type,
+          rule: regulationCheck.regulationRule,
+          unit: regulationCheck.unit,
+          alert: regulationCheck.alert
+        }))
+        .reduce((acc, curr) => {
+          if (curr.type === ALERT_TYPES.enoughBreak) {
+            const extra = curr.alert?.extra ? JSON.parse(curr.alert.extra) : {};
+            const notEnoughBreak = extra.not_enough_break;
+            const tooMuchUninterruptedWorkTime =
+              extra.too_much_uninterrupted_work_time;
+            if (notEnoughBreak) {
+              acc.push({
+                ...curr,
+                type: ALERT_TYPES.minimumWorkDayBreak
+              });
+            }
+            if (tooMuchUninterruptedWorkTime) {
+              acc.push({
+                ...curr,
+                type: ALERT_TYPES.maximumUninterruptedWorkTime
+              });
+            }
+            return acc;
+          }
+          acc.push(curr);
+          return acc;
+        }, []) ?? [],
+    [regulationComputations, includeWeeklyAlerts]
+  );
+
+  if (stillRunning) {
+    return (
+      <TagWrapper>
+      <RunningTag />
+    </TagWrapper>
+    );
+  }
+
+  if (noAdminValidation) {
+    return (
+      <TagWrapper>
+        <ToValidateTag />
+      </TagWrapper>
+    );
+  }
+
   return (
     <>
-      <SectionTitle title="Seuils réglementaires" component="h2" />
       {loading && <Skeleton variant="rectangular" width="100%" height={300} />}
       {!loading && regulationComputations && (
-        <>
-          {regulationCheckUnit === PERIOD_UNITS.DAY ? (
-            <RegulatoryTextDayBeforeAndAfter />
-          ) : (
-            <RegulatoryTextWeekBeforeAndAfter />
+          <Stack direction="column" width="100%" rowGap={employeeView ? 1 : 2}>
+          {(employeeView || checksWithAlerts.length > 0) && (
+            <Stack direction="row" columnGap={1} mb={1}>
+              <Typography
+                variant="h6"
+                fontSize={employeeView ? "1.125rem" : "1.25rem"}
+              >
+                Infractions
+              </Typography>
+              {checksWithAlerts.length > 0 && (
+              <Badge noIcon severity="error">
+                {checksWithAlerts.length}
+              </Badge>
+              )}
+            </Stack>
           )}
-          {regulationComputations.regulationChecks
-            ?.filter(
-              (regulationCheck) =>
-                regulationCheck.type in ALERT_TYPE_PROPS_SIMPLER
-            )
-            ?.filter(
-              (regulationCheck) => regulationCheck.unit === regulationCheckUnit
-            )
-            .map((regulationCheck) => renderRegulationCheck(regulationCheck))}
-        </>
-      )}
-      {!loading && !regulationComputations && (
-        <RegulatoryTextNotCalculatedYet />
+          {checksWithAlerts.length === 0 ? (
+            <NoAlerts employeeView={employeeView} />
+          ) : (
+            <>
+            {checksWithAlerts.map((regulationCheck) =>
+              renderRegulationCheck(regulationCheck, employeeView),
+              )}
+            </>
+            )}
+          </Stack>
       )}
     </>
   );

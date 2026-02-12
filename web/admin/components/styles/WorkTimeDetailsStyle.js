@@ -1,20 +1,15 @@
 import { makeStyles } from "@mui/styles";
 
-export const useStyles = makeStyles(theme => ({
-  employeeName: {
-    textOverflow: "ellipsis"
-  },
-  regulatoryAlertCard: {
-    height: "100%"
+export const useStyles = makeStyles((theme) => ({
+  container: {
+    padding: theme.spacing(4)
   },
   cardRecapKPI: {
+    flex: 1,
     display: "flex",
-    height: "100%",
+    minHeight: "144px",
     justifyContent: "center",
     flexDirection: "column"
-  },
-  cardRecapKPIContainer: {
-    flexGrow: 1
   },
   amplitudeText: {
     marginTop: theme.spacing(1),
@@ -24,17 +19,8 @@ export const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2)
   },
-  workTimeDetailsTitleContainer: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start"
-  },
   closeButton: {
     padding: 0
-  },
-  workTimeDetailsTitle: {
-    textOverflow: "ellipsis",
-    marginRight: theme.spacing(4)
   },
   listActivitiesAccordion: {
     border: `1px solid ${theme.palette.divider}`,

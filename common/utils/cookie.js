@@ -6,11 +6,19 @@ export function readCookie(name) {
 }
 
 export function clearCookie(name, isRootPath = false) {
-  setCookie(name, "", isRootPath);
+  setCookie(name, "", -1, isRootPath);
 }
 
-export function setCookie(name, value, isRootPath = false) {
-  document.cookie = `${name}=${value};secure;${isRootPath ? ";path=/;" : ""}`;
+export function setCookie(name, value, expirationDays = null, isRootPath = false) {
+  let cookie = `${name}=${value};secure`;
+  if (expirationDays) {
+    const maxAge = expirationDays * 24 * 60 * 60;
+    cookie += `;max-age=${maxAge}`;
+  }
+  if (isRootPath) {
+    cookie += ";path=/";
+  }
+  document.cookie = cookie;
 }
 
 export function currentUserId() {

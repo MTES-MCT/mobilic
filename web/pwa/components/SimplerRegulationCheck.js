@@ -1,109 +1,117 @@
 import React from "react";
-import {
-  ALERT_TYPE_PROPS_SIMPLER,
-  ALERT_TYPES
-} from "common/utils/regulation/alertTypes";
-import Chip from "@mui/material/Chip";
-import { Link } from "../../common/LinkButton";
+import { ALERT_TYPE_PROPS_SIMPLER } from "common/utils/regulation/alertTypes";
 import { useRegulationDrawer } from "../../landing/ResourcePage/RegulationDrawer";
-import { ChevronRight } from "@mui/icons-material";
 import { makeStyles } from "@mui/styles";
-import Notice from "../../common/Notice";
+import { Stack, Typography } from "@mui/material";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Tag } from "@codegouvfr/react-dsfr/Tag";
+import { fr } from "@codegouvfr/react-dsfr";
 
-const useStyles = makeStyles(theme => ({
-  moreInfoIcon: {
-    verticalAlign: "middle",
-    marginBottom: theme.spacing(0.25)
+const useStyles = makeStyles((theme) => ({
+  linkButton: {
+    textDecoration: "underline",
+    textUnderlineOffset: "6px"
   },
-  chip: {
-    backgroundColor: "#FDDBFA",
-    color: "#6E445A"
+  card: {
+    backgroundColor: "white",
+    padding: theme.spacing(1),
+    paddingLeft: theme.spacing(2)
+  },
+  warningTag: {
+    color: fr.colors.decisions.background.flat.warning.default,
+    backgroundColor: fr.colors.decisions.background.contrast.warning.default,
+    fontSize: "0.75rem"
+  },
+  coloredBackground: {
+    backgroundColor: "#FEF4F4"
   }
 }));
 
-export function SimplerRegulationCheck({ regulationCheck }) {
-  const { alert, type, label } = regulationCheck;
+export function SimplerRegulationCheck({
+  regulationCheck,
+  employeeView = false,
+}) {
+  const { alert, type } = regulationCheck;
   const extra = alert?.extra ? JSON.parse(alert.extra) : {};
   const alertProps = ALERT_TYPE_PROPS_SIMPLER[type];
   const rule = alertProps.rule;
-
-  if (type === ALERT_TYPES.enoughBreak) {
-    return <EnoughBreakCheck extra={extra} rule={rule} />;
-  }
-
-  const isSuccess = !alert;
-  const severity = isSuccess ? "success" : "error";
-
-  const message = isSuccess
-    ? alertProps.successMessage()
-    : alertProps.errorMessage(extra, label);
+  const tag = alertProps.getTag(extra);
 
   return (
     <Check
-      severity={severity}
       rule={rule}
-      message={message}
-      nightWork={extra.nightWork}
+      tag={tag}
+      title={alertProps.title}
+      employeeView={employeeView}
     />
   );
 }
 
-function EnoughBreakCheck({ extra, rule }) {
-  const notEnoughBreak = extra.not_enough_break;
-  const tooMuchUninterruptedWorkTime = extra.too_much_uninterrupted_work_time;
-
-  const breakMessage = notEnoughBreak
-    ? "Non-respect(s) du temps de pause"
-    : ALERT_TYPE_PROPS_SIMPLER[
-        ALERT_TYPES.minimumWorkDayBreak
-      ].successMessage();
-
-  const uninterruptedMessage = tooMuchUninterruptedWorkTime
-    ? "Dépassement(s) de la durée maximale du travail ininterrompu"
-    : ALERT_TYPE_PROPS_SIMPLER[
-        ALERT_TYPES.maximumUninterruptedWorkTime
-      ].successMessage();
-  return (
-    <>
-      <Check
-        severity={notEnoughBreak ? "error" : "success"}
-        rule={rule}
-        message={breakMessage}
-      />
-      <Check
-        severity={tooMuchUninterruptedWorkTime ? "error" : "success"}
-        rule={rule}
-        message={uninterruptedMessage}
-      />
-    </>
-  );
-}
-
-function Check({ severity, rule, message, nightWork = false }) {
+function Check({ title, rule, tag, employeeView = false }) {
   const openRegulationDrawer = useRegulationDrawer();
   const classes = useStyles();
 
-  return (
-    <Notice
-      type={severity}
-      size="small"
-      description={
-        <>
-          <Link
-            color="inherit"
-            onClick={e => {
-              e.preventDefault();
-              openRegulationDrawer(rule, true);
-            }}
-          >
-            {message}
-          </Link>
-          <ChevronRight className={classes.moreInfoIcon} />
-          {nightWork && (
-            <Chip className={classes.chip} label="Travail de nuit" />
+  if (employeeView) {
+    return (
+      <Stack
+        direction="column"
+        justifyContent="space-between"
+        className={classes.coloredBackground}
+        alignItems="start"
+        p={2}
+        rowGap={1}
+      >
+        <Typography fontWeight={500} textAlign="left">
+          {title}
+        </Typography>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          width="100%"
+        >
+          {tag && (
+            <Tag
+              className={classes.warningTag}
+              style={{ paddingRight: "0.5rem", paddingLeft: "0.5rem" }}
+            >
+              {tag}
+            </Tag>
           )}
-        </>
-      }
-    />
+          <Button
+            priority="tertiary no outline"
+            onClick={() => openRegulationDrawer(rule, true)}
+            size="small"
+            iconId="fr-icon-arrow-right-line"
+            iconPosition="right"
+            className={classes.linkButton}
+          />
+        </Stack>
+      </Stack>
+    );
+  }
+
+  return (
+    <Stack
+      direction="row"
+      className={classes.card}
+      alignItems="center"
+      justifyContent="space-between"
+    >
+      <Stack direction="row" columnGap={2} alignItems="center">
+        <Typography fontWeight={500}>{title}</Typography>
+        {tag && <Tag className={classes.warningTag}>{tag}</Tag>}
+      </Stack>
+      <Button
+        priority="tertiary no outline"
+        onClick={() => openRegulationDrawer(rule, true)}
+        size="small"
+        iconId="fr-icon-arrow-right-line"
+        iconPosition="right"
+        className={classes.linkButton}
+      >
+        Détail du seuil
+      </Button>
+    </Stack>
   );
 }

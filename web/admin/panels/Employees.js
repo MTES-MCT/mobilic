@@ -7,7 +7,6 @@ import { formatPersonName } from "common/utils/coworkers";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "../../common/Snackbar";
@@ -18,15 +17,18 @@ import {
   isoFormatLocalDate,
   now
 } from "common/utils/time";
+import { formatLastActiveDate } from "common/utils/employeeStatus";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { EMPLOYMENT_ROLE } from "common/utils/employments";
 import { TeamFilter } from "../components/TeamFilter";
 import { NO_TEAMS_LABEL, NO_TEAM_ID } from "../utils/teams";
 import { BusinessDropdown } from "../components/BusinessDropdown";
+import { AdminRightsDropdown } from "../components/AdminRightsDropdown";
+import { TeamDropdown } from "../components/TeamDropdown";
 import Stack from "@mui/material/Stack";
 import Notice from "../../common/Notice";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import { Explanation } from "../../common/typography/Explanation";
+import { fr } from "@codegouvfr/react-dsfr";
 import { readCookie, setCookie } from "common/utils/cookie";
 import BatchInviteModal from "../modals/BatchInviteModal";
 import { EmployeeProgressBar } from "../components/EmployeeProgressBar";
@@ -38,16 +40,24 @@ import {
   INVITE_NEW_EMPLOYEE_SUBMIT,
   INVITE_EMAIL_LIST_CLICK,
   INVITE_MISSING_EMPLOYEES_CLICK,
-  INVITE_NEW_EMPLOYEE_CLICK
+  INVITE_NEW_EMPLOYEE_CLICK,
+  INACTIVE_EMPLOYEES_BANNER_VIEW,
+  INACTIVE_EMPLOYEES_BANNER_CLICK
 } from "common/utils/matomoTags";
 import {
   BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
   CANCEL_EMPLOYMENT_MUTATION,
-  CHANGE_EMPLOYEE_ROLE,
   CREATE_EMPLOYMENT_MUTATION,
-  SEND_INVITATIONS_REMINDERS,
-  TERMINATE_EMPLOYMENT_MUTATION
+  SEND_INVITATIONS_REMINDERS
 } from "common/utils/apiQueries/employments";
+import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
+
+const STATUS_BADGE = {
+  ACTIVE: 0,
+  INACTIVE: 1,
+  DETACHED: 2
+};
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -55,17 +65,41 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
     alignItems: "center"
   },
-  successText: {
-    color: theme.palette.success.main
-  },
   augmentedTable: {
-    marginRight: theme.spacing(10)
+    "& .ReactVirtualized__Table__headerRow": {
+      backgroundColor: fr.colors.decisions.background.contrastRaised.grey.default,
+      borderTop: "none",
+      borderBottom: `2px solid ${fr.colors.decisions.border.plain.grey.default}`
+    },
+    "& .ReactVirtualized__Table__row": {
+      borderBottom: `1px solid ${fr.colors.decisions.border.default.grey.default}`
+    },
+    "& select": {
+      borderBottom: "none"
+    },
+    "& .fr-select-group": {
+      marginBottom: 0
+    },
+    "& .fr-select": {
+      boxShadow: "none",
+      textOverflow: "ellipsis",
+      overflow: "hidden",
+      whiteSpace: "nowrap"
+    }
   },
   terminatedEmployment: {
     color: theme.palette.text.disabled
   },
   hideButton: {
     marginLeft: theme.spacing(2)
+  },
+  badgeDetache: {
+    backgroundColor: fr.colors.decisions.background.contrast.grey.default,
+    color: fr.colors.decisions.text.mention.grey.default,
+    cursor: "default"
+  },
+  badgeCursor: {
+    cursor: "default"
   }
 }));
 
@@ -130,84 +164,6 @@ export function Employees({ company, containerRef }) {
 
   const updateValidListScrollPosition = () =>
     setTimeout(validEmploymentsTableRef?.current?.updateScrollPosition, 0);
-
-  async function cancelEmployment(employment) {
-    try {
-      await api.graphQlMutate(CANCEL_EMPLOYMENT_MUTATION, {
-        employmentId: employment.id
-      });
-      await adminStore.dispatch({
-        type: ADMIN_ACTIONS.delete,
-        payload: { id: employment.id, entity: "employments" }
-      });
-    } catch (err) {
-      alerts.error(formatApiError(err), employment.id, 6000);
-    }
-  }
-
-  async function changeEmployeeRole(employmentId, hasAdminRights) {
-    try {
-      const apiResponse = await api.graphQlMutate(CHANGE_EMPLOYEE_ROLE, {
-        employmentId,
-        hasAdminRights
-      });
-      const { teams, employments } =
-        apiResponse?.data?.employments?.changeEmployeeRole ?? {};
-      if (employments) {
-        await adminStore.dispatch({
-          type: ADMIN_ACTIONS.update,
-          payload: {
-            id: employmentId,
-            entity: "employments",
-            update: {
-              ...employments.find(
-                (employment) => employment.id === employmentId
-              ),
-              companyId,
-              adminStore
-            }
-          }
-        });
-      }
-      if (teams && employments) {
-        await adminStore.dispatch({
-          type: ADMIN_ACTIONS.updateTeams,
-          payload: { teams, employments }
-        });
-      }
-    } catch (err) {
-      alerts.error(formatApiError(err), employmentId, 6000);
-    }
-  }
-
-  async function giveAdminPermission(employmentId) {
-    await changeEmployeeRole(employmentId, true);
-  }
-
-  async function giveWorkerPermission(employmentId) {
-    await changeEmployeeRole(employmentId, false);
-  }
-
-  async function terminateEmployment(employmentId, endDate) {
-    const employmentResponse = await api.graphQlMutate(
-      TERMINATE_EMPLOYMENT_MUTATION,
-      {
-        employmentId,
-        endDate: isoFormatLocalDate(endDate)
-      }
-    );
-    await adminStore.dispatch({
-      type: ADMIN_ACTIONS.update,
-      payload: {
-        id: employmentId,
-        entity: "employments",
-        update: {
-          ...employmentResponse.data.employments.terminateEmployment,
-          companyId
-        }
-      }
-    });
-  }
 
   async function sendInvitationsReminders(employmentIds) {
     try {
@@ -329,87 +285,115 @@ export function Employees({ company, containerRef }) {
     format: (remindButton) => remindButton
   });
 
+  pendingEmploymentColumns.push({
+    label: "",
+    name: "cancelButton",
+    minWidth: 120,
+    baseWidth: 120,
+    format: (cancelButton) => cancelButton
+  });
+
+  const EmployeeStatusBadge = ({ isDetached, isInactive, lastActiveAt, endDate }) => {
+    if (isDetached) {
+      return (
+        <Tooltip title={`Détaché depuis le ${frenchFormatDateStringOrTimeStamp(endDate)}`}>
+          <Badge noIcon small className={classes.badgeDetache}>
+            {"détaché".toUpperCase()}
+          </Badge>
+        </Tooltip>
+      );
+    }
+    if (isInactive) {
+      return (
+        <Tooltip title={`Inactif depuis le ${formatLastActiveDate(lastActiveAt)}. Pensez à détacher ce salarié.`}>
+          <Badge severity="warning" noIcon small className={classes.badgeCursor}>
+            {"inactif".toUpperCase()}
+          </Badge>
+        </Tooltip>
+      );
+    }
+    return null;
+  };
+
   const validEmploymentColumns = [
     {
-      label: "Nom",
+      label: "Salarié",
       name: "lastName",
       align: "left",
       sortable: true,
-      minWidth: 120,
-      overflowTooltip: true
+      alwaysShowSortIcon: true,
+      minWidth: 180,
+      overflowTooltip: true,
+      format: (lastName, entry) => `${lastName} ${entry.firstName}`
     },
     {
-      label: "Prénom",
-      name: "firstName",
+      label: "",
+      name: "statusBadge",
       align: "left",
       sortable: true,
-      minWidth: 120,
-      overflowTooltip: true
-    },
-    {
-      label: "Identifiant",
-      name: "id",
-      align: "left",
-      minWidth: 160,
-      baseWidth: 160
+      propertyForSorting: "statusBadge",
+      minWidth: 90,
+      baseWidth: 90,
+      format: (_, entry) => (
+        <EmployeeStatusBadge
+          isDetached={entry.isDetached}
+          isInactive={entry.isInactive}
+          lastActiveAt={entry.lastActiveAt}
+          endDate={entry.endDate}
+        />
+      )
     },
     {
       label: "Email",
       name: "email",
       align: "left",
       sortable: true,
-      minWidth: 320,
+      minWidth: 280,
       overflowTooltip: true
     },
     {
-      label: "Accès gestionnaire",
-      name: "hasAdminRights",
-      format: (hasAdminRights) => (hasAdminRights ? "Oui" : "Non"),
-      align: "left",
-      sortable: true,
-      minWidth: 160
-    },
-    {
-      label: "Début rattachement",
+      label: (<>Début<br />rattachement</>),
       name: "startDate",
       align: "left",
       format: (startDate) => frenchFormatDateStringOrTimeStamp(startDate),
       sortable: true,
-      minWidth: 150
+      minWidth: 90,
+      baseWidth: 135
     },
     {
-      label: "Fin rattachement",
-      name: "endDate",
-      format: (endDate) =>
-        endDate ? frenchFormatDateStringOrTimeStamp(endDate) : null,
-      align: "left",
-      minWidth: 150
-    },
-    {
-      label: "Statut",
-      name: "active",
-      format: (active) => (
-        <Typography
-          className={`bold ${
-            active ? classes.successText : classes.terminatedEmployment
-          }`}
-        >
-          {active ? "Actif" : "Terminé"}
-        </Typography>
+      label: (<>Accès<br />gestionnaire</>),
+      name: "hasAdminRights",
+      format: (hasAdminRights, entry) => (
+        <AdminRightsDropdown
+          employmentId={entry.employmentId}
+          companyId={companyId}
+          hasAdminRights={!!hasAdminRights}
+          disabled={entry.id === adminStore.userId}
+          isDetached={entry.isDetached}
+        />
       ),
       align: "left",
-      minWidth: 80
+      sortable: true,
+      minWidth: 140,
+      baseWidth: 135
     }
   ];
 
   if (adminStore?.teams?.length > 0) {
     validEmploymentColumns.push({
-      label: "Groupe d'affectation",
+      label: (<>Groupe<br />d'affectation</>),
       name: "teamId",
       align: "left",
-      format: formatTeam,
+      format: (teamId, entry) => (
+        <TeamDropdown
+          employmentId={entry.employmentId}
+          companyId={companyId}
+          teamId={teamId}
+          disabled={entry.isDetached}
+        />
+      ),
       minWidth: 140,
-      overflowTooltip: true
+      baseWidth: 135
     });
   }
 
@@ -417,15 +401,72 @@ export function Employees({ company, containerRef }) {
     label: "Type d'activité",
     name: "business",
     align: "left",
-    format: (business, { employmentId }) => (
+    format: (business, { employmentId, isDetached }) => (
       <BusinessDropdown
         business={business}
         companyId={companyId}
         employmentId={employmentId}
+        disabled={isDetached}
       />
     ),
-    minWidth: 200,
-    overflowTooltip: true
+    minWidth: 180
+  });
+
+  validEmploymentColumns.push({
+    label: "Identifiant",
+    name: "id",
+    align: "left",
+    minWidth: 120,
+    baseWidth: 120
+  });
+
+  validEmploymentColumns.push({
+    label: "",
+    name: "action",
+    align: "left",
+    minWidth: 120,
+    baseWidth: 120,
+    format: (_, entry) =>
+      entry.isDetached ? (
+        <Button
+          priority="tertiary no outline"
+          size="small"
+          iconPosition="left"
+          iconId="fr-icon-arrow-go-forward-line"
+          onClick={() =>
+            modals.open("reattachEmployment", {
+              employee: entry,
+              onSuccess: (newEmployment) =>
+                handleReattachSuccess(newEmployment, entry.employmentId)
+            })
+          }
+        >
+          Rattacher
+        </Button>
+      ) : (
+        <Button
+          priority="tertiary no outline"
+          size="small"
+          iconPosition="left"
+          iconId="fr-icon-logout-box-r-line"
+          disabled={entry.id === adminStore.userId}
+          onClick={() =>
+            confirmActionIfOnlyAdmin(
+              adminStore.teams,
+              entry.id,
+              `Mettre fin au rattachement du gestionnaire ${entry.name}`,
+              () =>
+                modals.open("terminateEmployment", {
+                  inactiveEmployees: [entry],
+                  onSuccess: handleBatchTerminateSuccess
+                }),
+              true
+            )
+          }
+        >
+          Détacher
+        </Button>
+      )
   });
 
   const companyEmployments = React.useMemo(
@@ -471,6 +512,27 @@ export function Employees({ company, containerRef }) {
             >
               Relancer
             </Button>
+          ),
+          cancelButton: (
+            <Button
+              priority="tertiary no outline"
+              size="small"
+              iconPosition="left"
+              iconId="fr-icon-close-line"
+              onClick={() =>
+                modals.open("confirmation", {
+                  textButtons: true,
+                  title: "Confirmer l'annulation du rattachement",
+                  handleConfirm: async () =>
+                    alerts.withApiErrorHandling(
+                      async () => cancelEmployment(e),
+                      "cancel-employment"
+                    )
+                })
+              }
+            >
+              Annuler
+            </Button>
           )
         })),
     [companyEmployments]
@@ -511,23 +573,37 @@ export function Employees({ company, containerRef }) {
           );
         })
         .filter((e) => e.isAcknowledged)
-        .map((e) => ({
-          pending: false,
-          id: e.user.id,
-          email: e.user.email,
-          employmentId: e.id,
-          lastName: e.user.lastName,
-          firstName: e.user.firstName,
-          name: formatPersonName(e.user),
-          startDate: e.startDate,
-          endDate: e.endDate,
-          active: !e.endDate || e.endDate >= today,
-          hasAdminRights: e.hasAdminRights ? 1 : 0,
-          teamId: e.teamId,
-          userId: e.user.id,
-          companyId: e.company.id,
-          business: e.business
-        })),
+        .map((e) => {
+          const isDetached = e.endDate ? e.endDate <= today : false;
+          const isInactive = !isDetached && e.isInactive;
+          const statusBadge = isDetached
+            ? STATUS_BADGE.DETACHED
+            : isInactive
+              ? STATUS_BADGE.INACTIVE
+              : STATUS_BADGE.ACTIVE;
+          return {
+            pending: false,
+            id: e.user.id,
+            email: e.user.email,
+            employmentId: e.id,
+            lastName: e.user.lastName,
+            firstName: e.user.firstName,
+            name: formatPersonName(e.user),
+            startDate: e.startDate,
+            endDate: e.endDate,
+            active: !e.endDate || e.endDate > today,
+            hasAdminRights: e.hasAdminRights ? 1 : 0,
+            teamId: e.teamId,
+            userId: e.user.id,
+            companyId: e.company.id,
+            business: e.business,
+            lastActiveAt: e.lastActiveAt,
+            status: e.status,
+            isDetached,
+            isInactive,
+            statusBadge
+          };
+        }),
     [companyEmployments, selectedTeamIds]
   );
 
@@ -540,6 +616,100 @@ export function Employees({ company, containerRef }) {
     () => validEmployments.filter((e) => e.active),
     [validEmployments]
   );
+
+  const inactiveEmployees = React.useMemo(
+    () => activeValidEmployments.filter((e) => e.isInactive),
+    [activeValidEmployments]
+  );
+
+  const INACTIVE_BANNER_COOKIE = "dismissInactiveBanner";
+  const [isBannerDismissed, setIsBannerDismissed] = React.useState(() => {
+    const dismissedAt = readCookie(INACTIVE_BANNER_COOKIE);
+    if (!dismissedAt) return false;
+    const dismissedTime = parseInt(dismissedAt, 10);
+    const oneDayMs = 24 * 60 * 60 * 1000;
+    return Date.now() - dismissedTime < oneDayMs;
+  });
+
+  const handleDismissBanner = () => {
+    setCookie(INACTIVE_BANNER_COOKIE, Date.now().toString(), 1);
+    setIsBannerDismissed(true);
+  };
+
+  const shouldShowInactiveBanner =
+    inactiveEmployees.length >= 3 && !isBannerDismissed;
+
+  const hasTrackedBannerView = React.useRef(false);
+
+  React.useEffect(() => {
+    if (shouldShowInactiveBanner && !hasTrackedBannerView.current) {
+      trackEvent(INACTIVE_EMPLOYEES_BANNER_VIEW(inactiveEmployees.length));
+      hasTrackedBannerView.current = true;
+    }
+  }, [shouldShowInactiveBanner, inactiveEmployees.length]);
+
+  const handleBatchTerminateSuccess = async (terminatedEmployments) => {
+    for (const { employmentId, endDate } of terminatedEmployments) {
+      const employment = companyEmployments.find(e => e.id === employmentId);
+      if (employment) {
+        await adminStore.dispatch({
+          type: ADMIN_ACTIONS.update,
+          payload: {
+            id: employmentId,
+            entity: "employments",
+            update: {
+              ...employment,
+              endDate: endDate || isoFormatLocalDate(new Date()),
+              companyId
+            }
+          }
+        });
+      }
+    }
+  };
+
+  const handleReattachSuccess = async (newEmployment, oldEmploymentId) => {
+    if (oldEmploymentId && oldEmploymentId !== newEmployment.id) {
+      await adminStore.dispatch({
+        type: ADMIN_ACTIONS.delete,
+        payload: { id: oldEmploymentId, entity: "employments" }
+      });
+    }
+    await adminStore.dispatch({
+      type: ADMIN_ACTIONS.create,
+      payload: {
+        items: [{ ...newEmployment, companyId }],
+        entity: "employments"
+      }
+    });
+  };
+
+  const cancelEmployment = async (employment) => {
+    try {
+      await api.graphQlMutate(CANCEL_EMPLOYMENT_MUTATION, {
+        employmentId: employment.id
+      });
+      await adminStore.dispatch({
+        type: ADMIN_ACTIONS.delete,
+        payload: { id: employment.id, entity: "employments" }
+      });
+      alerts.success(
+        `Le rattachement de ${formatPersonName(employment)} a été annulé`,
+        "cancel-employment",
+        6000
+      );
+    } catch (err) {
+      alerts.error(formatApiError(err), "cancel-employment", 6000);
+    }
+  };
+
+  const handleOpenBatchTerminateModal = () => {
+    trackEvent(INACTIVE_EMPLOYEES_BANNER_CLICK);
+    modals.open("terminateEmployment", {
+      inactiveEmployees,
+      onSuccess: handleBatchTerminateSuccess
+    });
+  };
 
   const employeeProgressData = useEmployeeProgress(
     company,
@@ -571,60 +741,6 @@ export function Employees({ company, containerRef }) {
       setWantsToAddEmployment(false);
     }
   }, [isAddingEmployment, wantsToAddEmployment]);
-
-  const customActionEditTeam = {
-    name: "editTeam",
-    label: "Modifier l'affectation",
-    action: (employment) => {
-      modals.open("employeesTeamRevisionModal", {
-        employment,
-        teams: adminStore?.teams,
-        companyId,
-        adminStore
-      });
-    }
-  };
-
-  const customActionsPendingEmployment = (employment) => {
-    if (!employment) {
-      return [];
-    }
-    const customActions = [
-      {
-        name: "delete",
-        label: "Annuler l'invitation",
-        action: (empl) => {
-          modals.open("confirmation", {
-            textButtons: true,
-            title: "Confirmer annulation du rattachement",
-            handleConfirm: async () =>
-              alerts.withApiErrorHandling(
-                async () => cancelEmployment(empl),
-                "cancel-employment"
-              )
-          });
-        }
-      }
-    ];
-    if (!employment.hasAdminRights) {
-      customActions.push({
-        name: "setAdmin",
-        label: "Donner accès gestionnaire",
-        action: (empl) => giveAdminPermission(empl.id)
-      });
-    } else {
-      customActions.push({
-        name: "setWorker",
-        label: "Retirer accès gestionnaire",
-        disabled: employment.id === adminStore.userId,
-        action: (empl) => giveWorkerPermission(empl.employmentId)
-      });
-    }
-    if (adminStore?.teams?.length > 0) {
-      customActions.unshift(customActionEditTeam);
-    }
-    return customActions;
-  };
 
   const confirmActionIfOnlyAdmin = (
     teams,
@@ -673,56 +789,6 @@ export function Employees({ company, containerRef }) {
           }
         })
       : action();
-  };
-
-  const customActionsValidEmployment = (employment) => {
-    if (!employment) {
-      return [];
-    }
-    const customActions = [];
-    if (adminStore?.teams?.length > 0) {
-      customActions.push(customActionEditTeam);
-    }
-    if (!employment.hasAdminRights) {
-      customActions.push({
-        name: "setAdmin",
-        label: "Donner accès gestionnaire",
-        action: (empl) => giveAdminPermission(empl.employmentId)
-      });
-    } else {
-      customActions.push({
-        name: "setWorker",
-        label: "Retirer accès gestionnaire",
-        disabled: employment.id === adminStore.userId,
-        action: (empl) =>
-          confirmActionIfOnlyAdmin(
-            adminStore.teams,
-            empl.id,
-            `Retirer l'accès gestionnaire à ${employment.name}`,
-            () => giveWorkerPermission(empl.employmentId),
-            false
-          )
-      });
-    }
-    customActions.push({
-      name: "terminate",
-      label: "Mettre fin au rattachement",
-      disabled: employment.id === adminStore.userId,
-      action: (empl) =>
-        confirmActionIfOnlyAdmin(
-          adminStore.teams,
-          empl.id,
-          `Mettre fin au rattachement du gestionnaire ${employment.name}`,
-          () =>
-            modals.open("terminateEmployment", {
-              minDate: new Date(empl.startDate),
-              terminateEmployment: async (endDate) =>
-                terminateEmployment(empl.employmentId, endDate)
-            }),
-          true
-        )
-    });
-    return customActions;
   };
 
   const inviteEmails = async (mails) => {
@@ -877,7 +943,7 @@ export function Employees({ company, containerRef }) {
                 defaultSortBy={"creationDate"}
                 defaultSortType={"desc"}
                 virtualized
-                virtualizedRowHeight={45}
+                virtualizedRowHeight={56}
                 virtualizedMaxHeight={"100%"}
                 virtualizedAttachScrollTo={containerRef.current}
                 onRowAdd={async ({ idOrEmail, hasAdminRights, teamId }) => {
@@ -913,7 +979,6 @@ export function Employees({ company, containerRef }) {
                     alerts.error(formatApiError(err), idOrEmail, 6000);
                   }
                 }}
-                customRowActions={customActionsPendingEmployment}
               />
             )}
           </>
@@ -936,16 +1001,18 @@ export function Employees({ company, containerRef }) {
             />
           )}
         </Box>
-        <Box>
-          <EmployeeProgressBar progressData={employeeProgressData} />
-        </Box>
-
-        <Explanation>
-          Invitez vos salariés en renseignant leurs adresses e-mail (certaines
-          adresses n’apparaissent pas dans la liste ci-dessous car les salariés
-          ont choisi de ne pas vous les communiquer), afin qu'ils puissent
-          enregistrer du temps de travail pour l'entreprise.
-        </Explanation>
+        <Stack direction="row" alignItems="center" spacing={2}>
+          {adminStore?.teams?.length > 0 && teams && (
+            <TeamFilter
+              teams={teams}
+              setTeams={setTeams}
+              orderByProperty="rankName"
+            />
+          )}
+          <Box sx={{ flexGrow: 1 }}>
+            <EmployeeProgressBar progressData={employeeProgressData} />
+          </Box>
+        </Stack>
 
         {areThereEmploymentsWithoutBusinessType && (
           <Notice
@@ -953,33 +1020,51 @@ export function Employees({ company, containerRef }) {
             renseigné. Veuillez en sélectionner un pour chaque salarié actif."
           />
         )}
-        <Grid container>
-          {adminStore?.teams?.length > 0 && (
-            <Grid item sm={2} flexGrow={1}>
-              {teams && (
-                <TeamFilter
-                  teams={teams}
-                  setTeams={setTeams}
-                  orderByProperty="rankName"
-                />
-              )}
-            </Grid>
-          )}
-        </Grid>
+        {shouldShowInactiveBanner && (
+          <Notice
+            type="warning"
+            onClose={handleDismissBanner}
+            description={
+              <>
+                {formatPersonName(inactiveEmployees[0])} et{" "}
+                {inactiveEmployees.length - 1} autres salariés n'ont pas
+                enregistré de temps de travail depuis 3 mois. Pensez à détacher
+                ces salariés s'ils ne font plus partie de votre entreprise, en
+                sélectionnant l'option "détacher", ou{" "}
+                <button
+                  type="button"
+                  onClick={handleOpenBatchTerminateModal}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    font: "inherit",
+                    color: "inherit",
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center"
+                  }}
+                >
+                  en cliquant ici&nbsp;→
+                </button>
+              </>
+            }
+          />
+        )}
         <AugmentedTable
           columns={validEmploymentColumns}
           entries={validEmployments}
-          virtualizedRowHeight={45}
+          virtualizedRowHeight={56}
           className={classes.augmentedTable}
           virtualizedMaxHeight={"100%"}
           ref={validEmploymentsTableRef}
           defaultSortBy="lastName"
-          alwaysSortBy={[["active", "desc"]]}
+          alwaysSortBy={[["isDetached", "asc"]]}
           virtualizedAttachScrollTo={containerRef.current}
           rowClassName={(row) =>
             !row.active ? classes.terminatedEmployment : ""
           }
-          customRowActions={customActionsValidEmployment}
           virtualized
         />
       </Stack>
