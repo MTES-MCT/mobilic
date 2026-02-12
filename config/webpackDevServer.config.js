@@ -13,12 +13,13 @@ module.exports = setup({
         { from: /./, to: "/index.html" }
       ]
     },
-    proxy: {
-      "/api": {
+    proxy: [
+      {
+        context: ["/api"],
         target: "http://localhost:5000",
         pathRewrite: { "^/api": "" }
       }
-    }
+    ]
   },
   context: __dirname,
   entry: paths.appPublic,
