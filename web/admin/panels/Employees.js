@@ -324,7 +324,7 @@ export function Employees({ company, containerRef }) {
       alwaysShowSortIcon: true,
       minWidth: 180,
       overflowTooltip: true,
-      format: (lastName, entry) => `${entry.firstName} ${lastName}`
+      format: (lastName, entry) => `${lastName} ${entry.firstName}`
     },
     {
       label: "",

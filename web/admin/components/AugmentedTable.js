@@ -63,7 +63,7 @@ const useStyles = makeStyles(theme => ({
   },
   row: {
     boxSizing: "border-box",
-    fontSize: ({ small }) => (small ? "0.75rem" : "inherit"),
+    fontSize: ({ small }) => (small ? "0.75rem" : "0.875rem"), // DSFR fr-text--sm
     "& > *": {
       borderBottom: "unset"
     },
