@@ -40,6 +40,10 @@ export function Footer({ withFollow = true }) {
             linkProps: { to: "security-accreditation" }
           },
           {
+            text: "Configuration requise",
+            linkProps: { to: "compatibility" }
+          },
+          {
             text: "CGU",
             linkProps: {
               to: CGU_EXTERNAL_URL,
