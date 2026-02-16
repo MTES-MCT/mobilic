@@ -97,6 +97,7 @@ server {
       rewrite ^/api//?(.*)$ /$1 break;
       # can reuse variable set above
       proxy_pass $upstream_endpoint_0;
+      proxy_http_version 1.1;
       proxy_ssl_server_name on;
 
       proxy_hide_header Cache-Control;
