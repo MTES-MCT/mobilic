@@ -14,6 +14,7 @@ import { Main } from "../common/semantics/Main";
 import { Container } from "@mui/material";
 import { LoginBanner } from "./components/LoginBanner";
 import { AdminSection } from "./sections/AdminSection";
+import { SoftwareSection } from "./sections/SoftwareSection";
 
 export const Landing = () => {
   usePageTitle("Accueil - Mobilic");
@@ -26,6 +27,7 @@ export const Landing = () => {
         <IntroSection />
         <VideoSection />
         <AdminSection />
+        <SoftwareSection />
         {process.env.REACT_APP_FETCH_WEBINARS && <WebinarListSection />}
         {/* <Container maxWidth="lg">
           <Stack direction="column" gap={8} sx={{ marginY: 4 }}>
