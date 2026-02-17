@@ -178,7 +178,6 @@ function CompatibilityContent() {
         </div>
       </section>
 
-      {/* Section 4: Appareils non supportés */}
       <Alert
         severity="warning"
         title="Appareils non supportés"

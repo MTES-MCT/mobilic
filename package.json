@@ -119,16 +119,10 @@
   "packageManager": "pnpm@10.24.0",
   "browserslist": {
     "production": [
-      "Chrome >= 80",
-      "ChromeAndroid >= 80",
-      "Firefox >= 78",
-      "Safari >= 14",
-      "iOS >= 14",
-      "Samsung >= 13",
-      "Edge >= 80",
-      ">0.5%",
+      ">0.2%",
       "not dead",
-      "not op_mini all"
+      "not op_mini all",
+      "not op_mob >=1"
     ],
     "development": [
       "last 1 chrome version",
