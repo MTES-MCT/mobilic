@@ -1,6 +1,6 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import { Card } from "@mui/material";
+import { Box, Card } from "@mui/material";
 import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
 
 export const VIDEOS = {
@@ -101,6 +101,23 @@ function getCdnUrl(id) {
   return `https://player.vimeo.com/video/${id}?badge=0&amp;autopause=0&amp;quality_selector=1&amp;progress_bar=1&amp;player_id=0&amp;app_id=58479`;
 }
 
+export const VideoFrame = ({ id, title }) => (
+  <Box position="relative" width="100%" sx={{ aspectRatio: "1/1" }}>
+    <iframe
+      src={getCdnUrl(id)}
+      allow="autoplay; fullscreen; picture-in-picture"
+      style={{
+        position: "absolute",
+        top: "0",
+        left: "0",
+        width: "100%",
+        height: "100%",
+      }}
+      title={title}
+    ></iframe>
+  </Box>
+);
+
 export function VideoCard({ video, titleProps = {}, ...props }) {
   const classes = resourceCardsClasses();
 
@@ -114,20 +131,7 @@ export function VideoCard({ video, titleProps = {}, ...props }) {
       >
         {description}
       </Typography>
-      <div style={{ padding: "20rem 0 0 0", position: "relative" }}>
-        <iframe
-          src={getCdnUrl(id)}
-          allow="autoplay; fullscreen; picture-in-picture"
-          style={{
-            position: "absolute",
-            top: "0",
-            left: "0",
-            width: "100%",
-            height: "100%"
-          }}
-          title={title}
-        ></iframe>
-      </div>
+      <VideoFrame id={id} title={title} />
     </Card>
   );
 }
