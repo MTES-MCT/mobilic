@@ -1,6 +1,5 @@
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
 import React from "react";
+import Typography from "@mui/material/Typography";
 import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizontal.jpg";
 import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
@@ -8,15 +7,12 @@ import { useIsWidthDown } from "common/utils/useWidth";
 import classNames from "classnames";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Stack } from "@mui/material";
-import { LoginBanner } from "../components/LoginBanner";
+import { OuterContainer } from "../components/OuterContainer";
+import { InnerContainer } from "../components/InnerContainer";
 
 const useStyles = makeStyles((theme) => ({
   title: {
     color: fr.colors.decisions.background.flat.blueFrance.default,
-  },
-  heroContainer: {
-    padding: 0,
-    margin: 0,
   },
   explanation: {
     fontSize: "1.25rem",
@@ -68,27 +64,18 @@ const Title = () => {
   return (
     <Typography variant="h3" component="h2" className={classes.title}>
       La plateforme numérique gouvernementale du suivi de temps de travail dans
+      <br />
       le transport routier léger.
     </Typography>
   );
 };
 
 export function IntroSection() {
-  const classes = useStyles();
   const isXlDown = useIsWidthDown("xl");
 
   return (
-    <Container maxWidth={false} className={classes.heroContainer}>
-      <LoginBanner />
-      <Container
-        maxWidth={false}
-        sx={{
-          maxWidth: "1440px",
-          textAlign: "left",
-          marginY: isXlDown ? 5 : 10,
-          paddingX: isXlDown ? 3 : 0,
-        }}
-      >
+    <OuterContainer>
+      <InnerContainer>
         {isXlDown ? (
           <Stack
             direction="column"
@@ -107,14 +94,14 @@ export function IntroSection() {
             alignItems="center"
             columnGap={4}
           >
-            <Stack direction="column" maxWidth="594px" rowGap={3}>
+            <Stack direction="column" rowGap={3} flex={1}>
               <Title />
               <Explanation />
             </Stack>
             <PhoneImageComponent />
           </Stack>
         )}
-      </Container>
-    </Container>
+      </InnerContainer>
+    </OuterContainer>
   );
 }
