@@ -2,14 +2,13 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import React from "react";
 import BackgroundHorizontalImage from "common/assets/images/landing-hero-horizontal.jpg";
-import { Link } from "../../common/LinkButton";
 import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthDown } from "common/utils/useWidth";
 import classNames from "classnames";
-import Notice from "../../common/Notice";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Stack } from "@mui/material";
+import { LoginBanner } from "../components/LoginBanner";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -18,9 +17,6 @@ const useStyles = makeStyles((theme) => ({
   heroContainer: {
     padding: 0,
     margin: 0,
-  },
-  loginLink: {
-    whiteSpace: "nowrap",
   },
   explanation: {
     fontSize: "1.25rem",
@@ -83,14 +79,7 @@ export function IntroSection() {
 
   return (
     <Container maxWidth={false} className={classes.heroContainer}>
-      <Notice
-        size="small"
-        description={
-          <Link variant="login" to="/login-selection">
-            <span className={classes.loginLink}>Se connecter à mon espace</span>
-          </Link>
-        }
-      />
+      <LoginBanner />
       <Container
         maxWidth={false}
         sx={{
