@@ -71,7 +71,7 @@ export function AdminSection() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Découvrir l’API
+                Créer mon espace Mobilic
               </LinkButton>
             }
             className="blue"
