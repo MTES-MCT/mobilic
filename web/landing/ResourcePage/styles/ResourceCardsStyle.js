@@ -24,6 +24,8 @@ export const resourceCardsClasses = makeStyles(theme => ({
   pressCard: {
     height: "100%",
     marginRight: theme.spacing(2),
+    padding: theme.spacing(3),
+    paddingTop: theme.spacing(4),
   },
   pressImage: {
     maxHeight: 60,
@@ -36,10 +38,12 @@ export const resourceCardsClasses = makeStyles(theme => ({
     objectFit: "contain"
   },
   testimonialSentence: {
-    marginBottom: theme.spacing(4),
-    textAlign: "left"
+    marginBottom: theme.spacing(2),
+    textAlign: "left",
   },
   testimonialAuthor: {
-    textAlign: "left"
-  }
+    fontWeight: 500,
+    marginBottom: theme.spacing(0.5),
+    textAlign: "left",
+  },
 }));

@@ -1,6 +1,6 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import { Box, Card } from "@mui/material";
+import { Box, Card, Stack } from "@mui/material";
 import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
 
 export const VIDEOS = {
@@ -57,52 +57,41 @@ export const VIDEOS = {
   Testimony_Almy: {
     id: "873642814",
     title: "ludovic_almy",
-    description: "Ludovic Almy, responsable d'exploitation dans le déménagement"
+    author: "Ludovic Almy",
+    position: "Responsable d'exploitation dans le déménagement",
   },
   Testimony_Grenom: {
     id: "873642901",
     title: "raphael_grenom",
-    description:
-      "Raphaël Grenom, directeur d'une agence de livraison de marchandises"
+    author: "Raphaël Grenom",
+    position: "Directeur d'une agence de livraison de marchandises",
   },
   Testimony_Mace: {
     id: "873642970",
     title: "yoan_mace",
-    description: (
-      <span>
-        Yoann Macé,
-        <br />
-        gérant d'une entreprise de déménagement
-      </span>
-    )
+    author: "Yoann Macé",
+    position: "Gérant d'une entreprise de déménagement",
   },
   Testimony_Cohen: {
     id: "873642767",
     title: "jeremy_cohen_boulakia",
-    description:
-      "Jérémy Cohen Boulakia, directeur d'une entreprise de livraison de marchandises"
+    author: "Jérémy Cohen Boulakia",
+    position: "Directeur d'une entreprise de livraison de marchandises",
   },
   Testimony_Kbidi: {
     id: "873642861",
     title: "nicolas_kbidi",
-    description: (
-      <span>
-        Nicolas K'bidi,
-        <br />
-        déménageur
-        <br />
-        <br />
-      </span>
-    )
-  }
+    author: "Nicolas K'bidi",
+    position: "Déménageur",
+  },
 };
 
 function getCdnUrl(id) {
   return `https://player.vimeo.com/video/${id}?badge=0&amp;autopause=0&amp;quality_selector=1&amp;progress_bar=1&amp;player_id=0&amp;app_id=58479`;
 }
 
-export const VideoFrame = ({ id, title }) => (
-  <Box position="relative" width="100%" sx={{ aspectRatio: "1/1" }}>
+export const VideoFrame = ({ id, title, aspectRatio = "16/9" }) => (
+  <Box position="relative" width="100%" sx={{ aspectRatio }}>
     <iframe
       src={getCdnUrl(id)}
       allow="autoplay; fullscreen; picture-in-picture"
@@ -118,12 +107,19 @@ export const VideoFrame = ({ id, title }) => (
   </Box>
 );
 
-export function VideoCard({ video, titleProps = {}, ...props }) {
+export function VideoCard({
+  video,
+  aspectRatio = "16/9",
+  titleProps = {},
+  ...props
+}) {
   const classes = resourceCardsClasses();
 
-  const { id, title, description } = video;
+  const { id, title, description, author, position } = video;
   return (
     <Card variant="outlined" className={classes.card} {...props}>
+      <Stack direction="column" justifyContent="space-between" height="100%">
+        {description && (
       <Typography
         variant={"h5"}
         className={classes.description}
@@ -131,7 +127,17 @@ export function VideoCard({ video, titleProps = {}, ...props }) {
       >
         {description}
       </Typography>
-      <VideoFrame id={id} title={title} />
+        )}
+        <Box mb={2}>
+          {author && (
+            <Typography className={classes.testimonialAuthor}>
+              {author}
+            </Typography>
+          )}
+          {position && <Typography>{position}</Typography>}
+        </Box>
+        <VideoFrame id={id} title={title} aspectRatio={aspectRatio} />
+      </Stack>
     </Card>
   );
 }

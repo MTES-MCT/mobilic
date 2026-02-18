@@ -112,7 +112,8 @@ export function TalkingAboutUsSection() {
       imageComponent: AlexisDemenagementImage,
       sentence:
         "« Les temps de travail sont plus fiables. J'ai un meilleur recul sur les heures quotidiennes, ce qui me permet de mieux gérer le repos de mes salariés. »",
-      author: "Ludovic Almy, responsable exploitation chez Alexis +",
+      author: "Ludovic Almy",
+      position: "Responsable exploitation chez Alexis +",
     },
     {
       imageComponent: VirImage,
@@ -123,7 +124,8 @@ export function TalkingAboutUsSection() {
           <br />
         </span>
       ),
-      author: "Raphaël Grenom, directeur de l'agence VIR Dijon",
+      author: "Raphaël Grenom",
+      position: "Directeur de l'agence VIR Dijon",
     },
     {
       imageComponent: BretagneMaceDemenagementImage,
@@ -134,7 +136,8 @@ export function TalkingAboutUsSection() {
           <br />
         </span>
       ),
-      author: "Yoann Macé, gérant chez Bretagne Macé déménagement",
+      author: "Yoann Macé",
+      position: "Gérant chez Bretagne Macé déménagement",
     },
   ];
 
@@ -171,14 +174,17 @@ export function TalkingAboutUsSection() {
               Nos utilisateurs
             </Typography>
             <Carousel responsive={responsiveTestimonials}>
-              {TESTIMONIALS_TEXT.map((testimonial) => (
-                <TestimonialCard
-                  key={testimonial.author}
-                  ImageComponent={testimonial.imageComponent}
-                  sentence={testimonial.sentence}
-                  author={testimonial.author}
-                />
-              ))}
+              {TESTIMONIALS_TEXT.map(
+                ({ author, position, imageComponent, sentence }) => (
+                  <TestimonialCard
+                    key={author}
+                    ImageComponent={imageComponent}
+                    sentence={sentence}
+                    author={author}
+                    position={position}
+                  />
+                ),
+              )}
             </Carousel>
 
             <Carousel
@@ -191,6 +197,7 @@ export function TalkingAboutUsSection() {
                   video={video}
                   className={cardClasses.pressCard}
                   titleProps={{ component: "h4" }}
+                  aspectRatio="1/1"
                 />
               ))}
             </Carousel>

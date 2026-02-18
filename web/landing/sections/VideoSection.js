@@ -95,7 +95,7 @@ export function VideoSection() {
               Mobilic c’est quoi ?
             </Typography>
             <Box position="relative" maxWidth="356px" minHeight="310px">
-              <VideoFrame id={id} title={title} />
+              <VideoFrame id={id} title={title} aspectRatio="1/1" />
             </Box>
           </Stack>
         </Stack>
