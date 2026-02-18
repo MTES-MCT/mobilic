@@ -5,7 +5,7 @@ import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-import { Button } from "@codegouvfr/react-dsfr/Button";
+import { LinkButton } from "../../common/LinkButton";
 
 const useStyles = makeStyles((theme) => ({
   linkButton: {
@@ -42,8 +42,13 @@ export function SoftwareSection() {
               <li>Moins de gestion administrative pour vos clients</li>
             </ul>
           </Box>
-          <Button>Découvrir l’API</Button>
-          {/* https://developers.mobilic.beta.gouv.fr/ */}
+          <LinkButton
+            priority="primary"
+            size="medium"
+            to="https://developers.mobilic.beta.gouv.fr/"
+          >
+            Découvrir l’API
+          </LinkButton>
         </Stack>
       </InnerContainer>
     </OuterContainer>
