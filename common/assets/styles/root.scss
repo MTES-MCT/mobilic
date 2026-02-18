@@ -408,3 +408,12 @@ main {
 .ReactVirtualized__Table__row:has(.fr-tooltip) {
   overflow: visible !important;
 }
+
+@media (min-width: 90em) {
+  .fr-follow, .fr-footer {
+    .fr-container {
+      padding-left: 0;
+      padding-right: 0
+    }
+  }
+}
