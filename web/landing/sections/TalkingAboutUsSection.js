@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function TalkingAboutUsSection() {
+export function TalkingAboutUsSection({ grayBackground }) {
   const responsivePressArticles = {
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
@@ -163,7 +163,7 @@ export function TalkingAboutUsSection() {
   const cardClasses = resourceCardsClasses();
 
   return (
-    <OuterContainer grayBackground>
+    <OuterContainer grayBackground={grayBackground}>
       <InnerContainer>
         <Stack direction="column" rowGap={4}>
           <Typography variant={"h3"} component="h2">

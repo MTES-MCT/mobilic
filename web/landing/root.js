@@ -24,7 +24,9 @@ export const Landing = () => {
         <AdminSection />
         <SoftwareSection />
         {process.env.REACT_APP_FETCH_WEBINARS && <WebinarListSection />}
-        <TalkingAboutUsSection />
+        <TalkingAboutUsSection
+          grayBackground={process.env.REACT_APP_FETCH_WEBINARS}
+        />
       </Main>
       <Footer />
     </>
