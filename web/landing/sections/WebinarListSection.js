@@ -16,7 +16,7 @@ export function WebinarListSection() {
   return (
     <OuterContainer>
       <InnerContainer>
-        <Stack direction="column" rowGap={2}>
+        <Stack direction="column" rowGap={1}>
           <Typography variant="h3" component="h2">
             Découvrez Mobilic lors d’un webinaire
           </Typography>
