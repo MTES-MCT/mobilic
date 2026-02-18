@@ -479,7 +479,7 @@ module.exports = function(webpackEnv) {
             {
               inject: true,
               filename: "api-playground.html",
-              chunks: ["playground"].filter(Boolean),
+              excludeChunks: ["main"],
               template: paths.playgroundHtml
             },
             isEnvProduction
