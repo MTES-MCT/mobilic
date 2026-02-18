@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
   linkButton: {
     textDecoration: "underline",
     textUnderlineOffset: "6px",
+    padding: 0,
   },
 }));
 
@@ -34,39 +35,44 @@ export function VideoSection() {
         <Stack
           direction={{ xs: "column", lg: "row" }}
           gap={2}
+          rowGap={4}
           justifyContent="space-between"
         >
-          <Stack direction="column" maxWidth="750px" rowGap={2}>
+          <Stack direction="column" maxWidth="750px">
             <Title />
-            <Typography>
-              Aux entreprises dont les salariés (conducteurs et accompagnants)
-              utilisent des <b>véhicules utilitaires légers</b> (-3,5t ou -9
-              places) dans le cadre de transport routier de marchandises
-              (dernier kilomètre, déménagement, ...) ou de voyageurs (taxi, VTC,
-              LOTI), conformément aux articles{" "}
-              <ExternalLink
-                text="R.3312-19"
-                url="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043651220"
-              />{" "}
-              et{" "}
-              <ExternalLink
-                text="R.3312-58"
-                url="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043651176"
-              />{" "}
-              du code des transports.
-            </Typography>
-            <Typography color="#7B7B7B" fontSize="0.875rem">
-              Sont exclues les opérations de transport international ou de
-              cabotage de marchandises effectuées par des véhicules de plus de
-              2,5 tonnes.
-            </Typography>
-            <Typography>
-              <b>Mettre en place Mobilic c’est :</b>
-              <ul>
-                <li>Moins de gestion administrative</li>
-                <li>Une mise en conformité réglementaire</li>
-              </ul>
-            </Typography>
+            <Stack direction="column" rowGap={2} mt={2}>
+              <Typography>
+                Aux entreprises dont les salariés (conducteurs et accompagnants)
+                utilisent des <b>véhicules utilitaires légers</b> (-3,5t ou -9
+                places) dans le cadre de transport routier de marchandises
+                (dernier kilomètre, déménagement, ...) ou de voyageurs (taxi,
+                VTC, LOTI), conformément aux articles{" "}
+                <ExternalLink
+                  text="R.3312-19"
+                  url="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043651220"
+                />{" "}
+                et{" "}
+                <ExternalLink
+                  text="R.3312-58"
+                  url="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043651176"
+                />{" "}
+                du code des transports.
+              </Typography>
+              <Typography color="#7B7B7B" fontSize="0.875rem">
+                Sont exclues les opérations de transport international ou de
+                cabotage de marchandises effectuées par des véhicules de plus de
+                2,5 tonnes.
+              </Typography>
+              <Typography>
+                <span style={{ fontWeight: 500 }}>
+                  Mettre en place Mobilic c’est :
+                </span>
+                <ul>
+                  <li>Moins de gestion administrative</li>
+                  <li>Une mise en conformité réglementaire</li>
+                </ul>
+              </Typography>
+            </Stack>
             <LinkButton
               to="/#webinaires"
               priority="tertiary-no-outline"
