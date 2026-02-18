@@ -9,7 +9,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const OuterContainer = ({ grayBackground = false, children }) => {
+export const OuterContainer = ({
+  grayBackground = false,
+  children,
+  ...otherProps
+}) => {
   const classes = useStyles();
   return (
     <Container
@@ -18,6 +22,7 @@ export const OuterContainer = ({ grayBackground = false, children }) => {
       sx={{
         backgroundColor: grayBackground ? "#F6F6F6" : "inherit",
       }}
+      {...otherProps}
     >
       {children}
     </Container>

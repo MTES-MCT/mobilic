@@ -13,7 +13,6 @@ import { SoftwareSection } from "./sections/SoftwareSection";
 
 export const Landing = () => {
   usePageTitle("Accueil - Mobilic");
-
   return (
     <>
       <Header />

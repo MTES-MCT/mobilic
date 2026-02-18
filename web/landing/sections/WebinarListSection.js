@@ -14,7 +14,7 @@ export function WebinarListSection() {
   if (cantDisplayWebinarsBecauseNoneOrError) return null;
 
   return (
-    <OuterContainer>
+    <OuterContainer id="webinaires">
       <InnerContainer>
         <Stack direction="column" rowGap={2}>
           <Typography variant="h3" component="h2">
