@@ -187,10 +187,7 @@ export function TalkingAboutUsSection({ grayBackground }) {
               )}
             </Carousel>
 
-            <Carousel
-              responsive={responsivePressArticles}
-              className={classes.pressArticles}
-            >
+            <Carousel responsive={responsivePressArticles}>
               {TESTIMONIALS_VIDEOS.map(({ video }) => (
                 <VideoCard
                   key={video.id}
