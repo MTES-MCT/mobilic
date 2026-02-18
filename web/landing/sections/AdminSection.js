@@ -6,6 +6,10 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { Card } from "@codegouvfr/react-dsfr/Card";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import AdminSvg from "common/assets/images/landing/self-training.svg";
+import SoftwareSvg from "common/assets/images/landing/flow-settings.svg";
+import { Box } from "@mui/material";
+import { LinkButton } from "../../common/LinkButton";
 
 const useStyles = makeStyles((theme) => ({
   linkButton: {
@@ -16,6 +20,12 @@ const useStyles = makeStyles((theme) => ({
     color: "#3965EA",
   },
 }));
+
+const ImageContainer = (url) => (
+  <Box height="156px">
+    <img src={url} style={{ margin: "auto" }} />
+  </Box>
+);
 
 export function AdminSection() {
   const classes = useStyles();
@@ -48,17 +58,24 @@ export function AdminSection() {
                 </li>
               </ul>
             }
-            // desc="Lorem ipsum dolor sit amet, consectetur adipiscing, incididunt, ut labore et dolore magna aliqua. Vitae sapien pellentesque habitant morbi tristique senectus et"
-            enlargeLink
-            imageAlt="texte alternatif de l’image"
-            imageUrl="https://www.systeme-de-design.gouv.fr/v1.14/storybook/img/placeholder.16x9.png"
-            linkProps={{
-              href: "#",
-            }}
+            imageAlt="J’utilise Mobilic directement"
+            imageComponent={ImageContainer(AdminSvg)}
             size="medium"
             title="J’utilise Mobilic directement"
             titleAs="h3"
-            footer={<Button>Créer mon espace Mobilic</Button>}
+            footer={
+              <LinkButton
+                priority="primary"
+                size="medium"
+                to="https://mobilic.beta.gouv.fr/signup/role_selection"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Découvrir l’API
+              </LinkButton>
+            }
+            className="blue"
+            style={{ maxWidth: "565px" }}
           />
           <Typography
             color="#161616"
@@ -70,7 +87,6 @@ export function AdminSection() {
           </Typography>
           <Card
             background
-            border
             desc={
               <ul>
                 <li>Je crée mon compte Mobilic</li>
@@ -81,16 +97,24 @@ export function AdminSection() {
                 </li>
               </ul>
             }
-            enlargeLink
-            imageAlt="texte alternatif de l’image"
-            imageUrl="https://www.systeme-de-design.gouv.fr/v1.14/storybook/img/placeholder.16x9.png"
-            linkProps={{
-              href: "#",
-            }}
+            imageAlt="J’utilise un logiciel métier interconnecté"
+            imageComponent={ImageContainer(SoftwareSvg)}
+            footer={
+              <LinkButton
+                priority="primary"
+                size="medium"
+                to="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic-gestionnaire/substituer-mobilic-avec-un-logiciel-metier-interconnexion"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Me renseigner
+              </LinkButton>
+            }
             size="medium"
             title="J’utilise un logiciel métier interconnecté"
             titleAs="h3"
-            footer={<Button>Me renseigner</Button>}
+            className="green"
+            style={{ maxWidth: "565px" }}
           />
         </Stack>
       </InnerContainer>
