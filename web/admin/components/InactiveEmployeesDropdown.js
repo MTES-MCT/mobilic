@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import { makeStyles } from "@mui/styles";
 import { formatPersonName } from "common/utils/coworkers";
@@ -103,11 +103,26 @@ function getInactiveEmployeesToday(employments, workDays) {
 
 export function InactiveEmployeesDropdown({ employments, workDays }) {
   const classes = useStyles();
+  const [inactiveEmployees, setInactiveEmployees] = useState([]);
+  const hasComputed = useRef(false);
 
-  const inactiveEmployees = useMemo(
-    () => getInactiveEmployeesToday(employments, workDays),
-    [employments, workDays]
-  );
+  // Reset computation flag when data changes
+  const employmentsRef = useRef(employments);
+  const workDaysRef = useRef(workDays);
+  if (employmentsRef.current !== employments || workDaysRef.current !== workDays) {
+    hasComputed.current = false;
+    employmentsRef.current = employments;
+    workDaysRef.current = workDays;
+  }
+
+  const handleOpen = useCallback(() => {
+    // Only compute inactive employees when dropdown is opened
+    if (!hasComputed.current) {
+      const computed = getInactiveEmployeesToday(employments, workDays);
+      setInactiveEmployees(computed);
+      hasComputed.current = true;
+    }
+  }, [employments, workDays]);
 
   const renderEmployeeItem = (employee, index, { onClick }) => (
     <MenuItem
@@ -135,6 +150,7 @@ export function InactiveEmployeesDropdown({ employments, workDays }) {
       maxHeight={220}
       emptyMessage="Tous vos salariés ont utilisé Mobilic"
       renderItem={renderEmployeeItem}
+      onOpen={handleOpen}
     />
   );
 }

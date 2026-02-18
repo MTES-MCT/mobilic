@@ -141,7 +141,8 @@ export function DropdownMenu({
   maxHeight,
   emptyMessage,
   onItemClick,
-  renderItem
+  renderItem,
+  onOpen
 }) {
   const classes = useStyles({ size, disabled, menuWidth, maxHeight });
   const [anchorEl, setAnchorEl] = useState(null);
@@ -151,9 +152,12 @@ export function DropdownMenu({
     event => {
       if (!disabled) {
         setAnchorEl(event.currentTarget);
+        if (onOpen) {
+          onOpen();
+        }
       }
     },
-    [disabled]
+    [disabled, onOpen]
   );
 
   const handleClose = useCallback(() => {
