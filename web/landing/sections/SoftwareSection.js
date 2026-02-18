@@ -46,6 +46,8 @@ export function SoftwareSection() {
             priority="primary"
             size="medium"
             to="https://developers.mobilic.beta.gouv.fr/"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Découvrir l’API
           </LinkButton>
