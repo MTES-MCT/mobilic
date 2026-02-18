@@ -50,7 +50,7 @@ export function isAuthenticationError(error) {
 }
 
 export function isRetryable(error) {
-  return isConnectionError(error) || isAuthenticationError(error);
+  return isConnectionError(error);
 }
 
 export function formatNameInGqlError(
