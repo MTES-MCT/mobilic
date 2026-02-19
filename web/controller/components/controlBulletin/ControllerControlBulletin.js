@@ -191,7 +191,9 @@ export function ControllerControlBulletin({
             licenseNumber: newControlBulletin.licenseNumber,
             licenseCopyNumber: newControlBulletin.licenseCopyNumber,
             observation: newControlBulletin.observation,
-            isVehicleImmobilized: newControlBulletin.isVehicleImmobilized
+            isVehicleImmobilized: newControlBulletin.isVehicleImmobilized,
+            vehicleWeight: newControlBulletin.vehicleWeight,
+            realVehicleWeight: newControlBulletin.realVehicleWeight
           },
           { context: { nonPublicApi: true } }
         );

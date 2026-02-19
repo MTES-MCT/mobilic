@@ -3,7 +3,10 @@ import React from "react";
 import Stack from "@mui/material/Stack";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { COUNTRIES } from "../../utils/country";
-import { CONTROL_BULLETIN_TRANSPORT_TYPE } from "../../utils/controlBulletin";
+import { 
+  CONTROL_BULLETIN_TRANSPORT_TYPE,
+  CONTROL_BULLETIN_VEHICLE_WEIGHT
+} from "../../utils/controlBulletin";
 import { Input } from "../../../common/forms/Input";
 import { Select } from "../../../common/forms/Select";
 import { RadioButtons } from "../../../common/forms/RadioButtons";
@@ -163,6 +166,41 @@ export function ControlBulletinFormStep2({
         }}
         label="N° de copie conforme de la licence"
       />
+      <Select
+        label="Poids du véhicule"
+        nativeSelectProps={{
+          onChange: e => handleEditControlBulletin(e),
+          value: controlBulletin.vehicleWeight || "",
+          name: "vehicleWeight"
+        }}
+        state={
+          !controlBulletin.vehicleWeight && showErrors
+            ? "error"
+            : "default"
+        }
+      >
+        {
+          CONTROL_BULLETIN_VEHICLE_WEIGHT.map(option => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))
+        }
+      </Select>
+      {
+        controlBulletin.vehicleWeight === 'Poids réel constaté' && (
+          <Input
+            nativeInputProps={{
+              value: controlBulletin.realVehicleWeight || "",
+              name: "realVehicleWeight",
+              onChange: e => handleEditControlBulletin(e),
+              type: "number",
+              inputMode: "numeric"
+            }}
+            label="Poids réel constaté (en tonnes)"
+          />
+        )
+      }
       <Checkbox
         legend=""
         options={[
