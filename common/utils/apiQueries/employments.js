@@ -218,6 +218,7 @@ export const GET_EMPLOYMENT_QUERY = gql`
       id
       startDate
       hasAdminRights
+      email
       company {
         id
         name
