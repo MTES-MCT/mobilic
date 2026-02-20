@@ -79,9 +79,8 @@ function getInactiveEmployeesToday(employments, workDays) {
 
   const results = [];
   
-  // Single pass through employments with early returns
   for (const emp of employments) {
-    // Quick rejections first (cheapest checks)
+    // Quick rejections
     if (!emp?.user?.id) continue;
     if (activeUserIdsToday.has(emp.user.id)) continue;
     if (emp.validationStatus !== "approved") continue;
@@ -101,7 +100,7 @@ function getInactiveEmployeesToday(employments, workDays) {
     });
   }
 
-  // Sort by lastActiveAt descending (most recent first)
+  // Sort by lastActiveAt descending
   results.sort((a, b) => {
     if (!a.lastActiveAt && !b.lastActiveAt) return 0;
     if (!a.lastActiveAt) return 1;
@@ -117,11 +116,9 @@ export function InactiveEmployeesDropdown({ employments, workDays }) {
   const [isOpen, setIsOpen] = useState(false);
 
   // Only compute inactive employees when dropdown is opened to avoid expensive
-  // calculations on every render (can be 10k+ operations for large companies)
-  // We use a lazy initialization pattern: compute only when isOpen becomes true
+  // calculations on every render
   const inactiveEmployees = useMemo(() => {
     if (!isOpen) {
-      // Return empty array without any computation when closed
       return [];
     }
     return getInactiveEmployeesToday(employments, workDays);
