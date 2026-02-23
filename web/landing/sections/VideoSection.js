@@ -25,6 +25,14 @@ const Title = () => {
   );
 };
 
+const ListItemIcon = () => (
+  <i
+    className="fr-icon-check-line"
+    aria-hidden="true"
+    style={{ marginRight: "8px", color: "#000091" }}
+  />
+);
+
 export function VideoSection() {
   const classes = useStyles();
 
@@ -67,9 +75,15 @@ export function VideoSection() {
                 <span style={{ fontWeight: 500 }}>
                   Mettre en place Mobilic c’est :
                 </span>
-                <ul>
-                  <li>Moins de gestion administrative</li>
-                  <li>Une mise en conformité réglementaire</li>
+                <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+                  <li>
+                    <ListItemIcon />
+                    Moins de gestion administrative
+                  </li>
+                  <li>
+                    <ListItemIcon />
+                    Une mise en conformité réglementaire
+                  </li>
                 </ul>
               </Typography>
             </Stack>
