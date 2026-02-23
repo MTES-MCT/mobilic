@@ -1,11 +1,33 @@
+html {
+  height: 100%;
+}
+
 body {
   margin: 0;
   overflow: hidden;
-}
-#root {
   height: 100vh;
 }
 
+#playground-root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .graphiql-container {
-  height: calc(100vh - 50px) !important;
+  height: 100% !important;
+}
+
+/* Force Monaco editor to display */
+.graphiql-session {
+  height: 100%;
+}
+
+.graphiql-editors {
+  height: 100%;
+}
+
+.graphiql-query-editor,
+.graphiql-response {
+  height: 100%;
 }
