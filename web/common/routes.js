@@ -375,14 +375,7 @@ export const ROUTES = [
     label: "Vérification d'intégrité",
     accessible: () => true,
     component: <XlsxVerifier />,
-    menuItemFilter: () => false
-  },
-  {
-    path: "/accueil-gestionnaire",
-    label: "Accueil gestionnaire",
-    accessible: () => true,
-    component: <LandingGestionnaire />,
-    menuItemFilter: () => false
+    menuItemFilter: () => false,
   },
   {
     path: "/certificate",
