@@ -30,7 +30,7 @@ export const ExportsBanner = () => {
     >
       <Stack direction="row" columnGap={1} alignItems="center">
         <CircularProgress color="inherit" size="1rem" />
-        <div>{`${nbExports} export d’activité en cours de préparation...`}</div>
+        <div>{`${nbExports} export${nbExports > 1 ? 's' : ''} d'activité en cours de préparation... Vous pouvez quitter la page pendant la préparation de${nbExports > 1 ? 's' : ''} l'export${nbExports > 1 ? 's' : ''}.`}</div>
       </Stack>
       <Button
         priority="tertiary no outline"
