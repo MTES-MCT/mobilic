@@ -106,7 +106,7 @@ function CompatibilityContent() {
                 </li>
                 <li>
                   Pour installer Mobilic sur iOS, ouvrez le site dans Safari et
-                  utilisez « Ajouter à l'écran d'accueil »
+                  sélectionnez « Ajouter à l'écran d'accueil »
                 </li>
               </ul>
             </PlatformCard>
