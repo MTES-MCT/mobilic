@@ -218,6 +218,8 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
         return "Le lien a expiré. Contactez votre éditeur de logiciel afin de recevoir un nouveau mail de connexion.";
       case "EMPLOYMENT_CLIENT_LINK_NOT_FOUND":
         return "Paramètres invalides. Veuillez suivre le lien d'activation inclus dans le mail reçu. Si le problème persiste, contactez votre éditeur de logiciel.";
+      case "AGENT_CONNECT_IDP_NOT_ALLOWED_ERROR":
+        return "Connexion impossible : vous n'avez pas les autorisations nécessaires.";
       case "AGENT_CONNECT_ORGANIZATIONAL_UNIT_NOT_FOUND_ERROR":
         return {
           message: `Vous n'êtes pas autorisé(e) à créer un compte Mobilic contrôleur. Si vous faites partie de l’inspection du travail, veuillez suivre la procédure décrite dans la notice d’utilisation disponible sur :`,
