@@ -3,6 +3,14 @@ map $http_cache_control $cache_control {
     default   $http_cache_control;
 }
 
+# Strip Ubika WAF tracking cookie to prevent 508 loop detection on /api/* double-hop proxy.
+# Case-insensitive (~*) for HTTP/2 header lowercasing.
+map $http_cookie $cookies_no_ubika {
+    default $http_cookie;
+    "~*(?<b>.+);\s*x-ubika-data=[^;]+(?<rest>;\s*(?<a>.+))?" "$b$rest";
+    "~*^x-ubika-data=[^;]+(?:;\s*(?<a2>.+))?" "$a2";
+}
+
 server {
     server_name localhost;
     listen <%= ENV['PORT'] %>;
@@ -97,10 +105,12 @@ server {
       rewrite ^/api//?(.*)$ /$1 break;
       # can reuse variable set above
       proxy_pass $upstream_endpoint_0;
+      proxy_http_version 1.1;
       proxy_ssl_server_name on;
 
       proxy_hide_header Cache-Control;
-      proxy_set_header X-Ogo-Shield "";
+      proxy_set_header Cookie $cookies_no_ubika;
+      proxy_set_header x-ubika-data "";
 
       proxy_redirect $upstream_endpoint_0 /api/;
     }

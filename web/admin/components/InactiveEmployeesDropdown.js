@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import { makeStyles } from "@mui/styles";
 import { formatPersonName } from "common/utils/coworkers";
@@ -68,46 +68,61 @@ function getInactiveEmployeesToday(employments, workDays) {
   const now = Date.now();
   const today = isoFormatLocalDate(new Date());
 
-  const activeUserIdsToday = new Set(
-    (workDays || [])
-      .filter(wd => wd.day === today && wd.user?.id)
-      .map(wd => wd.user.id)
-  );
+  const activeUserIdsToday = new Set();
+  if (workDays) {
+    for (const wd of workDays) {
+      if (wd.day === today && wd.user?.id) {
+        activeUserIdsToday.add(wd.user.id);
+      }
+    }
+  }
 
-  return employments
-    .filter(emp => {
-      if (!emp?.user?.id) return false;
-      if (emp.endDate && emp.endDate < today) return false;
-      if (emp.validationStatus !== "approved") return false;
-      if (!emp.lastActiveAt) return false;
-      if (activeUserIdsToday.has(emp.user.id)) return false;
+  const results = [];
+  
+  for (const emp of employments) {
+    // Quick rejections
+    if (!emp?.user?.id) continue;
+    if (activeUserIdsToday.has(emp.user.id)) continue;
+    if (emp.validationStatus !== "approved") continue;
+    if (!emp.lastActiveAt) continue;
+    
+    // More expensive checks
+    if (emp.endDate && emp.endDate < today) continue;
+    
+    const lastActiveTimestampMs = unixToJSTimestamp(emp.lastActiveAt);
+    if (now - lastActiveTimestampMs > THRESHOLD_30_DAYS * 1000) continue;
 
-      const lastActiveTimestampMs = unixToJSTimestamp(emp.lastActiveAt);
-      if (now - lastActiveTimestampMs > THRESHOLD_30_DAYS * 1000) return false;
-
-      return true;
-    })
-    .map(emp => ({
+    results.push({
       id: emp.user.id,
       firstName: emp.user.firstName,
       lastName: emp.user.lastName,
       lastActiveAt: emp.lastActiveAt
-    }))
-    .sort((a, b) => {
-      if (!a.lastActiveAt && !b.lastActiveAt) return 0;
-      if (!a.lastActiveAt) return 1;
-      if (!b.lastActiveAt) return -1;
-      return b.lastActiveAt - a.lastActiveAt;
     });
+  }
+
+  // Sort by lastActiveAt descending
+  results.sort((a, b) => {
+    if (!a.lastActiveAt && !b.lastActiveAt) return 0;
+    if (!a.lastActiveAt) return 1;
+    if (!b.lastActiveAt) return -1;
+    return b.lastActiveAt - a.lastActiveAt;
+  });
+
+  return results;
 }
 
 export function InactiveEmployeesDropdown({ employments, workDays }) {
   const classes = useStyles();
+  const [isOpen, setIsOpen] = useState(false);
 
-  const inactiveEmployees = useMemo(
-    () => getInactiveEmployeesToday(employments, workDays),
-    [employments, workDays]
-  );
+  // Only compute inactive employees when dropdown is opened to avoid expensive
+  // calculations on every render
+  const inactiveEmployees = useMemo(() => {
+    if (!isOpen) {
+      return [];
+    }
+    return getInactiveEmployeesToday(employments, workDays);
+  }, [isOpen, employments, workDays]);
 
   const renderEmployeeItem = (employee, index, { onClick }) => (
     <MenuItem
@@ -135,6 +150,7 @@ export function InactiveEmployeesDropdown({ employments, workDays }) {
       maxHeight={220}
       emptyMessage="Tous vos salariés ont utilisé Mobilic"
       renderItem={renderEmployeeItem}
+      onOpenChange={setIsOpen}
     />
   );
 }
