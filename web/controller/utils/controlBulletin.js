@@ -4,6 +4,13 @@ export const CONTROL_BULLETIN_TRANSPORT_TYPE = {
   CABOTAGE: { label: "Cabotage", apiValue: "cabotage" }
 };
 
+export const CONTROL_BULLETIN_VEHICLE_WEIGHT = {
+  PV: "PV",
+  PTAC: "PTAC",
+  REAL: "Poids réel constaté",
+}
+
+
 export const canDownloadBDC = controlData => {
   return (
     !!controlData?.controlBulletin?.locationDepartment &&
