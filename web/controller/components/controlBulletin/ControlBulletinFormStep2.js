@@ -5,7 +5,7 @@ import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { COUNTRIES } from "../../utils/country";
 import { 
   CONTROL_BULLETIN_TRANSPORT_TYPE,
-  CONTROL_BULLETIN_VEHICLE_WEIGHT
+  CONTROL_BULLETIN_VEHICLE_WEIGHT,
 } from "../../utils/controlBulletin";
 import { Input } from "../../../common/forms/Input";
 import { Select } from "../../../common/forms/Select";
@@ -180,15 +180,17 @@ export function ControlBulletinFormStep2({
         }
       >
         {
-          CONTROL_BULLETIN_VEHICLE_WEIGHT.map(option => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))
+          Object.values(CONTROL_BULLETIN_VEHICLE_WEIGHT).map(
+            (value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            )
+          )
         }
       </Select>
       {
-        controlBulletin.vehicleWeight === 'Poids réel constaté' && (
+        controlBulletin.vehicleWeight === CONTROL_BULLETIN_VEHICLE_WEIGHT.REAL && (
           <Input
             nativeInputProps={{
               value: controlBulletin.realVehicleWeight || "",
