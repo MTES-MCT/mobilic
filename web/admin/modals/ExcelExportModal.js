@@ -20,6 +20,9 @@ import { EmployeeFilter } from "../components/EmployeeFilter";
 import Notice from "../../common/Notice";
 import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 import { useExportsContext } from "../utils/contextExports";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import { validateExportParams } from "common/utils/exportValidation";
 
 export const syncUsers = (setUsers, newUsers) => {
   setUsers((currentUsers) => [
@@ -53,6 +56,8 @@ export default function ExcelExportModal({
   const [teams, setTeams] = React.useState(initialTeams);
 
   const [isEnabledDownload, setIsEnabledDownload] = React.useState(true);
+  const [consolidatedFile, setConsolidatedFile] = React.useState(true);
+  const [exportValidation, setExportValidation] = React.useState(null);
 
   React.useEffect(() => {
     const load = async () => {
@@ -87,6 +92,24 @@ export default function ExcelExportModal({
     setUsers(usersToSelect);
     setTeams(newTeams);
   };
+
+  React.useEffect(() => {
+    if (!selectedCompany || !minDate || !maxDate) {
+      setExportValidation(null);
+      return;
+    }
+
+    const selectedUsers = users.filter((u) => u.selected);
+    const numUsers = selectedUsers.length === 0 ? users.length : selectedUsers.length;
+
+    const validation = validateExportParams({
+      numUsers: numUsers,
+      minDate: minDate,
+      maxDate: maxDate
+    });
+    
+    setExportValidation(validation);
+  }, [minDate, maxDate, users, selectedCompany, consolidatedFile]);
 
   const classes = modalStyles();
 
@@ -213,6 +236,28 @@ export default function ExcelExportModal({
               </Grid>
             </DateOrDateTimeRangeSelectionContext>
           </Grid>
+
+          {exportValidation?.message && (
+            <Notice
+              type="info"
+              description={exportValidation.message}
+              className={classes.subtitle}
+            />
+          )}
+          
+          {exportValidation?.canChooseConsolidated && (
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={consolidatedFile}
+                  onChange={(e) => setConsolidatedFile(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label="Télécharger un fichier unique avec les données de l'ensemble de mes salariés"
+              className={classes.subtitle}
+            />
+          )}
         </>
       }
       actions={
@@ -224,7 +269,7 @@ export default function ExcelExportModal({
                 let selectedUsers = users.filter((u) => u.selected);
                 const options = {
                   company_ids: [selectedCompany.id],
-                  one_file_by_employee: true
+                  one_file_by_employee: !consolidatedFile
                 };
                 if (selectedUsers.length > 0)
                   options["user_ids"] = selectedUsers.map((u) => u.id);
