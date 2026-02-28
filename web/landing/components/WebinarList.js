@@ -34,13 +34,14 @@ const useStyles = makeStyles(theme => ({
   webinarDateMonth: {
     fontWeight: 500,
     fontSize: "0.625rem",
-    textTransform: "uppercase"
+    textTransform: "uppercase",
+    lineHeight: 1,
   },
   webinarDate: {
     fontSize: "2rem",
     lineHeight: 1,
     fontWeight: "bold",
-    color: theme.palette.primary.main
+    color: fr.colors.decisions.background.flat.blueFrance.default,
   },
   webinarTime: {
     fontWeight: "bold"
@@ -83,9 +84,15 @@ export const WebinarList = ({ setCantDisplayWebinarsBecauseNoneOrError }) => {
                       direction={{ xs: "column", md: "row" }}
                       justifyContent="space-between"
                       alignItems={{ xs: "flex-start", md: "center" }}
+                      columnGap={2}
+                      rowGap={2}
                     >
-                      <Stack direction="row" alignItems="center" columnGap={2}>
-                        <Stack direction="column" alignItems="center">
+                      <Stack direction="row" alignItems="center" columnGap={3}>
+                        <Stack
+                          direction="column"
+                          alignItems="center"
+                          minWidth="50px"
+                        >
                           <Typography className={classes.webinarDateDay}>
                             {SHORT_DAYS[webinarDate.getDay()]}
                           </Typography>
@@ -97,14 +104,22 @@ export const WebinarList = ({ setCantDisplayWebinarsBecauseNoneOrError }) => {
                             {webinarDate.getFullYear()}
                           </Typography>
                         </Stack>
+                        <Stack
+                          direction={{ xs: "column", md: "row" }}
+                          columnGap={2}
+                        >
                         <Typography className={classes.webinarTime}>
                           {formatTimeOfDay(webinar.time)}
                         </Typography>
+                          <Typography
+                            className={classes.webinarTitle}
+                            flexGrow={1}
+                          >
+                            {webinar.title}
+                          </Typography>
+                        </Stack>
                       </Stack>
-                      <Typography className={classes.webinarTitle}>
-                        {webinar.title}
-                      </Typography>
-                      <Button priority="tertiary no outline" size="small">
+                      <Button priority="secondary" size="medium">
                         M'inscrire
                       </Button>
                     </Stack>

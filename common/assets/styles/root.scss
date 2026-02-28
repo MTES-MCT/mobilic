@@ -4,6 +4,7 @@
 @use 'Accordion.scss';
 @use 'Certificate.scss';
 @use 'Charts.scss';
+@use 'Card.scss';
 
 
 .flex-column {
@@ -153,7 +154,6 @@
 }
 
 .fade-in-image {
-  padding: 0;
   position: relative;
   animation: fadeIn 3s;
   -webkit-animation: fadeIn 3s;
@@ -408,4 +408,13 @@ main {
 
 .ReactVirtualized__Table__row:has(.fr-tooltip) {
   overflow: visible !important;
+}
+
+@media (min-width: 90em) {
+  .fr-follow, .fr-footer {
+    .fr-container {
+      padding-left: 0;
+      padding-right: 0
+    }
+  }
 }
