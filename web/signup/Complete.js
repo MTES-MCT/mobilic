@@ -45,7 +45,8 @@ export function Complete({ type }) {
   const location = useLocation();
 
   const companiesName = location.state ? location.state.companiesName : null;
-
+  const userHasActivatedEmail = store.userInfo().hasActivatedEmail ?? false;
+  
   return (
     <Container className={`centered ${classes.container}`} maxWidth="md">
       <Stack rowGap={2}>
@@ -54,14 +55,22 @@ export function Complete({ type }) {
         </Typography>
         {type === "user" ? (
           <Typography>
-            L'inscription s'est terminée avec succès ! Un email de vérification
-            de votre compte vous a été envoyé à l'adresse{" "}
-            <strong>{store.userInfo().email}</strong>.
+            L'inscription s'est terminée avec succès ! 
+            { 
+              !userHasActivatedEmail && (
+                <>
+                  {" "}
+                  Un email de vérification
+                  de votre compte vous a été envoyé à l'adresse{" "}
+                  <strong>{store.userInfo().email}</strong>
+                </>
+              )
+            }
           </Typography>
         ) : (
           <Typography>{getCompaniesText(companiesName)}</Typography>
         )}
-        {type === "user" && <AlertEmailDelay />}
+        {type === "user" && !userHasActivatedEmail && <AlertEmailDelay />}
         <Typography fontWeight="700" fontSize="1.25rem" mt={2}>
           Offrez-vous une formation gratuite de 45 minutes !
         </Typography>
