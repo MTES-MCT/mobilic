@@ -44,6 +44,9 @@ export const checkRequiredFieldStep1 = newControlBulletin => {
 };
 
 export const checkRequiredFieldStep2 = newControlBulletin => {
+  const isRealVehicleWeightRequired =
+    newControlBulletin?.vehicleWeight === CONTROL_BULLETIN_VEHICLE_WEIGHT.REAL;
+
   return (
     !!newControlBulletin?.companyAddress &&
     !!newControlBulletin?.companyName &&
@@ -52,6 +55,8 @@ export const checkRequiredFieldStep2 = newControlBulletin => {
     !!newControlBulletin?.missionAddressEnd &&
     !!newControlBulletin?.vehicleRegistrationCountry &&
     !!newControlBulletin?.vehicleRegistrationNumber &&
-    !!newControlBulletin?.transportType
+    !!newControlBulletin?.transportType &&
+    !!newControlBulletin?.vehicleWeight &&
+    (!isRealVehicleWeightRequired || !!newControlBulletin?.realVehicleWeight)
   );
 };

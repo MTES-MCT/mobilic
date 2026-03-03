@@ -197,9 +197,16 @@ export function ControlBulletinFormStep2({
               name: "realVehicleWeight",
               onChange: e => handleEditControlBulletin(e),
               type: "number",
-              inputMode: "numeric"
+              inputMode: "numeric",
+              required: true
             }}
             label="Poids réel constaté (en tonnes)"
+            state={
+              !controlBulletin.realVehicleWeight && showErrors
+                ? "error"
+                : "default"
+            }
+            stateRelatedMessage="Veuillez compléter ce champ."
           />
         )
       }
