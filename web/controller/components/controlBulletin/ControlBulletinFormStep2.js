@@ -179,6 +179,7 @@ export function ControlBulletinFormStep2({
             : "default"
         }
       >
+        <option value=""></option>
         {
           Object.values(CONTROL_BULLETIN_VEHICLE_WEIGHT).map(
             (value) => (

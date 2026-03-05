@@ -56,7 +56,6 @@ export const checkRequiredFieldStep2 = newControlBulletin => {
     !!newControlBulletin?.vehicleRegistrationCountry &&
     !!newControlBulletin?.vehicleRegistrationNumber &&
     !!newControlBulletin?.transportType &&
-    !!newControlBulletin?.vehicleWeight &&
     (!isRealVehicleWeightRequired || !!newControlBulletin?.realVehicleWeight)
   );
 };
