@@ -106,18 +106,42 @@ export function AlertGroup({
 
   const isSanctionReportable = readOnlyAlerts ? true : isReportable(sanction);
 
-  const isReported = React.useMemo(
-    () => alerts.filter(alert => alert.checked).length > 0,
+  // Memoize filter calculations to avoid recalculating on every render
+  const checkedAlertsCount = React.useMemo(
+    () => alerts.filter(alert => alert.checked).length,
     [alerts]
   );
 
-  const alertsNumber = getAlertsNumber(
-    controlType,
-    alerts,
+  const alertsWithPeriodCount = React.useMemo(
+    () => alerts.filter(alert => !!(alert.day || alert.week)).length,
+    [alerts]
+  );
+
+  const isReported = React.useMemo(
+    () => checkedAlertsCount > 0,
+    [checkedAlertsCount]
+  );
+
+  const alertsNumber = React.useMemo(() => {
+    if (readOnlyAlerts || !isSanctionReportable) {
+      return alertsWithPeriodCount;
+    } else if (
+      isReportingInfractions &&
+      controlType === CONTROL_TYPES.MOBILIC.label
+    ) {
+      return `${checkedAlertsCount} / ${alerts.length}`;
+    } else {
+      return checkedAlertsCount;
+    }
+  }, [
+    readOnlyAlerts,
     isSanctionReportable,
     isReportingInfractions,
-    readOnlyAlerts
-  );
+    controlType,
+    checkedAlertsCount,
+    alertsWithPeriodCount,
+    alerts.length
+  ]);
 
   const alertsGroupedByBusinessTypes = React.useMemo(
     () => groupBy(alerts, alert => alert.business.id),

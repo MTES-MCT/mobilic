@@ -123,15 +123,21 @@ export function useToggleContradictory(
     }
   }, [hasComputedContradictory, shouldCompute]);
 
+  // Memoize mission IDs sum to avoid recalculating on every render
+  const missionIdsSum = React.useMemo(
+    () => missionsWithValidationTimes.map(m => m[0].id).reduce((a, b) => a + b, 0),
+    [missionsWithValidationTimes]
+  );
+
   React.useEffect(() => {
     setShouldDisplayInitialEmployeeVersion(false);
     setHasComputedContradictory(false);
     setEmployeeMissionResourceVersions({});
-  }, [missionsWithValidationTimes.map(m => m[0].id).reduce((a, b) => a + b)]);
+  }, [missionIdsSum]);
 
-  return {
-    employeeVersion: employeeMissionResourceVersions,
-    adminVersion: missionsWithValidationTimes.reduce(
+  // Memoize admin version to avoid recalculating on every render
+  const adminVersion = React.useMemo(
+    () => missionsWithValidationTimes.reduce(
       (acc, m) => {
         acc.activities.push(...(m[0].allActivities || m[0].activities));
         acc.expenditures.push(...(m[0].expenditures || []));
@@ -139,6 +145,12 @@ export function useToggleContradictory(
       },
       { activities: [], expenditures: [] }
     ),
+    [missionsWithValidationTimes]
+  );
+
+  return {
+    employeeVersion: employeeMissionResourceVersions,
+    adminVersion,
     eventsHistory,
     isComputingContradictory,
     hasComputedContradictory,

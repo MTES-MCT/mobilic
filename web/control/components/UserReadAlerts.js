@@ -107,6 +107,11 @@ export function UserReadAlerts({
     [_groupedAlerts]
   );
 
+  const sortedGroupedAlerts = React.useMemo(
+    () => _groupedAlerts ? [..._groupedAlerts].sort(sanctionComparator) : [],
+    [_groupedAlerts]
+  );
+
   const updateInfractionsTitle = React.useMemo(
     () =>
       controlType === CONTROL_TYPES.LIC_PAPIER.label
@@ -186,7 +191,7 @@ export function UserReadAlerts({
                     })
                   }}
                 >
-                  {_groupedAlerts.sort(sanctionComparator).map(group => (
+                  {sortedGroupedAlerts.map(group => (
                     <ListItem
                       key={`${group.type}_${group.sanction}`}
                       disableGutters

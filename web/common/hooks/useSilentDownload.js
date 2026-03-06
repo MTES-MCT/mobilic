@@ -1,7 +1,7 @@
 import React from "react";
 
 export const useSilentDownload = () => {
-  const silentDownload = (url) => {
+  const silentDownload = React.useCallback((url) => {
     const a = document.createElement("a");
     a.href = url;
     a.download = "";
@@ -9,7 +9,7 @@ export const useSilentDownload = () => {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-  };
+  }, []); // No dependencies - pure function
 
   return { silentDownload };
 };

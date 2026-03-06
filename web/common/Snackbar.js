@@ -20,45 +20,45 @@ export const SnackbarProvider = ({ children }) => {
 
   const isSmUp = useIsWidthUp("sm");
 
-  function alert(message, severity, key, autoHideDuration) {
+  const alert = React.useCallback((message, severity, key, autoHideDuration) => {
     setMessage(message);
     setKey(key || message);
     setSeverity(severity);
     setAutoHideDuration(autoHideDuration);
     setOpen(true);
-  }
+  }, []);
 
-  function info(message, key = null, autoHideDuration = 0) {
+  const info = React.useCallback((message, key = null, autoHideDuration = 0) => {
     return alert(message, "info", key, autoHideDuration);
-  }
+  }, [alert]);
 
-  function error(message, key = null, autoHideDuration = 0) {
+  const error = React.useCallback((message, key = null, autoHideDuration = 0) => {
     return alert(message, "error", key, autoHideDuration);
-  }
+  }, [alert]);
 
-  function success(message, key = null, autoHideDuration = 0) {
+  const success = React.useCallback((message, key = null, autoHideDuration = 0) => {
     return alert(message, "success", key, autoHideDuration);
-  }
+  }, [alert]);
 
-  function warning(message, key = null, autoHideDuration = 0) {
+  const warning = React.useCallback((message, key = null, autoHideDuration = 0) => {
     return alert(message, "warning", key, autoHideDuration);
-  }
+  }, [alert]);
 
-  function close() {
+  const close = React.useCallback(() => {
     setAutoHideDuration(null);
     setOpen(false);
     setSeverity("info");
     setKey(null);
     setMessage(null);
-  }
+  }, []);
 
-  async function withApiErrorHandling(
+  const withApiErrorHandling = React.useCallback(async (
     func,
     name,
     overrideFormatError = null,
     onError = null,
     hideNetworkErrors = false
-  ) {
+  ) => {
     try {
       await func();
     } catch (err) {
@@ -68,18 +68,21 @@ export const SnackbarProvider = ({ children }) => {
       if (!isConnectionError(err) || !hideNetworkErrors)
         error(formatApiError(err, overrideFormatError), name, 10000);
     }
-  }
+  }, [error]);
+
+  const contextValue = React.useMemo(
+    () => ({
+      info,
+      error,
+      success,
+      warning,
+      withApiErrorHandling
+    }),
+    [info, error, success, warning, withApiErrorHandling]
+  );
 
   return (
-    <SnackbarContext.Provider
-      value={{
-        info,
-        error,
-        success,
-        warning,
-        withApiErrorHandling
-      }}
-    >
+    <SnackbarContext.Provider value={contextValue}>
       {children}
       <MuiSnackbar
         key={_key}

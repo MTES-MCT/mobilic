@@ -42,6 +42,11 @@ export function ControlBulletinFormStep3({
     }
   }, [controlData, groupedAlerts, isReportingInfractions]);
 
+  const sortedGroupedAlerts = React.useMemo(
+    () => groupedAlertsToDisplay ? [...groupedAlertsToDisplay].sort(sanctionComparator) : [],
+    [groupedAlertsToDisplay]
+  );
+
   React.useEffect(() => {
     setIsReportingInfractions(false);
   }, []);
@@ -79,7 +84,7 @@ export function ControlBulletinFormStep3({
       </Stack>
       {groupedAlertsToDisplay?.length > 0 ? (
         <List>
-          {groupedAlertsToDisplay.sort(sanctionComparator).map(group => (
+          {sortedGroupedAlerts.map(group => (
             <ListItem key={`${group.type}_${group.sanction}`} disableGutters>
               <AlertGroup {...group} readOnlyAlerts={false} />
             </ListItem>

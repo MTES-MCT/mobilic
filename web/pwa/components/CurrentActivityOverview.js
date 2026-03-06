@@ -42,7 +42,7 @@ export function CurrentActivityOverview({
   React.useEffect(() => {
     const interval = setInterval(() => {
       setNow(now());
-    }, 1000);
+    }, 1000); // Need 1s updates since we display seconds for short durations
     return () => clearInterval(interval);
   }, []);
 

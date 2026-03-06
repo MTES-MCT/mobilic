@@ -7,6 +7,11 @@ import { WarningComputedAlerts } from "./UserReadAlerts";
 import { sanctionComparator } from "../utils/sanctionComparator";
 
 export function AlertsInHistory({ alertsInPeriod }) {
+  const sortedAlerts = React.useMemo(
+    () => [...alertsInPeriod].sort(sanctionComparator),
+    [alertsInPeriod]
+  );
+
   return (
     <MissionReviewSection
       title="Infractions calculées par Mobilic"
@@ -15,7 +20,7 @@ export function AlertsInHistory({ alertsInPeriod }) {
     >
       <WarningComputedAlerts />
       <List>
-        {alertsInPeriod.sort(sanctionComparator).map(alert => (
+        {sortedAlerts.map(alert => (
           <ListItem key={`alert__${alert.type}`} sx={{ paddingX: 0 }}>
             <AlertCard alert={alert} />
           </ListItem>

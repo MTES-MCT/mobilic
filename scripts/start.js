@@ -77,16 +77,10 @@ checkBrowsers(paths.appPath, isInteractive)
     const useTypeScript = fs.existsSync(paths.appTsConfig);
     const tscCompileOnError = process.env.TSC_COMPILE_ON_ERROR === "true";
     const urls = prepareUrls(protocol, HOST, port);
-    const devSocket = {
-      warnings: warnings =>
-        devServer.sockWrite(devServer.sockets, "warnings", warnings),
-      errors: errors => devServer.sockWrite(devServer.sockets, "errors", errors)
-    };
     // Create a webpack compiler that is configured with custom messages.
     const compiler = createCompiler({
       appName,
       config,
-      devSocket,
       urls,
       useYarn,
       useTypeScript,
@@ -125,7 +119,7 @@ checkBrowsers(paths.appPath, isInteractive)
 
     ["SIGINT", "SIGTERM"].forEach(function(sig) {
       process.on(sig, function() {
-        devServer.close();
+        devServer.stop();
         process.exit();
       });
     });
