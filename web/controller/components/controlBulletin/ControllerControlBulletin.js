@@ -58,6 +58,7 @@ export function ControllerControlBulletin({
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
   const [controlBulletin, setControlBulletin] = React.useState({});
+  const [controlBulletinTmp, setControlBulletinTmp] = React.useState({});
   const [fieldUpdated, setFieldUpdated] = React.useState(false);
   const [step, setStep] = React.useState(1);
   const [grecoId, setGrecoId] = React.useState(
@@ -76,6 +77,7 @@ export function ControllerControlBulletin({
 
   React.useEffect(() => {
     setControlBulletin(initControlBulletinFromControlData());
+    setControlBulletinTmp(initControlBulletinFromControlData());
   }, [controlData]);
 
   React.useEffect(() => {
@@ -101,7 +103,7 @@ export function ControllerControlBulletin({
 
   const handleEditControlBulletin = (e) => {
     const { name, value } = e.target;
-    setControlBulletin((prevState) => ({
+    setControlBulletinTmp((prevState) => ({
       ...prevState,
       [name]: value,
       ...( name === "vehicleWeight" && value !== CONTROL_BULLETIN_VEHICLE_WEIGHT.REAL ? {
@@ -156,10 +158,11 @@ export function ControllerControlBulletin({
   const handleButtonClick = (buttonType) => {
     switch (buttonType) {
       case "save" : 
-        onSaveButton(controlBulletin)
+        onSaveButton(controlBulletinTmp)
       break;
       case "cancel" : 
         onClose();
+        setControlBulletinTmp(controlBulletin);
         setStep(1);
       break;
       case "back" :
@@ -256,21 +259,21 @@ export function ControllerControlBulletin({
       {step === 1 && (
         <ControlBulletinFormStep1
           handleEditControlBulletin={handleEditControlBulletin}
-          controlBulletin={controlBulletin}
+          controlBulletin={controlBulletinTmp}
           showErrors={showErrors}
         />
       )}
       {step === 2 && (
         <ControlBulletinFormStep2
           handleEditControlBulletin={handleEditControlBulletin}
-          controlBulletin={controlBulletin}
+          controlBulletin={controlBulletinTmp}
           showErrors={showErrors}
         />
       )}
       {step === 3 && (
         <ControlBulletinFormStep3
           handleEditControlBulletin={handleEditControlBulletin}
-          controlBulletin={controlBulletin}
+          controlBulletin={controlBulletinTmp}
           grecoId={grecoId}
           onUpdateGrecoId={onUpdateGrecoId}
           onModifyInfractions={onModifyInfractions}
