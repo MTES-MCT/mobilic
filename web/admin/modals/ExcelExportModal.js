@@ -109,7 +109,7 @@ export default function ExcelExportModal({
     });
     
     setExportValidation(validation);
-  }, [minDate, maxDate, users, selectedCompany, consolidatedFile]);
+  }, [minDate, maxDate, users, selectedCompany]);
 
   const classes = modalStyles();
 
