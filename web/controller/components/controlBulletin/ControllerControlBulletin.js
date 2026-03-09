@@ -254,6 +254,7 @@ export function ControllerControlBulletin({
           grecoId={grecoId}
           onUpdateGrecoId={onUpdateGrecoId}
           onModifyInfractions={onModifyInfractions}
+          isMinistryOfInterior={controllerUserInfo.isMinistryOfInterior}
         />
       )}
       <ButtonsGroup

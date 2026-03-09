@@ -6,6 +6,7 @@ import { useSnackbarAlerts } from "../../common/Snackbar";
 import { canDownloadBDC as _canDownloadBDC } from "./controlBulletin";
 import { strToUnixTimestamp } from "common/utils/time";
 import { useModals } from "common/utils/modals";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import {
   CONTROLLER_READ_CONTROL_DATA,
   CONTROLLER_READ_CONTROL_DATA_NO_LIC,
@@ -25,6 +26,8 @@ export const useReadControlData = (controlId, controlType) => {
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
   const modals = useModals();
+  const store = useStoreSyncedWithLocalStorage();
+  const controllerUserInfo = store.controllerInfo();
 
   const [controlData, setControlData] = React.useState({});
 
@@ -57,8 +60,8 @@ export const useReadControlData = (controlId, controlType) => {
   }, [controlId]);
 
   const canDownloadBDC = React.useMemo(
-    () => _canDownloadBDC(controlData),
-    [controlData]
+    () => _canDownloadBDC(controlData, controllerUserInfo),
+    [controlData, controllerUserInfo]
   );
 
   const bdcAlreadyExists = React.useMemo(
