@@ -12,10 +12,6 @@ import { Box } from "@mui/material";
 import { LinkButton } from "../../common/LinkButton";
 
 const useStyles = makeStyles((theme) => ({
-  linkButton: {
-    textDecoration: "underline",
-    textUnderlineOffset: "6px",
-  },
   highlightedText: {
     color: "#3965EA",
   },
@@ -23,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ImageContainer = (url) => (
   <Box height="156px">
-    <img src={url} style={{ margin: "auto" }} />
+    <img src={url} alt="" style={{ margin: "auto" }} />
   </Box>
 );
 

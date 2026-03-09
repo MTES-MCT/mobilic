@@ -8,10 +8,6 @@ import Box from "@mui/material/Box";
 import { LinkButton } from "../../common/LinkButton";
 
 const useStyles = makeStyles((theme) => ({
-  linkButton: {
-    textDecoration: "underline",
-    textUnderlineOffset: "6px",
-  },
   highlightedText: {
     color: "#3965EA",
   },
