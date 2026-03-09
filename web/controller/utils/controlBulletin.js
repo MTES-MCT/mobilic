@@ -4,6 +4,13 @@ export const CONTROL_BULLETIN_TRANSPORT_TYPE = {
   CABOTAGE: { label: "Cabotage", apiValue: "cabotage" }
 };
 
+export const CONTROL_BULLETIN_VEHICLE_WEIGHT = {
+  PV: "PV",
+  PTAC: "PTAC",
+  REAL: "Poids réel constaté",
+}
+
+
 export const canDownloadBDC = controlData => {
   return (
     !!controlData?.controlBulletin?.locationDepartment &&
@@ -37,6 +44,9 @@ export const checkRequiredFieldStep1 = newControlBulletin => {
 };
 
 export const checkRequiredFieldStep2 = newControlBulletin => {
+  const isRealVehicleWeightRequired =
+    newControlBulletin?.vehicleWeight === CONTROL_BULLETIN_VEHICLE_WEIGHT.REAL;
+
   return (
     !!newControlBulletin?.companyAddress &&
     !!newControlBulletin?.companyName &&
@@ -45,6 +55,7 @@ export const checkRequiredFieldStep2 = newControlBulletin => {
     !!newControlBulletin?.missionAddressEnd &&
     !!newControlBulletin?.vehicleRegistrationCountry &&
     !!newControlBulletin?.vehicleRegistrationNumber &&
-    !!newControlBulletin?.transportType
+    !!newControlBulletin?.transportType &&
+    (!isRealVehicleWeightRequired || !!newControlBulletin?.realVehicleWeight)
   );
 };

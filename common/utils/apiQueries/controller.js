@@ -313,6 +313,8 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
     $businessType: String
     $isDayPageFilled: Boolean
     $deliveredByHand: Boolean
+    $vehicleWeight: String
+    $realVehicleWeight: Int
   ) {
     controllerSaveControlBulletin(
       controlId: $controlId
@@ -341,6 +343,8 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
       businessType: $businessType
       isDayPageFilled: $isDayPageFilled
       deliveredByHand: $deliveredByHand
+      vehicleWeight: $vehicleWeight
+      realVehicleWeight: $realVehicleWeight
     ) {
       ...ControlData
       controlBulletin {

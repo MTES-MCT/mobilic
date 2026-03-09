@@ -17,7 +17,8 @@ import {
 import { syncControllerUser } from "../../utils/loadControllerUserData";
 import {
   checkRequiredFieldStep1,
-  checkRequiredFieldStep2
+  checkRequiredFieldStep2,
+  CONTROL_BULLETIN_VEHICLE_WEIGHT,
 } from "../../utils/controlBulletin";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { useInfractions } from "../../utils/contextInfractions";
@@ -102,8 +103,11 @@ export function ControllerControlBulletin({
     const { name, value } = e.target;
     setControlBulletin((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
+      ...( name === "vehicleWeight" && value !== CONTROL_BULLETIN_VEHICLE_WEIGHT.REAL ? {
+         realVehicleWeight: null } : {})
     }));
+
     setFieldUpdated(true);
   };
 
@@ -191,7 +195,9 @@ export function ControllerControlBulletin({
             licenseNumber: newControlBulletin.licenseNumber,
             licenseCopyNumber: newControlBulletin.licenseCopyNumber,
             observation: newControlBulletin.observation,
-            isVehicleImmobilized: newControlBulletin.isVehicleImmobilized
+            isVehicleImmobilized: newControlBulletin.isVehicleImmobilized,
+            vehicleWeight: newControlBulletin.vehicleWeight,
+            realVehicleWeight: newControlBulletin.realVehicleWeight
           },
           { context: { nonPublicApi: true } }
         );

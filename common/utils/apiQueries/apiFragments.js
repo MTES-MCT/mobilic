@@ -271,6 +271,8 @@ export const CONTROL_BULLETIN_FRAGMENT = gql`
     observation
     isVehicleImmobilized
     businessType
+    vehicleWeight
+    realVehicleWeight
   }
 `;
 

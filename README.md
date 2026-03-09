@@ -13,7 +13,7 @@ Ce `README` s'adresse aux développeurs informatiques du projet. Pour plus d'inf
 - [Documentation technique de l'API](https://mobilic.beta.gouv.fr/developers)
 - [Conditions d'interfaçage](https://developers.mobilic.beta.gouv.fr/conditions-dinterfacage)
 
-## Architecture logicielle
+## Architecture logicielle #
 
 Le projet est divisé en 2 grandes briques distinctes :
 
