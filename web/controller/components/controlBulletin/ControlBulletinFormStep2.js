@@ -210,6 +210,7 @@ export function ControlBulletinFormStep2({
                 : "default"
             }
             stateRelatedMessage="Veuillez compléter ce champ."
+            required
           />
         )
       }
