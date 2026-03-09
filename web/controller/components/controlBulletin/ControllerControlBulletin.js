@@ -103,15 +103,10 @@ export function ControllerControlBulletin({
     const { name, value } = e.target;
     setControlBulletin((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
+      ...( name === "vehicleWeight" && value !== CONTROL_BULLETIN_VEHICLE_WEIGHT.REAL ? {
+         realVehicleWeight: null } : {})
     }));
-
-    if (name === "vehicleWeight" && value !== CONTROL_BULLETIN_VEHICLE_WEIGHT.REAL) {
-      setControlBulletin((prevState) => ({
-        ...prevState,
-        realVehicleWeight: null
-      }));
-    }
 
     setFieldUpdated(true);
   };
