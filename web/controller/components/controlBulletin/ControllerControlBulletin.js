@@ -136,6 +136,7 @@ export function ControllerControlBulletin({
       }
       if (!STEPS[step + 1]) {
         setIsReportingInfractions(false);
+        setStep(1);
         onClose(true);
       } else {
         setStep(step + 1);
@@ -146,10 +147,29 @@ export function ControllerControlBulletin({
   const onBackOrCloseButton = () => {
     if (!STEPS[step - 1]) {
       onClose();
+      setStep(1);
     } else {
       setStep(step - 1);
     }
   };
+
+  const handleButtonClick = (buttonType) => {
+    switch (buttonType) {
+      case "save" : 
+        onSaveButton(controlBulletin)
+      break;
+      case "cancel" : 
+        onClose();
+        setStep(1);
+      break;
+      case "back" :
+        onBackOrCloseButton();
+      break;
+      default:
+        break;
+
+    }
+  }
 
   const saveControlBulletin = async (newControlBulletin, successMessage) =>
     withLoadingScreen(async () => {
@@ -213,7 +233,7 @@ export function ControllerControlBulletin({
   return (
     <>
       <ControlBulletinHeader
-        onCloseDrawer={onBackOrCloseButton}
+        onCloseDrawer={() => handleButtonClick("back")}
         backLinkLabel={
           !STEPS[step - 1]
             ? `Retour au contrôle ${controlData.id}`
@@ -259,12 +279,12 @@ export function ControllerControlBulletin({
       <ButtonsGroup
         buttons={[
           {
-            onClick: () => onSaveButton(controlBulletin),
+            onClick: () => handleButtonClick("save"),
             children: !STEPS[step + 1] ? "Enregistrer" : "Suivant"
           },
           {
             children: "Annuler",
-            onClick: () => onClose(),
+            onClick: () => handleButtonClick("cancel"),
             priority: "secondary"
           }
         ]}
