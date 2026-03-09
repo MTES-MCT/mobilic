@@ -1,35 +1,37 @@
 import React from "react";
-import { LandingSection, useSectionStyles } from "./LandingSection";
 import Typography from "@mui/material/Typography";
 import { WebinarList } from "../components/WebinarList";
+import { OuterContainer } from "../components/OuterContainer";
+import { InnerContainer } from "../components/InnerContainer";
+import { Stack } from "@mui/material";
 
-export function WebinarListSection({ className }) {
+export function WebinarListSection() {
   const [
     cantDisplayWebinarsBecauseNoneOrError,
-    setCantDisplayWebinarsBecauseNoneOrError
+    setCantDisplayWebinarsBecauseNoneOrError,
   ] = React.useState();
-
-  const classes = useSectionStyles();
 
   if (cantDisplayWebinarsBecauseNoneOrError) return null;
 
   return (
-    <LandingSection
-      title="Prochains webinaires Mobilic"
-      className={className}
-      id="webinaires"
-      titleProps={{ component: "h2" }}
-    >
-      <Typography className={classes.sectionIntroText}>
-        Inscrivez-vous à l’un de nos webinaires pour assister à une
-        démonstration de l’usage de Mobilic et obtenir toutes les réponses à vos
-        questions :
-      </Typography>
-      <WebinarList
-        setCantDisplayWebinarsBecauseNoneOrError={
-          setCantDisplayWebinarsBecauseNoneOrError
-        }
-      />
-    </LandingSection>
+    <OuterContainer id="webinaires">
+      <InnerContainer>
+        <Stack direction="column" rowGap={2}>
+          <Typography variant="h3" component="h2">
+            Découvrez Mobilic lors d’un webinaire
+          </Typography>
+          <Typography>
+            Inscrivez-vous à l’un de nos webinaires pour assister à une
+            démonstration de l’usage de Mobilic et obtenir toutes les réponses à
+            vos questions :
+          </Typography>
+          <WebinarList
+            setCantDisplayWebinarsBecauseNoneOrError={
+              setCantDisplayWebinarsBecauseNoneOrError
+            }
+          />
+        </Stack>
+      </InnerContainer>
+    </OuterContainer>
   );
 }
