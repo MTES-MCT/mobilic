@@ -1,0 +1,32 @@
+.fr-card {
+  .fr-card__title {
+    a {
+      color: inherit;
+    }
+  }
+  .fr-card__content {
+    padding-bottom: 0;
+  }
+
+  .fr-card__img {
+    height: 156px;
+  }
+}
+
+.fr-card.blue {
+  .fr-card__body {
+    background-color: #F4F8FF;
+  }
+  .fr-card__img {
+    background-color: #DAE9FF;
+  }
+}
+
+.fr-card.green {
+  .fr-card__body {
+    background-color: #E3FDEB;
+  }
+  .fr-card__img {
+    background-color: #9EF9BE;
+  }
+}

@@ -2,7 +2,6 @@ import SvgIcon from "@mui/material/SvgIcon";
 import React from "react";
 import { ReactComponent as MobilicFilledIcon_ } from "../assets/images/mobilic-logo-filled.svg";
 import { ReactComponent as MobilicOutlinedIcon_ } from "../assets/images/mobilic-logo-outlined.svg";
-import { ReactComponent as MobilicBlueIcon_ } from "../assets/images/mobilic-logo-blue.svg";
 import { ReactComponent as PersonIcon_ } from "../assets/images/User.svg";
 import { ReactComponent as TeamIcon_ } from "../assets/images/Team.svg";
 import { ReactComponent as TruckIcon_ } from "../assets/images/Truck2.svg";
@@ -26,7 +25,6 @@ import _SupplyChainVillageImage from "../assets/images/press-logos/supply_chain_
 import _VirImage from "../assets/images/testimonials-logos/vir.jpg";
 import _AlexisDemenagementImage from "../assets/images/testimonials-logos/alexis_plus.jpg";
 import _BretagneMaceDemenagementImage from "../assets/images/testimonials-logos/bretagne_mace_demenagement.jpg";
-import _ComputerImage from "../assets/images/computer.png";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 
 export function MobilicLogoFilledIcon(props) {
@@ -36,17 +34,6 @@ export function MobilicLogoFilledIcon(props) {
       {...props}
       viewBox="0 0 255.27 297.23"
       component={MobilicFilledIcon_}
-    />
-  );
-}
-
-export function MobilicLogoBlueIcon(props) {
-  return (
-    <SvgIcon
-      titleAccess={"mobilic-logo-blue"}
-      {...props}
-      viewBox="0 0 48 57"
-      component={MobilicBlueIcon_}
     />
   );
 }
@@ -221,10 +208,6 @@ export function BretagneMaceDemenagementImage(props) {
       {...props}
     />
   );
-}
-
-export function ComputerImage(props) {
-  return <img alt="Un ordinateur" src={_ComputerImage} {...props} />;
 }
 
 export function MobilicQrCode(props) {

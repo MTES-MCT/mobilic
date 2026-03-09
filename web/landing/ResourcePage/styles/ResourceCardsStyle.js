@@ -22,20 +22,15 @@ export const resourceCardsClasses = makeStyles(theme => ({
     width: "100%"
   },
   pressCard: {
-    borderRadius: 10,
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-    paddingRight: theme.spacing(1),
-    paddingLeft: theme.spacing(1),
-    borderColor: theme.palette.primary.main,
-    marginRight: theme.spacing(1),
-    marginLeft: theme.spacing(1),
-    height: "100%"
+    height: "100%",
+    marginRight: theme.spacing(2),
+    padding: theme.spacing(3),
+    paddingTop: theme.spacing(4),
   },
   pressImage: {
     maxHeight: 60,
     maxWidth: 230,
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
   },
   testimonialImage: {
     maxHeight: 90,
@@ -43,10 +38,12 @@ export const resourceCardsClasses = makeStyles(theme => ({
     objectFit: "contain"
   },
   testimonialSentence: {
-    marginBottom: theme.spacing(4),
-    textAlign: "left"
+    marginBottom: theme.spacing(2),
+    textAlign: "left",
   },
   testimonialAuthor: {
-    textAlign: "left"
-  }
+    fontWeight: 500,
+    marginBottom: theme.spacing(0.5),
+    textAlign: "left",
+  },
 }));
