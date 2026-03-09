@@ -9,8 +9,7 @@ export function validateExportParams({ numUsers, minDate, maxDate }) {
   if (!minDate || !maxDate || numUsers === 0) {
     return {
       message: null,
-      canChooseConsolidated: false,
-      strategy: null
+      canChooseConsolidated: false
     };
   }
 
@@ -23,8 +22,7 @@ export function validateExportParams({ numUsers, minDate, maxDate }) {
         "La période sélectionnée étant supérieure à 365 jours, le téléchargement sera divisé " +
         "en plusieurs fichiers pour des raisons techniques. Vous recevrez un fichier par " +
         "tranche de 365 jours et par salarié.",
-      canChooseConsolidated: false,
-      strategy: "over_365_days"
+      canChooseConsolidated: false
     };
   }
 
@@ -42,8 +40,7 @@ export function validateExportParams({ numUsers, minDate, maxDate }) {
     
     return {
       message: message,
-      canChooseConsolidated: false,
-      strategy: "over_31_days"
+      canChooseConsolidated: false
     };
   }
 
@@ -54,15 +51,13 @@ export function validateExportParams({ numUsers, minDate, maxDate }) {
         "Le nombre de salariés sélectionnés étant supérieur à 100, le téléchargement sera divisé " +
         "en plusieurs fichiers pour des raisons techniques. Vous recevrez un fichier par " +
         "tranche de 100 salariés.",
-      canChooseConsolidated: false,
-      strategy: "over_100_users"
+      canChooseConsolidated: false
     };
   }
 
   // Case 4: < 365 days AND < 31 days AND < 100 employees → consolidated OR individual file choice
   return {
     message: null,
-    canChooseConsolidated: true,
-    strategy: "single_or_consolidated"
+    canChooseConsolidated: true
   };
 }
