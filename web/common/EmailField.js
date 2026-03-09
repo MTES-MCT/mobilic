@@ -16,15 +16,19 @@ export function EmailField({
   showHint = false,
   ...props
 }) {
+  const [actualInput, setActualInput] = React.useState(value);
+
   React.useEffect(() => {
     if (validate && value && value !== "" && !validateCleanEmailString(value)) {
       setError(
         "Le format de l'adresse saisie n'est pas valide. Le format attendu est prenom.nom@domaine.fr."
       );
-    } else if (error && setError) setError("");
+    } else if (error && setError) {
+      setError("");
+    } else if (value && value !== "") {
+      setActualInput(value);
+    }
   }, [value]);
-
-  const [actualInput, setActualInput] = React.useState(value);
 
   return (
     <Input
