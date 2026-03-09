@@ -124,7 +124,7 @@ export function ControlBulletinFormStep2({
           ({ label, apiValue }) => ({
             label,
             nativeInputProps: {
-              value: controlBulletin.transportType === apiValue,
+              checked: controlBulletin.transportType === apiValue,
               onChange: e =>
                 handleEditControlBulletin({
                   target: {
