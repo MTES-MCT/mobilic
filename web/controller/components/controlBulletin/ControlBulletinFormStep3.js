@@ -18,7 +18,8 @@ export function ControlBulletinFormStep3({
   controlBulletin,
   grecoId,
   onUpdateGrecoId,
-  onModifyInfractions
+  onModifyInfractions,
+  isMinistryOfInterior
 }) {
   const {
     groupedAlerts,
@@ -52,10 +53,27 @@ export function ControlBulletinFormStep3({
         nativeInputProps={{
           value: grecoId,
           name: "grecoId",
-          onChange: e => onUpdateGrecoId(e.target.value)
+          onChange: e => onUpdateGrecoId(e.target.value),
+          required: isMinistryOfInterior
         }}
-        label="Numéro de contrôleur"
-        hintText="Numéro présent sur votre carte contrôleur"
+        label={
+          isMinistryOfInterior
+            ? "RIO ou identifiant Greco"
+            : "Numéro de contrôleur"
+        }
+        hintText={
+          isMinistryOfInterior
+            ? "Renseigner son RIO est obligatoire"
+            : "Numéro présent sur votre carte contrôleur"
+        }
+        state={
+          isMinistryOfInterior && !grecoId ? "error" : "default"
+        }
+        stateRelatedMessage={
+          isMinistryOfInterior && !grecoId
+            ? "Le matricule est obligatoire pour télécharger le BDC"
+            : undefined
+        }
       />
       <Stack
         direction="row"
