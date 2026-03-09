@@ -198,7 +198,9 @@ export function ControlBulletinFormStep2({
               name: "realVehicleWeight",
               onChange: e => handleEditControlBulletin(e),
               type: "number",
-              inputMode: "numeric",
+              inputMode: "decimal",
+              step: "0.01",
+              min: "0",
               required: true
             }}
             label="Poids réel constaté (en tonnes)"
