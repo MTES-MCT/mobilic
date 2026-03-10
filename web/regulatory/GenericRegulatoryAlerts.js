@@ -38,9 +38,7 @@ export function GenericRegulatoryAlerts({
   shouldDisplayInitialEmployeeVersion = false,
   employeeView = false,
 }) {
-  const [regulationComputations, setRegulationComputations] = React.useState(
-    []
-  );
+  const [allComputations, setAllComputations] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
 
   const api = useApi();
@@ -60,28 +58,27 @@ export function GenericRegulatoryAlerts({
         );
         const { regulationComputationsByDay } = apiResponse.data.user;
         if (regulationComputationsByDay?.length !== 1) {
-          setRegulationComputations(null);
+          setAllComputations(null);
         } else {
-          if (shouldDisplayInitialEmployeeVersion) {
-            setRegulationComputations(
-              getAlertComputationVersion(
-                regulationComputationsByDay[0].regulationComputations,
-                SubmitterType.EMPLOYEE
-              )
-            );
-          } else {
-            setRegulationComputations(
-              getLatestAlertComputationVersion(
-                regulationComputationsByDay[0].regulationComputations
-              )
-            );
-          }
+          setAllComputations(
+            regulationComputationsByDay[0].regulationComputations
+          );
         }
       });
       setLoading(false);
     };
     loadData();
-  }, [day, userId, shouldDisplayInitialEmployeeVersion]);
+  }, [day, userId]);
+
+  const regulationComputations = useMemo(
+    () => {
+      if (!allComputations) return allComputations;
+      return shouldDisplayInitialEmployeeVersion
+        ? getAlertComputationVersion(allComputations, SubmitterType.EMPLOYEE)
+        : getLatestAlertComputationVersion(allComputations);
+    },
+    [allComputations, shouldDisplayInitialEmployeeVersion]
+  );
 
   const checksWithAlerts = useMemo(
     () =>
