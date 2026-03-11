@@ -305,7 +305,7 @@ export function Employees({ company, containerRef }) {
     }
     if (isInactive) {
       return (
-        <Tooltip title={`Inactif depuis le ${formatLastActiveDate(lastActiveAt)}. Pensez à détacher ce salarié.`}>
+        <Tooltip title={`Aucun temps de travail saisi depuis le ${formatLastActiveDate(lastActiveAt)}. Pensez à détacher ce salarié.`}>
           <Badge severity="warning" noIcon small className={classes.badgeCursor}>
             {"inactif".toUpperCase()}
           </Badge>
