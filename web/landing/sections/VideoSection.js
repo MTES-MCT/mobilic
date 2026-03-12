@@ -6,6 +6,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { ExternalLink } from "../../common/ExternalLink";
 import { LinkButton } from "../../common/LinkButton";
+import { useWebinars } from "../useWebinars";
 import { makeStyles } from "@mui/styles";
 import { Box } from "@mui/material";
 
@@ -35,6 +36,8 @@ const ListItemIcon = () => (
 
 export function VideoSection() {
   const classes = useStyles();
+
+  const [webinars, webinarsLoaded] = useWebinars((() => {}));
 
   const { id, title } = VIDEOS.Home_Mobilic;
   return (
@@ -87,16 +90,20 @@ export function VideoSection() {
                 </ul>
               </Typography>
             </Stack>
-            <LinkButton
-              to="/#webinaires"
-              priority="tertiary-no-outline"
-              iconId="fr-icon-arrow-right-line"
-              iconPosition="right"
-              size="medium"
-              className={classes.linkButton}
-            >
-              Découvrir Mobilic lors d’un webinaire
-            </LinkButton>
+            {
+              (webinars.length > 0 && webinarsLoaded) && (
+                <LinkButton
+                  to="/#webinaires"
+                  priority="tertiary-no-outline"
+                  iconId="fr-icon-arrow-right-line"
+                  iconPosition="right"
+                  size="medium"
+                  className={classes.linkButton}
+                >
+                  Découvrir Mobilic lors d’un webinaire
+                </LinkButton>
+              )
+            }
           </Stack>
           <Stack
             direction="column"
