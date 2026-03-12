@@ -201,7 +201,6 @@ export function ControlBulletinFormStep2({
               inputMode: "decimal",
               step: "0.01",
               min: "0",
-              required: true
             }}
             label="Poids réel constaté (en tonnes)"
             state={
