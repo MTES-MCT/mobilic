@@ -168,14 +168,23 @@ export const CHANGE_EMPLOYEE_TEAM = gql`
 `;
 
 export const BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION = gql`
-  mutation batchCreateWorkerEmployments($companyId: Int!, $mails: [Email]!) {
+  mutation batchCreateWorkerEmployments(
+    $companyId: Int!
+    $mails: [Email]
+    $userIds: [Int]
+  ) {
     employments {
-      batchCreateWorkerEmployments(companyId: $companyId, mails: $mails) {
+      batchCreateWorkerEmployments(
+        companyId: $companyId
+        mails: $mails
+        userIds: $userIds
+      ) {
         id
         startDate
         endDate
         isAcknowledged
         email
+        hideEmail
         hasAdminRights
         latestInviteEmailTime
         user {

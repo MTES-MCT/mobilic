@@ -305,7 +305,7 @@ export function Employees({ company, containerRef }) {
     }
     if (isInactive) {
       return (
-        <Tooltip title={`Inactif depuis le ${formatLastActiveDate(lastActiveAt)}. Pensez à détacher ce salarié.`}>
+        <Tooltip title={`Aucun temps de travail saisi depuis le ${formatLastActiveDate(lastActiveAt)}. Pensez à détacher ce salarié.`}>
           <Badge severity="warning" noIcon small className={classes.badgeCursor}>
             {"inactif".toUpperCase()}
           </Badge>
@@ -791,14 +791,18 @@ export function Employees({ company, containerRef }) {
       : action();
   };
 
-  const inviteEmails = async (mails) => {
+  const batchInvite = async ({ emails, userIds }) => {
     await alerts.withApiErrorHandling(async () => {
+      const variables = { companyId };
+      if (emails && emails.length > 0) {
+        variables.mails = emails;
+      }
+      if (userIds && userIds.length > 0) {
+        variables.userIds = userIds;
+      }
       const employmentsResponse = await api.graphQlMutate(
         BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
-        {
-          companyId,
-          mails
-        }
+        variables
       );
       const employments =
         employmentsResponse.data.employments.batchCreateWorkerEmployments;
@@ -809,14 +813,21 @@ export function Employees({ company, containerRef }) {
           entity: "employments"
         }
       });
-      if (employments.length < mails.length) {
+      const totalRequested =
+        (emails ? emails.length : 0) + (userIds ? userIds.length : 0);
+      if (employments.length < totalRequested) {
         alerts.warning(
-          "Certaines invitations n'ont pu être envoyées, êtes-vous sûr(e) des adresses email ?",
+          `${employments.length} invitation(s) envoyée(s) sur ${totalRequested}. Vérifiez les adresses email et identifiants saisis.`,
           "batch-invite-warning",
           6000
         );
-      } else
-        alerts.success("Invitations envoyées !", "batch-invite-success", 6000);
+      } else {
+        alerts.success(
+          `${employments.length} invitation(s) envoyée(s) !`,
+          "batch-invite-success",
+          6000
+        );
+      }
       setTimeout(validEmploymentsTableRef.current.updateScrollPosition, 0);
     });
   };
@@ -828,7 +839,7 @@ export function Employees({ company, containerRef }) {
       trackEvent(INVITE_EMAIL_LIST_CLICK);
     }
     modals.open("batchInvite", {
-      handleSubmit: inviteEmails
+      handleSubmit: batchInvite
     });
   };
 
@@ -863,7 +874,7 @@ export function Employees({ company, containerRef }) {
           );
           setHasClosedInviteModal(true);
         }}
-        handleSubmit={inviteEmails}
+        handleSubmit={batchInvite}
         isNewAdmin={true}
       />
       <Stack direction="column" spacing={2}>
