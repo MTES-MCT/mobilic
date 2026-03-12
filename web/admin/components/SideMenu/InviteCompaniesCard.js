@@ -30,7 +30,7 @@ export function InviteCompaniesCard() {
     <Card
       onClick={() =>
         modals.open("batchInvite", {
-          handleSubmit: inviteCompanies,
+          handleSubmit: ({ emails }) => inviteCompanies(emails),
           title: "Faire connaître Mobilic",
           description: (
             <p>
@@ -39,6 +39,8 @@ export function InviteCompaniesCard() {
               stipulant que nous venons de votre part.
             </p>
           ),
+          inputLabel: "Adresses e-mail",
+          inputHintText: "Saisissez des adresses e-mail (prenom.nom@domaine.fr), séparées par un espace, une virgule ou un point-virgule.",
           acceptButtonTitle: "Envoyer les invitations"
         })
       }

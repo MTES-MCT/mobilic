@@ -17,7 +17,8 @@ import {
 import { syncControllerUser } from "../../utils/loadControllerUserData";
 import {
   checkRequiredFieldStep1,
-  checkRequiredFieldStep2
+  checkRequiredFieldStep2,
+  CONTROL_BULLETIN_VEHICLE_WEIGHT,
 } from "../../utils/controlBulletin";
 import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 import { useInfractions } from "../../utils/contextInfractions";
@@ -57,6 +58,7 @@ export function ControllerControlBulletin({
   const withLoadingScreen = useLoadingScreen();
   const alerts = useSnackbarAlerts();
   const [controlBulletin, setControlBulletin] = React.useState({});
+  const [controlBulletinTmp, setControlBulletinTmp] = React.useState({});
   const [fieldUpdated, setFieldUpdated] = React.useState(false);
   const [step, setStep] = React.useState(1);
   const [grecoId, setGrecoId] = React.useState(
@@ -75,6 +77,7 @@ export function ControllerControlBulletin({
 
   React.useEffect(() => {
     setControlBulletin(initControlBulletinFromControlData());
+    setControlBulletinTmp(initControlBulletinFromControlData());
   }, [controlData]);
 
   React.useEffect(() => {
@@ -100,10 +103,13 @@ export function ControllerControlBulletin({
 
   const handleEditControlBulletin = (e) => {
     const { name, value } = e.target;
-    setControlBulletin((prevState) => ({
+    setControlBulletinTmp((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
+      ...( name === "vehicleWeight" && value !== CONTROL_BULLETIN_VEHICLE_WEIGHT.REAL ? {
+         realVehicleWeight: null } : {})
     }));
+
     setFieldUpdated(true);
   };
 
@@ -132,6 +138,7 @@ export function ControllerControlBulletin({
       }
       if (!STEPS[step + 1]) {
         setIsReportingInfractions(false);
+        setStep(1);
         onClose(true);
       } else {
         setStep(step + 1);
@@ -142,8 +149,30 @@ export function ControllerControlBulletin({
   const onBackOrCloseButton = () => {
     if (!STEPS[step - 1]) {
       onClose();
+      setStep(1);
     } else {
       setStep(step - 1);
+    }
+  };
+
+  const handleButtonClick = async (buttonType) => {
+    switch (buttonType) {
+      case "save":
+        onSaveButton(controlBulletinTmp);
+        break;
+      case "cancel":
+        await onClose().then((closed) => {
+          if (closed) {
+            setControlBulletinTmp(controlBulletin);
+            setStep(1);
+          }
+        });
+        break;
+      case "back":
+        onBackOrCloseButton();
+        break;
+      default:
+        break;
     }
   };
 
@@ -191,7 +220,9 @@ export function ControllerControlBulletin({
             licenseNumber: newControlBulletin.licenseNumber,
             licenseCopyNumber: newControlBulletin.licenseCopyNumber,
             observation: newControlBulletin.observation,
-            isVehicleImmobilized: newControlBulletin.isVehicleImmobilized
+            isVehicleImmobilized: newControlBulletin.isVehicleImmobilized,
+            vehicleWeight: newControlBulletin.vehicleWeight,
+            realVehicleWeight: newControlBulletin.realVehicleWeight != null ? parseFloat(newControlBulletin.realVehicleWeight) : null,
           },
           { context: { nonPublicApi: true } }
         );
@@ -207,7 +238,7 @@ export function ControllerControlBulletin({
   return (
     <>
       <ControlBulletinHeader
-        onCloseDrawer={onBackOrCloseButton}
+        onCloseDrawer={() => handleButtonClick("back")}
         backLinkLabel={
           !STEPS[step - 1]
             ? `Retour au contrôle ${controlData.id}`
@@ -230,21 +261,21 @@ export function ControllerControlBulletin({
       {step === 1 && (
         <ControlBulletinFormStep1
           handleEditControlBulletin={handleEditControlBulletin}
-          controlBulletin={controlBulletin}
+          controlBulletin={controlBulletinTmp}
           showErrors={showErrors}
         />
       )}
       {step === 2 && (
         <ControlBulletinFormStep2
           handleEditControlBulletin={handleEditControlBulletin}
-          controlBulletin={controlBulletin}
+          controlBulletin={controlBulletinTmp}
           showErrors={showErrors}
         />
       )}
       {step === 3 && (
         <ControlBulletinFormStep3
           handleEditControlBulletin={handleEditControlBulletin}
-          controlBulletin={controlBulletin}
+          controlBulletin={controlBulletinTmp}
           grecoId={grecoId}
           onUpdateGrecoId={onUpdateGrecoId}
           onModifyInfractions={onModifyInfractions}
@@ -253,12 +284,12 @@ export function ControllerControlBulletin({
       <ButtonsGroup
         buttons={[
           {
-            onClick: () => onSaveButton(controlBulletin),
+            onClick: () => handleButtonClick("save"),
             children: !STEPS[step + 1] ? "Enregistrer" : "Suivant"
           },
           {
             children: "Annuler",
-            onClick: () => onClose(),
+            onClick: () => handleButtonClick("cancel"),
             priority: "secondary"
           }
         ]}

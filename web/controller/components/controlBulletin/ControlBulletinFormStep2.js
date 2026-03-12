@@ -3,7 +3,10 @@ import React from "react";
 import Stack from "@mui/material/Stack";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { COUNTRIES } from "../../utils/country";
-import { CONTROL_BULLETIN_TRANSPORT_TYPE } from "../../utils/controlBulletin";
+import { 
+  CONTROL_BULLETIN_TRANSPORT_TYPE,
+  CONTROL_BULLETIN_VEHICLE_WEIGHT,
+} from "../../utils/controlBulletin";
 import { Input } from "../../../common/forms/Input";
 import { Select } from "../../../common/forms/Select";
 import { RadioButtons } from "../../../common/forms/RadioButtons";
@@ -121,7 +124,7 @@ export function ControlBulletinFormStep2({
           ({ label, apiValue }) => ({
             label,
             nativeInputProps: {
-              value: controlBulletin.transportType === apiValue,
+              checked: controlBulletin.transportType === apiValue,
               onChange: e =>
                 handleEditControlBulletin({
                   target: {
@@ -163,6 +166,53 @@ export function ControlBulletinFormStep2({
         }}
         label="N° de copie conforme de la licence"
       />
+      <Select
+        label="Poids du véhicule"
+        nativeSelectProps={{
+          onChange: e => handleEditControlBulletin(e),
+          value: controlBulletin.vehicleWeight || "",
+          name: "vehicleWeight"
+        }}
+        state={
+          !controlBulletin.vehicleWeight && showErrors
+            ? "error"
+            : "default"
+        }
+      >
+        <option value=""></option>
+        {
+          Object.values(CONTROL_BULLETIN_VEHICLE_WEIGHT).map(
+            (value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            )
+          )
+        }
+      </Select>
+      {
+        controlBulletin.vehicleWeight === CONTROL_BULLETIN_VEHICLE_WEIGHT.REAL && (
+          <Input
+            nativeInputProps={{
+              value: controlBulletin.realVehicleWeight || "",
+              name: "realVehicleWeight",
+              onChange: e => handleEditControlBulletin(e),
+              type: "number",
+              inputMode: "decimal",
+              step: "0.01",
+              min: "0",
+            }}
+            label="Poids réel constaté (en tonnes)"
+            state={
+              !controlBulletin.realVehicleWeight && showErrors
+                ? "error"
+                : "default"
+            }
+            stateRelatedMessage="Veuillez compléter ce champ."
+            required
+          />
+        )
+      }
       <Checkbox
         legend=""
         options={[

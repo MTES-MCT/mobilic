@@ -9,7 +9,15 @@ import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { BATCH_INVITE_MODAL_SUBMIT } from "common/utils/matomoTags";
 
 const SEPARATORS_REGEX = /[,;\n ]/;
-const MAX_EMAILS = 100;
+const MAX_ENTRIES = 100;
+
+function isValidMobilicId(value) {
+  return /^\d+$/.test(value) && parseInt(value, 10) > 0;
+}
+
+function isValidEntry(value) {
+  return validateCleanEmailString(value) || isValidMobilicId(value);
+}
 
 export default function BatchInviteModal({
   open,
@@ -18,41 +26,53 @@ export default function BatchInviteModal({
   isNewAdmin = false,
   title = "",
   description = "",
+  inputLabel = "Adresses e-mail ou identifiants Mobilic",
+  inputHintText = "Saisissez des adresses e-mail (prenom.nom@domaine.fr) ou des identifiants Mobilic (nombres entiers), séparés par un espace, une virgule ou un point-virgule.",
   acceptButtonTitle = "",
   onClose
 }) {
   const { trackEvent } = useMatomo();
-  const [emails, setEmails] = React.useState([]);
+  const [entries, setEntries] = React.useState([]);
   const [text, setText] = React.useState("");
-  // use this variable to check if user has tried to validate input by pressing space for example
   const [hasValidated, setHasValidated] = React.useState(false);
   const [
-    tooManyEmailsInPastedText,
-    setTooManyEmailsInPastedText
+    tooManyEntriesInPastedText,
+    setTooManyEntriesInPastedText
   ] = React.useState(false);
 
   function parseText(t, ignoreLast = true) {
-    const newEmails = t.split(SEPARATORS_REGEX);
-    if (!ignoreLast || newEmails.length > 1) {
+    const tokens = t.split(SEPARATORS_REGEX);
+    if (!ignoreLast || tokens.length > 1) {
       setHasValidated(true);
     }
-    const { valid, invalid } = newEmails
-      .map(email => email.toLowerCase())
+    const { valid, invalid } = tokens
+      .map(token => token.trim())
       .reduce(
-        (acc, email, index) => {
-          const isValid = validateCleanEmailString(email);
-          // we don't want to take the last item because the user is probably not done writing
-          if (isValid && (!ignoreLast || index < newEmails.length - 1)) {
-            acc.valid.push(email);
+        (acc, token, index) => {
+          if (!token) return acc;
+          const shouldSkipLast = ignoreLast && index === tokens.length - 1;
+          if (isValidEntry(token) && !shouldSkipLast) {
+            const normalized = isValidMobilicId(token)
+              ? token
+              : token.toLowerCase();
+            acc.valid.push(normalized);
           } else {
-            acc.invalid.push(email);
+            acc.invalid.push(token);
           }
           return acc;
         },
         { valid: [], invalid: [] }
       );
-    const uniqueValidEmails = [...new Set([...emails, ...valid])];
-    setEmails(uniqueValidEmails.slice(0, MAX_EMAILS));
+    const existingValues = new Set(entries.map(e => e.value));
+    const newEntries = valid
+      .filter(v => !existingValues.has(v))
+      .map(v =>
+        isValidMobilicId(v)
+          ? { type: "id", value: v }
+          : { type: "email", value: v }
+      );
+    const combined = [...entries, ...newEntries].slice(0, MAX_ENTRIES);
+    setEntries(combined);
     setText(invalid.filter(e => !!e).join("\n"));
   }
 
@@ -65,16 +85,18 @@ export default function BatchInviteModal({
       setHasValidated(false);
     }
   }, [text]);
-  const isTextInvalidEmail = React.useMemo(
-    () => text && !validateCleanEmailString(text),
+
+  const isTextInvalid = React.useMemo(
+    () => text && !isValidEntry(text),
     [text]
   );
 
-  React.useEffect(() => setTooManyEmailsInPastedText(false), [text]);
+  React.useEffect(() => setTooManyEntriesInPastedText(false), [text]);
 
-  const tooManyEmails = React.useMemo(() => emails.length >= MAX_EMAILS, [
-    emails
-  ]);
+  const tooManyEntries = React.useMemo(
+    () => entries.length >= MAX_ENTRIES,
+    [entries]
+  );
 
   const _handleClose = () => {
     if (onClose) {
@@ -83,25 +105,25 @@ export default function BatchInviteModal({
     handleClose();
   };
 
-  const removeEmail = email => {
-    setEmails(currentEmails => currentEmails.filter(e => e !== email));
+  const removeEntry = value => {
+    setEntries(current => current.filter(e => e.value !== value));
   };
 
   const isError = React.useMemo(
     () =>
-      (hasValidated && isTextInvalidEmail) ||
-      tooManyEmails ||
-      tooManyEmailsInPastedText,
-    [isTextInvalidEmail, tooManyEmails, hasValidated, tooManyEmailsInPastedText]
+      (hasValidated && isTextInvalid) ||
+      tooManyEntries ||
+      tooManyEntriesInPastedText,
+    [isTextInvalid, tooManyEntries, hasValidated, tooManyEntriesInPastedText]
   );
   const errorMessage = React.useMemo(
     () =>
-      isTextInvalidEmail && hasValidated
-        ? "Le format de l'adresse saisie n'est pas valide. Le format attendu est prenom.nom@domaine.fr."
-        : tooManyEmails || tooManyEmailsInPastedText
-        ? `Le nombre d’e-mails ne peut dépasser ${MAX_EMAILS}. Veuillez découper la liste et procéder en plusieurs fois.`
+      isTextInvalid && hasValidated
+        ? "Le format saisi n'est pas valide. Saisissez une adresse e-mail (prenom.nom@domaine.fr) ou un identifiant Mobilic (nombre entier)."
+        : tooManyEntries || tooManyEntriesInPastedText
+        ? `Le nombre d'entrées ne peut dépasser ${MAX_ENTRIES}. Veuillez découper la liste et procéder en plusieurs fois.`
         : "",
-    [isTextInvalidEmail, tooManyEmails, hasValidated, tooManyEmailsInPastedText]
+    [isTextInvalid, tooManyEntries, hasValidated, tooManyEntriesInPastedText]
   );
 
   return (
@@ -112,7 +134,7 @@ export default function BatchInviteModal({
         title ||
         (isNewAdmin
           ? "Invitez vos salariés sur Mobilic !"
-          : "Inviter une liste d'emails")
+          : "Inviter une liste d'emails ou d'identifiants")
       }
       content={
         <>
@@ -121,8 +143,8 @@ export default function BatchInviteModal({
               <>
                 <p>
                   Invitez plusieurs salariés en une fois en renseignant leur
-                  adresse e-mail ou en copiant une liste dans l’encadré
-                  ci-dessous.
+                  adresse e-mail ou identifiant Mobilic, ou en copiant une
+                  liste dans l'encadré ci-dessous.
                 </p>
                 <p>
                   Une fois le compte créé, ils seront rattachés à votre
@@ -133,13 +155,13 @@ export default function BatchInviteModal({
             ) : (
               <p>
                 Invitez plusieurs salariés en une fois en renseignant leur
-                adresse e-mail ou en copiant une liste dans l’encadré
-                ci-dessous.
+                adresse e-mail ou identifiant Mobilic, ou en copiant une
+                liste dans l'encadré ci-dessous.
               </p>
             ))}
           <Input
-            label="Adresses e-mail"
-            hintText="Exemple de format attendu : prenom.nom@domaine.fr. Les adresses doivent être séparées par un espace."
+            label={inputLabel}
+            hintText={inputHintText}
             textArea
             state={isError ? "error" : "default"}
             stateRelatedMessage={errorMessage}
@@ -152,26 +174,29 @@ export default function BatchInviteModal({
               },
               onPaste: e => {
                 e.preventDefault();
-                setTooManyEmailsInPastedText(false);
+                setTooManyEntriesInPastedText(false);
                 const pastedText = e.clipboardData.getData("text");
-                const nbNewEmails = countItemsInText(pastedText);
-                if (nbNewEmails + emails.length > MAX_EMAILS) {
-                  setTooManyEmailsInPastedText(true);
+                const nbNewEntries = countItemsInText(pastedText);
+                if (nbNewEntries + entries.length > MAX_ENTRIES) {
+                  setTooManyEntriesInPastedText(true);
                   return;
                 }
                 parseText(pastedText, false);
               },
               value: text
             }}
-            disabled={tooManyEmails}
+            disabled={tooManyEntries}
           />
           <TagsGroup
-            tags={emails.map(email => ({
-              children: email,
+            tags={entries.map(entry => ({
+              children:
+                entry.type === "id"
+                  ? `ID: ${entry.value}`
+                  : entry.value,
               dismissible: true,
               nativeButtonProps: {
-                onClick: () => removeEmail(email),
-                "aria-label": `Retirer ${email}`
+                onClick: () => removeEntry(entry.value),
+                "aria-label": `Retirer ${entry.value}`
               }
             }))}
           />
@@ -185,20 +210,41 @@ export default function BatchInviteModal({
             </Button>
           )}
           <LoadingButton
-            disabled={emails.length === 0}
+            disabled={entries.length === 0}
             onClick={async e => {
-              let finalEmails = emails;
+              let finalEntries = [...entries];
 
               if (text) {
-                if (!validateCleanEmailString(text)) {
+                if (!isValidEntry(text)) {
                   setHasValidated(true);
                   return;
                 }
-                finalEmails = [...new Set([...emails, text])];
+                const normalized = isValidMobilicId(text)
+                  ? text
+                  : text.toLowerCase();
+                const existingValues = new Set(
+                  finalEntries.map(en => en.value)
+                );
+                if (!existingValues.has(normalized)) {
+                  finalEntries.push(
+                    isValidMobilicId(text)
+                      ? { type: "id", value: normalized }
+                      : { type: "email", value: normalized }
+                  );
+                }
               }
 
-              trackEvent(BATCH_INVITE_MODAL_SUBMIT(finalEmails.length));
-              await handleSubmit(finalEmails);
+              const emails = finalEntries
+                .filter(en => en.type === "email")
+                .map(en => en.value);
+              const userIds = finalEntries
+                .filter(en => en.type === "id")
+                .map(en => parseInt(en.value, 10));
+
+              trackEvent(
+                BATCH_INVITE_MODAL_SUBMIT(emails.length + userIds.length)
+              );
+              await handleSubmit({ emails, userIds });
               _handleClose();
             }}
           >

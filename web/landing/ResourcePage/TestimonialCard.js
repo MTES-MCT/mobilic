@@ -4,7 +4,12 @@ import Stack from "@mui/material/Stack";
 import { resourceCardsClasses } from "./styles/ResourceCardsStyle";
 import Typography from "@mui/material/Typography";
 
-export function TestimonialCard({ ImageComponent, sentence, author }) {
+export function TestimonialCard({
+  ImageComponent,
+  sentence,
+  author,
+  position,
+}) {
   const classes = resourceCardsClasses();
 
   return (
@@ -15,6 +20,7 @@ export function TestimonialCard({ ImageComponent, sentence, author }) {
           {sentence}
         </Typography>
         <Typography className={classes.testimonialAuthor}>{author}</Typography>
+        <Typography>{position}</Typography>
       </Stack>
     </Card>
   );

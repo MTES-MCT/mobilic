@@ -40,7 +40,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
   const [gender, setGender] = React.useState("");
   const [firstNameError, setFirstNameError] = React.useState(false);
   const [lastNameError, setLastNameError] = React.useState(false);
-  const [email, setEmail] = React.useState("");
+  const [email, setEmail] = React.useState(employeeInvite && employeeInvite.email ? employeeInvite.email : "");
   const [phoneNumber, setPhoneNumber] = React.useState("");
   const [emailError, setEmailError] = React.useState("");
   const [password, setPassword] = React.useState("");

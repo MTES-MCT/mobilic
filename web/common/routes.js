@@ -24,7 +24,6 @@ import Compatibility from "../landing/compatibility";
 import { Certificate } from "../landing/certificate";
 // Import normal pour Navigation (pas de lazy loading pour éviter les problèmes Redux)
 import Navigation from "../pwa/utils/navigation";
-import { LandingGestionnaire } from "../landing/gestionnaire/LandingGestionnaire";
 import LegalNotices from "../landing/legalNotices";
 import { Partners } from "../landing/partners";
 import PrivacyPolicy from "../landing/privacyPolicy";
@@ -383,14 +382,7 @@ export const ROUTES = [
     label: "Vérification d'intégrité",
     accessible: () => true,
     component: <XlsxVerifier />,
-    menuItemFilter: () => false
-  },
-  {
-    path: "/accueil-gestionnaire",
-    label: "Accueil gestionnaire",
-    accessible: () => true,
-    component: <LandingGestionnaire />,
-    menuItemFilter: () => false
+    menuItemFilter: () => false,
   },
   {
     path: "/certificate",
