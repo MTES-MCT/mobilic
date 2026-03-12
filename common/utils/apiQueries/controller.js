@@ -314,7 +314,7 @@ export const CONTROLLER_SAVE_CONTROL_BULLETIN = gql`
     $isDayPageFilled: Boolean
     $deliveredByHand: Boolean
     $vehicleWeight: String
-    $realVehicleWeight: Int
+    $realVehicleWeight: Float
   ) {
     controllerSaveControlBulletin(
       controlId: $controlId
