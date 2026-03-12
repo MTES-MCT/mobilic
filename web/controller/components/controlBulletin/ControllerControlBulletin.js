@@ -219,7 +219,7 @@ export function ControllerControlBulletin({
             observation: newControlBulletin.observation,
             isVehicleImmobilized: newControlBulletin.isVehicleImmobilized,
             vehicleWeight: newControlBulletin.vehicleWeight,
-            realVehicleWeight: newControlBulletin.realVehicleWeight
+            realVehicleWeight: newControlBulletin.realVehicleWeight != null ? parseFloat(newControlBulletin.realVehicleWeight) : null,
           },
           { context: { nonPublicApi: true } }
         );
