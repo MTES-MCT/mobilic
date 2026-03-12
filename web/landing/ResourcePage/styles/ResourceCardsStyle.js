@@ -22,15 +22,23 @@ export const resourceCardsClasses = makeStyles(theme => ({
     width: "100%"
   },
   pressCard: {
-    height: "100%",
     marginRight: theme.spacing(2),
-    padding: theme.spacing(3),
-    paddingTop: theme.spacing(4),
+    display: "flex",
+    flexDirection: "column",
   },
   pressImage: {
-    maxHeight: 60,
-    maxWidth: 230,
-    marginBottom: theme.spacing(2),
+    height: 150,
+    width: 400,
+    objectFit: "contain",
+    padding: theme.spacing(2),
+    [theme.breakpoints.down("md")]: {
+      width: "100%",
+      height: 100,
+    },
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+      height: 80,
+    },
   },
   testimonialImage: {
     maxHeight: 90,

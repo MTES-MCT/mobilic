@@ -106,7 +106,7 @@ export function VideoSection() {
             rowGap={2}
           >
             <Typography component="h3" fontSize="1.25rem" fontWeight="700">
-              Mobilic c’est quoi ?
+              Mobilic, c’est quoi ?
             </Typography>
             <Box position="relative" maxWidth="356px" minHeight="310px">
               <VideoFrame id={id} title={title} aspectRatio="1/1" />
