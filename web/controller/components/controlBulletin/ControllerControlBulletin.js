@@ -155,15 +155,18 @@ export function ControllerControlBulletin({
     }
   };
 
-  const handleButtonClick = (buttonType) => {
+  const handleButtonClick = async (buttonType) => {
     switch (buttonType) {
       case "save":
         onSaveButton(controlBulletinTmp);
         break;
       case "cancel":
-        onClose();
-        setControlBulletinTmp(controlBulletin);
-        setStep(1);
+        await onClose().then((closed) => {
+          if (closed) {
+            setControlBulletinTmp(controlBulletin);
+            setStep(1);
+          }
+        });
         break;
       case "back":
         onBackOrCloseButton();
