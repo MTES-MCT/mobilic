@@ -21,10 +21,16 @@ export const resourceCardsClasses = makeStyles(theme => ({
     height: "100%",
     width: "100%"
   },
-  pressCard: {
+  smallPressCard: {
     marginRight: theme.spacing(2),
     display: "flex",
     flexDirection: "column",
+  },
+   pressCard: {
+    height: "100%",
+    marginRight: theme.spacing(2),
+    padding: theme.spacing(3),
+    paddingTop: theme.spacing(4),
   },
   pressImage: {
     height: 150,

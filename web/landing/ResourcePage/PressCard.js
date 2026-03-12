@@ -16,7 +16,7 @@ export function PressCard({
   const { trackEvent } = useMatomo();
 
   return (
-    <Card variant="outlined" className={classes.pressCard}>
+    <Card variant="outlined" className={classes.smallPressCard}>
       <Stack direction="column" alignItems="center" my={3} rowGap={1}>
         <ImageComponent className={classes.pressImage} />
         <LinkButton
