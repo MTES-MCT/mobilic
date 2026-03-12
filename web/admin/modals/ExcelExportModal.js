@@ -20,8 +20,7 @@ import { EmployeeFilter } from "../components/EmployeeFilter";
 import Notice from "../../common/Notice";
 import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 import { useExportsContext } from "../utils/contextExports";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { validateExportParams } from "common/utils/exportValidation";
 
 export const syncUsers = (setUsers, newUsers) => {
@@ -246,16 +245,17 @@ export default function ExcelExportModal({
           )}
           
           {exportValidation?.canChooseConsolidated && (
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={consolidatedFile}
-                  onChange={(e) => setConsolidatedFile(e.target.checked)}
-                  color="primary"
-                />
-              }
-              label="Télécharger un fichier unique avec les données de l'ensemble de mes salariés"
+            <Checkbox
               className={classes.subtitle}
+              options={[
+                {
+                  label: "Télécharger un fichier unique avec les données de l'ensemble de mes salariés",
+                  nativeInputProps: {
+                    checked: consolidatedFile,
+                    onChange: (e) => setConsolidatedFile(e.target.checked)
+                  }
+                }
+              ]}
             />
           )}
         </>
