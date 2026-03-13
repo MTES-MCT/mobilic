@@ -18,7 +18,8 @@ export async function loadControllerUserData(api, store, alerts) {
 }
 
 export async function syncControllerUser(controllerUserPayload, api, store) {
-  const { id, firstName, lastName, email, grecoId } = controllerUserPayload;
+  const { id, firstName, lastName, email, grecoId, isMinistryOfInterior } =
+    controllerUserPayload;
   const syncActions = [];
   firstName &&
     lastName &&
@@ -29,7 +30,8 @@ export async function syncControllerUser(controllerUserPayload, api, store) {
           firstName,
           lastName,
           email,
-          grecoId
+          grecoId,
+          isMinistryOfInterior
         },
         false
       )
