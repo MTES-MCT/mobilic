@@ -78,6 +78,7 @@ export default function ExcelExportModal({
   React.useEffect(() => {
     setMinDate(defaultMinDate);
     setMaxDate(defaultMaxDate);
+    setConsolidatedFile(true);
   }, [open]);
 
   const handleUserFilterChange = (newUsers) => {
