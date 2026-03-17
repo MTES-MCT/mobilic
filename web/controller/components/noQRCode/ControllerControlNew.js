@@ -12,7 +12,10 @@ export function ControllerControlNew({
   onClose,
   setControlOnFocus
 }) {
+  const [submitted, setSubmitted] = React.useState(false);
+
   const onControlCreated = id => {
+    setSubmitted(true);
     onClose();
     setControlOnFocus({
       id,
@@ -21,6 +24,11 @@ export function ControllerControlNew({
       // on infraction display/edition and on BDC step 3 edition
     });
   };
+
+  if (submitted && !isOpen) {
+    return null;
+  }
+
   return (
     <ControlDrawer isOpen={isOpen} onClose={onClose}>
       <Container>
