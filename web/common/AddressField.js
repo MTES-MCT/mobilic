@@ -33,7 +33,7 @@ export function AddressField({
   disabled = false,
   small = false,
   askCurrentPosition = () => {},
-  disableGeolocation = true
+  disableGeolocation = false
 }) {
   const detaultOptions = () => {
     const companyAddresses = [
@@ -86,11 +86,14 @@ export function AddressField({
           ? null
           : option => option.default ? "Adresses enregistrées" : "Adresses proches"
       }
-      getOptionLabel={option =>
-        typeof option === "string"
-          ? option
-          : formatAddressMainText(option) || ""
-      }
+      getOptionLabel={option => {
+        if (typeof option === "string") {
+          return option;
+        }
+        const mainText = formatAddressMainText(option);
+        const subText = formatAddressSubText(option);
+        return subText ? `${mainText}, ${subText}` : mainText || "";
+      }}
       disabled={disabled}
       selectOnFocus
       options={options}
