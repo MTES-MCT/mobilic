@@ -232,6 +232,9 @@ export const USER_QUERY = gql`
       hasConfirmedEmail
       hasActivatedEmail
       disabledWarnings
+      admin
+      totpEnabled
+      isImpersonated
       missions(fromTime: $activityAfter, includeDeletedMissions: true) {
         edges {
           node {

@@ -426,7 +426,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       disabledWarnings,
       surveyActions,
       userAgreementStatus,
-      notifications
+      notifications,
+      admin,
+      totpEnabled,
+      isImpersonated
     },
     commitImmediately = true
   ) =>
@@ -447,7 +450,10 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             disabledWarnings,
             surveyActions,
             userAgreementStatus,
-            notifications
+            notifications,
+            admin,
+            totpEnabled,
+            isImpersonated
           }
         },
         resolve,

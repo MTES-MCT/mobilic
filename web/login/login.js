@@ -23,7 +23,12 @@ import { usePageTitle } from "../common/UsePageTitle";
 import { RegistrationLink } from "../common/RegistrationLink";
 import { PasswordInput } from "../common/forms/PasswordInput";
 import { Main } from "../common/semantics/Main";
-import { LOGIN_MUTATION } from "common/utils/apiQueries/loginSignup";
+import {
+  LOGIN_MUTATION,
+  VALIDATE_TOTP_LOGIN_MUTATION
+} from "common/utils/apiQueries/loginSignup";
+import { Stepper } from "@codegouvfr/react-dsfr/Stepper";
+import { OtpInput } from "../common/OtpInput";
 
 const useStyles = makeStyles((theme) => ({
   forgotPasswordLink: {
@@ -50,6 +55,10 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = React.useState(null);
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const [totpStep, setTotpStep] = React.useState(false);
+  const [challengeToken, setChallengeToken] = React.useState(null);
+  const [totpCode, setTotpCode] = React.useState("");
+  const totpSubmittingRef = React.useRef(false);
 
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
@@ -63,7 +72,7 @@ export default function Login() {
     setLoading(true);
     await alerts.withApiErrorHandling(
       async () => {
-        await api.graphQlMutate(
+        const response = await api.graphQlMutate(
           LOGIN_MUTATION,
           {
             email,
@@ -72,6 +81,12 @@ export default function Login() {
           {},
           true
         );
+        const loginResult = response.data.auth.login;
+        if (loginResult.totpRequired) {
+          setChallengeToken(loginResult.accessToken);
+          setTotpStep(true);
+          return;
+        }
         await store.updateUserIdAndInfo();
       },
       "login",
@@ -102,6 +117,132 @@ export default function Login() {
     );
     setLoading(false);
   };
+
+  const handleTotpSubmit = async (e, code) => {
+    if (e) e.preventDefault();
+    const codeToValidate = code || totpCode;
+    if (codeToValidate.length !== 6 || loading || totpSubmittingRef.current)
+      return;
+    totpSubmittingRef.current = true;
+    setErrorMessage(null);
+    setLoading(true);
+    await alerts.withApiErrorHandling(
+      async () => {
+        await api.graphQlMutate(
+          VALIDATE_TOTP_LOGIN_MUTATION,
+          { code: codeToValidate },
+          {
+            context: {
+              headers: { Authorization: `Bearer ${challengeToken}` }
+            }
+          },
+          true
+        );
+        await store.updateUserIdAndInfo();
+      },
+      "login",
+      (graphQLError) => {
+        setLoading(false);
+        totpSubmittingRef.current = false;
+        if (graphQLErrorMatchesCode(graphQLError, "AUTHENTICATION_ERROR")) {
+          setTotpCode("");
+          return "Code de vérification invalide ou expiré.";
+        }
+        if (graphQLErrorMatchesCode(graphQLError, "BLOCKED_ACCOUNT_ERROR")) {
+          setTotpStep(false);
+          setChallengeToken(null);
+          setTotpCode("");
+          setErrorMessage(
+            "Trop de tentatives. Veuillez vous reconnecter."
+          );
+          return "Compte temporairement bloqué.";
+        }
+      }
+    );
+  };
+
+  if (totpStep) {
+    return (
+      <>
+        <Header />
+        <Main>
+          <PaperContainer>
+            <Container className="centered" maxWidth="xs">
+              <PaperContainerTitle variant="h1" className={classes.mainTitle}>
+                Connexion
+              </PaperContainerTitle>
+              <Stepper
+                currentStep={2}
+                stepCount={2}
+                title="Vérification en deux étapes"
+              />
+              <Typography variant="body1" sx={{ mb: 3 }}>
+                Saisissez le code à 6 chiffres généré par votre application
+                d'authentification (Google Authenticator, Authy,
+                Bitwarden…).
+              </Typography>
+              <form
+                className="vertical-form"
+                noValidate
+                onSubmit={handleTotpSubmit}
+              >
+                <Input
+                  label="Code de vérification"
+                  nativeInputProps={{
+                    inputMode: "numeric",
+                    autoComplete: "one-time-code",
+                    maxLength: 6,
+                    value: totpCode,
+                    onChange: (e) =>
+                      setTotpCode(e.target.value.replace(/\D/g, ""))
+                  }}
+                />
+                <Box my={2}>
+                  <LoadingButton
+                    aria-label="Valider le code"
+                    type="submit"
+                    loading={loading}
+                    disabled={totpCode.length !== 6}
+                  >
+                    Valider
+                  </LoadingButton>
+                </Box>
+                {errorMessage && (
+                  <Box>
+                    <Typography className={classes.errorMessage}>
+                      {errorMessage}
+                    </Typography>
+                  )}
+                  {errorMessage && (
+                    <div
+                      className="fr-error-text fr-mt-2w"
+                      role="alert"
+                    >
+                      {errorMessage}
+                    </div>
+                  )}
+                  <Box mt={5}>
+                    <Link
+                      component="button"
+                      type="button"
+                      onClick={() => {
+                        setTotpStep(false);
+                        setChallengeToken(null);
+                        setTotpCode("");
+                        setErrorMessage(null);
+                      }}
+                    >
+                      Retour à la connexion
+                    </Link>
+                  </Box>
+                </form>
+              </Box>
+            </Container>
+          </PaperContainer>
+        </Main>
+      </>
+    );
+  }
 
   return (
     <>
