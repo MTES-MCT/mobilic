@@ -160,7 +160,9 @@ export async function syncUser(userPayload, api, store) {
     employments,
     surveyActions,
     userAgreementStatus,
-    notifications
+    notifications,
+    admin,
+    totpEnabled
   } = userPayload;
 
   onLogIn(shouldUpdatePassword);
@@ -202,7 +204,9 @@ export async function syncUser(userPayload, api, store) {
           disabledWarnings,
           surveyActions,
           userAgreementStatus,
-          notifications
+          notifications,
+          admin,
+          totpEnabled
         },
         false
       )

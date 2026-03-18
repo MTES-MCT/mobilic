@@ -232,6 +232,8 @@ export const USER_QUERY = gql`
       hasConfirmedEmail
       hasActivatedEmail
       disabledWarnings
+      admin
+      totpEnabled
       missions(fromTime: $activityAfter, includeDeletedMissions: true) {
         edges {
           node {
