@@ -117,13 +117,24 @@ export default function ExcelExportModal({
     <Modal
       open={open}
       handleClose={handleClose}
-      title="Télécharger le rapport d'activité"
+      title={
+        <>
+          <Typography variant="h2" component="h1" mt={2} className={classes.subtitle}>
+            Télécharger le rapport d'activité
+          </Typography>
+          <Notice
+            type="warning"
+            description="En cas d'export pour les agents de contrôle, veillez à ne pas
+            modifier la mise en page du fichier avant envoi."
+          />
+        </>
+      }
       size="lg"
       content={
         <>
           <Typography gutterBottom>
             Le rapport d'activité est un fichier Excel (.xlsx) qui contient les
-            onglets suivants.
+            onglets suivants:
           </Typography>
           <ul>
             <li>
@@ -142,15 +153,11 @@ export default function ExcelExportModal({
               </Typography>
             </li>
           </ul>
-          <Typography variant="h5" className={classes.subtitle}>
-            Options
+          <Typography component="h2" variant="h6" className={classes.subtitle}>
+            Options d'export
           </Typography>
-          <Notice
-            type="warning"
-            description="En cas d'export pour les agents de contrôle, veillez à ne pas
-            modifier la mise en page du fichier avant envoi."
-          />
-          <Grid spacing={4} container className={classes.subtitle}>
+
+          <Grid spacing={4} container>
             {companies.length > 1 && (
               <Grid item sm={6} className={classes.flexGrow}>
                 <Autocomplete
@@ -170,7 +177,6 @@ export default function ExcelExportModal({
             {teams?.length > 0 && (
               <Grid
                 item
-                className={classes.flexGrow}
                 sm={companies.length > 1 ? 6 : 12}
               >
                 <TeamFilter teams={teams} setTeams={handleTeamFilterChange} />
@@ -178,7 +184,6 @@ export default function ExcelExportModal({
             )}
             <Grid
               item
-              className={classes.flexGrow}
               sm={companies.length > 1 ? 6 : 12}
             >
               <EmployeeFilter users={users} setUsers={handleUserFilterChange} />
