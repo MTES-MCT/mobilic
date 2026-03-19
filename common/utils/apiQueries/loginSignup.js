@@ -6,12 +6,24 @@ export const LOGIN_MUTATION_STRING = `mutation login($email: Email!, $password: 
     login(email: $email, password: $password) {
       accessToken
       refreshToken
+      totpRequired
     }
   }
 }
 `;
 export const LOGIN_MUTATION = gql`
   ${LOGIN_MUTATION_STRING}
+`;
+
+export const VALIDATE_TOTP_LOGIN_MUTATION = gql`
+  mutation validateTotpLogin($code: String!) {
+    auth {
+      validateTotpLogin(code: $code) {
+        accessToken
+        refreshToken
+      }
+    }
+  }
 `;
 
 export const USER_SIGNUP_MUTATION = gql`
