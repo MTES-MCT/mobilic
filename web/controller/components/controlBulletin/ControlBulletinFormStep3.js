@@ -71,7 +71,7 @@ export function ControlBulletinFormStep3({
         }
         stateRelatedMessage={
           isMinistryOfInterior && !grecoId
-            ? "Le matricule est obligatoire pour télécharger le BDC"
+            ? "Le matricule est obligatoire pour télécharger le bulletin de contrôle"
             : undefined
         }
       />
@@ -123,7 +123,7 @@ export function ControlBulletinFormStep3({
         <Notice
           type="warning"
           description="Certains champs obligatoires doivent être renseignés pour permettre le
-          téléchargement du Bulletin de Contrôle."
+          téléchargement du bulletin de contrôle."
         />
       )}
     </Stack>
