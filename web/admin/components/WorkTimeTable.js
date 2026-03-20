@@ -20,6 +20,12 @@ import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { OPEN_WORKDAY_DRAWER } from "common/utils/matomoTags";
 import { AugmentedTable } from "./AugmentedTable";
 import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
+import {
+  entryToBeValidatedByAdmin,
+  entryToBeValidatedByWorker,
+  missionToValidationEntries
+} from "../selectors/validationEntriesSelectors";
+import { RunningTag, ToValidateTag, ValidatedTag, WaitingTag } from "../drawers/Tags";
 
 const useStyles = makeStyles((theme) => ({
   expenditures: {
@@ -52,7 +58,11 @@ const formatInfractions = (_, entry) => {
   if (!entry.totalWork) {
     return null;
   }
-  if (!entry.regulationComputations) {
+  // if regulationComputation is null, it means worker has more recent missions in the same day for which infractions are being computed, so we don't display anything to avoid confusion
+  if (entry.regulationComputations === null) {
+    return null
+  }
+  if (entry.regulationComputations === undefined) {
     return <InfractionsWaiting />;
   }
   return (
@@ -80,9 +90,85 @@ const formatPicto = () => (
   <span className={cx("fr-icon--sm", "fr-icon-arrow-right-line")} />
 );
 
+const MISSION_STATUS = {
+  ongoing: "En cours",
+  waitingWorker: "À valider par salarié",
+  toValidateAdmin: "Saisies à valider",
+  validated: "Validée"
+};
+
+const formatStatus = (status) => status || null;
+
+const getStatusForEntry = (entry, missionsById) => {
+  if (!entry || !missionsById)
+    return null
+
+  // 1. Get all missions associated to the entry
+
+  // Get missions ids from entry
+  const missionsIds = Object.keys(entry.missionNames);
+  // Get missions from ids
+  const missions = missionsIds.map(id => missionsById[id])
+
+  // 2.If missions found, determine status
+  if (missions.length === 0)
+    return null;
+
+  const validationEntries = missions
+    .flatMap((mission) => missionToValidationEntries(mission))
+
+    // Check if mission is ongoing
+  if (validationEntries.some((val) => !entry.endTime)) {
+    return <RunningTag text={MISSION_STATUS.ongoing} style={{fontSize: '0.75rem'}}/>
+  }
+
+  //Check if missions is waiting validation from worker
+  const isWaitingWorkerValidation = validationEntries.some((val) => entryToBeValidatedByWorker(val))
+  if (isWaitingWorkerValidation) {
+    return <WaitingTag text={MISSION_STATUS.waitingWorker} style={{fontSize: '0.75rem'}}/>
+  }
+
+  // Check if mission is waiting validation from admin
+  const isWaitingAdminValidation = validationEntries.some((val) => entryToBeValidatedByAdmin(val, entry.user.id))
+  if (isWaitingAdminValidation) {
+    return <ToValidateTag text={MISSION_STATUS.toValidateAdmin} printIcon={false} style={{fontSize: '0.75rem'}}/>
+  }
+
+  // Check if mission is validated
+  const isValidated = validationEntries.every((val) => val.adminValidation)
+
+  if (isValidated) {
+    return <ValidatedTag text={MISSION_STATUS.validated} style={{fontSize: '0.75rem'}}/>
+
+  }
+
+  return null;
+}
+
+const getMostRecentMissionId = (entry, missionsById, nbMissions) => {
+  let mostRecentMissionId = 0
+  let missionStartTime = null;
+
+  for (let i = 0; i < nbMissions; i++) {
+    const missionId = Object.keys(entry.missionNames)[i];
+    const mission = missionsById[missionId];
+    
+    if (!mission || !mission.startTime)
+      return null
+
+    if (missionStartTime === null || Number(mission.startTime) > Number(missionStartTime)) {
+      mostRecentMissionId = missionId;
+      missionStartTime = mission.startTime;
+      continue
+    }
+  }
+  return mostRecentMissionId;
+}
+
 export function WorkTimeTable({
   period,
   workTimeEntries,
+  missionsById,
   className,
   showMissionName,
   showExpenditures,
@@ -134,40 +220,34 @@ export function WorkTimeTable({
     format: formatWeeklyInfractions,
     align: "center"
   };
-  const startTimeCol = {
-    label: "Début",
-    name: "startTime",
-    format: (time) => (time ? formatTimeOfDay(time, false) : null),
-    align: "left",
-    minWidth: 80
-  };
-  const endTimeCol = {
-    label: "Fin",
-    name: "endTime",
-    format: (time, entry) => (
-      <WorkDayEndTime
-        endTime={time}
-        dayAggregate={entry}
-        openMission={openMission}
-      />
-    ),
-    align: "left",
-    minWidth: 100
-  };
   const workTimeCol = {
     label: "Travail",
     name: "totalWork",
     sortable: true,
     format: formatTimer,
-    align: "left",
+    align: "center",
     minWidth: 120
   };
   const restTimeCol = {
-    label: "Repos",
-    name: "rest",
-    format: (time) => (time ? formatTimer(time, false) : null),
-    align: "left",
+    label: "Pause",
+    name: "workDuration",
+    format: (time) => (time ? formatTimer(time, false) : '0min'),
+    align: "center",
     minWidth: 100
+  };
+  const amplitudeCol = {
+    label: "Amplitude",
+    name: "service",
+    format: (time) => (time ? formatTimer(time, false) : null),
+    align: "center",
+    minWidth: 100
+  };
+  const statusCol = {
+    label: "Statut",
+    name: "status",
+    format: formatStatus,
+    align: "left",
+    minWidth: 120
   };
   const expenditureCol = {
     label: "Frais",
@@ -193,14 +273,6 @@ export function WorkTimeTable({
     sortable: true,
     overflowTooltip: true
   };
-  const pictoCol = {
-    label: "+ d'infos",
-    name: "id",
-    format: formatPicto,
-    sortable: false,
-    align: "center",
-    overflowTooltip: true
-  };
 
   let columns = [];
   if (period === "day") {
@@ -208,11 +280,10 @@ export function WorkTimeTable({
       employeeCol,
       showMissionName && missionNamesCol,
       infractionsCol,
-      startTimeCol,
-      endTimeCol,
       workTimeCol,
       restTimeCol,
-      pictoCol
+      amplitudeCol,
+      statusCol,
     ];
   } else {
     columns = [
@@ -227,14 +298,44 @@ export function WorkTimeTable({
 
   columns = columns.filter(Boolean);
 
-  const preFormattedWorkTimeEntries = workTimeEntries.map((wte) => {
-    const base = {
-      ...wte,
-      id: wte.user.id + wte.periodStart.toString(),
-      workerName: formatPersonName(wte.user),
-      selectable: true
-    };
-    return base;
+  const preFormattedWorkTimeEntries = []
+
+  workTimeEntries.map((wte) => {
+    const nbMissions = wte.missionNames ? Object.keys(wte.missionNames).length : 0;
+    
+    // We get the most recentMission Id
+    let mostRecentMissionId = getMostRecentMissionId(wte, missionsById, nbMissions);
+    
+    for (let i = 0; i < nbMissions; i++) {
+
+      const missionId = Object.keys(wte.missionNames)[i];
+      const mission = missionsById[missionId];
+
+      if (!mission) 
+        continue;
+      const rest = missionsById[missionId].userStats[wte.user.id] ? missionsById[missionId].userStats[wte.user.id].breakDuration : null;
+      const service = missionsById[missionId].userStats[wte.user.id] ? missionsById[missionId].userStats[wte.user.id].service : null;
+      const totalWork = missionsById[missionId].userStats[wte.user.id] ? missionsById[missionId].userStats[wte.user.id].totalWorkDuration : null;
+      let regulationComputations = null
+
+      if (missionId === mostRecentMissionId) {
+         regulationComputations = wte.regulationComputations
+      }
+      
+      const base = {
+        ...wte,
+        missionNames: { [missionId]: wte.missionNames[missionId] },
+        rest,
+        service,
+        totalWork,
+        regulationComputations,
+        id: wte.user.id + wte.periodStart.toString() + missionId,
+        workerName: formatPersonName(wte.user),
+        status: getStatusForEntry({ missionNames: { [missionId]: mission.name }, user: wte.user, endTime: mission.endTime }, missionsById),
+        selectable: true,
+      };
+      preFormattedWorkTimeEntries.push(base);
+    }
   });
 
   return (
@@ -243,7 +344,7 @@ export function WorkTimeTable({
         key={2}
         columns={columns}
         entries={preFormattedWorkTimeEntries}
-        dense
+        small
         virtualizedRowHeight={40}
         defaultSortBy="periodStart"
         defaultSortType="desc"

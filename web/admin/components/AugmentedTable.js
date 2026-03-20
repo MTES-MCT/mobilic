@@ -1,4 +1,5 @@
 import React, { Fragment } from "react";
+import { fr } from "@codegouvfr/react-dsfr";
 import orderBy from "lodash/orderBy";
 import forEach from "lodash/forEach";
 import sum from "lodash/sum";
@@ -34,7 +35,7 @@ const overflowStyleForMaxWidthCells = {
 
 const VIRTUALIZED_TABLE_COLUMN_DEFAULT_MIN_WIDTH = 200;
 const VIRTUALIZED_TABLE_COLUMN_DEFAULT_BASE_WIDTH = 200;
-const DEFAULT_INTER_GROUP_ROW_HEIGHT = 20;
+const DEFAULT_INTER_GROUP_ROW_HEIGHT = 0;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -68,9 +69,9 @@ const useStyles = makeStyles(theme => ({
       borderBottom: "unset"
     },
     "&:hover": {
-      background: "#fafbfc"
+      background: "#DAE9FF",
     },
-    borderTop: "0.5px solid #ebeff3",
+    borderBottom: `0.5px solid ${fr.colors.decisions.border.plain.grey.default}`,
     "&:first-child": {
       borderTop: "none"
     }
@@ -78,7 +79,7 @@ const useStyles = makeStyles(theme => ({
   clickableRow: {
     "&:hover": {
       cursor: "pointer",
-      backgroundColor: "#b4e1fa"
+      backgroundColor: "#DAE9FF",
     }
   },
   interGroupRow: {
@@ -95,8 +96,8 @@ const useStyles = makeStyles(theme => ({
   },
   header: {
     background: "#fafbfc",
-    borderBottom: "1px solid #c9d3df",
-    borderTop: "1px solid #c9d3df",
+    borderBottom: `1px solid ${fr.colors.decisions.border.plain.grey.default}`,
+    borderTop: `1px solid ${fr.colors.decisions.border.plain.grey.default}`,
     borderRadius: "2px",
     fontWeight: 700,
     fontSize: ({ small }) => (small ? "0.75rem" : "0.875rem"),
@@ -111,9 +112,9 @@ const useStyles = makeStyles(theme => ({
       dense ? theme.spacing(0.5) : theme.spacing(2)
   },
   groupRow: {
-    color: theme.palette.primary.main,
+    color: theme.palette.grey-0,
+    backgroundColor: fr.colors.decisions.background.alt.grey.default,
     borderTop: "none",
-    borderBottom: "solid 1px",
     fontWeight: "bold",
     cursor: "pointer"
   },
@@ -189,7 +190,7 @@ export const AugmentedTable = React.forwardRef(
       align: "center",
       format: (value, entry) =>
         entry.__groupKey ? (
-          <IconButton size="small" color="inherit">
+          <IconButton size="small" color="inherit" style={{ color: fr.colors.decisions.text.actionHigh.blueFrance.default }}>
             {entry.__collapsedGroup ? (
               <KeyboardArrowRightIcon fontSize="inherit" />
             ) : (
@@ -463,6 +464,7 @@ export const AugmentedTable = React.forwardRef(
             sortedEntriesWithGroups.push({
               __endOfGroup: `end_${currentGroupKey}`
             });
+          // Synthetic row used to render the group header and store its collapse state.
           const newGroupEntry = {
             id: groupKey,
             __groupKey: groupKey,
