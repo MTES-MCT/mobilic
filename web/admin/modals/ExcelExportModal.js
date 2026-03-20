@@ -134,7 +134,7 @@ export default function ExcelExportModal({
         <>
           <Typography gutterBottom>
             Le rapport d'activité est un fichier Excel (.xlsx) qui contient les
-            onglets suivants:
+            onglets suivants :
           </Typography>
           <ul>
             <li>
