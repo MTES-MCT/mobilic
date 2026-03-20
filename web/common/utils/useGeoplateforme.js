@@ -82,7 +82,7 @@ export function useGeoplateforme_Reverse({
       "reverse",
       queryArgs,
       (results) => {
-        setOptions(resultMapper(results));
+        setOptions(results);
         setLoading(false);
       },
       resultMapper
