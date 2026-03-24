@@ -21,13 +21,13 @@ const tagsStyles = makeStyles((theme) => ({
 
 export const RunningTag = ({text, style}) => {
   const classes = tagsStyles();
-  return <Tag className={classes.running} style={style}>{text || "Mission en cours"}</Tag>;
+  return <Tag className={classes.running + 'fr-tag--sm'} style={style}>{text || "Mission en cours"}</Tag>;
 };
 
 export const ToValidateTag = ({text, printIcon, style}) => {
   const classes = tagsStyles();
   return (
-      <Tag iconId={printIcon ? "fr-icon-warning-line" : ''} className={classes.toValidate} style={style}>
+      <Tag iconId={printIcon ? "fr-icon-warning-line" : ''} className={classes.toValidate + ' fr-tag--sm'} style={style}>
         {text || "Saisies à valider"}
       </Tag>
   )
@@ -36,7 +36,7 @@ export const ToValidateTag = ({text, printIcon, style}) => {
 export const WaitingTag = ({text, style}) => {
   const classes = tagsStyles();
   return (
-    <Tag className={classes.waiting} style={style}>
+    <Tag className={classes.waiting + ' fr-tag--sm'} style={style}>
       {text || "En attente de validation par le salarié"}
     </Tag>
   );
@@ -45,7 +45,7 @@ export const WaitingTag = ({text, style}) => {
 export const ValidatedTag = ({text, style}) => {
   const classes = tagsStyles();
   return (
-    <Tag className={classes.validated} style={style}>
+    <Tag className={classes.validated + ' fr-tag--sm'} style={style}>
       {text || "Validée"}
       </Tag>
   );
