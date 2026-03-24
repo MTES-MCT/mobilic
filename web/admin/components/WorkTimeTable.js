@@ -26,6 +26,7 @@ import {
   missionToValidationEntries
 } from "../selectors/validationEntriesSelectors";
 import { RunningTag, ToValidateTag, ValidatedTag, WaitingTag } from "../drawers/Tags";
+import { MISSION_STATUS } from "../utils/missionsStatus";
 
 const useStyles = makeStyles((theme) => ({
   expenditures: {
@@ -89,13 +90,6 @@ const formatWeeklyInfractions = (_, entry) => {
 const formatPicto = () => (
   <span className={cx("fr-icon--sm", "fr-icon-arrow-right-line")} />
 );
-
-const MISSION_STATUS = {
-  ongoing: "En cours",
-  waitingWorker: "À valider par le salarié",
-  toValidateAdmin: "Saisies à valider",
-  validated: "Validée"
-};
 
 const formatStatus = (status) => status || null;
 
