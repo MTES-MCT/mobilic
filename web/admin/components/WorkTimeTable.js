@@ -92,7 +92,7 @@ const formatPicto = () => (
 
 const MISSION_STATUS = {
   ongoing: "En cours",
-  waitingWorker: "À valider par salarié",
+  waitingWorker: "À valider par le salarié",
   toValidateAdmin: "Saisies à valider",
   validated: "Validée"
 };
@@ -139,7 +139,6 @@ const getStatusForEntry = (entry, missionsById) => {
 
   if (isValidated) {
     return <ValidatedTag text={MISSION_STATUS.validated} style={{fontSize: '0.75rem'}}/>
-
   }
 
   return null;
@@ -204,7 +203,8 @@ export function WorkTimeTable({
     name: "infractions",
     minWidth: 120,
     format: formatInfractions,
-    align: "center"
+    align: "center",
+    flexGrow: 0
   };
   const dailyInfractionsCol = {
     label: "Infractions journalières",
@@ -226,21 +226,24 @@ export function WorkTimeTable({
     sortable: true,
     format: formatTimer,
     align: "center",
-    minWidth: 120
+    minWidth: 120,
+    flexGrow: 0
   };
   const restTimeCol = {
     label: "Pause",
     name: "workDuration",
     format: (time) => (time ? formatTimer(time, false) : '0min'),
     align: "center",
-    minWidth: 100
+    minWidth: 100,
+    flexGrow: 0
   };
   const amplitudeCol = {
     label: "Amplitude",
     name: "service",
     format: (time) => (time ? formatTimer(time, false) : null),
     align: "center",
-    minWidth: 100
+    minWidth: 100,
+    flexGrow: 0
   };
   const statusCol = {
     label: "Statut",
