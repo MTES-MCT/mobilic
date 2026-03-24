@@ -15,17 +15,19 @@ import { useMissionDrawer } from "../drawers/MissionDrawer";
 import { WorkDayEndTime } from "./WorkDayEndTime";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { useDayDrawer } from "../drawers/DayDrawer";
+import { useAdminStore } from "../store/store";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { OPEN_WORKDAY_DRAWER } from "common/utils/matomoTags";
 import { AugmentedTable } from "./AugmentedTable";
 import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
 import {
+  entryDeleted,
   entryToBeValidatedByAdmin,
   entryToBeValidatedByWorker,
   missionToValidationEntries
 } from "../selectors/validationEntriesSelectors";
-import { RunningTag, ToValidateTag, ValidatedTag, WaitingTag } from "../drawers/Tags";
+import { RunningTag, ToValidateTag, ValidatedTag, WaitingTag, DeletedTag } from "../drawers/Tags";
 import { MISSION_STATUS } from "../utils/missionsStatus";
 
 const useStyles = makeStyles((theme) => ({
@@ -93,8 +95,8 @@ const formatPicto = () => (
 
 const formatStatus = (status) => status || null;
 
-const getStatusForEntry = (entry, missionsById) => {
-  if (!entry || !missionsById)
+const getStatusForEntry = (entry, missionsById, currentUserId) => {
+  if (!entry || !missionsById || !currentUserId)
     return null
 
   // 1. Get all missions associated to the entry
@@ -111,28 +113,32 @@ const getStatusForEntry = (entry, missionsById) => {
   const validationEntries = missions
     .flatMap((mission) => missionToValidationEntries(mission))
 
-    // Check if mission is ongoing
-  if (validationEntries.some((val) => !entry.endTime)) {
-    return <RunningTag text={MISSION_STATUS.ongoing} style={{fontSize: '0.75rem'}}/>
+  // Mission is ongoing ?
+  if (validationEntries.some((val) => !val.endTime)) {
+    return <RunningTag text={MISSION_STATUS.ongoing} />
   }
 
-  //Check if missions is waiting validation from worker
+  // Mission is waiting validation from admin ?
+  const isWaitingAdminValidation = validationEntries.some((val) => entryToBeValidatedByAdmin(val, currentUserId))
+  if (isWaitingAdminValidation) {
+    return <ToValidateTag text={MISSION_STATUS.toValidateAdmin} printIcon={false} />
+  }
+
+  // Missions is waiting validation from worker ?
   const isWaitingWorkerValidation = validationEntries.some((val) => entryToBeValidatedByWorker(val))
   if (isWaitingWorkerValidation) {
-    return <WaitingTag text={MISSION_STATUS.waitingWorker} style={{fontSize: '0.75rem'}}/>
+    return <WaitingTag text={MISSION_STATUS.waitingWorker} />
   }
 
-  // Check if mission is waiting validation from admin
-  const isWaitingAdminValidation = validationEntries.some((val) => entryToBeValidatedByAdmin(val, entry.user.id))
-  if (isWaitingAdminValidation) {
-    return <ToValidateTag text={MISSION_STATUS.toValidateAdmin} printIcon={false} style={{fontSize: '0.75rem'}}/>
-  }
-
-  // Check if mission is validated
+  // Mission is validated ?
   const isValidated = validationEntries.every((val) => val.adminValidation)
 
   if (isValidated) {
-    return <ValidatedTag text={MISSION_STATUS.validated} style={{fontSize: '0.75rem'}}/>
+    return <ValidatedTag text={MISSION_STATUS.validated} />
+  }
+
+  if (validationEntries.some((val) => entryDeleted(val))) {
+    return <DeletedTag text={MISSION_STATUS.deleted} />
   }
 
   return null;
@@ -169,6 +175,7 @@ export function WorkTimeTable({
 }) {
   const openMission = useMissionDrawer()[1];
   const { openWorkday } = useDayDrawer();
+  const adminStore = useAdminStore();
 
   const { trackEvent } = useMatomo();
 
@@ -328,7 +335,7 @@ export function WorkTimeTable({
         regulationComputations,
         id: wte.user.id + wte.periodStart.toString() + missionId,
         workerName: formatPersonName(wte.user),
-        status: getStatusForEntry({ missionNames: { [missionId]: mission.name }, user: wte.user, endTime: mission.endTime }, missionsById),
+        status: getStatusForEntry({ missionNames: { [missionId]: mission.name }, user: wte.user, endTime: mission.endTime }, missionsById, adminStore.userId),
         selectable: true,
       };
       preFormattedWorkTimeEntries.push(base);

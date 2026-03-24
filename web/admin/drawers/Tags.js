@@ -50,3 +50,12 @@ export const ValidatedTag = ({text, style}) => {
       </Tag>
   );
 };
+
+export const DeletedTag = ({text, style}) => {
+  const classes = tagsStyles();
+  return (
+    <Tag className={classes.deleted + ' fr-tag--sm'} style={style}>
+      {text || "Supprimé"}
+    </Tag>
+  )
+}
