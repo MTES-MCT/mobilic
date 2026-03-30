@@ -11,7 +11,6 @@ import { useSnackbarAlerts } from "../common/Snackbar";
 import { useHistory } from "react-router-dom";
 import { Link } from "../common/LinkButton";
 import { AGENT_CONNECT_LOGIN_MUTATION } from "common/utils/apiQueries/loginSignup";
-import { buildAgentConnectCallbackUrl } from "../controller/utils/agentConnect";
 
 export function AgentConnectCallback() {
   const api = useApi();
@@ -58,10 +57,15 @@ export function AgentConnectCallback() {
     const code = queryString.get("code");
     const state = queryString.get("state");
     const errorDescription = queryString.get("error_description");
-    
-    // Use the same callback URL builder to ensure exact match with authorization request
-    const callBackUrl = buildAgentConnectCallbackUrl();
-    
+    const newQS = removeParamsFromQueryString(window.location.search, [
+      "code",
+      "state",
+      "iss"
+    ]);
+    const callBackUrl =
+      window.location.origin +
+      window.location.pathname +
+      (newQS.length > 0 ? `?${newQS}` : "");
     if (code) {
       retrieveAgentConnectInfo(code, callBackUrl, state);
     } else if (errorDescription === MESSAGE_WHEN_USER_ABORT_CONNEXION) {
