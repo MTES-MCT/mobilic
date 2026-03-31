@@ -94,14 +94,9 @@ export function TotpSetup() {
         <form onSubmit={handleVerify}>
           <OtpInput
             label="Code de vérification"
-            nativeInputProps={{
-              inputMode: "numeric",
-              autoComplete: "one-time-code",
-              maxLength: 6,
-              value: verificationCode,
-              onChange: (e) =>
-                setVerificationCode(e.target.value.replace(/\D/g, ""))
-            }}
+            value={verificationCode}
+            onChange={setVerificationCode}
+            disabled={loading}
           />
           <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
             <LoadingButton

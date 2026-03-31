@@ -181,36 +181,29 @@ export default function Login() {
                 d'authentification (Google Authenticator, Authy,
                 Bitwarden…).
               </Typography>
-              <form
-                className="vertical-form"
-                noValidate
-                onSubmit={handleTotpSubmit}
-              >
-                <Input
-                  label="Code de vérification"
-                  nativeInputProps={{
-                    inputMode: "numeric",
-                    autoComplete: "one-time-code",
-                    maxLength: 6,
-                    value: totpCode,
-                    onChange: (e) =>
-                      setTotpCode(e.target.value.replace(/\D/g, ""))
-                  }}
-                />
-                <Box my={2}>
-                  <LoadingButton
-                    aria-label="Valider le code"
-                    type="submit"
-                    loading={loading}
-                    disabled={totpCode.length !== 6}
-                  >
-                    Valider
-                  </LoadingButton>
-                </Box>
-                {errorMessage && (
-                  <Box>
-                    <Typography className={classes.errorMessage}>
-                      {errorMessage}
+              <Box my={1}>
+                <form
+                  className="vertical-form"
+                  noValidate
+                  onSubmit={handleTotpSubmit}
+                >
+                  <OtpInput
+                    label="Code de vérification"
+                    value={totpCode}
+                    onChange={(code) => {
+                      setTotpCode(code);
+                      if (errorMessage) setErrorMessage(null);
+                      if (code.length === 6) handleTotpSubmit(null, code);
+                    }}
+                    disabled={loading}
+                  />
+                  {loading && (
+                    <Typography
+                      variant="body2"
+                      className="fr-mt-2w"
+                      sx={{ textAlign: "center" }}
+                    >
+                      Vérification en cours…
                     </Typography>
                   )}
                   {errorMessage && (
