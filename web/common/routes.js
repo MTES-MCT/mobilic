@@ -97,6 +97,7 @@ export const CONTROLLER_ROUTE_PREFIX = "/controller";
 // React.lazy avec React Fast Refresh fonctionnel
 const Admin = React.lazy(() => import("../admin/Admin"));
 const OAuth = React.lazy(() => import("../oauth/root"));
+const ImpersonationSearch = React.lazy(() => import("../support/ImpersonationSearch"));
 
 // Wrapper pour encapsuler chaque composant lazy avec son propre Suspense
 function withSuspense(Component) {
@@ -431,6 +432,13 @@ export const ROUTES = [
     label: "Réglementation",
     accessible: () => true,
     component: <RegulationPage />,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/support/impersonation",
+    label: "Support - Impersonation",
+    accessible: ({ userInfo }) => !!userInfo?.admin && !!userInfo?.totpEnabled,
+    component: withSuspense(ImpersonationSearch),
     menuItemFilter: () => false
   },
   {
