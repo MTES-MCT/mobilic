@@ -4,7 +4,7 @@ import { Link } from "../../common/LinkButton";
 import React from "react";
 import { JoinedText } from "./JoinedText";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
-import { OPEN_MISSION_DRAWER_IN_ACTIVITY_PANEL } from "common/utils/matomoTags";
+import { OPEN_MISSION_DRAWER_IN_ACTIVITY_PANEL } from "../../../common/utils/matomoTags";
 
 export function MissionNamesList({ missionNames, openMission }) {
   const filteredMissionNames = pickBy(missionNames, (name, id) => !!name);

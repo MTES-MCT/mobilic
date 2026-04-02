@@ -29,6 +29,7 @@ import {
 } from "../selectors/validationEntriesSelectors";
 import { RunningTag, ToValidateTag, ValidatedTag, WaitingTag, DeletedTag } from "../drawers/Tags";
 import { MISSION_STATUS } from "../utils/missionsStatus";
+import { MissionStatusTagBtn } from "./MissionStatusTagBtn";
 
 const useStyles = makeStyles((theme) => ({
   expenditures: {
@@ -96,6 +97,8 @@ const formatPicto = () => (
 const formatStatus = (status) => status || null;
 
 const getStatusForEntry = (entry, missionsById, currentUserId) => {
+  const openMission = useMissionDrawer()[1];
+
   if (!entry || !missionsById || !currentUserId)
     return null
 
@@ -113,28 +116,49 @@ const getStatusForEntry = (entry, missionsById, currentUserId) => {
   const validationEntries = missions
     .flatMap((mission) => missionToValidationEntries(mission))
 
-  // Mission is ongoing ?
+    // Mission is ongoing ?
   if (validationEntries.some((val) => !val.endTime)) {
-    return <RunningTag text={MISSION_STATUS.ongoing} />
+    return (
+      <MissionStatusTagBtn missionId={validationEntries[0].missionId} openMission={openMission}>
+        <RunningTag text={MISSION_STATUS.ongoing} />
+      </MissionStatusTagBtn>
+    );
   }
 
   // Mission is waiting validation from admin ?
   const isWaitingAdminValidation = validationEntries.some((val) => entryToBeValidatedByAdmin(val, currentUserId))
   if (isWaitingAdminValidation) {
-    return <ToValidateTag text={MISSION_STATUS.toValidateAdmin} printIcon={false} />
+    return (
+      <MissionStatusTagBtn missionId={validationEntries[0].missionId} openMission={openMission}>
+        <ToValidateTag text={MISSION_STATUS.toValidateAdmin} printIcon={false} />
+      </MissionStatusTagBtn>
+    );
   }
 
   // Missions is waiting validation from worker ?
   const isWaitingWorkerValidation = validationEntries.some((val) => entryToBeValidatedByWorker(val))
   if (isWaitingWorkerValidation) {
-    return <WaitingTag text={MISSION_STATUS.waitingWorker} />
+    return (
+      <MissionStatusTagBtn missionId={validationEntries[0].missionId} openMission={openMission}>
+        <WaitingTag text={MISSION_STATUS.waitingWorker} />
+      </MissionStatusTagBtn>
+    );
+  }
+  console.log("validationEntries", validationEntries)
+  // Mission is validated ?
+  const areAllMissionsValidated = validationEntries.every((val) => val.adminValidation)
+  const areSomeMissionsValidated = validationEntries.some((val) => val.adminValidation)
+
+  if (areAllMissionsValidated) {
+    return <ValidatedTag text={MISSION_STATUS.allValidated} />
   }
 
-  // Mission is validated ?
-  const isValidated = validationEntries.every((val) => val.adminValidation)
-
-  if (isValidated) {
-    return <ValidatedTag text={MISSION_STATUS.validated} />
+  if (areSomeMissionsValidated) {
+    return (
+      <MissionStatusTagBtn missionId={validationEntries[0].missionId} openMission={openMission}>
+        <ValidatedTag text={MISSION_STATUS.validated} />
+      </MissionStatusTagBtn>
+    );
   }
 
   if (validationEntries.some((val) => entryDeleted(val))) {
@@ -310,35 +334,62 @@ export function WorkTimeTable({
     // We get the most recentMission Id
     let mostRecentMissionId = getMostRecentMissionId(wte, missionsById, nbMissions);
     
-    for (let i = 0; i < nbMissions; i++) {
-
-      const missionId = Object.keys(wte.missionNames)[i];
+    const missionsStatus = [...new Set(Object.keys(wte.missionNames || {}).map(missionId => {
       const mission = missionsById[missionId];
+      if (!mission) return null;
+      return getStatusForEntry({ missionNames: { [missionId]: wte.missionNames[missionId] }, user: wte.user, endTime: mission.endTime }, missionsById, adminStore.userId)
+    }))]
+    console.log("missionsStatus", missionsStatus)
+    const areAllMissionsValidated = missionsStatus.every(status => status && status.props.text === MISSION_STATUS.allValidated)
+    if (areAllMissionsValidated) {
+        const rest = wte.rest || null;
+        const service = wte.service || null;
+        const totalWork = wte.totalWork || null;
+        const regulationComputations = wte.regulationComputations || null;
 
-      if (!mission) 
-        continue;
-      const rest = missionsById[missionId].userStats[wte.user.id] ? missionsById[missionId].userStats[wte.user.id].breakDuration : null;
-      const service = missionsById[missionId].userStats[wte.user.id] ? missionsById[missionId].userStats[wte.user.id].service : null;
-      const totalWork = missionsById[missionId].userStats[wte.user.id] ? missionsById[missionId].userStats[wte.user.id].totalWorkDuration : null;
-      let regulationComputations = null
+        const base = {
+          ...wte,
+          rest,
+          service,
+          totalWork,
+          regulationComputations,
+          id: wte.user.id + wte.periodStart.toString(),
+          workerName: formatPersonName(wte.user),
+          status: <ValidatedTag text={MISSION_STATUS.allValidated} />,
+          selectable: true,
+        };
+        preFormattedWorkTimeEntries.push(base);
+        return
+    } else {
+      for (let i = 0; i < nbMissions; i++) {
 
-      if (missionId === mostRecentMissionId) {
-         regulationComputations = wte.regulationComputations
+        const missionId = Object.keys(wte.missionNames)[i];
+        const mission = missionsById[missionId];
+        if (!mission) 
+          continue;
+        const rest = missionsById[missionId].userStats[wte.user.id] ? missionsById[missionId].userStats[wte.user.id].breakDuration : null;
+        const service = missionsById[missionId].userStats[wte.user.id] ? missionsById[missionId].userStats[wte.user.id].service : null;
+        const totalWork = missionsById[missionId].userStats[wte.user.id] ? missionsById[missionId].userStats[wte.user.id].totalWorkDuration : null;
+        let regulationComputations = null
+
+        if (missionId === mostRecentMissionId) {
+          regulationComputations = wte.regulationComputations
+        }
+        
+        const base = {
+          ...wte,
+          missionNames: { [missionId]: wte.missionNames[missionId] },
+          rest,
+          service,
+          totalWork,
+          regulationComputations,
+          id: wte.user.id + wte.periodStart.toString() + missionId,
+          workerName: formatPersonName(wte.user),
+          status: getStatusForEntry({ missionNames: { [missionId]: mission.name }, user: wte.user, endTime: mission.endTime }, missionsById, adminStore.userId),
+          selectable: true,
+        };
+        preFormattedWorkTimeEntries.push(base);
       }
-      
-      const base = {
-        ...wte,
-        missionNames: { [missionId]: wte.missionNames[missionId] },
-        rest,
-        service,
-        totalWork,
-        regulationComputations,
-        id: wte.user.id + wte.periodStart.toString() + missionId,
-        workerName: formatPersonName(wte.user),
-        status: getStatusForEntry({ missionNames: { [missionId]: mission.name }, user: wte.user, endTime: mission.endTime }, missionsById, adminStore.userId),
-        selectable: true,
-      };
-      preFormattedWorkTimeEntries.push(base);
     }
   });
 

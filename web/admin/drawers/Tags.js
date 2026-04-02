@@ -21,7 +21,9 @@ const tagsStyles = makeStyles((theme) => ({
 
 export const RunningTag = ({text, style}) => {
   const classes = tagsStyles();
-  return <Tag className={classes.running + 'fr-tag--sm'} style={style}>{text || "Mission en cours"}</Tag>;
+  return <Tag className={classes.running + ' fr-tag--sm'} style={style}>
+    {text || "Mission en cours"}
+    </Tag>;
 };
 
 export const ToValidateTag = ({text, printIcon, style}) => {

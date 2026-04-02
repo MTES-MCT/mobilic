@@ -1,8 +1,9 @@
 
 export const MISSION_STATUS = {
-  ongoing: "En cours",
-  waitingWorker: "À valider par le salarié",
-  toValidateAdmin: "Saisies à valider",
-  validated: "Validée",
-  deleted: "Supprimée"
+  ongoing: "Mission en cours",
+  waitingWorker: "Mission à valider par le salarié",
+  toValidateAdmin: "Mission à valider",
+  validated: "Mission validée",
+  allValidated: "Journée validée",
+  deleted: "Mission supprimée"
 };
