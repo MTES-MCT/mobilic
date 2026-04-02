@@ -193,6 +193,12 @@ function RootComponent() {
       sessionStorage.removeItem("fcRedirection");
       return;
     }
+    const impersonationReturn = sessionStorage.getItem("impersonationReturn");
+    if (impersonationReturn) {
+      sessionStorage.removeItem("impersonationReturn");
+      history.replace("/support/impersonation");
+      return;
+    }
 
     if (!isSigningUp && !isInOauthFlow) {
       // Routing priority :

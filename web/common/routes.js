@@ -436,7 +436,7 @@ export const ROUTES = [
   },
   {
     path: "/support/impersonation",
-    label: "Support - Impersonation",
+    label: "Impersonation",
     accessible: ({ userInfo }) => !!userInfo?.admin && !!userInfo?.totpEnabled,
     component: withSuspense(ImpersonationSearch),
     menuItemFilter: () => false
@@ -447,6 +447,18 @@ export const ROUTES = [
     accessible: () => true,
     menuItemFilter: () => false,
     component: <Home />
+  },
+  {
+    label: "Support",
+    path: "",
+    accessible: ({ userInfo }) => !!userInfo?.admin && !!userInfo?.totpEnabled,
+    menuItemFilter: ({ userInfo }) => !!userInfo?.admin && !!userInfo?.totpEnabled,
+    subRoutes: [
+      {
+        path: "/support/impersonation",
+        label: "Accès au compte"
+      }
+    ]
   },
   RESOURCES_ROUTE,
   {
@@ -461,7 +473,8 @@ export const ROUTES = [
       },
       {
         path: "/logout",
-        label: "Déconnexion"
+        label: "Déconnexion",
+        accessible: ({ userInfo }) => !userInfo?.isImpersonated
       }
     ]
   },
