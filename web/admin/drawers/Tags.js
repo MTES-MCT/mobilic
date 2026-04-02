@@ -12,6 +12,18 @@ const tagsStyles = makeStyles((theme) => ({
     color: fr.colors.decisions.background.flat.blueFrance.default,
     backgroundColor: fr.colors.decisions.background.contrast.blueFrance.default
   },
+  validated: {
+    color: fr.colors.decisions.background.flat.blueFrance.default,
+    backgroundColor: fr.colors.decisions.background.contrast.blueFrance.default
+  },
+  allValidated: {
+    color: fr.colors.decisions.background.flat.grey.default,
+    backgroundColor: fr.colors.decisions.background.contrast.grey.default
+  },
+  deleted: {
+    color: fr.colors.decisions.background.flat.greenEmeraude.default,
+    backgroundColor: fr.colors.decisions.background.contrast.greenEmeraude.default
+  },
   toValidate: {
     color: fr.colors.decisions.background.flat.yellowTournesol.default,
     backgroundColor:
@@ -48,6 +60,15 @@ export const ValidatedTag = ({text, style}) => {
   const classes = tagsStyles();
   return (
     <Tag className={classes.validated + ' fr-tag--sm'} style={style}>
+      {text || "Validée"}
+      </Tag>
+  );
+};
+
+export const AllValidatedTag = ({text, style}) => {
+  const classes = tagsStyles();
+  return (
+    <Tag className={classes.allValidated + ' fr-tag--sm'} style={style}>
       {text || "Validée"}
       </Tag>
   );

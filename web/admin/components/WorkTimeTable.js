@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  formatTimeOfDay,
   formatTimer,
   getStartOfWeek,
   prettyFormatMonth,
@@ -12,7 +11,6 @@ import { formatExpendituresAsOneString } from "common/utils/expenditures";
 import { makeStyles } from "@mui/styles";
 import { MissionNamesList } from "./MissionNamesList";
 import { useMissionDrawer } from "../drawers/MissionDrawer";
-import { WorkDayEndTime } from "./WorkDayEndTime";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { useDayDrawer } from "../drawers/DayDrawer";
 import { useAdminStore } from "../store/store";
@@ -27,7 +25,7 @@ import {
   entryToBeValidatedByWorker,
   missionToValidationEntries
 } from "../selectors/validationEntriesSelectors";
-import { RunningTag, ToValidateTag, ValidatedTag, WaitingTag, DeletedTag } from "../drawers/Tags";
+import { RunningTag, ToValidateTag, ValidatedTag, WaitingTag, DeletedTag, AllValidatedTag } from "../drawers/Tags";
 import { MISSION_STATUS } from "../utils/missionsStatus";
 import { MissionStatusTagBtn } from "./MissionStatusTagBtn";
 
@@ -90,17 +88,36 @@ const formatWeeklyInfractions = (_, entry) => {
   return <InfractionsNumber nbAlerts={entry.weeklyAlerts} />;
 };
 
-const formatPicto = () => (
-  <span className={cx("fr-icon--sm", "fr-icon-arrow-right-line")} />
-);
-
 const formatStatus = (status) => status || null;
 
-const getStatusForEntry = (entry, missionsById, currentUserId) => {
-  const openMission = useMissionDrawer()[1];
+const formatMissionNamesList = (_, entry, openMission) => {
+  if (!entry.missionNames || !entry.status) {
+    return null;
+  }
 
-  if (!entry || !missionsById || !currentUserId)
-    return null
+  const missionNames = entry.missionNames;
+  const missionsStatus =
+    entry.status.props.text || entry.status.props.children?.props.text;
+  const missionsAreClickable =
+    missionsStatus !== MISSION_STATUS.allValidated;
+
+  return (
+    <MissionNamesList
+      missionNames={missionNames}
+      openMission={missionsAreClickable ? openMission : null}
+    />
+  );
+};
+
+const getStatusForEntry = (
+  entry,
+  missionsById,
+  currentUserId,
+  openMission
+) => {
+  if (!entry || !missionsById || !currentUserId || !openMission) {
+    return null;
+  }
 
   // 1. Get all missions associated to the entry
 
@@ -144,15 +161,9 @@ const getStatusForEntry = (entry, missionsById, currentUserId) => {
       </MissionStatusTagBtn>
     );
   }
-  console.log("validationEntries", validationEntries)
+
   // Mission is validated ?
-  const areAllMissionsValidated = validationEntries.every((val) => val.adminValidation)
   const areSomeMissionsValidated = validationEntries.some((val) => val.adminValidation)
-
-  if (areAllMissionsValidated) {
-    return <ValidatedTag text={MISSION_STATUS.allValidated} />
-  }
-
   if (areSomeMissionsValidated) {
     return (
       <MissionStatusTagBtn missionId={validationEntries[0].missionId} openMission={openMission}>
@@ -188,6 +199,22 @@ const getMostRecentMissionId = (entry, missionsById, nbMissions) => {
   return mostRecentMissionId;
 }
 
+const onRowClick = (entry, trackEvent, openWorkday, openMission) => {
+  if (!entry.day || trackEvent === null || openWorkday === null || openMission === null) {
+    return false;
+  }
+
+  trackEvent(OPEN_WORKDAY_DRAWER);
+
+  if (entry.status.props.text !== MISSION_STATUS.allValidated) {
+    openMission(Object.keys(entry.missionNames)[0]);
+    return true;
+  }
+
+  openWorkday(entry);
+  return true;
+}
+
 export function WorkTimeTable({
   period,
   workTimeEntries,
@@ -197,8 +224,8 @@ export function WorkTimeTable({
   showExpenditures,
   loading
 }) {
-  const openMission = useMissionDrawer()[1];
   const { openWorkday } = useDayDrawer();
+  const openMission = useMissionDrawer()[1];
   const adminStore = useAdminStore();
 
   const { trackEvent } = useMatomo();
@@ -294,9 +321,7 @@ export function WorkTimeTable({
   const missionNamesCol = {
     label: "Mission(s)",
     name: "missionNames",
-    format: (missionNames) => (
-      <MissionNamesList missionNames={missionNames} openMission={openMission} />
-    ),
+    format: (_, entry) => formatMissionNamesList(_, entry, openMission),
     align: "left",
     sortable: true,
     overflowTooltip: true
@@ -337,10 +362,18 @@ export function WorkTimeTable({
     const missionsStatus = [...new Set(Object.keys(wte.missionNames || {}).map(missionId => {
       const mission = missionsById[missionId];
       if (!mission) return null;
-      return getStatusForEntry({ missionNames: { [missionId]: wte.missionNames[missionId] }, user: wte.user, endTime: mission.endTime }, missionsById, adminStore.userId)
+      return getStatusForEntry(
+        {
+          missionNames: { [missionId]: wte.missionNames[missionId] },
+          user: wte.user,
+          endTime: mission.endTime
+        },
+        missionsById,
+        adminStore.userId,
+        openMission
+      )
     }))]
-    console.log("missionsStatus", missionsStatus)
-    const areAllMissionsValidated = missionsStatus.every(status => status && status.props.text === MISSION_STATUS.allValidated)
+    const areAllMissionsValidated = missionsStatus.every(status => status && status.props.children.props.text === MISSION_STATUS.validated)
     if (areAllMissionsValidated) {
         const rest = wte.rest || null;
         const service = wte.service || null;
@@ -355,7 +388,7 @@ export function WorkTimeTable({
           regulationComputations,
           id: wte.user.id + wte.periodStart.toString(),
           workerName: formatPersonName(wte.user),
-          status: <ValidatedTag text={MISSION_STATUS.allValidated} />,
+          status: <AllValidatedTag text={MISSION_STATUS.allValidated} />,
           selectable: true,
         };
         preFormattedWorkTimeEntries.push(base);
@@ -385,7 +418,16 @@ export function WorkTimeTable({
           regulationComputations,
           id: wte.user.id + wte.periodStart.toString() + missionId,
           workerName: formatPersonName(wte.user),
-          status: getStatusForEntry({ missionNames: { [missionId]: mission.name }, user: wte.user, endTime: mission.endTime }, missionsById, adminStore.userId),
+          status: getStatusForEntry(
+            {
+              missionNames: { [missionId]: mission.name },
+              user: wte.user,
+              endTime: mission.endTime
+            },
+            missionsById,
+            adminStore.userId,
+            openMission
+          ),
           selectable: true,
         };
         preFormattedWorkTimeEntries.push(base);
@@ -405,11 +447,9 @@ export function WorkTimeTable({
         defaultSortType="desc"
         className={className}
         virtualized
-        onRowClick={(entry) => {
-          if (!entry.day) return false;
-          trackEvent(OPEN_WORKDAY_DRAWER);
-          openWorkday(entry);
-        }}
+        onRowClick={(entry) =>
+          onRowClick(entry, trackEvent, openWorkday, openMission)
+        }
         groupByColumn={{
           label: periodLabel,
           name: "periodStart",
