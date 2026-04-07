@@ -57,6 +57,8 @@ const InfractionsNumber = ({ nbAlerts }) => (
 );
 
 const formatInfractions = (_, entry) => {
+  const missionStatus = entry.status?.props?.children?.props?.text || entry.status?.props?.text;
+
   if (!entry.totalWork) {
     return null;
   }
@@ -64,7 +66,10 @@ const formatInfractions = (_, entry) => {
   if (entry.regulationComputations === null) {
     return null
   }
-  if (entry.regulationComputations === undefined) {
+  // If a user has multiple missions on the same day and not all of them are validated,
+  // we display the "waiting validation" icon to make it clear that infractions are
+  // hidden because some missions are still unvalidated, not because there are none.
+  if (entry.regulationComputations === undefined || (missionStatus && missionStatus === MISSION_STATUS.validated)) {
     return <InfractionsWaiting />;
   }
   return (
