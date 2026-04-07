@@ -4,21 +4,6 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { makeStyles } from "@mui/styles";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
 
-const baseTagPropTypes = {
-  text: PropTypes.string,
-  style: PropTypes.object
-};
-
-RunningTag.propTypes = baseTagPropTypes;
-ToValidateTag.propTypes = {
-  ...baseTagPropTypes,
-  printIcon: PropTypes.bool
-};
-WaitingTag.propTypes = baseTagPropTypes;
-ValidatedTag.propTypes = baseTagPropTypes;
-AllValidatedTag.propTypes = baseTagPropTypes;
-DeletedTag.propTypes = baseTagPropTypes;
-
 const tagsStyles = makeStyles((theme) => ({
   running: {
     color: fr.colors.decisions.background.flat.warning.default,
@@ -98,5 +83,20 @@ export const DeletedTag = ({text, style}) => {
     </Tag>
   )
 }
+
+const baseTagPropTypes = {
+  text: PropTypes.string,
+  style: PropTypes.object
+};
+
+RunningTag.propTypes = baseTagPropTypes;
+ToValidateTag.propTypes = {
+  ...baseTagPropTypes,
+  printIcon: PropTypes.bool
+};
+WaitingTag.propTypes = baseTagPropTypes;
+ValidatedTag.propTypes = baseTagPropTypes;
+AllValidatedTag.propTypes = baseTagPropTypes;
+DeletedTag.propTypes = baseTagPropTypes;
 
 

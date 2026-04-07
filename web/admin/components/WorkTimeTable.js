@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import {
   formatTimer,
   getStartOfWeek,
@@ -57,20 +58,25 @@ const InfractionsNumber = ({ nbAlerts }) => (
 );
 
 const formatInfractions = (_, entry) => {
-  const missionStatus = entry.status?.props?.children?.props?.text || entry.status?.props?.text;
+  const missionStatus =
+    entry.status?.props?.children?.props?.text || entry.status?.props?.text;
+  const isValidatedMissionStatus =
+    missionStatus === MISSION_STATUS.validated;
 
   if (!entry.totalWork) {
     return null;
   }
   // if regulationComputation is null, it means worker has more recent missions in the same day for which infractions are being computed, so we don't display anything to avoid confusion
   if (entry.regulationComputations === null) {
-    return null
+    return null;
   }
   // If a user has multiple missions on the same day and not all of them are validated,
   // we display the "waiting validation" icon to make it clear that infractions are
   // hidden because some missions are still unvalidated, not because there are none.
-  if (entry.regulationComputations === undefined || (missionStatus && missionStatus === MISSION_STATUS.validated)) {
-    const tooltipTitle = missionStatus && missionStatus === MISSION_STATUS.validated ? "Autre(s) mission(s) en attente de validation" : "Mission(s) en attente de validation";
+  if (entry.regulationComputations === undefined || isValidatedMissionStatus) {
+    const tooltipTitle = isValidatedMissionStatus
+      ? "Autre(s) mission(s) en attente de validation"
+      : "Mission(s) en attente de validation";
     return <InfractionsWaiting tooltipTitle={tooltipTitle} />;
   }
   return (
@@ -185,25 +191,146 @@ const getStatusForEntry = (
   return null;
 }
 
-const getMostRecentMissionId = (entry, missionsById, nbMissions) => {
-  let mostRecentMissionId = 0
+const getMostRecentMissionId = (entry, missionsById, missionIds) => {
+  let mostRecentMissionId = 0;
   let missionStartTime = null;
 
-  for (let i = 0; i < nbMissions; i++) {
-    const missionId = Object.keys(entry.missionNames)[i];
-    const mission = missionsById[missionId];
-    
-    if (!mission || !mission.startTime)
-      return null
+  for (const missionId of missionIds) {
+    const missionStart = missionsById[missionId]?.startTime;
 
-    if (missionStartTime === null || Number(mission.startTime) > Number(missionStartTime)) {
+    if (!missionStart) {
+      return null;
+    }
+
+    if (
+      missionStartTime === null ||
+      Number(missionStart) > Number(missionStartTime)
+    ) {
       mostRecentMissionId = missionId;
-      missionStartTime = mission.startTime;
-      continue
+      missionStartTime = missionStart;
     }
   }
+
   return mostRecentMissionId;
-}
+};
+
+const getMissionStatuses = (wte, missionsById, currentUserId, openMission) =>
+  [
+    ...new Set(
+      Object.keys(wte.missionNames || {}).map((missionId) => {
+        const mission = missionsById[missionId];
+
+        if (!mission) {
+          return null;
+        }
+
+        return getStatusForEntry(
+          {
+            missionNames: { [missionId]: wte.missionNames[missionId] },
+            user: wte.user,
+            endTime: mission.endTime
+          },
+          missionsById,
+          currentUserId,
+          openMission
+        );
+      })
+    )
+  ];
+
+const buildAllValidatedEntry = (wte) => ({
+  ...wte,
+  rest: wte.rest || null,
+  service: wte.service || null,
+  totalWork: wte.totalWork || null,
+  regulationComputations: wte.regulationComputations || null,
+  id: wte.user.id + wte.periodStart.toString(),
+  workerName: formatPersonName(wte.user),
+  status: <AllValidatedTag text={MISSION_STATUS.allValidated} />,
+  selectable: true
+});
+
+const buildMissionEntry = (
+  wte,
+  missionId,
+  missionsById,
+  currentUserId,
+  openMission,
+  mostRecentMissionId
+) => {
+  const mission = missionsById[missionId];
+
+  if (!mission) {
+    return null;
+  }
+
+  const userStats = mission.userStats?.[wte.user.id];
+
+  return {
+    ...wte,
+    missionNames: { [missionId]: wte.missionNames[missionId] },
+    rest: userStats ? userStats.breakDuration : null,
+    service: userStats ? userStats.service : null,
+    totalWork: userStats ? userStats.totalWorkDuration : null,
+    regulationComputations:
+      missionId === mostRecentMissionId ? wte.regulationComputations : null,
+    id: wte.user.id + wte.periodStart.toString() + missionId,
+    workerName: formatPersonName(wte.user),
+    status: getStatusForEntry(
+      {
+        missionNames: { [missionId]: mission.name },
+        user: wte.user,
+        endTime: mission.endTime
+      },
+      missionsById,
+      currentUserId,
+      openMission
+    ),
+    selectable: true
+  };
+};
+
+const preFormatWorkTimeEntries = (
+  workTimeEntries,
+  missionsById,
+  currentUserId,
+  openMission
+) =>
+  workTimeEntries.flatMap((wte) => {
+    const missionIds = Object.keys(wte.missionNames || {});
+    const mostRecentMissionId = getMostRecentMissionId(
+      wte,
+      missionsById,
+      missionIds
+    );
+    const missionsStatus = getMissionStatuses(
+      wte,
+      missionsById,
+      currentUserId,
+      openMission
+    );
+    const areAllMissionsValidated = missionsStatus.every(
+      (status) =>
+        status?.props?.children?.props?.text === MISSION_STATUS.validated
+    );
+
+    if (areAllMissionsValidated) {
+      return [buildAllValidatedEntry(wte)];
+    }
+
+    return missionIds
+      .map((missionId) =>
+        buildMissionEntry(
+          wte,
+          missionId,
+          missionsById,
+          currentUserId,
+          openMission,
+          mostRecentMissionId
+        )
+      )
+      .filter(Boolean);
+  });
 
 const onRowClick = (entry, trackEvent, openWorkday, openMission) => {
   if (!entry.day || trackEvent === null || openWorkday === null || openMission === null) {
@@ -357,89 +484,12 @@ export function WorkTimeTable({
 
   columns = columns.filter(Boolean);
 
-  const preFormattedWorkTimeEntries = []
-
-  workTimeEntries.map((wte) => {
-    const nbMissions = wte.missionNames ? Object.keys(wte.missionNames).length : 0;
-    
-    // We get the most recentMission Id
-    let mostRecentMissionId = getMostRecentMissionId(wte, missionsById, nbMissions);
-    
-    const missionsStatus = [...new Set(Object.keys(wte.missionNames || {}).map(missionId => {
-      const mission = missionsById[missionId];
-      if (!mission) return null;
-      return getStatusForEntry(
-        {
-          missionNames: { [missionId]: wte.missionNames[missionId] },
-          user: wte.user,
-          endTime: mission.endTime
-        },
-        missionsById,
-        adminStore.userId,
-        openMission
-      )
-    }))]
-    const areAllMissionsValidated = missionsStatus.every(status => status && status.props.children.props.text === MISSION_STATUS.validated)
-    if (areAllMissionsValidated) {
-        const rest = wte.rest || null;
-        const service = wte.service || null;
-        const totalWork = wte.totalWork || null;
-        const regulationComputations = wte.regulationComputations || null;
-
-        const base = {
-          ...wte,
-          rest,
-          service,
-          totalWork,
-          regulationComputations,
-          id: wte.user.id + wte.periodStart.toString(),
-          workerName: formatPersonName(wte.user),
-          status: <AllValidatedTag text={MISSION_STATUS.allValidated} />,
-          selectable: true,
-        };
-        preFormattedWorkTimeEntries.push(base);
-        return
-    } else {
-      for (let i = 0; i < nbMissions; i++) {
-
-        const missionId = Object.keys(wte.missionNames)[i];
-        const mission = missionsById[missionId];
-        if (!mission) 
-          continue;
-        const rest = missionsById[missionId].userStats[wte.user.id] ? missionsById[missionId].userStats[wte.user.id].breakDuration : null;
-        const service = missionsById[missionId].userStats[wte.user.id] ? missionsById[missionId].userStats[wte.user.id].service : null;
-        const totalWork = missionsById[missionId].userStats[wte.user.id] ? missionsById[missionId].userStats[wte.user.id].totalWorkDuration : null;
-        let regulationComputations = null
-
-        if (missionId === mostRecentMissionId) {
-          regulationComputations = wte.regulationComputations
-        }
-        
-        const base = {
-          ...wte,
-          missionNames: { [missionId]: wte.missionNames[missionId] },
-          rest,
-          service,
-          totalWork,
-          regulationComputations,
-          id: wte.user.id + wte.periodStart.toString() + missionId,
-          workerName: formatPersonName(wte.user),
-          status: getStatusForEntry(
-            {
-              missionNames: { [missionId]: mission.name },
-              user: wte.user,
-              endTime: mission.endTime
-            },
-            missionsById,
-            adminStore.userId,
-            openMission
-          ),
-          selectable: true,
-        };
-        preFormattedWorkTimeEntries.push(base);
-      }
-    }
-  });
+  const preFormattedWorkTimeEntries = preFormatWorkTimeEntries(
+    workTimeEntries,
+    missionsById,
+    adminStore.userId,
+    openMission
+  );
 
   return (
     <>
@@ -470,3 +520,52 @@ export function WorkTimeTable({
     </>
   );
 }
+
+InfractionsWaiting.propTypes = {
+  tooltipTitle: PropTypes.string.isRequired
+};
+
+InfractionsNumber.propTypes = {
+  nbAlerts: PropTypes.number
+};
+
+const missionStatsPropType = PropTypes.shape({
+  breakDuration: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  service: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  totalWorkDuration: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+});
+
+const missionPropType = PropTypes.shape({
+  endTime: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  startTime: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  name: PropTypes.string,
+  userStats: PropTypes.objectOf(missionStatsPropType)
+});
+
+const workTimeEntryPropType = PropTypes.shape({
+  missionNames: PropTypes.objectOf(PropTypes.string),
+  user: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired
+  }).isRequired,
+  periodStart: PropTypes.oneOfType([
+    PropTypes.instanceOf(Date),
+    PropTypes.number,
+    PropTypes.string
+  ]).isRequired,
+  rest: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  service: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  totalWork: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  regulationComputations: PropTypes.shape({
+    nbAlertsDailyAdmin: PropTypes.number
+  })
+});
+
+WorkTimeTable.propTypes = {
+  period: PropTypes.oneOf(["day", "week", "month"]).isRequired,
+  workTimeEntries: PropTypes.arrayOf(workTimeEntryPropType).isRequired,
+  missionsById: PropTypes.objectOf(missionPropType).isRequired,
+  className: PropTypes.string,
+  showMissionName: PropTypes.bool,
+  showExpenditures: PropTypes.bool,
+  loading: PropTypes.bool
+};

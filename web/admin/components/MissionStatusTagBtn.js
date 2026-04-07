@@ -8,7 +8,6 @@ export const MissionStatusTagBtn = ({ children, openMission, missionId }) => {
     const { trackEvent } = useMatomo();
 
     if (openMission && !missionId) {
-        console.error("MissionStatusTagBtn: openMission function provided without missionId");
         return <span>{children}</span>;
     }
 
@@ -16,8 +15,6 @@ export const MissionStatusTagBtn = ({ children, openMission, missionId }) => {
         <Link
             to="#"
             onClick={e => {
-                console.log("MissionStatusTagBtn clicked, missionId:", missionId);
-                console.log("openMission function:", openMission);
                 e.stopPropagation();
 
                 if (openMission) {
