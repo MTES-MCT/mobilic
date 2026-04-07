@@ -41,8 +41,8 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const InfractionsWaiting = () => (
-  <Tooltip title="Mission(s) en attente de validation">
+const InfractionsWaiting = ({ tooltipTitle }) => (
+  <Tooltip title={tooltipTitle}>
     <span
       className={cx("fr-icon--sm", "fr-icon-time-line")}
       style={{ color: "var(--background-flat-blue-france)" }}
@@ -70,7 +70,8 @@ const formatInfractions = (_, entry) => {
   // we display the "waiting validation" icon to make it clear that infractions are
   // hidden because some missions are still unvalidated, not because there are none.
   if (entry.regulationComputations === undefined || (missionStatus && missionStatus === MISSION_STATUS.validated)) {
-    return <InfractionsWaiting />;
+    const tooltipTitle = missionStatus && missionStatus === MISSION_STATUS.validated ? "Autre(s) mission(s) en attente de validation" : "Mission(s) en attente de validation";
+    return <InfractionsWaiting tooltipTitle={tooltipTitle} />;
   }
   return (
     <InfractionsNumber
