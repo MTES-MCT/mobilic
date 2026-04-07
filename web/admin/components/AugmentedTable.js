@@ -71,7 +71,7 @@ const useStyles = makeStyles(theme => ({
     "&:hover": {
       background: "#DAE9FF",
     },
-    borderBottom: `0.5px solid ${fr.colors.decisions.border.plain.grey.default}`,
+    borderBottom: `1px solid var(--border-default-grey)`,
     "&:first-child": {
       borderTop: "none"
     }
