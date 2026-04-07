@@ -1,7 +1,15 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { Link } from "../../common/LinkButton";
 const { OPEN_MISSION_DRAWER_IN_ACTIVITY_PANEL } = require("common/utils/matomoTags");
+
+
+MissionStatusTagBtn.propTypes = {
+    children: PropTypes.node,
+    openMission: PropTypes.func,
+    missionId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+};
 
 export const MissionStatusTagBtn = ({ children, openMission, missionId }) => {
     const { trackEvent } = useMatomo();
