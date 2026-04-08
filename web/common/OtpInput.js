@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { fr } from "@codegouvfr/react-dsfr";
 
 export function OtpInput({ value, onChange, label, length = 6, disabled = false }) {
@@ -64,7 +65,7 @@ export function OtpInput({ value, onChange, label, length = 6, disabled = false 
       >
         {digits.map((digit, i) => (
           <input
-            key={`otp-${i}`}
+            key={`otp-${i}`} // NOSONAR — fixed-size array, never reordered
             id={`otp-${i}`}
             ref={(el) => (inputsRef.current[i] = el)}
             className={fr.cx("fr-input")}
@@ -94,3 +95,11 @@ export function OtpInput({ value, onChange, label, length = 6, disabled = false 
     </div>
   );
 }
+
+OtpInput.propTypes = {
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  label: PropTypes.string,
+  length: PropTypes.number,
+  disabled: PropTypes.bool
+};
