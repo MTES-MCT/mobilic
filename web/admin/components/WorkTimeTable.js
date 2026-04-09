@@ -58,8 +58,7 @@ const InfractionsNumber = ({ nbAlerts }) => (
 );
 
 const formatInfractions = (_, entry) => {
-  const missionStatus =
-    entry.status?.props?.children?.props?.text || entry.status?.props?.text;
+  const missionStatus = entry.statusKey ? entry.statusKey : null;
   const isValidatedMissionStatus =
     missionStatus === MISSION_STATUS.validated;
 
@@ -67,13 +66,13 @@ const formatInfractions = (_, entry) => {
     return null;
   }
   // if regulationComputation is null, it means worker has more recent missions in the same day for which infractions are being computed, so we don't display anything to avoid confusion
-  if (entry.regulationComputations === null) {
+  if (entry.hasHiddenInfractionsBecauseNewerMissionExists) {
     return null;
   }
   // If a user has multiple missions on the same day and not all of them are validated,
   // we display the "waiting validation" icon to make it clear that infractions are
   // hidden because some missions are still unvalidated, not because there are none.
-  if (entry.regulationComputations === undefined || isValidatedMissionStatus) {
+  if (!entry.regulationComputations  || isValidatedMissionStatus) {
     const tooltipTitle = isValidatedMissionStatus
       ? "Autre(s) mission(s) en attente de validation"
       : "Mission(s) en attente de validation";
@@ -100,16 +99,50 @@ const formatWeeklyInfractions = (_, entry) => {
   return <InfractionsNumber nbAlerts={entry.weeklyAlerts} />;
 };
 
-const formatStatus = (status) => status || null;
+const formatStatus = (status, entry, openMission) => {
+  let tag = null;
+
+  if (!status || !entry || !openMission) {
+    return null;
+  }
+  const missionId = entry.id
+
+  switch (status) {
+    case MISSION_STATUS.ongoing:
+      tag = <RunningTag text={MISSION_STATUS.ongoing} />;
+      break;
+    case MISSION_STATUS.toValidateAdmin:
+      tag = <ToValidateTag text={MISSION_STATUS.toValidateAdmin} printIcon={false} />;
+      break;
+    case MISSION_STATUS.waitingWorker:
+      tag = <WaitingTag text={MISSION_STATUS.waitingWorker} />;
+      break;
+    case MISSION_STATUS.validated:
+      tag = <ValidatedTag text={MISSION_STATUS.validated} />;
+      break;
+    case MISSION_STATUS.allValidated:
+      tag = <AllValidatedTag text={MISSION_STATUS.allValidated} />;
+      break;
+    case MISSION_STATUS.deleted:
+      tag = <DeletedTag text={MISSION_STATUS.deleted} />;
+      break;
+    default:
+      tag = null;
+  }
+  return (
+     <MissionStatusTagBtn missionId={missionId} openMission={openMission}>
+      {tag}
+     </MissionStatusTagBtn>
+  )
+};
 
 const formatMissionNamesList = (_, entry, openMission) => {
-  if (!entry.missionNames || !entry.status) {
+  if (!entry.missionNames || !entry.statusKey || !openMission) {
     return null;
   }
 
   const missionNames = entry.missionNames;
-  const missionsStatus =
-    entry.status.props.text || entry.status.props.children?.props.text;
+  const missionsStatus = entry.statusKey;
   const missionsAreClickable =
     missionsStatus !== MISSION_STATUS.allValidated;
 
@@ -147,45 +180,29 @@ const getStatusForEntry = (
 
     // Mission is ongoing ?
   if (validationEntries.some((val) => !val.endTime)) {
-    return (
-      <MissionStatusTagBtn missionId={validationEntries[0].missionId} openMission={openMission}>
-        <RunningTag text={MISSION_STATUS.ongoing} />
-      </MissionStatusTagBtn>
-    );
+    return MISSION_STATUS.ongoing;
   }
 
   // Mission is waiting validation from admin ?
   const isWaitingAdminValidation = validationEntries.some((val) => entryToBeValidatedByAdmin(val, currentUserId))
   if (isWaitingAdminValidation) {
-    return (
-      <MissionStatusTagBtn missionId={validationEntries[0].missionId} openMission={openMission}>
-        <ToValidateTag text={MISSION_STATUS.toValidateAdmin} printIcon={false} />
-      </MissionStatusTagBtn>
-    );
+    return MISSION_STATUS.toValidateAdmin;
   }
 
   // Missions is waiting validation from worker ?
   const isWaitingWorkerValidation = validationEntries.some((val) => entryToBeValidatedByWorker(val))
   if (isWaitingWorkerValidation) {
-    return (
-      <MissionStatusTagBtn missionId={validationEntries[0].missionId} openMission={openMission}>
-        <WaitingTag text={MISSION_STATUS.waitingWorker} />
-      </MissionStatusTagBtn>
-    );
+    return MISSION_STATUS.waitingWorker;
   }
 
   // Mission is validated ?
   const areSomeMissionsValidated = validationEntries.some((val) => val.adminValidation)
   if (areSomeMissionsValidated) {
-    return (
-      <MissionStatusTagBtn missionId={validationEntries[0].missionId} openMission={openMission}>
-        <ValidatedTag text={MISSION_STATUS.validated} />
-      </MissionStatusTagBtn>
-    );
+    return MISSION_STATUS.validated;
   }
 
   if (validationEntries.some((val) => entryDeleted(val))) {
-    return <DeletedTag text={MISSION_STATUS.deleted} />
+    return MISSION_STATUS.deleted;
   }
 
   return null;
@@ -215,8 +232,6 @@ const getMostRecentMissionId = (entry, missionsById, missionIds) => {
 };
 
 const getMissionStatuses = (wte, missionsById, currentUserId, openMission) =>
-  [
-    ...new Set(
       Object.keys(wte.missionNames || {}).map((missionId) => {
         const mission = missionsById[missionId];
 
@@ -235,8 +250,6 @@ const getMissionStatuses = (wte, missionsById, currentUserId, openMission) =>
           openMission
         );
       })
-    )
-  ];
 
 const buildAllValidatedEntry = (wte) => ({
   ...wte,
@@ -246,7 +259,7 @@ const buildAllValidatedEntry = (wte) => ({
   regulationComputations: wte.regulationComputations || null,
   id: wte.user.id + wte.periodStart.toString(),
   workerName: formatPersonName(wte.user),
-  status: <AllValidatedTag text={MISSION_STATUS.allValidated} />,
+  statusKey: MISSION_STATUS.allValidated,
   selectable: true
 });
 
@@ -274,9 +287,10 @@ const buildMissionEntry = (
     totalWork: userStats ? userStats.totalWorkDuration : null,
     regulationComputations:
       missionId === mostRecentMissionId ? wte.regulationComputations : null,
+    hasHiddenInfractionsBecauseNewerMissionExists: missionId !== mostRecentMissionId,
     id: wte.user.id + wte.periodStart.toString() + missionId,
     workerName: formatPersonName(wte.user),
-    status: getStatusForEntry(
+    statusKey: getStatusForEntry(
       {
         missionNames: { [missionId]: mission.name },
         user: wte.user,
@@ -311,7 +325,7 @@ const preFormatWorkTimeEntries = (
     );
     const areAllMissionsValidated = missionsStatus.every(
       (status) =>
-        status?.props?.children?.props?.text === MISSION_STATUS.validated
+        status === MISSION_STATUS.validated
     );
 
     if (areAllMissionsValidated) {
@@ -339,7 +353,7 @@ const onRowClick = (entry, trackEvent, openWorkday, openMission) => {
 
   trackEvent(OPEN_WORKDAY_DRAWER);
 
-  if (entry.status.props.text !== MISSION_STATUS.allValidated) {
+  if (entry.statusKey && entry.statusKey !== MISSION_STATUS.allValidated) {
     openMission(Object.keys(entry.missionNames)[0]);
     return true;
   }
@@ -416,7 +430,7 @@ export function WorkTimeTable({
   };
   const restTimeCol = {
     label: "Pause",
-    name: "workDuration",
+    name: "rest",
     format: (time) => (time ? formatTimer(time, false) : '0min'),
     align: "center",
     minWidth: 100,
@@ -432,8 +446,8 @@ export function WorkTimeTable({
   };
   const statusCol = {
     label: "Statut",
-    name: "status",
-    format: formatStatus,
+    name: "statusKey",
+    format: (statusKey, entry) => formatStatus(statusKey, entry, openMission),
     align: "left",
     minWidth: 120
   };
