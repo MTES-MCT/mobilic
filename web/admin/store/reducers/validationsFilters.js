@@ -1,3 +1,5 @@
+import uniqBy from "lodash/uniqBy";
+
 export function updateValidationsFiltersReducer(state, payload) {
   return {
     ...state,
@@ -9,7 +11,7 @@ export function updateValidationsFiltersReducer(state, payload) {
 }
 
 export function computeUsersInValidationFilter(adminedTeams, usersWithoutTeam) {
-  return adminedTeams.reduce(
+  const allUsers = adminedTeams.reduce(
     (accumulator, currentTeam) =>
       accumulator.concat(
         currentTeam.users.map(user => ({
@@ -20,4 +22,5 @@ export function computeUsersInValidationFilter(adminedTeams, usersWithoutTeam) {
       ),
     usersWithoutTeam || []
   );
+  return uniqBy(allUsers, u => u.id);
 }
