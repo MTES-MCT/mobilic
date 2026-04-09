@@ -65,7 +65,7 @@ const formatInfractions = (_, entry) => {
   if (!entry.totalWork) {
     return null;
   }
-  // if regulationComputation is null, it means worker has more recent missions in the same day for which infractions are being computed, so we don't display anything to avoid confusion
+  // if worker has more recent missions in the same day for which infractions are being computed, so we don't display anything to avoid confusion
   if (entry.hasHiddenInfractionsBecauseNewerMissionExists) {
     return null;
   }
@@ -105,7 +105,7 @@ const formatStatus = (status, entry, openMission) => {
   if (!status || !entry || !openMission) {
     return null;
   }
-  const missionId = entry.id
+  const missionId = entry.id;
 
   switch (status) {
     case MISSION_STATUS.ongoing:
@@ -126,14 +126,12 @@ const formatStatus = (status, entry, openMission) => {
     case MISSION_STATUS.deleted:
       tag = <DeletedTag text={MISSION_STATUS.deleted} />;
       break;
-    default:
-      tag = null;
   }
   return (
      <MissionStatusTagBtn missionId={missionId} openMission={openMission}>
       {tag}
      </MissionStatusTagBtn>
-  )
+  );
 };
 
 const formatMissionNamesList = (_, entry, openMission) => {
