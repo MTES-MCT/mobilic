@@ -112,7 +112,7 @@ const useStyles = makeStyles(theme => ({
       dense ? theme.spacing(0.5) : theme.spacing(2)
   },
   groupRow: {
-    color: theme.palette.grey-0,
+    color: fr.colors.decisions.text.default.grey.default,
     backgroundColor: fr.colors.decisions.background.alt.grey.default,
     borderTop: "none",
     fontWeight: "bold",
