@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { Link } from "../../common/LinkButton";
-const { OPEN_MISSION_DRAWER_IN_ACTIVITY_PANEL } = require("common/utils/matomoTags");
+import { OPEN_MISSION_DRAWER_IN_ACTIVITY_PANEL } from "common/utils/matomoTags";
 
 export const MissionStatusTagBtn = ({ children, openMission, missionId }) => {
     const { trackEvent } = useMatomo();
