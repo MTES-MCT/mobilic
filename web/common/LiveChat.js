@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
 import { makeStyles } from "@mui/styles";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
@@ -36,6 +37,7 @@ export const LiveChat = ({ userId, userInfo, position = 'br', open = false }) =>
   const [displayIcon, setDisplayIcon] = useState(false);
   const classes = useStyles();
   const BREVO_CONV_ID = process.env.REACT_APP_BREVO_CONV_ID;
+  const brevoGlobal = globalThis;
 
   const email = userInfo?.email ?? null;
   const firstName = userInfo?.firstName ?? null;
@@ -43,11 +45,11 @@ export const LiveChat = ({ userId, userInfo, position = 'br', open = false }) =>
   const phone = userInfo?.phoneNumber ?? null;
 
   const syncBrevoVisitorData = () => {
-      if (!window.BrevoConversations) {
-        return;
-      }
+    if (!brevoGlobal.BrevoConversations) {
+      return;
+    }
 
-    window.BrevoConversations("updateIntegrationData", {
+    brevoGlobal.BrevoConversations("updateIntegrationData", {
       email,
       firstName,
       lastName,
@@ -61,9 +63,9 @@ export const LiveChat = ({ userId, userInfo, position = 'br', open = false }) =>
     if (!BREVO_CONV_ID)
       return;
 
-    window.BrevoConversationsID = BREVO_CONV_ID;
-    window.BrevoConversationsSetup = {
-      ...(window.BrevoConversationsSetup || {}),
+    brevoGlobal.BrevoConversationsID = BREVO_CONV_ID;
+    brevoGlobal.BrevoConversationsSetup = {
+      ...(brevoGlobal.BrevoConversationsSetup || {}),
       visitorId: userId ? String(userId) : undefined,
       onRendered: () => {
         setDisplayIcon(true);
@@ -73,9 +75,9 @@ export const LiveChat = ({ userId, userInfo, position = 'br', open = false }) =>
       buttonPosition: position,
     };
 
-    if (!window.BrevoConversations) {
-      window.BrevoConversations = function (...args) {
-        (window.BrevoConversations.q = window.BrevoConversations.q || []).push(args);
+    if (!brevoGlobal.BrevoConversations) {
+      brevoGlobal.BrevoConversations = function (...args) {
+        (brevoGlobal.BrevoConversations.q = brevoGlobal.BrevoConversations.q || []).push(args);
       };
     }
 
@@ -91,7 +93,7 @@ export const LiveChat = ({ userId, userInfo, position = 'br', open = false }) =>
     document.head?.appendChild(script);
 
     return () => {
-      document.head?.removeChild(script);
+      script.remove();
     };
   }, [BREVO_CONV_ID]);
 
@@ -100,19 +102,19 @@ export const LiveChat = ({ userId, userInfo, position = 'br', open = false }) =>
   }, []);
 
   useEffect(() => {
-    if (!window.BrevoConversations) {
+    if (!brevoGlobal.BrevoConversations) {
       return;
     }
     if (open) {
-      window.BrevoConversations("expandWidget");
+      brevoGlobal.BrevoConversations("expandWidget");
       setDisplayIcon(true);
     }
   }, [open]);
 
 
   const hideChat = () => {
-    if (window.BrevoConversations) {
-      window.BrevoConversations("hide");
+    if (brevoGlobal.BrevoConversations) {
+      brevoGlobal.BrevoConversations("hide");
     }
     setDisplayIcon(false);
   };
@@ -129,4 +131,16 @@ export const LiveChat = ({ userId, userInfo, position = 'br', open = false }) =>
     </IconButton>,
     document.body
   );
+};
+
+LiveChat.propTypes = {
+  userId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  userInfo: PropTypes.shape({
+    email: PropTypes.string,
+    firstName: PropTypes.string,
+    lastName: PropTypes.string,
+    phoneNumber: PropTypes.string,
+  }),
+  position: PropTypes.oneOf(["bl", "br"]),
+  open: PropTypes.bool,
 };
