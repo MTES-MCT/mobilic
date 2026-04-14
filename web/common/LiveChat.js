@@ -1,25 +1,38 @@
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
+import ReactDOM from "react-dom";
 import { makeStyles } from "@mui/styles";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 
+const BREVO_Z_INDEX = 4000;
+const CLOSE_BUTTON_Z_INDEX = BREVO_Z_INDEX + 10;
+const CLOSE_BUTTON_SIZE = 20;
+const CLOSE_BUTTON_BOTTOM = 68;
+const CLOSE_BUTTON_OFFSET = 20;
+const CLOSE_BUTTON_LEFT_OFFSET = 60;
+
 const useStyles = makeStyles(theme => ({
   closeButton: {
     position: "fixed",
-    right: "20px",
-    bottom: "68px",
+    bottom: CLOSE_BUTTON_BOTTOM,
     backgroundColor: "grey",
     color: theme.palette.primary.contrastText,
-    height: "20px",
-    width: "20px",
-    zIndex: 649
+    height: CLOSE_BUTTON_SIZE,
+    width: CLOSE_BUTTON_SIZE,
+    zIndex: CLOSE_BUTTON_Z_INDEX,
+  },
+  closeButtonRight: {
+    right: CLOSE_BUTTON_OFFSET,
+  },
+  closeButtonLeft: {
+    left: CLOSE_BUTTON_LEFT_OFFSET,
   },
   closeIcon: {
     fontSize: "1rem"
   },
 }));
 
-export const LiveChat = ({ userId, userInfo }) => {
+export const LiveChat = ({ userId, userInfo, position = 'br', open = false }) => {
   const [displayIcon, setDisplayIcon] = useState(false);
   const classes = useStyles();
   const BREVO_CONV_ID = process.env.REACT_APP_BREVO_CONV_ID;
@@ -30,17 +43,17 @@ export const LiveChat = ({ userId, userInfo }) => {
   const phone = userInfo?.phoneNumber ?? null;
 
   const syncBrevoVisitorData = () => {
-    if (!userId || !window.BrevoConversations) {
-      return;
-    }
+      if (!window.BrevoConversations) {
+        return;
+      }
 
     window.BrevoConversations("updateIntegrationData", {
       email,
       firstName,
       lastName,
       phone,
-      mobilic_id: String(userId),
-      metabase_link: `https://metabase.mobilic.beta.gouv.fr/dashboard/6?id=${userId}`,
+      mobilic_id: userId ? String(userId) : null,
+      metabase_link: userId ? `https://metabase.mobilic.beta.gouv.fr/dashboard/6?id=${userId}` : null,
     });
   };
 
@@ -56,7 +69,8 @@ export const LiveChat = ({ userId, userInfo }) => {
         setDisplayIcon(true);
         syncBrevoVisitorData();
       },
-      zIndex: 600,
+      zIndex: BREVO_Z_INDEX,
+      buttonPosition: position,
     };
 
     if (!window.BrevoConversations) {
@@ -75,11 +89,26 @@ export const LiveChat = ({ userId, userInfo }) => {
     script.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
     script.async = true;
     document.head?.appendChild(script);
-  }, [BREVO_CONV_ID, userId]);
+
+    return () => {
+      document.head?.removeChild(script);
+    };
+  }, [BREVO_CONV_ID]);
 
   useEffect(() => {
     syncBrevoVisitorData();
-  }, [userId, email, firstName, lastName]);
+  }, []);
+
+  useEffect(() => {
+    if (!window.BrevoConversations) {
+      return;
+    }
+    if (open) {
+      window.BrevoConversations("expandWidget");
+      setDisplayIcon(true);
+    }
+  }, [open]);
+
 
   const hideChat = () => {
     if (window.BrevoConversations) {
@@ -88,14 +117,16 @@ export const LiveChat = ({ userId, userInfo }) => {
     setDisplayIcon(false);
   };
 
-  return (
-    displayIcon &&
-    (
-      <>
-        <IconButton className={classes.closeButton} onClick={hideChat}>
-          <CloseIcon className={classes.closeIcon} />
-        </IconButton>
-      </>
-    )
+  if (!displayIcon)
+    return null;
+
+  return ReactDOM.createPortal(
+    <IconButton 
+      className={`${classes.closeButton} ${position === 'bl' ? classes.closeButtonLeft : classes.closeButtonRight}`} 
+      onClick={hideChat}
+    >
+      <CloseIcon className={classes.closeIcon} />
+    </IconButton>,
+    document.body
   );
 };

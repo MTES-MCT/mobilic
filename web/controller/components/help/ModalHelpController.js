@@ -1,14 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import Stack from "@mui/material/Stack";
-import { Crisp } from "crisp-sdk-web";
+import {
+  useStoreSyncedWithLocalStorage
+} from "../../../../common/store/store";
+import { LiveChat } from "../../../common/LiveChat";
 import { ControllerHelpCard } from "../home/ControllerHelpCard";
 
 export function HelpController() {
-  const openChat = () => {
-    Crisp.setPosition("left");
-    Crisp.chat.show();
-    Crisp.chat.open();
-  };
+  const [openChat, setOpenChat] = useState(false);
+  const store = useStoreSyncedWithLocalStorage();
+  const userId = store.userId();
+  const userInfo = store.userInfo();
+
+  const handleChatClick = () => {
+    setOpenChat(true);
+  }
 
   return (
     <Stack spacing={2}>
@@ -30,14 +36,18 @@ export function HelpController() {
         description="Comment utiliser Mobilic ?"
         linkTo="https://mobilic.beta.gouv.fr/resources/controller"
       />
-      {process.env.REACT_APP_CRISP_WEBSITE_ID && (
+      {process.env.REACT_APP_BREVO_CONV_ID && (
         <ControllerHelpCard
           iconName={"fr-icon-questionnaire-fill"}
           title="Service Support"
           description="Un problème technique ou une question règlementaire ? Contactez l'équipe Mobilic"
-          clickAction={openChat}
+          clickAction={handleChatClick}
         />
       )}
+      {
+        openChat && 
+        <LiveChat userId={userId} userInfo={userInfo} position="bl" open={true}/>
+      }
     </Stack>
   );
 }

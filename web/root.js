@@ -294,8 +294,9 @@ function RootComponent() {
   React.useEffect(() => {
     withLoadingScreen(
       async () => {
-        if (controllerId && store.controllerId())
+        if (controllerId && store.controllerId()) {
           await loadControllerAndRoute();
+        }
       },
       { cacheKey: "loadController" + controllerId },
       false
@@ -319,6 +320,9 @@ function RootComponent() {
   );
 
   const routes = getAccessibleRoutes({ userInfo, companies, controllerInfo });
+  const shouldRenderLiveChat =
+    process.env.REACT_APP_BREVO_CONV_ID &&
+    !currentControllerId()
 
   return (
     <>
@@ -326,10 +330,8 @@ function RootComponent() {
         process.env.REACT_APP_SENTRY_ENVIRONMENT === "sandbox") && (
         <EnvironmentHeader />
       )}
-      {/*process.env.REACT_APP_CRISP_AUTOLOAD !== "1" &&
-      process.env.REACT_APP_CRISP_WEBSITE_ID &&
-      !controllerId && <LiveChat />*/}
-      <LiveChat userId={userId} userInfo={userInfo} />
+      {shouldRenderLiveChat && <LiveChat userId={userId} userInfo={userInfo} />}
+      {/* <LiveChat userId={userId} userInfo={userInfo} /> */}
       {store.userId() && shouldSeeCguModal && (
         <AcceptCguModal
           onAccept={() => setSeeAgainCgu(false)}
