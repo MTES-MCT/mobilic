@@ -63,9 +63,10 @@ export const LiveChat = ({ userId, userInfo, position = 'br', open = false }) =>
     if (!BREVO_CONV_ID)
       return;
 
+    const previousSetup = brevoGlobal.BrevoConversationsSetup;
     brevoGlobal.BrevoConversationsID = BREVO_CONV_ID;
     brevoGlobal.BrevoConversationsSetup = {
-      ...(brevoGlobal.BrevoConversationsSetup || {}),
+      ...(previousSetup ?? undefined),
       visitorId: userId ? String(userId) : undefined,
       onRendered: () => {
         setDisplayIcon(true);
@@ -77,7 +78,9 @@ export const LiveChat = ({ userId, userInfo, position = 'br', open = false }) =>
 
     if (!brevoGlobal.BrevoConversations) {
       brevoGlobal.BrevoConversations = function (...args) {
-        (brevoGlobal.BrevoConversations.q = brevoGlobal.BrevoConversations.q || []).push(args);
+        const queue = brevoGlobal.BrevoConversations.q || [];
+        brevoGlobal.BrevoConversations.q = queue;
+        queue.push(args);
       };
     }
 
