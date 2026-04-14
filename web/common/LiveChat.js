@@ -1,22 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, use } from "react";
 import { makeStyles } from "@mui/styles";
-import { Crisp } from "crisp-sdk-web";
-import CrispClosedChat from "common/assets/images/crisp_closed_chat.svg";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 
 const useStyles = makeStyles(theme => ({
-  chatButton: {
-    position: "fixed",
-    right: "24px",
-    bottom: "20px",
-    backgroundColor: "#1972F5",
-    zIndex: 650,
-    width: "60px",
-    height: "60px",
-    cursor: "pointer",
-    borderRadius: "100%"
-  },
   closeButton: {
     position: "fixed",
     right: "20px",
@@ -30,45 +17,84 @@ const useStyles = makeStyles(theme => ({
   closeIcon: {
     fontSize: "1rem"
   },
-  chatIcon: {
-    backgroundImage: `url(${CrispClosedChat})`,
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center",
-    width: "33px",
-    height: "28px",
-    top: "18px",
-    left: "13px",
-    position: "absolute"
-  }
 }));
 
-export const LiveChat = () => {
-  const [open, setOpen] = useState(false);
-  const [displayIcon, setDisplayIcon] = useState(true);
+export const LiveChat = ({ userId, userInfo }) => {
+  const [displayIcon, setDisplayIcon] = useState(false);
   const classes = useStyles();
+  const BREVO_CONV_ID = process.env.REACT_APP_BREVO_CONV_ID;
 
-  const openChat = () => {
-    setOpen(true);
-    Crisp.chat.show();
-    Crisp.chat.open();
+  const email = userInfo?.email ?? null;
+  const firstName = userInfo?.firstName ?? null;
+  const lastName = userInfo?.lastName ?? null;
+  const phone = userInfo?.phoneNumber ?? null;
+
+  const syncBrevoVisitorData = () => {
+    if (!userId || !window.BrevoConversations) {
+      return;
+    }
+
+    window.BrevoConversations("updateIntegrationData", {
+      email,
+      firstName,
+      lastName,
+      phone,
+      mobilic_id: String(userId),
+      metabase_link: `https://metabase.mobilic.beta.gouv.fr/dashboard/6?id=${userId}`,
+    });
   };
 
+  useEffect(() => {
+    if (!BREVO_CONV_ID)
+      return;
+
+    window.BrevoConversationsID = BREVO_CONV_ID;
+    window.BrevoConversationsSetup = {
+      ...(window.BrevoConversationsSetup || {}),
+      visitorId: userId ? String(userId) : undefined,
+      onRendered: () => {
+        setDisplayIcon(true);
+        syncBrevoVisitorData();
+      },
+      zIndex: 600,
+    };
+
+    if (!window.BrevoConversations) {
+      window.BrevoConversations = function (...args) {
+        (window.BrevoConversations.q = window.BrevoConversations.q || []).push(args);
+      };
+    }
+
+    const existingScript = document.querySelector(`script[src="https://conversations-widget.brevo.com/brevo-conversations.js"]`);
+
+    if (existingScript) {
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
+    script.async = true;
+    document.head?.appendChild(script);
+  }, [BREVO_CONV_ID, userId]);
+
+  useEffect(() => {
+    syncBrevoVisitorData();
+  }, [userId, email, firstName, lastName]);
+
   const hideChat = () => {
-    setOpen(false);
+    if (window.BrevoConversations) {
+      window.BrevoConversations("hide");
+    }
     setDisplayIcon(false);
-    Crisp.chat.hide();
   };
 
   return (
-    !open &&
-    displayIcon && (
+    displayIcon &&
+    (
       <>
         <IconButton className={classes.closeButton} onClick={hideChat}>
           <CloseIcon className={classes.closeIcon} />
         </IconButton>
-        <div role="button" className={classes.chatButton} onClick={openChat}>
-          <span className={classes.chatIcon}></span>
-        </div>
       </>
     )
   );

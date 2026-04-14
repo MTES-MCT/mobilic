@@ -42,7 +42,6 @@ import {
   createInstance,
   useMatomo
 } from "@datapunt/matomo-tracker-react";
-import { Crisp } from "crisp-sdk-web";
 import { ErrorBoundary } from "./common/ErrorFallback";
 import { RegulationDrawerContextProvider } from "./landing/ResourcePage/RegulationDrawer";
 import { isGoogleAdsInitiated, initGoogleAds } from "common/utils/trackAds";
@@ -284,11 +283,6 @@ function RootComponent() {
     withLoadingScreen(
       async () => {
         if (userId && store.userId()) {
-          Crisp.session.setData({
-            mobilic_id: userId,
-            metabase_link:
-              "https://metabase.mobilic.beta.gouv.fr/dashboard/6?id=" + userId
-          });
           await loadUserAndRoute();
         }
       },
@@ -332,10 +326,10 @@ function RootComponent() {
         process.env.REACT_APP_SENTRY_ENVIRONMENT === "sandbox") && (
         <EnvironmentHeader />
       )}
-      {process.env.REACT_APP_CRISP_AUTOLOAD !== "1" &&
-        process.env.REACT_APP_CRISP_WEBSITE_ID &&
-        !controllerId && <LiveChat />}
-      <LiveChat />
+      {/*process.env.REACT_APP_CRISP_AUTOLOAD !== "1" &&
+      process.env.REACT_APP_CRISP_WEBSITE_ID &&
+      !controllerId && <LiveChat />*/}
+      <LiveChat userId={userId} userInfo={userInfo} />
       {store.userId() && shouldSeeCguModal && (
         <AcceptCguModal
           onAccept={() => setSeeAgainCgu(false)}
