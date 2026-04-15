@@ -103,6 +103,7 @@ export function MissionDrawerContextProvider({
         id="mission-drawer"
       >
         <MissionDetails
+          key={missionIdOnFocus}
           missionId={missionIdOnFocus}
           day={location.state ? location.state.day : null}
           handleClose={onClose}
