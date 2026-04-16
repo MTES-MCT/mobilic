@@ -86,7 +86,6 @@ export const DeletedTag = ({style}) => {
 }
 
 const baseTagPropTypes = {
-  text: PropTypes.string,
   style: PropTypes.object
 };
 
