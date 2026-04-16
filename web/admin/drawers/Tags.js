@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { fr } from "@codegouvfr/react-dsfr";
 import { makeStyles } from "@mui/styles";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
+import { MISSION_STATUS } from "../utils/missionsStatus";
 
 const tagsStyles = makeStyles((theme) => ({
   running: {
@@ -32,54 +33,54 @@ const tagsStyles = makeStyles((theme) => ({
   }
 }));
 
-export const RunningTag = ({text, style}) => {
+export const RunningTag = ({style}) => {
   const classes = tagsStyles();
   return <Tag className={classes.running + ' fr-tag--sm'} style={style}>
-    {text || "Mission en cours"}
+    {MISSION_STATUS.ongoing}
     </Tag>;
 };
 
-export const ToValidateTag = ({text, printIcon, style}) => {
+export const ToValidateTag = ({printIcon, style}) => {
   const classes = tagsStyles();
   return (
       <Tag iconId={printIcon ? "fr-icon-warning-line" : ''} className={classes.toValidate + ' fr-tag--sm'} style={style}>
-        {text || "Saisies à valider"}
+        {MISSION_STATUS.toValidateAdmin}
       </Tag>
   )
 };
 
-export const WaitingTag = ({text, style}) => {
+export const WaitingTag = ({style}) => {
   const classes = tagsStyles();
   return (
     <Tag className={classes.waiting + ' fr-tag--sm'} style={style}>
-      {text || "En attente de validation par le salarié"}
+      {MISSION_STATUS.waitingWorker}
     </Tag>
   );
 };
 
-export const ValidatedTag = ({text, style}) => {
+export const ValidatedTag = ({style}) => {
   const classes = tagsStyles();
   return (
     <Tag className={classes.validated + ' fr-tag--sm'} style={style}>
-      {text || "Validée"}
+      {MISSION_STATUS.validated}
       </Tag>
   );
 };
 
-export const AllValidatedTag = ({text, style}) => {
+export const AllValidatedTag = ({style}) => {
   const classes = tagsStyles();
   return (
     <Tag className={classes.allValidated + ' fr-tag--sm'} style={style}>
-      {text || "Validée"}
+      {MISSION_STATUS.allValidated}
       </Tag>
   );
 };
 
-export const DeletedTag = ({text, style}) => {
+export const DeletedTag = ({style}) => {
   const classes = tagsStyles();
   return (
     <Tag className={classes.deleted + ' fr-tag--sm'} style={style}>
-      {text || "Supprimé"}
+      {MISSION_STATUS.deleted}
     </Tag>
   )
 }
