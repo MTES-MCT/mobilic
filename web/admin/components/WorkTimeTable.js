@@ -105,7 +105,7 @@ const formatStatus = (status, entry, openMission) => {
   if (!status || !entry || !openMission) {
     return null;
   }
-  const missionId = entry.id;
+  const missionId = Object.keys(entry.missionNames)[0]
 
   switch (status) {
     case MISSION_STATUS.ongoing:
