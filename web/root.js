@@ -331,7 +331,7 @@ function RootComponent() {
         <EnvironmentHeader />
       )}
       {shouldRenderLiveChat && <LiveChat userId={userId} userInfo={userInfo} />}
-      {/* <LiveChat userId={userId} userInfo={userInfo} /> */}
+
       {store.userId() && shouldSeeCguModal && (
         <AcceptCguModal
           onAccept={() => setSeeAgainCgu(false)}
