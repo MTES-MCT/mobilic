@@ -105,26 +105,26 @@ const formatStatus = (status, entry, openMission) => {
   if (!status || !entry || !openMission) {
     return null;
   }
-  const missionId = entry.id;
+  const missionId = Object.keys(entry.missionNames)[0]
 
   switch (status) {
     case MISSION_STATUS.ongoing:
-      tag = <RunningTag text={MISSION_STATUS.ongoing} />;
+      tag = <RunningTag/>;
       break;
     case MISSION_STATUS.toValidateAdmin:
-      tag = <ToValidateTag text={MISSION_STATUS.toValidateAdmin} printIcon={false} />;
+      tag = <ToValidateTag printIcon={false} />;
       break;
     case MISSION_STATUS.waitingWorker:
-      tag = <WaitingTag text={MISSION_STATUS.waitingWorker} />;
+      tag = <WaitingTag/>;
       break;
     case MISSION_STATUS.validated:
-      tag = <ValidatedTag text={MISSION_STATUS.validated} />;
+      tag = <ValidatedTag/>;
       break;
     case MISSION_STATUS.allValidated:
-      tag = <AllValidatedTag text={MISSION_STATUS.allValidated} />;
+      tag = <AllValidatedTag/>;
       break;
     case MISSION_STATUS.deleted:
-      tag = <DeletedTag text={MISSION_STATUS.deleted} />;
+      tag = <DeletedTag/>;
       break;
   }
   return (
