@@ -322,7 +322,7 @@ function RootComponent() {
   const routes = getAccessibleRoutes({ userInfo, companies, controllerInfo });
   const shouldRenderLiveChat =
     process.env.REACT_APP_BREVO_CONV_ID &&
-    !currentControllerId()
+    !currentControllerId();
 
   return (
     <>
