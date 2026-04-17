@@ -5,6 +5,8 @@ import { makeStyles } from "@mui/styles";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 
+const BREVO_CONV_ID = process.env.REACT_APP_BREVO_CONV_ID;
+
 const BREVO_Z_INDEX = 4000;
 const CLOSE_BUTTON_Z_INDEX = BREVO_Z_INDEX + 10;
 const CLOSE_BUTTON_SIZE = 20;
@@ -36,7 +38,6 @@ const useStyles = makeStyles(theme => ({
 export const LiveChat = ({ userId, userInfo, position = 'br', open = false }) => {
   const [displayIcon, setDisplayIcon] = useState(false);
   const classes = useStyles();
-  const BREVO_CONV_ID = process.env.REACT_APP_BREVO_CONV_ID;
   const brevoGlobal = globalThis;
 
   const email = userInfo?.email ?? null;
@@ -96,13 +97,18 @@ export const LiveChat = ({ userId, userInfo, position = 'br', open = false }) =>
     document.head?.appendChild(script);
 
     return () => {
-      script.remove();
+      document.head?.querySelector(`script[src="https://conversations-widget.brevo.com/brevo-conversations.js"]`)?.remove();
+      brevoGlobal.BrevoConversations("hide");
+      script?.remove();
+      delete brevoGlobal.BrevoConversations;
+      delete brevoGlobal.BrevoConversationsSetup;
+      delete brevoGlobal.BrevoConversationsID;
     };
   }, [BREVO_CONV_ID]);
 
   useEffect(() => {
     syncBrevoVisitorData();
-  }, []);
+  }, [userId, userInfo]);
 
   useEffect(() => {
     if (!brevoGlobal.BrevoConversations) {
