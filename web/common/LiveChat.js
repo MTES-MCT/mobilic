@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { makeStyles } from "@mui/styles";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import MobilicChatIcon from "common/assets/images/mobilic-logo-filled.svg";
 
 const BREVO_CONV_ID = process.env.REACT_APP_BREVO_CONV_ID;
 
@@ -13,6 +14,8 @@ const CLOSE_BUTTON_SIZE = 20;
 const CLOSE_BUTTON_BOTTOM = 68;
 const CLOSE_BUTTON_OFFSET = 20;
 const CLOSE_BUTTON_LEFT_OFFSET = 60;
+const CHAT_BUTTON_BG_COLOR = "#1972F5";
+const CHAT_ICON_COLOR = "#FFFFFF";
 
 const useStyles = makeStyles(theme => ({
   closeButton: {
@@ -33,6 +36,40 @@ const useStyles = makeStyles(theme => ({
   closeIcon: {
     fontSize: "1rem"
   },
+  mobilicChatIcon: {
+    position: "relative",
+    backgroundColor: CHAT_BUTTON_BG_COLOR,
+    zIndex: 6500,
+    width: "60px",
+    height: "60px",
+    cursor: "pointer",
+    borderRadius: "100%",
+    "&:before": {
+      content: '""',
+      position: "absolute",
+      inset: 0,
+      border: "1px solid red",
+      backgroundColor: CHAT_ICON_COLOR,
+      webkitmaskImage: `url(${MobilicChatIcon})`,
+      webkitmaskRepeat: "no-repeat",
+      webkitmaskPosition: "center",
+      webkitmaskSize: "30px",
+      maskImage: `url(${MobilicChatIcon})`,
+      maskRepeat: "no-repeat",
+      maskPosition: "center",
+      maskSize: "30px",
+    }
+  },
+  mobilicChatIconRight: {
+    position: "fixed",
+    right: "20px",
+    bottom: "20px",
+  },
+  mobilicChatIconLeft: {
+    position: "fixed",
+    left: "20px",
+    bottom: "20px",
+  }
 }));
 
 export const LiveChat = ({ userId, userInfo, position = 'br', open = false }) => {
@@ -128,16 +165,28 @@ export const LiveChat = ({ userId, userInfo, position = 'br', open = false }) =>
     setDisplayIcon(false);
   };
 
+  const openChat = () => {
+    if (brevoGlobal.BrevoConversations) {
+      brevoGlobal.BrevoConversations("expandWidget");
+    }
+    setDisplayIcon(true);
+  };
+
   if (!displayIcon)
     return null;
 
   return ReactDOM.createPortal(
-    <IconButton 
-      className={`${classes.closeButton} ${position === 'bl' ? classes.closeButtonLeft : classes.closeButtonRight}`} 
-      onClick={hideChat}
-    >
-      <CloseIcon className={classes.closeIcon} />
-    </IconButton>,
+    <>
+      <IconButton 
+        className={`${classes.closeButton} ${position === 'bl' ? classes.closeButtonLeft : classes.closeButtonRight}`} 
+        onClick={hideChat}
+      >
+        <CloseIcon className={classes.closeIcon} />
+      </IconButton>
+      <div role="button" className={`${classes.mobilicChatIcon} ${position === 'bl' ? classes.mobilicChatIconLeft : classes.mobilicChatIconRight}`} onClick={openChat}>
+      </div>
+    </>
+    ,
     document.body
   );
 };
