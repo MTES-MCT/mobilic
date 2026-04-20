@@ -33,5 +33,6 @@ export const MissionStatusTagBtn = ({ children, openMission, openWorkDay, missio
 MissionStatusTagBtn.propTypes = {
     children: PropTypes.node,
     openMission: PropTypes.func,
+    openWorkDay: PropTypes.func,
     missionId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
