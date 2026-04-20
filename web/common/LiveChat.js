@@ -49,7 +49,6 @@ const useStyles = makeStyles(theme => ({
       content: '""',
       position: "absolute",
       inset: 0,
-      border: "1px solid red",
       backgroundColor: CHAT_ICON_COLOR,
       webkitmaskImage: `url(${MobilicChatIcon})`,
       webkitmaskRepeat: "no-repeat",
@@ -184,8 +183,12 @@ export const LiveChat = ({ userId, userInfo, position = 'br', open = false }) =>
       >
         <CloseIcon className={classes.closeIcon} />
       </IconButton>
-      <div role="button" className={`${classes.mobilicChatIcon} ${position === 'bl' ? classes.mobilicChatIconLeft : classes.mobilicChatIconRight}`} onClick={openChat}>
-      </div>
+      <button
+        type="button"
+        aria-label="Ouvrir le chat"
+        className={`${classes.mobilicChatIcon} ${position === 'bl' ? classes.mobilicChatIconLeft : classes.mobilicChatIconRight}`}
+        onClick={openChat}
+      />
     </>
     ,
     document.body
