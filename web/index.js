@@ -5,7 +5,6 @@ import React from "react";
 import Root from "./root";
 import { createRoot } from "react-dom/client";
 import { initSentry } from "common/utils/sentry";
-import { Crisp } from "crisp-sdk-web";
 import { startReactDsfr } from "@codegouvfr/react-dsfr/spa";
 import { Link } from "react-router-dom";
 
@@ -23,11 +22,6 @@ startReactDsfr({
 
 initSentry();
 
-if (process.env.REACT_APP_CRISP_WEBSITE_ID) {
-  Crisp.configure(process.env.REACT_APP_CRISP_WEBSITE_ID, {
-    autoload: process.env.REACT_APP_CRISP_AUTOLOAD === "1"
-  });
-}
 
 const container = document.getElementById("root");
 const root = createRoot(container);

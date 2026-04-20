@@ -57,8 +57,6 @@ const scalingoLink =
 const ovhLink = "https://us.ovhcloud.com/legal/data-processing-agreement/";
 const scalewayLink =
   "https://www-uploads.scaleway.com/DPA_2024_ENG_b0abb5cc26.pdf";
-const crispLink =
-  "https://help.crisp.chat/en/article/how-to-sign-my-gdpr-data-processing-agreement-dpa-1wfmngo/";
 const sentryLink = "https://sentry.io/legal/dpa/";
 const metabaseLink = "https://www.metabase.com/license/hosting";
 const mailjetLink = "https://www.mailjet.com/fr/legal/dpa/";
@@ -92,13 +90,6 @@ const dataInfra = [
     "France",
      
     <ExternalLink url={scalewayLink} title="Garantie Scaleway" />
-  ],
-  [
-    "Crisp",
-    "Support / Chat",
-    "France",
-     
-    <ExternalLink url={crispLink} title="Garantie Crisp" />
   ],
   [
     "Sentry",
@@ -423,10 +414,6 @@ function PrivacyPolicyContent() {
             Mobilic utilise l&lsquo;outil de mesure d&lsquo;audience Matomo,
             configuré en mode exempté et ne nécessitant pas le recueil de votre
             consentement conformément aux recommandations de la CNIL.
-          </p>
-          <p>
-            Toutefois, votre consentement est nécessaire et se matérialise par
-            un bandeau cookies s&lsquo;agissant de Crisp.
           </p>
           <p>
             Pour aller plus loin, vous pouvez consulter les fiches proposées par
