@@ -114,7 +114,7 @@ const dataInfra = [
   ],
   [
     "Brevo",
-    "Envoi d’e-mails / Newsletter",
+    "Envoi d’e-mails / Newsletter / Support / Chat",
     "France",
      
     <ExternalLink url={brevoLink} title="Garantie Brevo" />
@@ -146,8 +146,7 @@ function PrivacyPolicyContent() {
         <Box>
           <h2>Qui est responsable de Mobilic&nbsp;?</h2>
           <p>
-            Mobilic, développé au sein de la Fabrique numérique du Ministère de
-            la transition écologique, est sous la responsabilité de la Direction
+            Mobilic, développé par le ministère des Transports, est sous la responsabilité de la Direction
             générale des infrastructures, des transports et des mobilités
             (DGITM), sous-direction du droit social des transports.
           </p>
@@ -337,8 +336,7 @@ function PrivacyPolicyContent() {
             <li>par courrier à l&lsquo;adresse suivante&nbsp;:</li>
             <address>
               <Typography>
-                Ministère de l’Aménagement du territoire et de la
-                Décentralisation
+                Ministère des Transports
               </Typography>
               <Typography>
                 À l&lsquo;attention du Délégué à la protection des données (DPD)
