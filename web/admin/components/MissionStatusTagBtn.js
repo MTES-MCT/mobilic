@@ -4,10 +4,10 @@ import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { Link } from "../../common/LinkButton";
 import { OPEN_MISSION_DRAWER_IN_ACTIVITY_PANEL } from "common/utils/matomoTags";
 
-export const MissionStatusTagBtn = ({ children, openMission, missionId }) => {
+export const MissionStatusTagBtn = ({ children, openMission, openWorkDay, missionId }) => {
     const { trackEvent } = useMatomo();
 
-    if (openMission && !missionId) {
+    if ((!openMission && !openWorkDay) || (openMission && !missionId)) {
         return <span>{children}</span>;
     }
 
@@ -20,6 +20,8 @@ export const MissionStatusTagBtn = ({ children, openMission, missionId }) => {
                 if (openMission) {
                     trackEvent(OPEN_MISSION_DRAWER_IN_ACTIVITY_PANEL);
                     openMission(missionId);
+                } else if (openWorkDay) {
+                    openWorkDay();
                 }
             }}
         >
@@ -31,5 +33,6 @@ export const MissionStatusTagBtn = ({ children, openMission, missionId }) => {
 MissionStatusTagBtn.propTypes = {
     children: PropTypes.node,
     openMission: PropTypes.func,
+    openWorkDay: PropTypes.func,
     missionId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };

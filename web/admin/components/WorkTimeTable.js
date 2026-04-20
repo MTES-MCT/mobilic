@@ -99,7 +99,7 @@ const formatWeeklyInfractions = (_, entry) => {
   return <InfractionsNumber nbAlerts={entry.weeklyAlerts} />;
 };
 
-const formatStatus = (status, entry, openMission) => {
+const formatStatus = (status, entry, openMission, openWorkday) => {
   let tag = null;
 
   if (!status || !entry || !openMission) {
@@ -128,9 +128,17 @@ const formatStatus = (status, entry, openMission) => {
       break;
   }
   return (
-     <MissionStatusTagBtn missionId={missionId} openMission={openMission}>
+    <MissionStatusTagBtn
+      missionId={missionId}
+      openWorkDay={
+        status === MISSION_STATUS.allValidated
+          ? () => openWorkday(entry)
+          : null
+      }
+      openMission={status === MISSION_STATUS.allValidated ? null : openMission}
+    >
       {tag}
-     </MissionStatusTagBtn>
+    </MissionStatusTagBtn>
   );
 };
 
@@ -445,7 +453,7 @@ export function WorkTimeTable({
   const statusCol = {
     label: "Statut",
     name: "statusKey",
-    format: (statusKey, entry) => formatStatus(statusKey, entry, openMission),
+    format: (statusKey, entry) => formatStatus(statusKey, entry, openMission, openWorkday),
     align: "left",
     minWidth: 120
   };
