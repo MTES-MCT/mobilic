@@ -9,7 +9,8 @@ import MobilicChatIcon from "common/assets/images/mobilic-logo-filled.svg";
 const BREVO_CONV_ID = process.env.REACT_APP_BREVO_CONV_ID;
 
 const BREVO_Z_INDEX = 4000;
-const CLOSE_BUTTON_Z_INDEX = BREVO_Z_INDEX + 10;
+const MOBILIC_CHAT_ICON_Z_INDEX = BREVO_Z_INDEX + 1;
+const CLOSE_BUTTON_Z_INDEX = MOBILIC_CHAT_ICON_Z_INDEX + 1;
 const CLOSE_BUTTON_SIZE = 20;
 const CLOSE_BUTTON_BOTTOM = 68;
 const CLOSE_BUTTON_OFFSET = 20;
@@ -39,7 +40,7 @@ const useStyles = makeStyles(theme => ({
   mobilicChatIcon: {
     position: "relative",
     backgroundColor: CHAT_BUTTON_BG_COLOR,
-    zIndex: 6500,
+    zIndex: MOBILIC_CHAT_ICON_Z_INDEX,
     width: "60px",
     height: "60px",
     cursor: "pointer",
