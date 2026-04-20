@@ -16,7 +16,6 @@ import _ControllerImage from "../assets/images/controller1.png";
 import _MobilicQrCode from "../assets/images/mobilic-qrcode.svg";
 import _NoDataImage from "../assets/images/no-data.png";
 import _AxecImage from "../assets/images/press-logos/axec.png";
-import _ActuTransportLogistiqueImage from "../assets/images/press-logos/actuTransportLogistique.png";
 import _EcoLogisticsImage from "../assets/images/press-logos/ecologistics.jpg";
 import _FlottesAutomobilesImage from "../assets/images/press-logos/flottes-automobiles.jpg";
 import _HubInstituteImage from "../assets/images/press-logos/hubInstitute.png";
@@ -152,16 +151,6 @@ export function ControllerImage(props) {
 
 export function AxecImage(props) {
   return <img alt="AXEC" src={_AxecImage} {...props} />;
-}
-
-export function ActuTransportLogistiqueImage(props) {
-  return (
-    <img
-      alt="Actu Transport Logistique"
-      src={_ActuTransportLogistiqueImage}
-      {...props}
-    />
-  );
 }
 
 export function EcoLogisticsImage(props) {

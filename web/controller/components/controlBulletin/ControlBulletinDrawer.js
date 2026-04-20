@@ -25,18 +25,22 @@ export function ControlBulletinDrawer({
   );
   const modals = useModals();
 
-  const closeDrawer = (forceClose = false) => {
+  const closeDrawer = async (forceClose = false) => {
     if (!forceClose && mustConfirmBeforeClosing) {
-      modals.open("confirmationCancelControlBulletinModal", {
-        confirmButtonLabel: "Revenir à mes modifications",
-        handleCancel: () => {
-          cancelInfractions({ forceCancel: true });
-          onClose();
-        },
-        handleConfirm: () => {}
+      return new Promise(resolve =>{
+        modals.open("confirmationCancelControlBulletinModal", {
+          confirmButtonLabel: "Revenir à mes modifications",
+          handleCancel: () => {
+            cancelInfractions({ forceCancel: true });
+            onClose();
+            resolve(true)
+          },
+          handleConfirm: () => resolve(false)
+        });
       });
     } else {
       onClose();
+      return true;
     }
   };
 

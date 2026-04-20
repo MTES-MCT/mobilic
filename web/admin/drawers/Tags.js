@@ -1,7 +1,9 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { fr } from "@codegouvfr/react-dsfr";
 import { makeStyles } from "@mui/styles";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
+import { MISSION_STATUS } from "../utils/missionsStatus";
 
 const tagsStyles = makeStyles((theme) => ({
   running: {
@@ -12,6 +14,18 @@ const tagsStyles = makeStyles((theme) => ({
     color: fr.colors.decisions.background.flat.blueFrance.default,
     backgroundColor: fr.colors.decisions.background.contrast.blueFrance.default
   },
+  validated: {
+    color: fr.colors.decisions.background.flat.blueFrance.default,
+    backgroundColor: fr.colors.decisions.background.contrast.blueFrance.default
+  },
+  allValidated: {
+    color: fr.colors.decisions.background.flat.grey.default,
+    backgroundColor: fr.colors.decisions.background.contrast.grey.default
+  },
+  deleted: {
+    color: fr.colors.decisions.background.flat.greenEmeraude.default,
+    backgroundColor: fr.colors.decisions.background.contrast.greenEmeraude.default
+  },
   toValidate: {
     color: fr.colors.decisions.background.flat.yellowTournesol.default,
     backgroundColor:
@@ -19,25 +33,70 @@ const tagsStyles = makeStyles((theme) => ({
   }
 }));
 
-export const RunningTag = () => {
+export const RunningTag = ({style}) => {
   const classes = tagsStyles();
-  return <Tag className={classes.running}>Mission en cours</Tag>;
+  return <Tag className={classes.running + ' fr-tag--sm'} style={style}>
+    {MISSION_STATUS.ongoing}
+    </Tag>;
 };
 
-export const ToValidateTag = () => {
+export const ToValidateTag = ({printIcon, style}) => {
   const classes = tagsStyles();
   return (
-    <Tag iconId="fr-icon-warning-line" className={classes.toValidate}>
-      Saisies à valider
+      <Tag iconId={printIcon ? "fr-icon-warning-line" : ''} className={classes.toValidate + ' fr-tag--sm'} style={style}>
+        {MISSION_STATUS.toValidateAdmin}
+      </Tag>
+  )
+};
+
+export const WaitingTag = ({style}) => {
+  const classes = tagsStyles();
+  return (
+    <Tag className={classes.waiting + ' fr-tag--sm'} style={style}>
+      {MISSION_STATUS.waitingWorker}
     </Tag>
   );
 };
 
-export const WaitingTag = () => {
+export const ValidatedTag = ({style}) => {
   const classes = tagsStyles();
   return (
-    <Tag className={classes.waiting}>
-      En attente de validation par le salarié
-    </Tag>
+    <Tag className={classes.validated + ' fr-tag--sm'} style={style}>
+      {MISSION_STATUS.validated}
+      </Tag>
   );
 };
+
+export const AllValidatedTag = ({style}) => {
+  const classes = tagsStyles();
+  return (
+    <Tag className={classes.allValidated + ' fr-tag--sm'} style={style}>
+      {MISSION_STATUS.allValidated}
+      </Tag>
+  );
+};
+
+export const DeletedTag = ({style}) => {
+  const classes = tagsStyles();
+  return (
+    <Tag className={classes.deleted + ' fr-tag--sm'} style={style}>
+      {MISSION_STATUS.deleted}
+    </Tag>
+  )
+}
+
+const baseTagPropTypes = {
+  style: PropTypes.object
+};
+
+RunningTag.propTypes = baseTagPropTypes;
+ToValidateTag.propTypes = {
+  ...baseTagPropTypes,
+  printIcon: PropTypes.bool
+};
+WaitingTag.propTypes = baseTagPropTypes;
+ValidatedTag.propTypes = baseTagPropTypes;
+AllValidatedTag.propTypes = baseTagPropTypes;
+DeletedTag.propTypes = baseTagPropTypes;
+
+

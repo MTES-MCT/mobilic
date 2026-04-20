@@ -308,6 +308,7 @@ export const CONTROLLER_USER_FRAGMENT = gql`
     lastName
     email
     grecoId
+    isMinistryOfInterior
   }
 `;
 

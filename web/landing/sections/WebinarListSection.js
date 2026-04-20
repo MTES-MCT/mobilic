@@ -14,7 +14,7 @@ export function WebinarListSection() {
   if (cantDisplayWebinarsBecauseNoneOrError) return null;
 
   return (
-    <OuterContainer id="webinaires">
+    <OuterContainer id="webinaires" style={{ scrollMarginTop: "100px" }}>
       <InnerContainer>
         <Stack direction="column" rowGap={2}>
           <Typography variant="h3" component="h2">

@@ -2,7 +2,6 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import "react-multi-carousel/lib/styles.css";
 import {
-  ActuTransportLogistiqueImage,
   AlexisDemenagementImage,
   AxecImage,
   BretagneMaceDemenagementImage,
@@ -63,11 +62,6 @@ export function TalkingAboutUsSection({ grayBackground }) {
   };
   const PRESS_ARTICLES = [
     {
-      imageComponent: ActuTransportLogistiqueImage,
-      link: "https://www.actu-transport-logistique.fr/officiel-des-transporteurs/actualites/transport-leger-mobilic-poursuit-son-implantation-dans-les-entreprises-705685.php",
-      matomoTag: "actu-transport-1",
-    },
-    {
       imageComponent: HubInstituteImage,
       link: "https://hubinstitute.com/Videos/stage-2-mobilic-rendre-clairs-et-accessibles-les-droits-des-chauffeurs-routiers",
       buttonLabel: "Voir la vidéo",
@@ -99,12 +93,7 @@ export function TalkingAboutUsSection({ grayBackground }) {
       imageComponent: AxecImage,
       link: "https://www.linkedin.com/pulse/mobilic-ou-la-fin-du-petit-menteur-marc-bougaut/?trackingId=mDlGzBwMsikJJNPh2GI1yg%3D%3D",
       matomoTag: "axec-image",
-    },
-    {
-      imageComponent: ActuTransportLogistiqueImage,
-      link: "https://www.actu-transport-logistique.fr/routier/une-application-web-pour-lutter-contre-le-travail-illegal-dans-le-transport-leger-674545.php",
-      matomoTag: "actu-transport-2",
-    },
+    }
   ];
 
   const TESTIMONIALS_TEXT = [

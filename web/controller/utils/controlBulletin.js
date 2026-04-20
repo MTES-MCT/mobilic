@@ -10,9 +10,8 @@ export const CONTROL_BULLETIN_VEHICLE_WEIGHT = {
   REAL: "Poids réel constaté",
 }
 
-
-export const canDownloadBDC = controlData => {
-  return (
+export const canDownloadBDC = (controlData, controllerUserInfo) => {
+  const baseRequirements =
     !!controlData?.controlBulletin?.locationDepartment &&
     !!controlData?.controlBulletin?.locationCommune &&
     !!controlData?.controlBulletin?.locationLieu &&
@@ -27,8 +26,12 @@ export const canDownloadBDC = controlData => {
     !!controlData?.controlBulletin?.vehicleRegistrationCountry &&
     !!controlData?.controlBulletin?.missionAddressBegin &&
     !!controlData?.controlBulletin?.missionAddressEnd &&
-    !!controlData?.controlBulletin?.transportType
-  );
+    !!controlData?.controlBulletin?.transportType;
+
+  if (controllerUserInfo?.isMinistryOfInterior) {
+    return baseRequirements && !!controllerUserInfo?.grecoId?.trim();
+  }
+  return baseRequirements;
 };
 
 export const checkRequiredFieldStep1 = newControlBulletin => {

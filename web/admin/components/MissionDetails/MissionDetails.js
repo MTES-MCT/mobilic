@@ -221,7 +221,10 @@ export function MissionDetails({
     }
   }, [mission, usersToAdd]);
 
-  if (loading) return <CircularProgress color="primary" />;
+  if (loading) {
+    return <CircularProgress color="primary" />;
+  }
+  
   if (missionLoadError)
     return <Typography color="error">{missionLoadError}</Typography>;
 

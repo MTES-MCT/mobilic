@@ -110,7 +110,8 @@
     "build-analyze": "INLINE_RUNTIME_CHUNK=false node scripts/build.js --analyze",
     "build-with-nginx": "pnpm build && scripts/start_nginx.sh",
     "lint": "NODE_ENV=development eslint --config eslint.config.mjs --ext .js,.jsx ./",
-    "prepare": "husky"
+    "prepare": "husky",
+    "commitlint": "commitlint --edit"
   },
   "engines": {
     "node": "24.x"
@@ -147,6 +148,8 @@
     "@babel/preset-env": "^7.23.2",
     "@babel/preset-react": "^7.28.5",
     "@babel/preset-typescript": "^7.23.2",
+    "@commitlint/cli": "^20.4.3",
+    "@commitlint/config-conventional": "^20.4.3",
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.15.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.6.1",

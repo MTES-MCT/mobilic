@@ -108,7 +108,11 @@ export default function C1BExportModal({
     <Modal
       open={open}
       handleClose={handleClose}
-      title="Générer des fichiers C1B"
+      title={
+        <Typography variant="h2" component="h1" mt={2} className={classes.subtitle}>
+          Générer des fichiers C1B
+        </Typography>
+      }
       size="lg"
       content={
         <>
@@ -123,7 +127,7 @@ export default function C1BExportModal({
             vous pouvez donc l'utiliser pour traiter les données Mobilic, une
             fois exportées dans ce format.
           </Typography>
-          <Typography variant="h5" className={classes.subtitle}>
+          <Typography component="h2" variant="h6" className={classes.subtitle}>
             Conditions d'export
           </Typography>
           <Typography gutterBottom>
@@ -137,9 +141,6 @@ export default function C1BExportModal({
                 s'il est dans la liste d'export."
               sx={{ marginTop: 1 }}
             />
-          </Typography>
-          <Typography variant="h5" className={classes.subtitle}>
-            Avertissement
           </Typography>
           <Notice
             type="warning"
@@ -167,8 +168,8 @@ export default function C1BExportModal({
               </ul>
             }
           />
-          <Typography variant="h5" className={classes.subtitle}>
-            Options
+          <Typography component="h2" variant="h6" className={classes.subtitle}>
+            Options d'export
           </Typography>
           <Typography>
             Les données d'activité sont limitées à une{" "}

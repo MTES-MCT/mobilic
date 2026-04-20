@@ -21,6 +21,11 @@ export const resourceCardsClasses = makeStyles(theme => ({
     height: "100%",
     width: "100%"
   },
+  smallPressCard: {
+    marginRight: theme.spacing(2),
+    display: "flex",
+    flexDirection: "column",
+  },
   pressCard: {
     height: "100%",
     marginRight: theme.spacing(2),
@@ -28,9 +33,18 @@ export const resourceCardsClasses = makeStyles(theme => ({
     paddingTop: theme.spacing(4),
   },
   pressImage: {
-    maxHeight: 60,
-    maxWidth: 230,
-    marginBottom: theme.spacing(2),
+    height: 120,
+    width: "100%",
+    objectFit: "contain",
+    padding: theme.spacing(2),
+    [theme.breakpoints.down("md")]: {
+      width: "100%",
+      height: 100,
+    },
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+      height: 80,
+    },
   },
   testimonialImage: {
     maxHeight: 90,

@@ -60,6 +60,7 @@ import {
   LOG_LOCATION_MUTATION
 } from "common/utils/apiQueries/missions";
 import { InactiveEmployeesDropdown } from "../components/InactiveEmployeesDropdown";
+import { missionWithStats } from "../selectors/missionSelectors";
 
 const useStyles = makeStyles((theme) => ({
   pageHeader: {
@@ -314,6 +315,18 @@ function ActivitiesPanel() {
     [minDate, maxDate, selectedUsers, adminStore.workDays]
   );
 
+  // We create this object to have missions filled with stats easily accessible by id to avoid doing costly computations for each entry in the work time table.
+  // This allows us to quickly look up mission details without iterating through the entire list of missions for each work day entry.
+  const missionsById = React.useMemo(() => {
+    const missions = missionWithStats(adminStore) || [];
+
+    return missions.reduce((acc, mission) => {
+      acc[mission.id] = mission;
+      return acc;
+    }, {});
+  }, [adminStore]);
+
+
   const periodAggregates = React.useMemo(
     () => aggregateWorkDayPeriods(selectedWorkDays, period),
     [selectedWorkDays, period]
@@ -506,6 +519,7 @@ function ActivitiesPanel() {
           className={classes.workTimeTable}
           period={period}
           workTimeEntries={periodAggregates}
+          missionsById={missionsById}
           showExpenditures={adminStore.settings.requireExpenditures}
           showMissionName={adminStore.settings.requireMissionName}
           loading={loading}

@@ -124,7 +124,7 @@ export function ControlBulletinFormStep2({
           ({ label, apiValue }) => ({
             label,
             nativeInputProps: {
-              value: controlBulletin.transportType === apiValue,
+              checked: controlBulletin.transportType === apiValue,
               onChange: e =>
                 handleEditControlBulletin({
                   target: {
@@ -198,8 +198,9 @@ export function ControlBulletinFormStep2({
               name: "realVehicleWeight",
               onChange: e => handleEditControlBulletin(e),
               type: "number",
-              inputMode: "numeric",
-              required: true
+              inputMode: "decimal",
+              step: "0.01",
+              min: "0",
             }}
             label="Poids réel constaté (en tonnes)"
             state={
@@ -208,6 +209,7 @@ export function ControlBulletinFormStep2({
                 : "default"
             }
             stateRelatedMessage="Veuillez compléter ce champ."
+            required
           />
         )
       }
