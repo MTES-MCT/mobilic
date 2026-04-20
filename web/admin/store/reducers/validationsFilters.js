@@ -8,17 +8,24 @@ export function updateValidationsFiltersReducer(state, payload) {
   };
 }
 
-export function computeUsersInValidationFilter(users, adminedTeams, usersWithoutTeam) {
-  const allUsers = adminedTeams.reduce(
-    (accumulator, currentTeam) =>
-      accumulator.concat(
-        currentTeam.users.map(user => ({
-          ...user,
-          teamId: currentTeam.id,
-          teamName: currentTeam.name
-        }))
-      ),
-    usersWithoutTeam || []
-  );
-  return allUsers;
+export function computeUsersInValidationFilter(allCompanyUsers, adminedTeams, usersWithoutTeam) {
+  return allCompanyUsers.reduce((accumulator, currentUser) => {
+    const foundTeam = adminedTeams.find(team =>
+      team.users?.some(u => u.id === currentUser.id)
+    );
+    if (foundTeam) {
+      accumulator.push({
+        ...currentUser,
+        teamId: foundTeam.id,
+        teamName: foundTeam.name
+      });
+    } else {
+      if (usersWithoutTeam.some(u => u.id === currentUser.id)) {
+        accumulator.push({
+          ...currentUser
+        });
+      }
+    }
+    return accumulator;
+  }, []);
 }
