@@ -1,6 +1,6 @@
 import React from "react";
 import debounce from "lodash/debounce";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { EmployeeFilter } from "../components/EmployeeFilter";
 import Paper from "@mui/material/Paper";
 import { PeriodToggle } from "../components/PeriodToggle";
@@ -184,6 +184,7 @@ function ActivitiesPanel() {
   const alerts = useSnackbarAlerts();
   const api = useApi();
   const history = useHistory();
+  const location = useLocation();
   const { trackEvent } = useMatomo();
   const { getUsersSinceDate } = useGetUsersSinceDate();
 
@@ -371,6 +372,7 @@ function ActivitiesPanel() {
         <InactiveEmployeesDropdown
           employments={adminStore.employments}
           workDays={adminStore.workDays}
+          defaultOpen={location.state?.openInactiveDropdown}
         />
       </Box>
       <Grid
