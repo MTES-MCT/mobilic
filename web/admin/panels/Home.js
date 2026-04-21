@@ -303,43 +303,51 @@ export default function Home({ setShouldRefreshData }) {
 
   const hasDataRef = React.useRef(false);
 
-  const loadDashboard = useCallback(async () => {
-    try {
-      if (hasDataRef.current) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
+  const fetchDashboard = useCallback(
+    async (forceRefresh = false) => {
+      try {
+        if (forceRefresh) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
+        }
+        const now = new Date();
+        const month = now.toISOString().slice(0, 7);
+        const res = await api.graphQlQuery(
+          DASHBOARD_HOME_QUERY,
+          {
+            id: adminStore.userId,
+            companyIds: [adminStore.companyId],
+            month
+          },
+          { fetchPolicy: forceRefresh ? "network-only" : "cache-first" }
+        );
+        const company = res.data.user.adminedCompanies[0];
+        setSummary(company.dashboardSummary);
+        setAlertsData(company.regulatoryAlertsRecap);
+        setLastUpdate(now);
+        hasDataRef.current = true;
+      } catch (err) {
+        console.error("Dashboard load failed:", err);
+        alerts.error("Erreur lors du chargement du tableau de bord", "", 6000);
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
       }
-      const now = new Date();
-      const month = now.toISOString().slice(0, 7);
-      const res = await api.graphQlQuery(
-        DASHBOARD_HOME_QUERY,
-        {
-          id: adminStore.userId,
-          companyIds: [adminStore.companyId],
-          month
-        },
-        { fetchPolicy: "no-cache" }
-      );
-      const company = res.data.user.adminedCompanies[0];
-      setSummary(company.dashboardSummary);
-      setAlertsData(company.regulatoryAlertsRecap);
-      setLastUpdate(now);
-      hasDataRef.current = true;
-    } catch (err) {
-      console.error("Dashboard load failed:", err);
-      alerts.error("Erreur lors du chargement du tableau de bord", "", 6000);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [api, adminStore.userId, adminStore.companyId, alerts]);
+    },
+    [api, adminStore.userId, adminStore.companyId, alerts]
+  );
+
+  const refreshDashboard = useCallback(
+    () => fetchDashboard(true),
+    [fetchDashboard]
+  );
 
   useEffect(() => {
     if (adminStore.userId && adminStore.companyId) {
-      loadDashboard();
+      fetchDashboard();
     }
-  }, [adminStore.userId, adminStore.companyId, loadDashboard]);
+  }, [adminStore.userId, adminStore.companyId, fetchDashboard]);
 
   async function handleSendReminders() {
     if (!summary?.pendingInvitationEmploymentIds?.length) return;
@@ -409,8 +417,8 @@ export default function Home({ setShouldRefreshData }) {
 
   if (!summary) return null;
 
-  const formattedTime = lastUpdate
-    ? `${String(lastUpdate.getHours()).padStart(2, "0")}:${String(lastUpdate.getMinutes()).padStart(2, "0")}`
+  const formattedUpdate = lastUpdate
+    ? `le ${String(lastUpdate.getDate()).padStart(2, "0")}/${String(lastUpdate.getMonth() + 1).padStart(2, "0")} à ${String(lastUpdate.getHours()).padStart(2, "0")}:${String(lastUpdate.getMinutes()).padStart(2, "0")}`
     : "";
 
   return (
@@ -477,7 +485,7 @@ export default function Home({ setShouldRefreshData }) {
               </Typography>
               {lastUpdate && (
                 <Typography sx={{ color: "#666666", fontSize: "0.875rem" }}>
-                  Dernière mise à jour à {formattedTime}
+                  Dernière mise à jour {formattedUpdate}
                 </Typography>
               )}
               <Box
@@ -499,7 +507,7 @@ export default function Home({ setShouldRefreshData }) {
                   title="Rafraîchir"
                   priority="tertiary no outline"
                   size="small"
-                  onClick={loadDashboard}
+                  onClick={refreshDashboard}
                   disabled={refreshing}
                 />
               </Box>
