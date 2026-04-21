@@ -78,7 +78,7 @@ function ValidationPanel() {
   const { refresh: refreshDeletedMissions, loading: loadingDeletedMissions } =
     useRefreshDeletedMissions();
 
-  const [tab, setTab] = React.useState(0);
+  const [tab, setTab] = React.useState(location.state?.tab ?? 0);
   const [tableEntries, setTableEntries] = React.useState([]);
   const [tableColumns, setTableColumns] = React.useState([]);
   const [users, setUsers] = React.useState(adminStore.validationsFilters.users);
