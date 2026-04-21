@@ -238,11 +238,7 @@ function InfractionsSection({ alertsData, onClickDay }) {
 
   return (
     <Box>
-      {!hasAlerts ? (
-        <Typography sx={{ color: "#3A3A3A", fontStyle: "italic" }}>
-          Tous les seuils réglementaires sont respectés
-        </Typography>
-      ) : (
+      {hasAlerts ? (
         <Box>
           {weeklyAlerts.map((alert, index) => (
             <AlertRow
@@ -255,6 +251,10 @@ function InfractionsSection({ alertsData, onClickDay }) {
             />
           ))}
         </Box>
+      ) : (
+        <Typography sx={{ color: "#3A3A3A", fontStyle: "italic" }}>
+          Tous les seuils réglementaires sont respectés
+        </Typography>
       )}
       <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
         <Box
