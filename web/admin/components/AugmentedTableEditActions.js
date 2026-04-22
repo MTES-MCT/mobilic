@@ -3,8 +3,8 @@ import IconButton from "@mui/material/IconButton";
 import CheckIcon from "@mui/icons-material/Check";
 import { makeStyles } from "@mui/styles";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 
 const useStyles = makeStyles(theme => ({
@@ -104,7 +104,7 @@ export function AugmentedTableEditActions({
             onStartRowEdit();
           }}
         >
-          <EditIcon />
+          <EditOutlinedIcon />
         </IconButton>
       )}
       {onRowDelete && (
@@ -112,7 +112,7 @@ export function AugmentedTableEditActions({
           className="no-margin-no-padding"
           onClick={() => onRowDelete(entry)}
         >
-          <DeleteIcon color="error" />
+          <DeleteOutlinedIcon color="error" />
         </IconButton>
       )}
     </>
