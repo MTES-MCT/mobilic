@@ -38,7 +38,6 @@
     "classnames": "^2.2.6",
     "common": "workspace:*",
     "core-js": "^3.8.1",
-    "crisp-sdk-web": "^1.0.18",
     "css-loader": "^6.0.0",
     "csv-stringify": "^5.3.6",
     "date-fns": "^2.29.3",

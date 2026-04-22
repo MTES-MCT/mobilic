@@ -5,7 +5,6 @@ import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { Card } from "@codegouvfr/react-dsfr/Card";
-import { Button } from "@codegouvfr/react-dsfr/Button";
 import AdminSvg from "common/assets/images/landing/self-training.svg";
 import SoftwareSvg from "common/assets/images/landing/flow-settings.svg";
 import { Box } from "@mui/material";

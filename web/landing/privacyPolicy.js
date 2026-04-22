@@ -57,8 +57,6 @@ const scalingoLink =
 const ovhLink = "https://us.ovhcloud.com/legal/data-processing-agreement/";
 const scalewayLink =
   "https://www-uploads.scaleway.com/DPA_2024_ENG_b0abb5cc26.pdf";
-const crispLink =
-  "https://help.crisp.chat/en/article/how-to-sign-my-gdpr-data-processing-agreement-dpa-1wfmngo/";
 const sentryLink = "https://sentry.io/legal/dpa/";
 const metabaseLink = "https://www.metabase.com/license/hosting";
 const mailjetLink = "https://www.mailjet.com/fr/legal/dpa/";
@@ -94,13 +92,6 @@ const dataInfra = [
     <ExternalLink url={scalewayLink} title="Garantie Scaleway" />
   ],
   [
-    "Crisp",
-    "Support / Chat",
-    "France",
-     
-    <ExternalLink url={crispLink} title="Garantie Crisp" />
-  ],
-  [
     "Sentry",
     "Tracking d’erreurs",
     "États-Unis",
@@ -123,7 +114,7 @@ const dataInfra = [
   ],
   [
     "Brevo",
-    "Envoi d’e-mails / Newsletter",
+    "Envoi d’e-mails / Newsletter / Support / Chat",
     "France",
      
     <ExternalLink url={brevoLink} title="Garantie Brevo" />
@@ -155,8 +146,7 @@ function PrivacyPolicyContent() {
         <Box>
           <h2>Qui est responsable de Mobilic&nbsp;?</h2>
           <p>
-            Mobilic, développé au sein de la Fabrique numérique du Ministère de
-            la transition écologique, est sous la responsabilité de la Direction
+            Mobilic, développé par le ministère des Transports, est sous la responsabilité de la Direction
             générale des infrastructures, des transports et des mobilités
             (DGITM), sous-direction du droit social des transports.
           </p>
@@ -346,8 +336,7 @@ function PrivacyPolicyContent() {
             <li>par courrier à l&lsquo;adresse suivante&nbsp;:</li>
             <address>
               <Typography>
-                Ministère de l’Aménagement du territoire et de la
-                Décentralisation
+                Ministère des Transports
               </Typography>
               <Typography>
                 À l&lsquo;attention du Délégué à la protection des données (DPD)
@@ -423,10 +412,6 @@ function PrivacyPolicyContent() {
             Mobilic utilise l&lsquo;outil de mesure d&lsquo;audience Matomo,
             configuré en mode exempté et ne nécessitant pas le recueil de votre
             consentement conformément aux recommandations de la CNIL.
-          </p>
-          <p>
-            Toutefois, votre consentement est nécessaire et se matérialise par
-            un bandeau cookies s&lsquo;agissant de Crisp.
           </p>
           <p>
             Pour aller plus loin, vous pouvez consulter les fiches proposées par

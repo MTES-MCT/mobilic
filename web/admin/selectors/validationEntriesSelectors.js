@@ -56,8 +56,12 @@ export const entryToBeValidatedByAdmin = (
   );
 };
 
-export const entryToBeValidatedByWorker = tableEntry =>
-  !tableEntry.adminValidation && !tableEntry.workerValidation;
+export const entryToBeValidatedByWorker = (tableEntry) => {
+  if (tableEntry.isDeleted) {
+    return false;
+  }
+  return (!tableEntry.adminValidation && !tableEntry.workerValidation);
+};
 
 const entryValidatedByWorkerOrOutdated = tableEntry =>
   tableEntry.workerValidation ||
