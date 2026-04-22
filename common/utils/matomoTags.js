@@ -4,6 +4,7 @@ export const MATOMO_CATEGORIES = {
   ADMIN_ACTIVITY_FILTER: "admin-activity-filter",
   ADMIN_EXPORT: "admin-export",
   ADMIN_EMPLOYEE_INVITATION: "admin-employee-invitation",
+  ADMIN_VEHICLE: "admin-vehicle",
   HOME: "homepage"
 };
 
@@ -18,7 +19,8 @@ export const MATOMO_ACTIONS = {
   INACTIVE_EMPLOYEES_BANNER_VIEW: "inactive-employees-banner-view",
   INACTIVE_EMPLOYEES_BANNER_CLICK: "inactive-employees-banner-click",
   BATCH_TERMINATE_MODAL_OPEN: "batch-terminate-modal-open",
-  BATCH_TERMINATE_MODAL_SUBMIT: "batch-terminate-modal-submit"
+  BATCH_TERMINATE_MODAL_SUBMIT: "batch-terminate-modal-submit",
+  BATCH_ADD_VEHICLES_SUBMIT: "batch-add-vehicles-submit"
 };
 
 export const EDIT_ACTIVITY_IN_MISSION_PANEL = {
@@ -236,4 +238,11 @@ export const BATCH_TERMINATE_MODAL_SUBMIT = terminatedCount => ({
   action: MATOMO_ACTIONS.BATCH_TERMINATE_MODAL_SUBMIT,
   name: "Soumission détachement en masse (nb détachements)",
   value: terminatedCount
+});
+
+export const BATCH_ADD_VEHICLES_SUBMIT = vehicleCount => ({
+  category: MATOMO_CATEGORIES.ADMIN_VEHICLE,
+  action: MATOMO_ACTIONS.BATCH_ADD_VEHICLES_SUBMIT,
+  name: "Soumission ajout véhicules par lot (nb véhicules)",
+  value: vehicleCount
 });
