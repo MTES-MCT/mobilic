@@ -19,6 +19,16 @@ function isValidEntry(value) {
   return validateCleanEmailString(value) || isValidMobilicId(value);
 }
 
+function defaultNormalize(token) {
+  if (isValidMobilicId(token)) {
+    return { type: "id", value: token };
+  }
+  return { type: "email", value: token.toLowerCase() };
+}
+
+const DEFAULT_VALIDATION_ERROR =
+  "Le format saisi n'est pas valide. Saisissez une adresse e-mail (prenom.nom@domaine.fr) ou un identifiant Mobilic (nombre entier).";
+
 export default function BatchInviteModal({
   open,
   handleClose,
@@ -29,7 +39,13 @@ export default function BatchInviteModal({
   inputLabel = "Adresses e-mail ou identifiants Mobilic",
   inputHintText = "Saisissez des adresses e-mail (prenom.nom@domaine.fr) ou des identifiants Mobilic (nombres entiers), séparés par un espace, une virgule ou un point-virgule.",
   acceptButtonTitle = "",
-  onClose
+  onClose,
+  validationFn = isValidEntry,
+  normalizeFn = defaultNormalize,
+  validationErrorMessage = DEFAULT_VALIDATION_ERROR,
+  placeholder = "",
+  separatorsRegex = SEPARATORS_REGEX,
+  trackingEventFn = BATCH_INVITE_MODAL_SUBMIT
 }) {
   const { trackEvent } = useMatomo();
   const [entries, setEntries] = React.useState([]);
@@ -41,7 +57,7 @@ export default function BatchInviteModal({
   ] = React.useState(false);
 
   function parseText(t, ignoreLast = true) {
-    const tokens = t.split(SEPARATORS_REGEX);
+    const tokens = t.split(separatorsRegex);
     if (!ignoreLast || tokens.length > 1) {
       setHasValidated(true);
     }
@@ -51,11 +67,8 @@ export default function BatchInviteModal({
         (acc, token, index) => {
           if (!token) return acc;
           const shouldSkipLast = ignoreLast && index === tokens.length - 1;
-          if (isValidEntry(token) && !shouldSkipLast) {
-            const normalized = isValidMobilicId(token)
-              ? token
-              : token.toLowerCase();
-            acc.valid.push(normalized);
+          if (validationFn(token) && !shouldSkipLast) {
+            acc.valid.push(normalizeFn(token));
           } else {
             acc.invalid.push(token);
           }
@@ -64,20 +77,14 @@ export default function BatchInviteModal({
         { valid: [], invalid: [] }
       );
     const existingValues = new Set(entries.map(e => e.value));
-    const newEntries = valid
-      .filter(v => !existingValues.has(v))
-      .map(v =>
-        isValidMobilicId(v)
-          ? { type: "id", value: v }
-          : { type: "email", value: v }
-      );
+    const newEntries = valid.filter(e => !existingValues.has(e.value));
     const combined = [...entries, ...newEntries].slice(0, MAX_ENTRIES);
     setEntries(combined);
     setText(invalid.filter(e => !!e).join("\n"));
   }
 
   const countItemsInText = t => {
-    return t.split(SEPARATORS_REGEX).length;
+    return t.split(separatorsRegex).length;
   };
 
   React.useEffect(() => {
@@ -87,8 +94,8 @@ export default function BatchInviteModal({
   }, [text]);
 
   const isTextInvalid = React.useMemo(
-    () => text && !isValidEntry(text),
-    [text]
+    () => text && !validationFn(text),
+    [text, validationFn]
   );
 
   React.useEffect(() => setTooManyEntriesInPastedText(false), [text]);
@@ -119,11 +126,17 @@ export default function BatchInviteModal({
   const errorMessage = React.useMemo(
     () =>
       isTextInvalid && hasValidated
-        ? "Le format saisi n'est pas valide. Saisissez une adresse e-mail (prenom.nom@domaine.fr) ou un identifiant Mobilic (nombre entier)."
+        ? validationErrorMessage
         : tooManyEntries || tooManyEntriesInPastedText
         ? `Le nombre d'entrées ne peut dépasser ${MAX_ENTRIES}. Veuillez découper la liste et procéder en plusieurs fois.`
         : "",
-    [isTextInvalid, tooManyEntries, hasValidated, tooManyEntriesInPastedText]
+    [
+      isTextInvalid,
+      tooManyEntries,
+      hasValidated,
+      tooManyEntriesInPastedText,
+      validationErrorMessage
+    ]
   );
 
   return (
@@ -183,7 +196,8 @@ export default function BatchInviteModal({
                 }
                 parseText(pastedText, false);
               },
-              value: text
+              value: text,
+              ...(placeholder && { placeholder })
             }}
             disabled={tooManyEntries}
           />
@@ -215,25 +229,20 @@ export default function BatchInviteModal({
               let finalEntries = [...entries];
 
               if (text) {
-                if (!isValidEntry(text)) {
+                if (!validationFn(text)) {
                   setHasValidated(true);
                   return;
                 }
-                const normalized = isValidMobilicId(text)
-                  ? text
-                  : text.toLowerCase();
+                const normalized = normalizeFn(text);
                 const existingValues = new Set(
                   finalEntries.map(en => en.value)
                 );
-                if (!existingValues.has(normalized)) {
-                  finalEntries.push(
-                    isValidMobilicId(text)
-                      ? { type: "id", value: normalized }
-                      : { type: "email", value: normalized }
-                  );
+                if (!existingValues.has(normalized.value)) {
+                  finalEntries.push(normalized);
                 }
               }
 
+              const allValues = finalEntries.map(en => en.value);
               const emails = finalEntries
                 .filter(en => en.type === "email")
                 .map(en => en.value);
@@ -241,10 +250,13 @@ export default function BatchInviteModal({
                 .filter(en => en.type === "id")
                 .map(en => parseInt(en.value, 10));
 
-              trackEvent(
-                BATCH_INVITE_MODAL_SUBMIT(emails.length + userIds.length)
-              );
-              await handleSubmit({ emails, userIds });
+              trackEvent(trackingEventFn(allValues.length));
+              const result = await handleSubmit({ entries: allValues, emails, userIds });
+              if (result?.failedEntries?.length > 0) {
+                setEntries(result.failedEntries.map(v => normalizeFn(v)));
+                setText("");
+                return;
+              }
               _handleClose();
             }}
           >
