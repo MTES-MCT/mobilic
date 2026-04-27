@@ -332,7 +332,6 @@ function ActivitiesPanel() {
     [selectedWorkDays, period]
   );
   const ref = React.useRef(null);
-  const width = useWidth();
 
   const classes = useStyles();
   return [

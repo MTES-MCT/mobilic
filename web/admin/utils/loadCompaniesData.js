@@ -2,7 +2,7 @@ import {
   ADMIN_COMPANIES_LIST_QUERY,
   ADMIN_COMPANIES_QUERY
 } from "common/utils/apiQueries/admin";
-import { DAY, getStartOfDay, now } from "common/utils/time";
+import { startOfDay } from "common/utils/time";
 import { sortBy } from "lodash/collection";
 
 export async function loadCompaniesList(api, userId) {
@@ -30,7 +30,7 @@ export async function loadCompanyDetails(api, userId, minDate, companyId) {
       id: userId,
       activityAfter: minDate,
       workDaysLimit: 10000,
-      endedMissionsAfter: getStartOfDay(now() - DAY * 31),
+      endedMissionsAfter: startOfDay(new Date(minDate)),
       companyIds
     },
     { context: { timeout: process.env.REACT_APP_TIMEOUT_MS || 60000 } }

@@ -169,6 +169,22 @@ function InternalAdmin() {
     if (adminStore.companyId) loadDataCompanyDetails();
   }, [adminStore.companyId]);
 
+  const isFirstMinDateRendered = React.useRef(true);
+  
+  // Update company details when changing the min date filter in the activities panel 
+  // to update the displayed missions and work days according to the selected period.
+  React.useEffect(() => {
+    // Do not load company details on the first render of the activities panel to avoid loading data twice 
+    // on initial load since company details are already loaded when the company is selected.
+    if (isFirstMinDateRendered.current) {
+      isFirstMinDateRendered.current = false;
+      return;
+    }
+    if (adminStore.companyId) {
+      loadDataCompanyDetails();
+    }
+  }, [adminStore.activitiesFilters.minDate]);
+
   React.useEffect(() => {
     const { userId, companyId, employments } = adminStore;
     if (!userId || !companyId || !employments || employments.length === 0) {
