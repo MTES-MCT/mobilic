@@ -12,6 +12,7 @@ import { useDownloadBDC } from "../../controller/utils/useDownloadBDC";
 import Box from "@mui/material/Box";
 import Notice from "../../common/Notice";
 import { scrollToId } from "../../common/hooks/useScroll";
+import { useInfractions } from "../../controller/utils/contextInfractions";
 
 export const controlTabsStyles = makeStyles(theme => ({
   middleTab: {
@@ -58,6 +59,7 @@ export const controlTabsStyles = makeStyles(theme => ({
 
 export function UserReadTabs({ tabs, restoreScroll, ...props }) {
   const [tab, setTab] = React.useState(tabs[0].name);
+  const { natinfViewMode } = useInfractions() || { natinfViewMode: 'list' };
 
   React.useEffect(() => scrollToId("control-header"), [tab]);
 
@@ -79,35 +81,41 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
 
   const downloadBDC = useDownloadBDC(props.controlId);
   const classes = controlTabsStyles();
+  
+  // Hide tabs completely when in NATINF search mode
+  const showTabs = natinfViewMode === 'list';
+  
   return (
     <>
       <TabContext value={tab}>
-        <AppBar enableColorOnDark position="static">
-          <Tabs
-            value={tab}
-            onChange={(e, t) => onChangeTab(t)}
-            aria-label="user read tabs"
-            centered
-            variant="fullWidth"
-            indicatorColor="primary"
-            textColor="inherit"
-          >
-            {tabs.map(t => (
-              <Tab
-                className={
-                  t.name === "alerts" ? classes.middleTab : classes.tab
-                }
-                label={t.label}
-                value={t.name}
-                key={t.name}
-                icon={t.icon}
-                disabled={t.name !== "alerts" && props.isReportingInfractions}
-              />
-            ))}
-          </Tabs>
-        </AppBar>
+        {showTabs && (
+          <AppBar enableColorOnDark position="static">
+            <Tabs
+              value={tab}
+              onChange={(e, t) => onChangeTab(t)}
+              aria-label="user read tabs"
+              centered
+              variant="fullWidth"
+              indicatorColor="primary"
+              textColor="inherit"
+            >
+              {tabs.map(t => (
+                <Tab
+                  className={
+                    t.name === "alerts" ? classes.middleTab : classes.tab
+                  }
+                  label={t.label}
+                  value={t.name}
+                  key={t.name}
+                  icon={t.icon}
+                  disabled={t.name !== "alerts" && props.isReportingInfractions}
+                />
+              ))}
+            </Tabs>
+          </AppBar>
+        )}
         <Box className={classes.boxContainer}>
-          {!!showModifyInfractionsAlert && (
+          {showTabs && !!showModifyInfractionsAlert && (
             <Notice
               description={
                 <>
@@ -137,7 +145,7 @@ export function UserReadTabs({ tabs, restoreScroll, ...props }) {
           </Container>
         </Box>
       </TabContext>
-      {!!currentControllerId() && !props.isReportingInfractions && (
+      {!!currentControllerId() && !props.isReportingInfractions && showTabs && (
         <ControllerControlBottomMenu
           editBDC={props.openBulletinControl}
           downloadBDC={downloadBDC}

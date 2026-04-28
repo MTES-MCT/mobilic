@@ -126,6 +126,7 @@ export const CONTROLLER_READ_CONTROL_DATA_NO_LIC = gql`
         ...ObservedInfractions
       }
       reportedInfractionsLastUpdateTime
+      reportedCustomInfractionsLastUpdateTime
       canTakePictures
       pictures {
         url
@@ -208,6 +209,7 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
         ...ObservedInfractions
       }
       reportedInfractionsLastUpdateTime
+      reportedCustomInfractionsLastUpdateTime
       businessTypeDuringControl {
         id
         transportType
@@ -383,6 +385,17 @@ export const CONTROLLER_SAVE_REPORTED_INFRACTIONS = gql`
         ...ObservedInfractions
       }
       reportedInfractionsLastUpdateTime
+      reportedCustomInfractionsLastUpdateTime
+    }
+  }
+`;
+
+export const CONTROLLER_SEARCH_NATINF = gql`
+  query searchNatinf($query: String!) {
+    searchNatinf(query: $query) {
+      code
+      label
+      description
     }
   }
 `;

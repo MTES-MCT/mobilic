@@ -6,60 +6,19 @@ import {
   unixToJSTimestamp
 } from "common/utils/time";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
-import { makeStyles } from "@mui/styles";
-import { fr } from "@codegouvfr/react-dsfr";
 import Stack from "@mui/material/Stack";
 import { useInfractions } from "../../../controller/utils/contextInfractions";
 import { useControl } from "../../../controller/utils/contextControl";
 import { capitalizeFirstLetter } from "common/utils/string";
 import classNames from "classnames";
+import { gregorian_fr } from "common/utils/calendarLocale";
+import { useCalendarStyles } from "../../../common/styles/calendarStyles";
 
 const controlHistoryDepth =
   parseInt(process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH) || 28;
 
-const gregorian_fr = {
-  name: "gregorian_fr",
-  months: [
-    ["Janvier", "Jan"],
-    ["Février", "Fév"],
-    ["Mars", "Mars"],
-    ["Avril", "Avr"],
-    ["Mai", "Mai"],
-    ["Juin", "Jun"],
-    ["Juillet", "Jul"],
-    ["Août", "Aou"],
-    ["Septembre", "Sep"],
-    ["Octobre", "Oct"],
-    ["Novembre", "Nov"],
-    ["Décembre", "Déc"]
-  ],
-  weekDays: [
-    ["Samedi", "S"],
-    ["Dimanche", "D"],
-    ["Lundi", "L"],
-    ["Mardi", "M"],
-    ["Mercredi", "M"],
-    ["Jeudi", "J"],
-    ["Vendredi", "V"]
-  ],
-  digits: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
-  meridiems: [
-    ["AM", "am"],
-    ["PM", "pm"]
-  ]
-};
-
-const useStyles = makeStyles(theme => ({
-  calendar: {
-    border: "1px solid",
-    borderColor: fr.colors.decisions.background.disabled.grey.default,
-    borderRadius: "0px",
-    boxShadow: "none"
-  }
-}));
-
 export const InfractionDay = ({ alerts, sanction }) => {
-  const classes = useStyles();
+  const classes = useCalendarStyles();
   const {
     isReportingInfractions,
     onAddInfraction,
@@ -140,8 +99,8 @@ export const InfractionDay = ({ alerts, sanction }) => {
           className="fr-tag-group"
           style={{ listStyleType: "none", paddingInlineStart: "0" }}
         >
-          {initialTimestamps
-            .map(ts => (ts / 1000) >> 0)
+          {initialDays
+            .slice()
             .sort()
             .map(ts => (
               <li key={ts}>

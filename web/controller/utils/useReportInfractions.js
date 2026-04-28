@@ -7,6 +7,7 @@ import { formatApiError } from "common/utils/errors";
 import { getAlertsGroupedByDay } from "common/utils/regulation/groupAlertsByDay";
 import { isoFormatLocalDate, strToUnixTimestamp } from "common/utils/time";
 import { CONTROLLER_SAVE_REPORTED_INFRACTIONS } from "common/utils/apiQueries/controller";
+import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 
 export const useReportInfractions = (controlData) => {
   const api = useApi();
@@ -17,18 +18,30 @@ export const useReportInfractions = (controlData) => {
     reportedInfractionsLastUpdateTime,
     setReportedInfractionsLastUpdateTime
   ] = React.useState(controlData.reportedInfractionsLastUpdateTime);
+  const [
+    reportedCustomInfractionsLastUpdateTime,
+    setReportedCustomInfractionsLastUpdateTime
+  ] = React.useState(controlData.reportedCustomInfractionsLastUpdateTime);
   const [observedInfractions, setObservedInfractions] = React.useState([]);
 
   const [isReportingInfractions, setIsReportingInfractions] =
     React.useState(false);
   const [hasModifiedInfractions, setHasModifiedInfractions] =
     React.useState(false);
+  const [natinfViewMode, setNatinfViewMode] = React.useState('list');
 
   React.useEffect(() => {
     setReportedInfractionsLastUpdateTime(
       controlData.reportedInfractionsLastUpdateTime
     );
   }, [controlData.reportedInfractionsLastUpdateTime]);
+
+  React.useEffect(() => {
+    setReportedCustomInfractionsLastUpdateTime(
+      controlData.reportedCustomInfractionsLastUpdateTime
+    );
+
+  }, [controlData.reportedCustomInfractionsLastUpdateTime]);
 
   React.useEffect(() => {
     setObservedInfractions(controlData.observedInfractions);
@@ -40,43 +53,57 @@ export const useReportInfractions = (controlData) => {
       : [];
   }, [observedInfractions]);
 
-  const saveInfractions = async ({ showSuccessMessage = true } = {}) => {
+  const saveInfractions = async ({ showSuccessMessage = true, infractionsOverride = null } = {}) => {
     withLoadingScreen(async () => {
       try {
+        const infractionsToSave = infractionsOverride ?? observedInfractions;
+        const reportedInfractionsPayload = infractionsToSave
+          .filter((infraction) => infraction.isReported)
+          .map(({ date, sanction, unit, type, label, description }) => ({
+            dateStr: isoFormatLocalDate(date),
+            sanction,
+            unit,
+            type,
+            ...(type === "custom" && {
+              customLabel: label,
+              customDescription: description
+            })
+          }));
+        
         const apiResponse = await api.graphQlMutate(
           CONTROLLER_SAVE_REPORTED_INFRACTIONS,
           {
             controlId: controlData?.id,
-            reportedInfractions: observedInfractions
-              .filter((infraction) => infraction.isReported)
-              .map(({ date, sanction, unit, type }) => ({
-                dateStr: isoFormatLocalDate(date),
-                sanction,
-                unit,
-                type
-              }))
+            reportedInfractions: reportedInfractionsPayload
           },
           { context: { nonPublicApi: true } }
         );
         const {
           reportedInfractionsLastUpdateTime:
             newReportedInfractionsLastUpdateTime,
+          reportedCustomInfractionsLastUpdateTime:
+            newReportedCustomInfractionsLastUpdateTime,
           observedInfractions: newObservedInfractions
         } = apiResponse.data.controllerSaveReportedInfractions;
         setReportedInfractionsLastUpdateTime(
           newReportedInfractionsLastUpdateTime
         );
+        setReportedCustomInfractionsLastUpdateTime(
+          newReportedCustomInfractionsLastUpdateTime
+        );
+        
         const newObservedInfractionsWithDates = newObservedInfractions.map(
           (o) => ({
             ...o,
             date: o.date ? strToUnixTimestamp(o.date) : null
           })
         );
+        
         setObservedInfractions(newObservedInfractionsWithDates);
         controlData.observedInfractions = newObservedInfractionsWithDates;
         if (showSuccessMessage) {
           alerts.success(
-            observedInfractions.length === 1
+            infractionsToSave.length === 1
               ? "L'infraction relevée a été enregistrée "
               : "Les infractions relevées ont été enregistrées",
             "",
@@ -184,6 +211,35 @@ export const useReportInfractions = (controlData) => {
     setHasModifiedInfractions(true);
   };
 
+  const addCustomInfractions = (customInfractionsForAPI) => {
+    if (!customInfractionsForAPI || customInfractionsForAPI.length === 0) {
+      return;
+    }
+
+    setObservedInfractions((currentObservedInfractions) => [
+      ...currentObservedInfractions,
+      ...customInfractionsForAPI.map((customInfraction) => ({
+        sanction: customInfraction.sanction,
+        date: strToUnixTimestamp(customInfraction.dateStr),
+        type: customInfraction.type,
+        isReported: true,
+        isReportable: true,
+        label: (customInfraction.customLabel || "").trim() || customInfraction.sanction,
+        description: (customInfraction.customDescription || "").trim(),
+        unit: PERIOD_UNITS.DAY,
+        business: null
+      }))
+    ]);
+    setHasModifiedInfractions(true);
+  };
+
+  const removeCustomInfractionsBySanction = (sanction) => {
+    setObservedInfractions((current) =>
+      current.filter(inf => !(inf.sanction === sanction && inf.type === "custom"))
+    );
+    setHasModifiedInfractions(true);
+  };
+
   const checkedAlertsNumber = React.useMemo(
     () =>
       groupedAlerts
@@ -211,6 +267,7 @@ export const useReportInfractions = (controlData) => {
 
   return {
     reportedInfractionsLastUpdateTime,
+    reportedCustomInfractionsLastUpdateTime,
     groupedAlerts,
     checkedAlertsNumber,
     totalAlertsNumber,
@@ -221,6 +278,11 @@ export const useReportInfractions = (controlData) => {
     cancelInfractions,
     onUpdateInfraction,
     onAddInfraction,
-    onRemoveInfraction
+    onRemoveInfraction,
+    addCustomInfractions,
+    removeCustomInfractionsBySanction,
+    natinfViewMode,
+    setNatinfViewMode,
+    observedInfractions
   };
 };

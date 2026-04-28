@@ -19,6 +19,8 @@ import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 import classNames from "classnames";
 import { useInfractions } from "../../../controller/utils/contextInfractions";
 import { useControl } from "../../../controller/utils/contextControl";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const useStyles = makeStyles(theme => {
   return {
@@ -65,8 +67,12 @@ const getAlertsNumber = (
   alerts,
   isSanctionReportable,
   isReportingInfractions,
-  readOnlyAlerts
+  readOnlyAlerts,
+  type
 ) => {
+  if (type === "custom") {
+    return alerts.filter(alert => !!(alert.day || alert.week)).length || alerts.length;
+  }
   if (readOnlyAlerts || !isSanctionReportable) {
     return alerts.filter(alert => !!(alert.day || alert.week)).length;
   } else if (
@@ -97,7 +103,8 @@ export function AlertGroup({
   onChangeTab,
   readOnlyAlerts,
   displayBusinessType = false,
-  titleProps = {}
+  titleProps = {},
+  onDelete
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
@@ -116,11 +123,19 @@ export function AlertGroup({
     alerts,
     isSanctionReportable,
     isReportingInfractions,
-    readOnlyAlerts
+    readOnlyAlerts,
+    type
   );
 
   const alertsGroupedByBusinessTypes = React.useMemo(
-    () => groupBy(alerts, alert => alert.business.id),
+    () => groupBy(alerts, alert => {
+      // For custom infractions, group by sanction (NATINF code) instead of business
+      // so each NATINF gets its own description displayed
+      if (alert.type === "custom") {
+        return `custom_${alert.sanction}`;
+      }
+      return alert.business?.id ?? "unknown";
+    }),
     [alerts]
   );
 
@@ -140,15 +155,15 @@ export function AlertGroup({
         isReported ? classes.reportedAlert : ""
       )}
     >
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <AccordionSummary>
         <Grid
           container
-          spacing={2}
+          spacing={1}
           alignItems="center"
           justifyContent="space-between"
           wrap="nowrap"
         >
-          <Grid item>
+          <Grid item xs>
             <Typography
               className="bold"
               color="primary"
@@ -173,11 +188,45 @@ export function AlertGroup({
               </span>
             </Grid>
           )}
+          <Grid item>
+            <ExpandMoreIcon
+              sx={{
+                transform: open ? "rotate(180deg)" : "none",
+                transition: "transform 0.2s",
+                display: "block"
+              }}
+            />
+          </Grid>
+          {onDelete && (
+            <Grid item>
+              <IconButton
+                size="small"
+                color="primary"
+                onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                aria-label="Supprimer l'infraction"
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </Grid>
+          )}
         </Grid>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
         {/* TODO refactor: extract in another component */}
-        {(controlType === CONTROL_TYPES.MOBILIC.label ||
+        {/* Custom infractions display (NATINF added manually) */}
+        {type === "custom" && (
+          <>
+            <Description noMargin>{alerts[0].description}</Description>
+            {alerts[0].unit === PERIOD_UNITS.DAY && (
+              <InfractionDay alerts={alerts} sanction={sanction} />
+            )}
+            {alerts[0].unit === PERIOD_UNITS.WEEK && (
+              <InfractionWeek alerts={alerts} sanction={sanction} />
+            )}
+          </>
+        )}
+        {/* Computed infractions for MOBILIC/NO_LIC controls */}
+        {type !== "custom" && (controlType === CONTROL_TYPES.MOBILIC.label ||
           controlType === CONTROL_TYPES.NO_LIC.label) &&
           Object.entries(alertsGroupedByBusinessTypes).map(
             ([businessId, alertsByBusiness]) => {
@@ -188,7 +237,7 @@ export function AlertGroup({
               } = firstAlert;
               return (
                 <React.Fragment key={`alertsByBusiness_${businessId}`}>
-                  {displayBusinessType && (
+                  {displayBusinessType && alertBusiness && (
                     <BusinessTypeTitle business={alertBusiness} />
                   )}
                   <Description noMargin>{alertDescription}</Description>
@@ -211,7 +260,7 @@ export function AlertGroup({
               );
             }
           )}
-        {controlType === CONTROL_TYPES.LIC_PAPIER.label && (
+        {type !== "custom" && controlType === CONTROL_TYPES.LIC_PAPIER.label && (
           <>
             <Description>{alerts[0].description}</Description>
             {alerts[0].unit === PERIOD_UNITS.DAY && (
