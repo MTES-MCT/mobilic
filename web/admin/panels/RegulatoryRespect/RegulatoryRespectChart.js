@@ -29,6 +29,10 @@ const ALERTS_DATA = {
   maximumWorkDayTime: {
     label: "Durée du travail quotidien",
     color: "#115ADF"
+  },
+  maximumNightWorkDayTime: {
+    label: "Durée du travail de nuit",
+    color: "#1F1A4A"
   }
 };
 
