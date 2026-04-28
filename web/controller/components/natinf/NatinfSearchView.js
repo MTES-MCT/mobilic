@@ -50,14 +50,17 @@ const useStyles = makeStyles(theme => ({
   footerActions: {
     position: "fixed",
     bottom: 0,
+    left: 0,
     right: 0,
     width: "100%",
     maxWidth: "860px",
+    margin: "0 auto",
     backgroundColor: "white",
     padding: theme.spacing(2, 3),
     borderTop: `1px solid ${theme.palette.divider}`,
     display: "flex",
-    zIndex: 1300
+    zIndex: 1300,
+    boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.1)"
   },
   footerActionsRow: {
     justifyContent: "space-between",
@@ -107,8 +110,12 @@ export function NatinfSearchView({
         // Ensure stored items are objects with code+label (not legacy strings)
         if (Array.isArray(parsed) && parsed.every(item => typeof item === 'object' && item.code)) {
           setRecentSearches(parsed);
+        } else {
+          localStorage.removeItem('natinf_recent_searches');
         }
       } catch (e) {
+        // Invalid JSON format, clear corrupted data
+        app.logger.warn('Invalid natinf_recent_searches data:', e);
         localStorage.removeItem('natinf_recent_searches');
       }
     }
@@ -184,7 +191,7 @@ export function NatinfSearchView({
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", width: "100%", minHeight: 0 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", width: "100%", height: "100vh" }}>
       <Box
         sx={{
           flexShrink: 0,
@@ -209,7 +216,7 @@ export function NatinfSearchView({
           Fermer
         </Button>
       </Box>
-      <Box sx={{ overflowY: "auto", flexGrow: 1 }}>
+      <Box sx={{ overflowY: "auto", flexGrow: 1, paddingBottom: "120px" }}>
       <Container maxWidth="md" className={classes.container}>
       {!showConfirmation ? (
         <>

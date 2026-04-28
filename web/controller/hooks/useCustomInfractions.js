@@ -11,7 +11,7 @@ export const useCustomInfractions = () => {
   
   /**
    * Add or update a custom infraction
-   * @param {Object} natinf - { code, label, description }
+   * @param {Object} natinf - { code, label, description, articles }
    * @param {Number} dayTimestamp - Unix timestamp of selected day
    */
   const addDayToCustomInfraction = (natinf, dayTimestamp) => {
@@ -36,6 +36,7 @@ export const useCustomInfractions = () => {
             code: natinf.code,
             label: natinf.label,
             description: natinf.description,
+            articles: natinf.articles,
             days: [dayTimestamp]
           }
         ];
@@ -49,15 +50,12 @@ export const useCustomInfractions = () => {
    */
   const removeDayFromCustomInfraction = (code, dayTimestamp) => {
     setCustomInfractions(prev => {
-      return prev
-        .map(item => {
-          if (item.code === code) {
-            const updatedDays = item.days.filter(d => d !== dayTimestamp);
-            return { ...item, days: updatedDays };
-          }
-          return item;
-        })
-        .filter(item => item.days.length > 0);
+      const updatedInfractions = prev.map(item => {
+        if (item.code !== code) return item;
+        const updatedDays = item.days.filter(d => d !== dayTimestamp);
+        return { ...item, days: updatedDays };
+      });
+      return updatedInfractions.filter(item => item.days.length > 0);
     });
   };
 
@@ -92,7 +90,8 @@ export const useCustomInfractions = () => {
         dateStr: isoFormatLocalDate(day),
         type: "custom",
         customLabel: infraction.label,
-        customDescription: infraction.description
+        customDescription: infraction.description,
+        customArticles: infraction.articles
       }))
     );
   };

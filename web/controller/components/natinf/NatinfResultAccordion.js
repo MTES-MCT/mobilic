@@ -19,7 +19,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useCalendarStyles } from "../../../common/styles/calendarStyles";
 
 const controlHistoryDepth =
-  parseInt(process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH) || 28;
+  Number.parseInt(process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH, 10) || 28;
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -66,7 +66,7 @@ export function NatinfResultAccordion({
     const newDays = values.map(dateObj => {
       const date = dateObj.toDate ? dateObj.toDate() : new Date(dateObj);
       date.setHours(0, 0, 0, 0);
-      return (date.getTime() / 1000) >> 0;
+      return Math.trunc(date.getTime() / 1000);
     });
     newDays.filter(ts => !selectedDays.includes(ts)).forEach(day => onDaySelect(natinf, day));
     selectedDays.filter(ts => !newDays.includes(ts)).forEach(day => onDayRemove(natinf.code, day));
@@ -154,7 +154,7 @@ export function NatinfResultAccordion({
             >
               {selectedDays
                 .slice()
-                .sort()
+                .sort((a, b) => a - b)
                 .map(day => (
                   <li key={day}>
                     <Tag

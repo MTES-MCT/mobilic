@@ -396,6 +396,7 @@ export const CONTROLLER_SEARCH_NATINF = gql`
       code
       label
       description
+      articles
     }
   }
 `;

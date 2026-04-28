@@ -59,14 +59,15 @@ export const useReportInfractions = (controlData) => {
         const infractionsToSave = infractionsOverride ?? observedInfractions;
         const reportedInfractionsPayload = infractionsToSave
           .filter((infraction) => infraction.isReported)
-          .map(({ date, sanction, unit, type, label, description }) => ({
+          .map(({ date, sanction, unit, type, label, description, articles }) => ({
             dateStr: isoFormatLocalDate(date),
             sanction,
             unit,
             type,
             ...(type === "custom" && {
               customLabel: label,
-              customDescription: description
+              customDescription: description,
+              customArticles: articles
             })
           }));
         
@@ -226,6 +227,7 @@ export const useReportInfractions = (controlData) => {
         isReportable: true,
         label: (customInfraction.customLabel || "").trim() || customInfraction.sanction,
         description: (customInfraction.customDescription || "").trim(),
+        articles: (customInfraction.customArticles || "").trim(),
         unit: PERIOD_UNITS.DAY,
         business: null
       }))

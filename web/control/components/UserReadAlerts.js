@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
   },
   bottomButtons: {
     position: "sticky",
-    bottom: "-20px",
+    bottom: 0,
     background: "white",
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
@@ -143,8 +143,9 @@ export function UserReadAlerts({
       type: ci.type,
       isReported: true,
       isReportable: true,
-      label: ci.customLabel && ci.customLabel.trim() ? ci.customLabel : ci.sanction,
-      description: ci.customDescription && ci.customDescription.trim() ? ci.customDescription : "",
+      label: (ci.customLabel ?? "").trim() || ci.sanction,
+      description: (ci.customDescription ?? "").trim(),
+      articles: (ci.customArticles ?? "").trim(),
       unit: PERIOD_UNITS.DAY,
       business: null
     }));
@@ -216,7 +217,7 @@ export function UserReadAlerts({
   }
 
   return (
-    <Container maxWidth={displayPictures ? "lg" : "md"} sx={{ padding: 0 }}>
+    <Container maxWidth={displayPictures ? "lg" : "md"} sx={{ padding: 0, minHeight: "calc(100vh - 200px)" }}>
       {controlType === CONTROL_TYPES.MOBILIC.label && (
         <DisplayBusinessTypes businessTypes={businessTypes} />
       )}
