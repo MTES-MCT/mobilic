@@ -50,8 +50,9 @@ const useStyles = makeStyles(theme => ({
   footerActions: {
     position: "fixed",
     bottom: 0,
-    left: 0,
     right: 0,
+    width: "100%",
+    maxWidth: "860px",
     backgroundColor: "white",
     padding: theme.spacing(2, 3),
     borderTop: `1px solid ${theme.palette.divider}`,
