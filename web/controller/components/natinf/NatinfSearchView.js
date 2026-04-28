@@ -1,3 +1,4 @@
+
 import React from "react";
 import classNames from "classnames";
 import { makeStyles } from "@mui/styles";
@@ -114,8 +115,7 @@ export function NatinfSearchView({
           localStorage.removeItem('natinf_recent_searches');
         }
       } catch (e) {
-        // Invalid JSON format, clear corrupted data
-        app.logger.warn('Invalid natinf_recent_searches data:', e);
+        alerts.error("Une erreur est survenue", {}, 6000);
         localStorage.removeItem('natinf_recent_searches');
       }
     }
