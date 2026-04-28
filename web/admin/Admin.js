@@ -126,10 +126,12 @@ function InternalAdmin() {
           await alerts.withApiErrorHandling(
             async () => {
               const minDate = adminStore.activitiesFilters.minDate;
+              const maxDate = adminStore.activitiesFilters.maxDate;
               const companies = await loadCompanyDetails(
                 api,
                 userId,
                 minDate,
+                maxDate,
                 companyId
               );
               adminStore.dispatch({
