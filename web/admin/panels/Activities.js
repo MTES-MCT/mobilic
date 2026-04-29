@@ -543,7 +543,7 @@ function ActivitiesPanel() {
               }
             }}
             // renderDay is needed to fix issue caused by key being passed with props
-            renderDay={(day, selectedDates, pickersDayProps) => {
+            renderDay={(pickersDayProps) => {
               const { key, ...safeProps } = pickersDayProps;
               return <PickersDay {...safeProps} />;
             }}
@@ -584,7 +584,7 @@ function ActivitiesPanel() {
               }
             }}
             // renderDay is needed to fix issue caused by key being passed with props
-            renderDay={(day, selectedDates, pickersDayProps) => {
+            renderDay={(pickersDayProps) => {
               const { key, ...safeProps } = pickersDayProps;
               return <PickersDay {...safeProps} />;
             }}
