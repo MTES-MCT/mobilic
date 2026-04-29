@@ -517,7 +517,7 @@ function ActivitiesPanel() {
             fullWidth
             disableCloseOnSelect={false}
             disableMaskedInput={true}
-            onChange={(val) => {
+            onAccept={(val) => {
               trackEvent(ACTIVITY_FILTER_MIN_DATE);
               setMinDate(isoFormatLocalDate(val));
             }}
@@ -558,7 +558,7 @@ function ActivitiesPanel() {
             fullWidth
             disableCloseOnSelect={false}
             disableMaskedInput={true}
-            onChange={(val) => {
+            onAccept={(val) => {
               trackEvent(ACTIVITY_FILTER_MAX_DATE);
               setMaxDate(isoFormatLocalDate(val));
             }}
