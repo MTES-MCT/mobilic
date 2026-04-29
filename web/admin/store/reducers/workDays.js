@@ -66,7 +66,7 @@ export function addWorkDaysReducer(
   if (companiesPayload.some(c => c.missions)) {
     const newMissions = flatMap(
       companiesPayload.map(c =>
-        c.missions && c.missions.edges
+        c.missions?.edges
           ? c.missions.edges.map(m => ({
               ...m.node,
               companyId: c.id,
