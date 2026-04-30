@@ -211,7 +211,7 @@ export function UserReadAlerts({
         addDayToCustomInfraction={addDayToCustomInfraction}
         removeDayFromCustomInfraction={removeDayFromCustomInfraction}
         removeCustomInfraction={removeCustomInfraction}
-        controlTime={controlData.qrCodeGenerationTime}
+        controlTime={controlData.qrCodeGenerationTime || controlData.controlTime}
       />
     );
   }
