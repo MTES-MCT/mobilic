@@ -274,7 +274,7 @@ export function UserReadAlerts({
                   sx={{
                     ...(isReportingInfractions && {
                       overflow: "scroll",
-                      maxHeight: "30vh"
+                      maxHeight: "40vh"
                     })
                   }}
                 >
@@ -366,10 +366,13 @@ export function UserReadAlerts({
               {isReportingInfractions && isMinistryOfInterior && (
                 <Button
                   priority="secondary"
-                  iconId="ri-add-line"
+                  iconId="fr-icon-add-line"
+                  iconPosition="right"
                   onClick={handleAddCustomInfractions}
                   size="small"
-                  sx={{ marginTop: 1 }}
+                  style={{
+                    marginTop: 15,
+                  }}
                 >
                   Ajouter des infractions
                 </Button>
