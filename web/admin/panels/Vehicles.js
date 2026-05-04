@@ -232,6 +232,7 @@ export default function VehicleAdmin({ company }) {
         normalizeFn={normalizeRegistrationNumber}
         validationErrorMessage="Le format saisi n'est pas valide. Une immatriculation doit contenir au moins une lettre et un chiffre."
         trackingEventFn={BATCH_ADD_VEHICLES_SUBMIT}
+        parseOnInput={false}
       />
     </>
   );

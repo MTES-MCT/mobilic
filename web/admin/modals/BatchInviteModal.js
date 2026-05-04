@@ -45,7 +45,8 @@ export default function BatchInviteModal({
   validationErrorMessage = DEFAULT_VALIDATION_ERROR,
   placeholder = "",
   separatorsRegex = SEPARATORS_REGEX,
-  trackingEventFn = BATCH_INVITE_MODAL_SUBMIT
+  trackingEventFn = BATCH_INVITE_MODAL_SUBMIT,
+  parseOnInput = true
 }) {
   const { trackEvent } = useMatomo();
   const [entries, setEntries] = React.useState([]);
@@ -97,6 +98,10 @@ export default function BatchInviteModal({
     () => text && !validationFn(text),
     [text, validationFn]
   );
+
+  const handleTextChange = parseOnInput
+    ? e => parseText(e.target.value)
+    : e => setText(e.target.value);
 
   React.useEffect(() => setTooManyEntriesInPastedText(false), [text]);
 
@@ -179,9 +184,7 @@ export default function BatchInviteModal({
             state={isError ? "error" : "default"}
             stateRelatedMessage={errorMessage}
             nativeTextAreaProps={{
-              onChange: e => {
-                parseText(e.target.value);
-              },
+              onChange: handleTextChange,
               onBlur: e => {
                 parseText(e.target.value, false);
               },
@@ -224,22 +227,29 @@ export default function BatchInviteModal({
             </Button>
           )}
           <LoadingButton
-            disabled={entries.length === 0}
+            disabled={entries.length === 0 && !text.trim()}
             onClick={async e => {
               let finalEntries = [...entries];
 
               if (text) {
-                if (!validationFn(text)) {
+                const tokens = text
+                  .split(separatorsRegex)
+                  .map(t => t.trim())
+                  .filter(Boolean);
+                if (!tokens.every(validationFn)) {
+                  parseText(text, false);
                   setHasValidated(true);
                   return;
                 }
-                const normalized = normalizeFn(text);
-                const existingValues = new Set(
-                  finalEntries.map(en => en.value)
-                );
-                if (!existingValues.has(normalized.value)) {
-                  finalEntries.push(normalized);
+                const seen = new Set(finalEntries.map(en => en.value));
+                for (const t of tokens) {
+                  const normalized = normalizeFn(t);
+                  if (!seen.has(normalized.value)) {
+                    seen.add(normalized.value);
+                    finalEntries.push(normalized);
+                  }
                 }
+                finalEntries = finalEntries.slice(0, MAX_ENTRIES);
               }
 
               const allValues = finalEntries.map(en => en.value);
