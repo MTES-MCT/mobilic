@@ -1,5 +1,5 @@
 // DSFR "Menu déroulant" (beta): https://www.systeme-de-design.gouv.fr/composants-et-modeles/composants-beta/menu-deroulant
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { makeStyles } from "@mui/styles";
@@ -142,11 +142,22 @@ export function DropdownMenu({
   emptyMessage,
   onItemClick,
   renderItem,
-  onOpenChange
+  onOpenChange,
+  defaultOpen = false
 }) {
   const classes = useStyles({ size, disabled, menuWidth, maxHeight });
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const buttonRef = useRef(null);
+
+  useEffect(() => {
+    if (defaultOpen && buttonRef.current && !anchorEl) {
+      setAnchorEl(buttonRef.current);
+      if (onOpenChange) {
+        onOpenChange(true);
+      }
+    }
+  }, [defaultOpen]);
 
   const handleOpen = useCallback(
     event => {
@@ -182,6 +193,7 @@ export function DropdownMenu({
   return (
     <>
       <button
+        ref={buttonRef}
         type="button"
         className={`${classes.triggerButton} ${open ? classes.triggerButtonOpen : ""}`}
         onClick={handleOpen}
