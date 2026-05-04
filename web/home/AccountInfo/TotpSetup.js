@@ -28,7 +28,7 @@ export function TotpSetup() {
   const [verificationCode, setVerificationCode] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
-  if (!userInfo.admin) {
+  if (!userInfo?.admin) {
     return null;
   }
 
