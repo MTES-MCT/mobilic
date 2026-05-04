@@ -192,6 +192,11 @@ const onMinDateChange = debounce(
   500
 );
 
+const renderPickersDay = (pickersDayProps) => {
+  const { key, ...safeProps } = pickersDayProps;
+  return <PickersDay {...safeProps} />;
+};
+
 function ActivitiesPanel() {
   usePageTitle("Activités - Mobilic");
   const adminStore = useAdminStore();
@@ -225,6 +230,48 @@ function ActivitiesPanel() {
   });
 
   const minDateOfFetchedData = adminStore.minWorkDaysDate;
+
+  const datePickerSlotProps = {
+  textField: {
+    size: "small",
+    required: true,
+    variant: "outlined",
+    error: !!dateRangeError,
+    helperText: dateRangeError,
+    FormHelperTextProps: {
+      sx: {
+        position: "absolute",
+        bottom: "-22px",
+        left: 0,
+        color: "error.main",
+        fontSize: "0.75rem",
+        margin: 0,
+        whiteSpace: "nowrap"
+      }
+    }
+  }
+};
+
+  const refreshCurrentWorkDays = () =>
+    refreshWorkDays(
+      setLoading,
+      alerts,
+      api,
+      adminStore.userId,
+      minDate,
+      maxDate,
+      company.id,
+      (companiesPayload, newMinDate) =>
+        adminStore.dispatch({
+          type: ADMIN_ACTIONS.addWorkDays,
+          payload: { companiesPayload, minDate: newMinDate, reset: true }
+        }),
+      (companiesPayload) =>
+        adminStore.dispatch({
+          type: ADMIN_ACTIONS.addUsers,
+          payload: { companiesPayload }
+        })
+    );
 
   const today = new Date();
   // 1-year limit to avoid performance issues
@@ -268,29 +315,7 @@ function ActivitiesPanel() {
 
     if (shouldReload) {
       const timeoutId = setTimeout(() => {
-        refreshWorkDays(
-          setLoading,
-          alerts,
-          api,
-          adminStore.userId,
-          minDate,
-          maxDate,
-          company.id,
-          (companiesPayload, newMinDate) =>
-            adminStore.dispatch({
-              type: ADMIN_ACTIONS.addWorkDays,
-              payload: {
-                companiesPayload,
-                minDate: newMinDate,
-                reset: true
-              }
-            }),
-          (companiesPayload) =>
-            adminStore.dispatch({
-              type: ADMIN_ACTIONS.addUsers,
-              payload: { companiesPayload }
-            })
-        );
+        refreshCurrentWorkDays();
       }, 500); // 500ms debounce
 
       prevDateRangeRef.current = { minDate, maxDate };
@@ -522,31 +547,9 @@ function ActivitiesPanel() {
             }}
             cancelText={null}
             maxDate={today}
-            slotProps={{
-              textField: {
-                size: "small",
-                required: true,
-                variant: "outlined",
-                error: !!dateRangeError,
-                helperText: dateRangeError,
-                FormHelperTextProps: {
-                  sx: {
-                    position: "absolute",
-                    bottom: "-22px",
-                    left: 0,
-                    color: "error.main",
-                    fontSize: "0.75rem",
-                    margin: 0,
-                    whiteSpace: "nowrap"
-                  }
-                }
-              }
-            }}
+            slotProps={datePickerSlotProps}
             // renderDay is needed to fix issue caused by key being passed with props
-            renderDay={(pickersDayProps) => {
-              const { key, ...safeProps } = pickersDayProps;
-              return <PickersDay {...safeProps} />;
-            }}
+            renderDay={renderPickersDay}
           />
         </Grid>
         <Grid item>
@@ -563,31 +566,9 @@ function ActivitiesPanel() {
             }}
             cancelText={null}
             maxDate={maxAllowedEndDate > today ? today : maxAllowedEndDate}
-            slotProps={{
-              textField: {
-                size: "small",
-                required: true,
-                variant: "outlined",
-                error: !!dateRangeError,
-                helperText: dateRangeError,
-                FormHelperTextProps: {
-                  sx: {
-                    position: "absolute",
-                    bottom: "-22px",
-                    left: 0,
-                    color: "error.main",
-                    fontSize: "0.75rem",
-                    margin: 0,
-                    whiteSpace: "nowrap"
-                  }
-                }
-              }
-            }}
+            slotProps={datePickerSlotProps}
             // renderDay is needed to fix issue caused by key being passed with props
-            renderDay={(pickersDayProps) => {
-              const { key, ...safeProps } = pickersDayProps;
-              return <PickersDay {...safeProps} />;
-            }}
+            renderDay={renderPickersDay}
           />
         </Grid>
         <Grid item>
@@ -696,29 +677,7 @@ function ActivitiesPanel() {
                     6000
                   );
                   setOpenLogHoliday(false);
-                  refreshWorkDays(
-                    setLoading,
-                    alerts,
-                    api,
-                    adminStore.userId,
-                    minDate,
-                    maxDate,
-                    company.id,
-                    (companiesPayload, newMinDate) =>
-                      adminStore.dispatch({
-                        type: ADMIN_ACTIONS.addWorkDays,
-                        payload: {
-                          companiesPayload,
-                          minDate: newMinDate,
-                          reset: true
-                        }
-                      }),
-                    (companiesPayload) =>
-                      adminStore.dispatch({
-                        type: ADMIN_ACTIONS.addUsers,
-                        payload: { companiesPayload }
-                      })
-                  );
+                  refreshCurrentWorkDays();
                 },
                 "create-holiday",
                 (graphQLError) => {
