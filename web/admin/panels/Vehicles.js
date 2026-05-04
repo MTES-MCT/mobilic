@@ -232,6 +232,7 @@ export default function VehicleAdmin({ company }) {
         normalizeFn={normalizeRegistrationNumber}
         validationErrorMessage="Cette immatriculation n'est pas reconnue. Exemples attendus : AB-123-CD, 1234-AB-56, AB12-CDE, 1-ABC-123."
         trackingEventFn={BATCH_ADD_VEHICLES_SUBMIT}
+        parseOnInput={false}
       />
     </>
   );
