@@ -5,18 +5,18 @@
 export const gregorian_fr = {
   name: "gregorian_fr",
   months: [
-    ["Janvier", "Jan"],
-    ["Février", "Fév"],
+    ["Janvier", "Janv."],
+    ["Février", "Févr."],
     ["Mars", "Mars"],
-    ["Avril", "Avr"],
+    ["Avril", "Avr."],
     ["Mai", "Mai"],
-    ["Juin", "Jun"],
-    ["Juillet", "Jul"],
-    ["Août", "Aou"],
-    ["Septembre", "Sep"],
-    ["Octobre", "Oct"],
-    ["Novembre", "Nov"],
-    ["Décembre", "Déc"]
+    ["Juin", "Juin"],
+    ["Juillet", "Juil."],
+    ["Août", "Août"],
+    ["Septembre", "Sept."],
+    ["Octobre", "Oct."],
+    ["Novembre", "Nov."],
+    ["Décembre", "Déc."]
   ],
   weekDays: [
     ["Samedi", "S"],

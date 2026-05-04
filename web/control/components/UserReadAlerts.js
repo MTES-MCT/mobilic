@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
@@ -9,7 +10,6 @@ import Stack from "@mui/material/Stack";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import Notice from "../../common/Notice";
 import { AlertGroup } from "./Alerts/AlertGroup";
-import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 
 import { FieldTitle } from "../../common/typography/FieldTitle";
 import { DisplayBusinessTypes } from "./Alerts/BusinessTypesFromGroupedAlerts";
@@ -51,13 +51,45 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(4)
   },
   bottomButtons: {
-    position: "sticky",
-    bottom: 0,
-    background: "white",
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
     zIndex: 300,
     width: "100%"
+  },
+  bottomButtonsRow: {
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing(1),
+    [theme.breakpoints.up("sm")]: {
+      flexDirection: "row"
+    }
+  },
+  bottomButton: {
+    width: "100%",
+    justifyContent: "center"
+  },
+  addInfractionBar: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    paddingBottom: theme.spacing(1),
+    background: "white"
+  },
+  listScroll: {
+    overflow: "auto"
+  },
+  listScrollComputed: {
+    overflow: "scroll",
+    maxHeight: "40vh"
+  },
+  innerContainer: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column"
+  },
+  gridItemFlex: {
+    display: "flex",
+    flexDirection: "column"
+  },
+  stackFlex: {
+    flex: 1
   }
 }));
 
@@ -217,19 +249,19 @@ export function UserReadAlerts({
   }
 
   return (
-    <Container maxWidth={displayPictures ? "lg" : "md"} sx={{ padding: 0, minHeight: "calc(100vh - 200px)" }}>
+    <Container maxWidth={displayPictures ? "lg" : "md"} sx={{ padding: 0, minHeight: "calc(100vh - 200px)", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
       {controlType === CONTROL_TYPES.MOBILIC.label && (
         <DisplayBusinessTypes businessTypes={businessTypes} />
       )}
-      <Container className={classes.container}>
+      <Container className={classNames(classes.container, classes.innerContainer)}>
         <Grid container spacing={2}>
           {displayPictures && (
             <Grid item xs={5}>
               <UserReadAlertsPictures />
             </Grid>
           )}
-          <Grid item xs={displayPictures ? 7 : 12}>
-            <Stack direction="column" rowGap={1}>
+          <Grid item xs={displayPictures ? 7 : 12} className={classes.gridItemFlex}>
+            <Stack direction="column" rowGap={1} className={classes.stackFlex}>
 
               {/* Computed infractions section */}
               {showComputedSection && (
@@ -237,9 +269,9 @@ export function UserReadAlerts({
                   {!isReportingInfractions ? (
                     <>
                       <TitleContainer>
-                        <FieldTitle uppercaseTitle component="h2">
+                        <Typography variant="h6" component="h2">
                           Infractions calculées par Mobilic
-                        </FieldTitle>
+                        </Typography>
                         <Button
                           priority="primary"
                           onClick={() => reportInfraction('computed')}
@@ -270,14 +302,7 @@ export function UserReadAlerts({
                 </>
               )}
               {showComputedSection && (
-                <List
-                  sx={{
-                    ...(isReportingInfractions && {
-                      overflow: "scroll",
-                      maxHeight: "40vh"
-                    })
-                  }}
-                >
+                <List className={isReportingInfractions ? classes.listScrollComputed : undefined}>
                   {computedInfractions.sort(sanctionComparator).map(group => (
                     <ListItem
                       key={`${group.type}_${group.sanction}`}
@@ -306,9 +331,9 @@ export function UserReadAlerts({
                   {!isReportingInfractions ? (
                     <>
                       <TitleContainer sx={{ marginTop: reportedCustomInfractions.length > 0 ? 3 : 0 }}>
-                        <FieldTitle uppercaseTitle component="h2">
+                        <Typography variant="h6" component="h2">
                           Autre(s) infraction(s) constatée(s)
-                        </FieldTitle>
+                        </Typography>
                         <Button
                           priority="primary"
                           onClick={() => reportInfraction('custom')}
@@ -331,14 +356,7 @@ export function UserReadAlerts({
                     </FieldTitle>
                   )}
                   {reportedCustomInfractions.length > 0 ? (
-                    <List
-                      sx={{
-                        ...(isReportingInfractions && {
-                          overflow: "scroll",
-                          maxHeight: "30vh"
-                        })
-                      }}
-                    >
+                    <List className={classes.listScroll}>
                       {reportedCustomInfractions.sort(sanctionComparator).map(group => (
                         <ListItem
                           key={`${group.type}_${group.sanction}`}
@@ -362,21 +380,7 @@ export function UserReadAlerts({
                 </>
               )}
               
-              {/* "Ajouter des infractions" visible in both edit sections */}
-              {isReportingInfractions && isMinistryOfInterior && (
-                <Button
-                  priority="secondary"
-                  iconId="fr-icon-add-line"
-                  iconPosition="right"
-                  onClick={handleAddCustomInfractions}
-                  size="small"
-                  style={{
-                    marginTop: 15,
-                  }}
-                >
-                  Ajouter des infractions
-                </Button>
-              )}
+
               
               {/* Show message if no infractions at all */}
               {computedInfractions.length === 0 && reportedCustomInfractions.length === 0 && !isReportingInfractions && (
@@ -408,23 +412,36 @@ export function UserReadAlerts({
           </Grid>
         </Grid>
       </Container>
+      {isReportingInfractions && isMinistryOfInterior && (
+        <div className={classes.addInfractionBar}>
+          <Button
+            priority="secondary"
+            iconId="fr-icon-add-line"
+            iconPosition="right"
+            onClick={handleAddCustomInfractions}
+          >
+            Ajouter des infractions
+          </Button>
+        </div>
+      )}
       {isReportingInfractions && (
-        <ButtonsGroup
-          className={classes.bottomButtons}
-          buttons={[
-            {
-              onClick: () => { setEditSection(null); saveInfractions(); },
-              children: "Enregistrer"
-            },
-            {
-              children: "Annuler",
-              onClick: () => { setEditSection(null); cancelInfractions(); },
-              priority: "secondary"
-            }
-          ]}
-          inlineLayoutWhen="sm and up"
-          alignment="right"
-        />
+        <div className={classes.bottomButtons}>
+          <div className={classes.bottomButtonsRow}>
+            <Button
+              className={classes.bottomButton}
+              onClick={() => { setEditSection(null); saveInfractions(); }}
+            >
+              Enregistrer
+            </Button>
+            <Button
+              className={classes.bottomButton}
+              priority="secondary"
+              onClick={() => { setEditSection(null); cancelInfractions(); }}
+            >
+              Annuler
+            </Button>
+          </div>
+        </div>
       )}
     </Container>
   );

@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -19,8 +18,7 @@ import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 import classNames from "classnames";
 import { useInfractions } from "../../../controller/utils/contextInfractions";
 import { useControl } from "../../../controller/utils/contextControl";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
 
 const useStyles = makeStyles(theme => {
   return {
@@ -35,29 +33,59 @@ const useStyles = makeStyles(theme => {
       margin: 0,
       marginRight: theme.spacing(1)
     },
-    alertNumber: {
-      display: "inline-flex",
-      whiteSpace: "pre",
-      borderRadius: "100px",
-      color: "white",
-      paddingLeft: theme.spacing(1),
-      paddingRight: theme.spacing(1),
-      height: theme.spacing(3),
-      minWidth: theme.spacing(3),
-      alignItems: "center",
-      justifyContent: "center",
-      fontWeight: "bold",
-      fontSize: "0.75rem"
-    },
     reportedAlert: {
       borderColor: theme.palette.primary.main,
       borderWidth: "1px"
     },
-    reportableAlert: {
-      backgroundColor: theme.palette.error.main
+    summary: {
+      display: "flex",
+      flexDirection: "column",
+      width: "100%"
     },
-    notReportableAlert: {
-      backgroundColor: theme.palette.primary.main
+    summaryRow: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      width: "100%"
+    },
+    summaryLeft: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing(1)
+    },
+    summaryIcons: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      flexShrink: 0
+    },
+    arrowIcon: {
+      transition: "transform 0.2s",
+      display: "block"
+    },
+    arrowIconOpen: {
+      transform: "rotate(180deg)"
+    },
+    deleteButton: {
+      background: "none",
+      border: "none",
+      cursor: "pointer",
+      padding: "4px",
+      display: "flex",
+      alignItems: "center",
+      color: "var(--text-action-high-blue-france)"
+    },
+    alertBadge: {
+      borderRadius: "1rem",
+      backgroundColor: `${theme.palette.info.main} !important`,
+      color: "white !important"
+    },
+    errorAlertBadge: {
+      borderRadius: "1rem",
+      backgroundColor: `${theme.palette.error.main} !important`,
+      color: "white !important"
     }
   };
 });
@@ -156,60 +184,52 @@ export function AlertGroup({
       )}
     >
       <AccordionSummary>
-        <Grid
-          container
-          spacing={1}
-          alignItems="center"
-          justifyContent="space-between"
-          wrap="nowrap"
-        >
-          <Grid item xs>
-            <Typography
-              className="bold"
-              color="primary"
-              {...titleProps}
-              fontSize="0.875rem"
-            >
-              {sanction}
-            </Typography>
-            <Typography fontWeight="500">{infringementLabel}</Typography>
-          </Grid>
-          {alertsNumber !== 0 && (
-            <Grid item>
+        <div className={classes.summary}>
+          <div className={classes.summaryRow}>
+            <div className={classes.summaryLeft}>
+              <Typography
+                className="bold"
+                color="primary"
+                {...titleProps}
+                fontSize="0.875rem"
+              >
+                {sanction}
+              </Typography>
+              {alertsNumber !== 0 && (
+                <Badge
+                  severity={isSanctionReportable ? "error" : "info"}
+                  small
+                  noIcon
+                  as="span"
+                  className={isSanctionReportable ? classes.errorAlertBadge : classes.alertBadge}
+                >
+                  {alertsNumber}
+                </Badge>
+              )}
+            </div>
+            <div className={classes.summaryIcons}>
               <span
                 className={classNames(
-                  classes.alertNumber,
-                  isSanctionReportable
-                    ? classes.reportableAlert
-                    : classes.notReportableAlert
+                  "fr-icon-arrow-down-s-line",
+                  classes.arrowIcon,
+                  open && classes.arrowIconOpen
                 )}
-              >
-                {alertsNumber}
-              </span>
-            </Grid>
-          )}
-          <Grid item>
-            <ExpandMoreIcon
-              sx={{
-                transform: open ? "rotate(180deg)" : "none",
-                transition: "transform 0.2s",
-                display: "block"
-              }}
-            />
-          </Grid>
-          {onDelete && (
-            <Grid item>
-              <IconButton
-                size="small"
-                color="primary"
-                onClick={(e) => { e.stopPropagation(); onDelete(); }}
-                aria-label="Supprimer l'infraction"
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            </Grid>
-          )}
-        </Grid>
+                aria-hidden="true"
+              />
+              {onDelete && (
+                <button
+                  className={classes.deleteButton}
+                  onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                  title="Supprimer l'infraction"
+                  aria-label="Supprimer l'infraction"
+                >
+                  <span className="fr-icon-delete-line" aria-hidden="true" />
+                </button>
+              )}
+            </div>
+          </div>
+          <Typography fontWeight="500">{infringementLabel}</Typography>
+        </div>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
         {/* TODO refactor: extract in another component */}
@@ -288,7 +308,7 @@ export function AlertCard({ alert }) {
       variant="outlined"
       className={classes.container}
     >
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <AccordionSummary expandIcon={<span className="fr-icon-arrow-down-s-line" aria-hidden="true" />}>
         <Grid
           container
           spacing={2}

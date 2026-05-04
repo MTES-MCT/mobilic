@@ -3,10 +3,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
-import { fr } from "@codegouvfr/react-dsfr";
 import { Calendar } from "react-multi-date-picker";
 import { addDaysToDate, textualPrettyFormatDay, unixToJSTimestamp } from "common/utils/time";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
@@ -14,8 +11,7 @@ import Stack from "@mui/material/Stack";
 import { capitalizeFirstLetter } from "common/utils/string";
 import classNames from "classnames";
 import { gregorian_fr } from "common/utils/calendarLocale";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { useCalendarStyles } from "../../../common/styles/calendarStyles";
 
 const controlHistoryDepth =
@@ -29,20 +25,50 @@ const useStyles = makeStyles(theme => ({
   details: {
     display: "block"
   },
-  alertNumber: {
-    display: "inline-flex",
-    whiteSpace: "pre",
-    borderRadius: "100px",
-    color: "white",
-    paddingLeft: "8px",
-    paddingRight: "8px",
-    height: "24px",
-    minWidth: "24px",
+  summary: {
+    display: "flex",
+    flexDirection: "column",
+    width: "100%"
+  },
+  summaryRow: {
+    display: "flex",
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    fontWeight: "bold",
-    fontSize: "0.75rem",
-    backgroundColor: fr.colors.decisions.background.flat.error.default
+    justifyContent: "space-between",
+    width: "100%"
+  },
+  summaryLeft: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.spacing(1)
+  },
+  summaryIcons: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    flexShrink: 0
+  },
+  arrowIcon: {
+    transition: "transform 0.2s",
+    display: "block"
+  },
+  arrowIconOpen: {
+    transform: "rotate(180deg)"
+  },
+  deleteButton: {
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    padding: "4px",
+    display: "flex",
+    alignItems: "center",
+    color: "var(--text-action-high-blue-france)"
+  },
+  alertBadge: {
+    borderRadius: "1rem",
+    backgroundColor: `${theme.palette.error.main} !important`,
+    color: "white !important"
   }
 }));
 
@@ -58,6 +84,8 @@ export function NatinfResultAccordion({
 }) {
   const classes = useStyles();
   const calendarClasses = useCalendarStyles();
+
+  if (!controlTime) controlTime = Math.trunc(Date.now() / 1000);
 
   const maxDate = new Date(unixToJSTimestamp(controlTime));
   const minDate = addDaysToDate(new Date(maxDate), -controlHistoryDepth);
@@ -89,65 +117,66 @@ export function NatinfResultAccordion({
       className={classes.container}
     >
       <AccordionSummary>
-        <Grid container spacing={1} alignItems="center" justifyContent="space-between" wrap="nowrap">
-          <Grid item xs>
-            <Typography className="bold" color="primary" fontSize="0.875rem">
-              NATINF {natinf.code}
-            </Typography>
-            <Typography fontWeight="500" fontSize="0.875rem" style={{ textTransform: "uppercase" }}>
-              {natinf.label}
-            </Typography>
-          </Grid>
-          {selectedDays.length > 0 && (
-            <Grid item>
-              <span className={classes.alertNumber}>
-                {selectedDays.length}
-              </span>
-            </Grid>
-          )}
-          <Grid item>
-            <ExpandMoreIcon
-              sx={{
-                transform: expanded ? "rotate(180deg)" : "none",
-                transition: "transform 0.2s",
-                display: "block"
-              }}
-            />
-          </Grid>
-          {onDelete && (
-            <Grid item>
-              <IconButton
-                size="small"
-                color="primary"
-                onClick={(e) => { e.stopPropagation(); onDelete(); }}
-                aria-label="Supprimer l'infraction"
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            </Grid>
-          )}
-        </Grid>
+        <div className={classes.summary}>
+          <div className={classes.summaryRow}>
+            <div className={classes.summaryLeft}>
+              <Typography className="bold" color="primary" fontSize="0.875rem">
+                NATINF {natinf.code}
+              </Typography>
+              {selectedDays.length > 0 && (
+                <Badge small noIcon as="span" className={classes.alertBadge}>
+                  {selectedDays.length}
+                </Badge>
+              )}
+            </div>
+            <div className={classes.summaryIcons}>
+              <span
+                className={classNames(
+                  "fr-icon-arrow-down-s-line",
+                  classes.arrowIcon,
+                  expanded && classes.arrowIconOpen
+                )}
+                aria-hidden="true"
+              />
+              {onDelete && (
+                <button
+                  className={classes.deleteButton}
+                  onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                  title="Supprimer l'infraction"
+                  aria-label="Supprimer l'infraction"
+                >
+                  <span className="fr-icon-delete-line" aria-hidden="true" />
+                </button>
+              )}
+            </div>
+          </div>
+          <Typography fontWeight="500" fontSize="0.875rem" style={{ textTransform: "uppercase" }}>
+            {natinf.label}
+          </Typography>
+        </div>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
-        <Stack direction="column" gap={2}>
-          <Typography component="div" style={{ marginBottom: 0 }}>
-            Sélectionnez la ou les journées concernées&nbsp;:
-          </Typography>
-          <Calendar
-            className={classNames(calendarClasses.calendar, "custom-calendar")}
-            value={selectedDates}
-            onChange={handleDateChange}
-            multiple
-            sort
-            minDate={minDate}
-            maxDate={maxDate}
-            highlightToday={false}
-            weekStartDayIndex={1}
-            headerOrder={["MONTH_YEAR", "LEFT_BUTTON", "RIGHT_BUTTON"]}
-            monthYearSeparator=" "
-            locale={gregorian_fr}
-          />
-          {selectedDays.length > 0 && (
+        {expanded && (
+          <Stack direction="column" gap={2}>
+            <Typography component="div" style={{ marginBottom: 0 }}>
+              Sélectionnez la ou les journées concernées&nbsp;:
+            </Typography>
+            <Calendar
+              className={classNames(calendarClasses.calendar, "custom-calendar")}
+              value={selectedDates}
+              onChange={handleDateChange}
+              multiple
+              sort
+              minDate={minDate}
+              maxDate={maxDate}
+              currentDate={maxDate}
+              highlightToday={false}
+              weekStartDayIndex={1}
+              headerOrder={["LEFT_BUTTON", "MONTH_YEAR", "RIGHT_BUTTON"]}
+              monthYearSeparator=" "
+              locale={gregorian_fr}
+            />
+            {selectedDays.length > 0 && (
             <ul
               className="fr-tag-group"
               style={{ listStyleType: "none", paddingInlineStart: "0" }}
@@ -169,8 +198,9 @@ export function NatinfResultAccordion({
                   </li>
                 ))}
             </ul>
-          )}
-        </Stack>
+            )}
+          </Stack>
+        )}
       </AccordionDetails>
     </Accordion>
   );

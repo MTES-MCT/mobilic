@@ -89,7 +89,7 @@ export const InfractionDay = ({ alerts, sanction }) => {
           maxDate={maxDate}
           highlightToday={false}
           weekStartDayIndex={1}
-          headerOrder={["MONTH_YEAR", "LEFT_BUTTON", "RIGHT_BUTTON"]}
+          headerOrder={["LEFT_BUTTON", "MONTH_YEAR", "RIGHT_BUTTON"]}
           monthYearSeparator=" "
           locale={gregorian_fr}
         />

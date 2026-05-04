@@ -115,7 +115,8 @@ export function ControllerControlBottomMenu({
       rowGap={3}
       maxWidth="100%"
       sx={{
-        maxWidth: { xs: "100%", md: "70%" }
+        maxWidth: { xs: "100%", md: "90%" },
+        margin: "0 auto"
       }}
     >
       <TitleContainer>

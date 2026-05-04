@@ -77,7 +77,23 @@ const useStyles = makeStyles(theme => ({
   confirmationDescription: {
     marginBottom: theme.spacing(3),
     color: theme.palette.text.secondary
-  }
+  },
+  bottomButtons: {
+    zIndex: 300,
+    width: "100%"
+  },
+  bottomButtonsRow: {
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing(1),
+    [theme.breakpoints.up("sm")]: {
+      flexDirection: "row"
+    }
+  },
+  bottomButton: {
+    width: "100%",
+    justifyContent: "center"
+  },
 }));
 
 export function NatinfSearchView({
@@ -112,7 +128,7 @@ export function NatinfSearchView({
         } else {
           localStorage.removeItem('natinf_recent_searches');
         }
-      } catch (e) {
+      } catch {
         alerts.error("Une erreur est survenue", {}, 6000);
         localStorage.removeItem('natinf_recent_searches');
       }
@@ -214,7 +230,7 @@ export function NatinfSearchView({
           Fermer
         </Button>
       </Box>
-      <Box sx={{ overflowY: "auto", flexGrow: 1, paddingBottom: "120px" }}>
+      <Box sx={{ overflowY: "auto", flexGrow: 1, paddingBottom: "200px" }}>
       <Container maxWidth="md" className={classes.container}>
       {!showConfirmation ? (
         <>
@@ -346,24 +362,24 @@ export function NatinfSearchView({
           </Button>
         </>
       ) : (
-        <>
+        <div className={classes.bottomButtons}>
+          <div className={classes.bottomButtonsRow}>
           <Button
             onClick={handleConfirm}
             disabled={selectedInfractionsCount === 0}
-            size="large"
-            style={{ width: "100%" }}
+            className={classes.bottomButton}
           >
             Ajouter au contrôle
           </Button>
           <Button
             onClick={() => setShowConfirmation(false)}
             priority="secondary"
-            size="large"
-            style={{ width: "100%" }}
+            className={classes.bottomButton}
           >
             Rechercher d'autres infractions
           </Button>
-        </>
+          </div>
+        </div>
       )}
     </Box>
     </Container>
