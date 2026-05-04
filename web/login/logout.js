@@ -15,14 +15,23 @@ export function Logout() {
   async function _logout() {
     const userInfo = store.userInfo();
     if (userInfo?.isImpersonated) {
-      await api.graphQlMutate(
-        STOP_IMPERSONATION_MUTATION,
-        {},
-        { context: { nonPublicApi: true } }
-      );
-      await store.updateUserIdAndInfo();
-      history.replace("/support/impersonation");
-      return;
+      try {
+        await api.graphQlMutate(
+          STOP_IMPERSONATION_MUTATION,
+          {},
+          { context: { nonPublicApi: true } }
+        );
+        await store.updateUserIdAndInfo();
+        history.replace("/support/impersonation");
+        return;
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error(
+          "StopImpersonation failed, falling back to full logout",
+          err
+        );
+        // fall through to the full logout below to leave Kelly in a clean state
+      }
     }
     const queryString = new URLSearchParams(location.search);
     const next = queryString.get("next");
