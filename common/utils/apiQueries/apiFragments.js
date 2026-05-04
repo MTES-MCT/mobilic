@@ -176,6 +176,7 @@ export const OBSERVED_INFRACTIONS_FRAGMENT = gql`
     isReported
     label
     description
+    articles
     type
     unit
     extra

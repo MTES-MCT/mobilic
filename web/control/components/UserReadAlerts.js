@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import ListItem from "@mui/material/ListItem";
 import List from "@mui/material/List";
-import { prettyFormatDayHour } from "common/utils/time";
+import { prettyFormatDayHour, strToUnixTimestamp } from "common/utils/time";
 import Stack from "@mui/material/Stack";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import Notice from "../../common/Notice";
@@ -16,6 +16,7 @@ import { DisplayBusinessTypes } from "./Alerts/BusinessTypesFromGroupedAlerts";
 import { getBusinessTypesFromGroupedAlerts } from "../utils/businessTypesFromGroupedAlerts";
 import { Description } from "../../common/typography/Description";
 import { CONTROL_TYPES } from "../../controller/utils/useReadControlData";
+import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 import { useInfractions } from "../../controller/utils/contextInfractions";
 import { sanctionComparator } from "../utils/sanctionComparator";
 import { useControl } from "../../controller/utils/contextControl";
@@ -23,6 +24,9 @@ import { TitleContainer } from "./TitleContainer";
 import Grid from "@mui/material/Grid";
 import { useIsWidthUp } from "common/utils/useWidth";
 import { UserReadAlertsPictures } from "./UserReadAlertsPictures";
+import { useCustomInfractions } from "../../controller/hooks/useCustomInfractions";
+import { NatinfSearchView } from "../../controller/components/natinf/NatinfSearchView";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -48,7 +52,7 @@ const useStyles = makeStyles(theme => ({
   },
   bottomButtons: {
     position: "sticky",
-    bottom: "-20px",
+    bottom: 0,
     background: "white",
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
@@ -86,25 +90,97 @@ export function UserReadAlerts({
 }) {
   const classes = useStyles();
   const isDesktop = useIsWidthUp("lg");
+  const store = useStoreSyncedWithLocalStorage();
+  const controllerUserInfo = store.controllerInfo();
   const {
     groupedAlerts: infractionsGroupedAlerts,
     isReportingInfractions,
     totalAlertsNumber,
     reportedInfractionsLastUpdateTime,
+    reportedCustomInfractionsLastUpdateTime,
     saveInfractions,
     cancelInfractions,
-    setIsReportingInfractions
+    setIsReportingInfractions,
+    addCustomInfractions,
+    natinfViewMode,
+    setNatinfViewMode,
+    removeCustomInfractionsBySanction,
+    observedInfractions
   } = useInfractions();
   const { controlType, controlData } = useControl();
+  
+  const {
+    customInfractions,
+    addDayToCustomInfraction,
+    removeDayFromCustomInfraction,
+    removeCustomInfraction,
+    clearCustomInfractions,
+    getCustomInfractionsForAPI
+  } = useCustomInfractions();
 
-  const reportInfraction = () => {
+  const [editSection, setEditSection] = React.useState(null);
+
+  const reportInfraction = (section) => {
+    setEditSection(section);
     setIsReportingInfractions(true);
   };
 
+  const handleAddCustomInfractions = () => {
+    setNatinfViewMode('search');
+  };
+
+  const handleConfirmCustomInfractions = () => {
+    const customInfractionsForAPI = getCustomInfractionsForAPI();
+    if (customInfractionsForAPI.length === 0) {
+      setNatinfViewMode('list');
+      setEditSection(null);
+      return;
+    }
+    // Build merged list synchronously to avoid stale closure in saveInfractions
+    const newEntries = customInfractionsForAPI.map((ci) => ({
+      sanction: ci.sanction,
+      date: ci.dateStr ? strToUnixTimestamp(ci.dateStr) : null,
+      type: ci.type,
+      isReported: true,
+      isReportable: true,
+      label: (ci.customLabel ?? "").trim() || ci.sanction,
+      description: (ci.customDescription ?? "").trim(),
+      articles: (ci.customArticles ?? "").trim(),
+      unit: PERIOD_UNITS.DAY,
+      business: null
+    }));
+    const mergedInfractions = [...observedInfractions, ...newEntries];
+    addCustomInfractions(customInfractionsForAPI);
+    clearCustomInfractions();
+    setNatinfViewMode('list');
+    setEditSection(null);
+    saveInfractions({ infractionsOverride: mergedInfractions });
+  };
+
+  const isMinistryOfInterior = controllerUserInfo?.isMinistryOfInterior || false;
+
   const _groupedAlerts = groupedAlerts ?? infractionsGroupedAlerts;
-  const businessTypes = React.useMemo(
-    () => getBusinessTypesFromGroupedAlerts(_groupedAlerts),
+  
+  // Separate computed infractions from custom NATINF infractions
+  const computedInfractions = React.useMemo(
+    () => _groupedAlerts?.filter(group => group.type !== "custom") || [],
     [_groupedAlerts]
+  );
+  
+  const reportedCustomInfractions = React.useMemo(
+    () => _groupedAlerts?.filter(group => group.type === "custom") || [],
+    [_groupedAlerts]
+  );
+
+  // Section visibility logic
+  const showComputedSection = computedInfractions.length > 0 && (!isReportingInfractions || editSection === 'computed');
+  const showCustomSection = isReportingInfractions
+    ? editSection === 'custom' && (reportedCustomInfractions.length > 0 || isMinistryOfInterior)
+    : reportedCustomInfractions.length > 0;
+  
+  const businessTypes = React.useMemo(
+    () => getBusinessTypesFromGroupedAlerts(computedInfractions),
+    [computedInfractions]
   );
 
   const updateInfractionsTitle = React.useMemo(
@@ -126,8 +202,22 @@ export function UserReadAlerts({
     [controlType, isReportingInfractions, controlData.pictures, isDesktop]
   );
 
+  if (natinfViewMode === 'search') {
+    return (
+      <NatinfSearchView
+        onClose={() => setNatinfViewMode('list')}
+        onConfirm={handleConfirmCustomInfractions}
+        customInfractions={customInfractions}
+        addDayToCustomInfraction={addDayToCustomInfraction}
+        removeDayFromCustomInfraction={removeDayFromCustomInfraction}
+        removeCustomInfraction={removeCustomInfraction}
+        controlTime={controlData.qrCodeGenerationTime || controlData.controlTime}
+      />
+    );
+  }
+
   return (
-    <Container maxWidth={displayPictures ? "lg" : "md"} sx={{ padding: 0 }}>
+    <Container maxWidth={displayPictures ? "lg" : "md"} sx={{ padding: 0, minHeight: "calc(100vh - 200px)" }}>
       {controlType === CONTROL_TYPES.MOBILIC.label && (
         <DisplayBusinessTypes businessTypes={businessTypes} />
       )}
@@ -140,53 +230,55 @@ export function UserReadAlerts({
           )}
           <Grid item xs={displayPictures ? 7 : 12}>
             <Stack direction="column" rowGap={1}>
-              {isReportingInfractions && (
-                <Typography>{updateInfractionsTitle}</Typography>
-              )}
-              {!isReportingInfractions && (
-                <TitleContainer>
-                  <Typography
-                    component="h2"
-                    fontWeight="bold"
-                    fontSize="1.125rem"
-                  >
-                    Infractions retenues
-                  </Typography>
-                  <Button
-                    priority="primary"
-                    onClick={reportInfraction}
-                    disabled={false}
-                    size="small"
-                  >
-                    Modifier
-                  </Button>
-                </TitleContainer>
-              )}
-              {!isReportingInfractions && reportedInfractionsLastUpdateTime && (
-                <Description noMargin>
-                  {`Date de la dernière modification des infractions retenues : ${prettyFormatDayHour(
-                    reportedInfractionsLastUpdateTime
-                  )}`}
-                </Description>
-              )}
-              {controlType === CONTROL_TYPES.MOBILIC.label && (
+
+              {/* Computed infractions section */}
+              {showComputedSection && (
                 <>
-                  <FieldTitle uppercaseTitle component="h2">
-                    Infractions calculées par Mobilic
-                  </FieldTitle>
-                  <WarningComputedAlerts />
+                  {!isReportingInfractions ? (
+                    <>
+                      <TitleContainer>
+                        <FieldTitle uppercaseTitle component="h2">
+                          Infractions calculées par Mobilic
+                        </FieldTitle>
+                        <Button
+                          priority="primary"
+                          onClick={() => reportInfraction('computed')}
+                          size="small"
+                        >
+                          Modifier
+                        </Button>
+                      </TitleContainer>
+                      {reportedInfractionsLastUpdateTime && (
+                        <Description noMargin>
+                          {`Dernière modification le ${prettyFormatDayHour(
+                            reportedInfractionsLastUpdateTime
+                          )}`}
+                        </Description>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <FieldTitle uppercaseTitle component="h2" sx={{ marginTop: 0 }}>
+                        Infractions calculées par Mobilic
+                      </FieldTitle>
+                      <Typography>{updateInfractionsTitle}</Typography>
+                    </>
+                  )}
+                  {controlType === CONTROL_TYPES.MOBILIC.label && isReportingInfractions && (
+                    <WarningComputedAlerts />
+                  )}
                 </>
               )}
-              {_groupedAlerts?.length > 0 ? (
+              {showComputedSection && (
                 <List
                   sx={{
                     ...(isReportingInfractions && {
                       overflow: "scroll",
-                      height: "65vh"
+                      maxHeight: "40vh"
                     })
                   }}
                 >
-                  {_groupedAlerts.sort(sanctionComparator).map(group => (
+                  {computedInfractions.sort(sanctionComparator).map(group => (
                     <ListItem
                       key={`${group.type}_${group.sanction}`}
                       disableGutters
@@ -206,7 +298,88 @@ export function UserReadAlerts({
                     </ListItem>
                   ))}
                 </List>
-              ) : (
+              )}
+              
+              {/* Custom infractions section */}
+              {showCustomSection && (
+                <>
+                  {!isReportingInfractions ? (
+                    <>
+                      <TitleContainer sx={{ marginTop: reportedCustomInfractions.length > 0 ? 3 : 0 }}>
+                        <FieldTitle uppercaseTitle component="h2">
+                          Autre(s) infraction(s) constatée(s)
+                        </FieldTitle>
+                        <Button
+                          priority="primary"
+                          onClick={() => reportInfraction('custom')}
+                          size="small"
+                        >
+                          Modifier
+                        </Button>
+                      </TitleContainer>
+                      {reportedCustomInfractionsLastUpdateTime && (
+                        <Description noMargin>
+                          {`Dernière modification le ${prettyFormatDayHour(
+                            reportedCustomInfractionsLastUpdateTime
+                          )}`}
+                        </Description>
+                      )}
+                    </>
+                  ) : (
+                    <FieldTitle uppercaseTitle component="h2" sx={{ marginTop: 0 }}>
+                      Autre(s) infraction(s) constatée(s)
+                    </FieldTitle>
+                  )}
+                  {reportedCustomInfractions.length > 0 ? (
+                    <List
+                      sx={{
+                        ...(isReportingInfractions && {
+                          overflow: "scroll",
+                          maxHeight: "30vh"
+                        })
+                      }}
+                    >
+                      {reportedCustomInfractions.sort(sanctionComparator).map(group => (
+                        <ListItem
+                          key={`${group.type}_${group.sanction}`}
+                          disableGutters
+                          disablePadding
+                          sx={{ marginBottom: "8px" }}
+                        >
+                          <AlertGroup
+                            {...group}
+                            setPeriodOnFocus={setPeriodOnFocus}
+                            onChangeTab={onChangeTab}
+                            readOnlyAlerts={readOnlyAlerts}
+                            titleProps={{ component: "h3" }}
+                            displayBusinessType={false}
+                            onDelete={isReportingInfractions && editSection === 'custom' ? () => removeCustomInfractionsBySanction(group.sanction) : undefined}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  ) : null}
+                </>
+              )}
+              
+              {/* "Ajouter des infractions" visible in both edit sections */}
+              {isReportingInfractions && isMinistryOfInterior && (
+                <Button
+                  priority="secondary"
+                  iconId="fr-icon-add-line"
+                  iconPosition="right"
+                  onClick={handleAddCustomInfractions}
+                  size="small"
+                  style={{
+                    marginTop: 15,
+                  }}
+                >
+                  Ajouter des infractions
+                </Button>
+              )}
+              
+              {/* Show message if no infractions at all */}
+              {computedInfractions.length === 0 && reportedCustomInfractions.length === 0 && !isReportingInfractions && (
                 <Typography className={classes.italicInfo}>
                   Il n'y a aucune alerte réglementaire sur la période
                 </Typography>
@@ -240,12 +413,12 @@ export function UserReadAlerts({
           className={classes.bottomButtons}
           buttons={[
             {
-              onClick: () => saveInfractions(),
+              onClick: () => { setEditSection(null); saveInfractions(); },
               children: "Enregistrer"
             },
             {
               children: "Annuler",
-              onClick: () => cancelInfractions(),
+              onClick: () => { setEditSection(null); cancelInfractions(); },
               priority: "secondary"
             }
           ]}

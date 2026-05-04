@@ -7,14 +7,17 @@ export const getAlertsGroupedByDay = observedInfractions => {
   if (!observedInfractions) {
     return [];
   }
+  
   const infractionsGroupedByLabel = groupBy(
     observedInfractions,
-    infraction => infraction.label
+    infraction => infraction.label || infraction.sanction || "unknown"
   );
+  
   return Object.entries(infractionsGroupedByLabel).map(
     ([label, infractions]) => {
       const firstInfraction = infractions[0];
-      const { sanction, type, unit } = firstInfraction;
+      const { sanction, type } = firstInfraction;
+      const unit = (firstInfraction.unit || "day").toLowerCase();
       return {
         alerts: infractions.map(
           ({
