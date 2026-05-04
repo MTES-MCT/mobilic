@@ -57,7 +57,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 function isValidRegistrationNumber(value) {
-  return /^(?=.*\d)(?=.*[A-Z])[A-Z0-9\- ]{4,}$/i.test(value);
+  return /^(?=.*\d)(?=.*[A-Z])[A-Z0-9-]{4,}$/i.test(value);
 }
 
 function normalizeRegistrationNumber(token) {
@@ -231,7 +231,6 @@ export default function VehicleAdmin({ company }) {
         validationFn={isValidRegistrationNumber}
         normalizeFn={normalizeRegistrationNumber}
         validationErrorMessage="Le format saisi n'est pas valide. Une immatriculation doit contenir au moins une lettre et un chiffre."
-        separatorsRegex={/[,;\n]/}
         trackingEventFn={BATCH_ADD_VEHICLES_SUBMIT}
       />
     </>
