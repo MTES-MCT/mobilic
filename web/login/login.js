@@ -126,39 +126,42 @@ export default function Login() {
     totpSubmittingRef.current = true;
     setErrorMessage(null);
     setLoading(true);
-    await alerts.withApiErrorHandling(
-      async () => {
-        await api.graphQlMutate(
-          VALIDATE_TOTP_LOGIN_MUTATION,
-          { code: codeToValidate },
-          {
-            context: {
-              headers: { Authorization: `Bearer ${challengeToken}` }
-            }
-          },
-          true
-        );
-        await store.updateUserIdAndInfo();
-      },
-      "login",
-      (graphQLError) => {
-        setLoading(false);
-        totpSubmittingRef.current = false;
-        if (graphQLErrorMatchesCode(graphQLError, "AUTHENTICATION_ERROR")) {
-          setTotpCode("");
-          return "Code de vérification invalide ou expiré.";
-        }
-        if (graphQLErrorMatchesCode(graphQLError, "BLOCKED_ACCOUNT_ERROR")) {
-          setTotpStep(false);
-          setChallengeToken(null);
-          setTotpCode("");
-          setErrorMessage(
-            "Trop de tentatives. Veuillez vous reconnecter."
+    try {
+      await alerts.withApiErrorHandling(
+        async () => {
+          await api.graphQlMutate(
+            VALIDATE_TOTP_LOGIN_MUTATION,
+            { code: codeToValidate },
+            {
+              context: {
+                headers: { Authorization: `Bearer ${challengeToken}` }
+              }
+            },
+            true
           );
-          return "Compte temporairement bloqué.";
+          await store.updateUserIdAndInfo();
+        },
+        "login",
+        (graphQLError) => {
+          if (graphQLErrorMatchesCode(graphQLError, "AUTHENTICATION_ERROR")) {
+            setTotpCode("");
+            return "Code de vérification invalide ou expiré.";
+          }
+          if (graphQLErrorMatchesCode(graphQLError, "BLOCKED_ACCOUNT_ERROR")) {
+            setTotpStep(false);
+            setChallengeToken(null);
+            setTotpCode("");
+            setErrorMessage(
+              "Trop de tentatives. Veuillez vous reconnecter."
+            );
+            return "Compte temporairement bloqué.";
+          }
         }
-      }
-    );
+      );
+    } finally {
+      totpSubmittingRef.current = false;
+      setLoading(false);
+    }
   };
 
   if (totpStep) {
