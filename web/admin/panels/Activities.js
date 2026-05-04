@@ -3,16 +3,21 @@ import debounce from "lodash/debounce";
 import { useHistory } from "react-router-dom";
 import { EmployeeFilter } from "../components/EmployeeFilter";
 import Paper from "@mui/material/Paper";
+import { addDays } from "date-fns";
 import { PeriodToggle } from "../components/PeriodToggle";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
-import { useWidth } from "common/utils/useWidth";
 import { WorkTimeTable } from "../components/WorkTimeTable";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
 import { useAdminStore, useAdminCompanies } from "../store/store";
 import { useModals } from "common/utils/modals";
-import { isoFormatLocalDate, startOfDayAsDate } from "common/utils/time";
+import {
+  getEndOfDay,
+  isoFormatLocalDate,
+  startOfDay,
+  startOfDayAsDate
+} from "common/utils/time";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
@@ -26,7 +31,6 @@ import NewMissionForm from "../../common/NewMissionForm";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { MobileDatePicker } from "@mui/x-date-pickers";
-import TextField from "@mui/material/TextField";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
@@ -135,10 +139,22 @@ const refreshWorkDays = async (
 ) => {
   setLoading(true);
   await alerts.withApiErrorHandling(async () => {
+    // Use inclusive day boundaries and cap to 1 year.
+    const minMissionTimestamp = startOfDay(new Date(minDate));
+    const selectedMaxMissionTimestamp = getEndOfDay(
+      startOfDay(new Date(maxDate))
+    );
+    const maxMissionTimestamp = Math.min(
+      selectedMaxMissionTimestamp,
+      minMissionTimestamp + (365 * 24 * 60 * 60) - 1
+    );
+
     const companiesPayload = await api.graphQlQuery(ADMIN_WORK_DAYS_QUERY, {
       id: userId,
       activityAfter: minDate,
       activityBefore: maxDate,
+      endedMissionsAfter: minMissionTimestamp,
+      endedMissionsBefore: maxMissionTimestamp,
       companyIds: [companyId]
     });
     addWorkDays(companiesPayload.data.user.adminedCompanies, minDate);
@@ -176,6 +192,11 @@ const onMinDateChange = debounce(
   500
 );
 
+const renderPickersDay = (pickersDayProps) => {
+  const { key, ...safeProps } = pickersDayProps;
+  return <PickersDay {...safeProps} />;
+};
+
 function ActivitiesPanel() {
   usePageTitle("Activités - Mobilic");
   const adminStore = useAdminStore();
@@ -202,10 +223,116 @@ function ActivitiesPanel() {
   );
   const [openNewMission, setOpenNewMission] = React.useState(false);
   const [openLogHoliday, setOpenLogHoliday] = React.useState(false);
+  const [dateRangeError, setDateRangeError] = React.useState("");
+  const lastValidDateRangeRef = React.useRef({
+    minDate: adminStore.activitiesFilters.minDate,
+    maxDate: adminStore.activitiesFilters.maxDate
+  });
 
   const minDateOfFetchedData = adminStore.minWorkDaysDate;
 
+  const datePickerSlotProps = {
+  textField: {
+    size: "small",
+    required: true,
+    variant: "outlined",
+    error: !!dateRangeError,
+    helperText: dateRangeError,
+    FormHelperTextProps: {
+      sx: {
+        position: "absolute",
+        bottom: "-22px",
+        left: 0,
+        color: "error.main",
+        fontSize: "0.75rem",
+        margin: 0,
+        whiteSpace: "nowrap"
+      }
+    }
+  }
+};
+
+  const refreshCurrentWorkDays = () =>
+    refreshWorkDays(
+      setLoading,
+      alerts,
+      api,
+      adminStore.userId,
+      minDate,
+      maxDate,
+      company.id,
+      (companiesPayload, newMinDate) =>
+        adminStore.dispatch({
+          type: ADMIN_ACTIONS.addWorkDays,
+          payload: { companiesPayload, minDate: newMinDate, reset: true }
+        }),
+      (companiesPayload) =>
+        adminStore.dispatch({
+          type: ADMIN_ACTIONS.addUsers,
+          payload: { companiesPayload }
+        })
+    );
+
   const today = new Date();
+  // 1-year limit to avoid performance issues
+  const maxAllowedEndDate = minDate ? addDays(new Date(minDate), 365) : today;
+  const isDateRangeValid = React.useCallback((start, end) => {
+    if (!start || !end || start > end) {
+      return false;
+    }
+
+    const daysDiff = Math.ceil(
+      (new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)
+    );
+    return daysDiff <= 365;
+  }, []);
+
+  // Validate date range
+  React.useEffect(() => {
+    if (minDate && maxDate && !isDateRangeValid(minDate, maxDate)) {
+      setDateRangeError("La période ne peut pas dépasser 1 an");
+    } else {
+      setDateRangeError("");
+    }
+  }, [minDate, maxDate, isDateRangeValid]);
+
+  // Reload data when date range changes (backward pagination handled by onMinDateChange)
+  const prevDateRangeRef = React.useRef({ minDate, maxDate });
+  React.useEffect(() => {
+    if (!minDate || !maxDate || !company?.id) return;
+
+    if (!isDateRangeValid(minDate, maxDate)) {
+      return;
+    }
+
+    lastValidDateRangeRef.current = { minDate, maxDate };
+
+    const prevMinDate = prevDateRangeRef.current.minDate;
+    const prevMaxDate = prevDateRangeRef.current.maxDate;
+
+    // Reload if maxDate changed or minDate moved forward, and range is valid (≤ 365 days)
+    const shouldReload = maxDate !== prevMaxDate || minDate > prevMinDate;
+
+    if (shouldReload) {
+      const timeoutId = setTimeout(() => {
+        refreshCurrentWorkDays();
+      }, 500); // 500ms debounce
+
+      prevDateRangeRef.current = { minDate, maxDate };
+      return () => clearTimeout(timeoutId);
+    }
+    
+    prevDateRangeRef.current = { minDate, maxDate };
+  }, [
+    minDate,
+    maxDate,
+    company?.id,
+    isDateRangeValid,
+    alerts,
+    api,
+    adminStore,
+    company
+  ]);
 
   React.useEffect(() => {
     adminStore.dispatch({
@@ -224,6 +351,10 @@ function ActivitiesPanel() {
 
   React.useEffect(() => {
     if (minDate && (!maxDate || maxDate < minDate)) setMaxDate(minDate);
+    if (!isDateRangeValid(minDate, maxDate)) {
+      return;
+    }
+
     onMinDateChange(
       minDate,
       minDateOfFetchedData,
@@ -247,16 +378,19 @@ function ActivitiesPanel() {
       type: ADMIN_ACTIONS.updateActivitiesFilters,
       payload: { minDate }
     });
-  }, [minDate]);
+  }, [minDate, maxDate, isDateRangeValid]);
 
   React.useEffect(() => {
     if (maxDate && !minDate) setMinDate(minDateOfFetchedData);
     if (maxDate && minDate && minDate > maxDate) setMinDate(maxDate);
+    if (!isDateRangeValid(minDate, maxDate)) {
+      return;
+    }
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateActivitiesFilters,
       payload: { maxDate }
     });
-  }, [maxDate]);
+  }, [maxDate, minDate, isDateRangeValid]);
 
   const [exportMenuAnchorEl, setExportMenuAnchorEl] = React.useState(null);
 
@@ -304,15 +438,23 @@ function ActivitiesPanel() {
     return selected;
   }, [users]);
 
+  const appliedDateRange = React.useMemo(() => {
+    if (isDateRangeValid(minDate, maxDate)) {
+      return { minDate, maxDate };
+    }
+
+    return lastValidDateRangeRef.current;
+  }, [minDate, maxDate, isDateRangeValid]);
+
   const selectedWorkDays = React.useMemo(
     () =>
       adminStore.workDays.filter(
         (wd) =>
           selectedUsers.map((u) => u.id).includes(wd.user.id) &&
-          (!minDate || wd.day >= minDate) &&
-          (!maxDate || wd.day <= maxDate)
+          (!appliedDateRange.minDate || wd.day >= appliedDateRange.minDate) &&
+          (!appliedDateRange.maxDate || wd.day <= appliedDateRange.maxDate)
       ),
-    [minDate, maxDate, selectedUsers, adminStore.workDays]
+    [appliedDateRange, selectedUsers, adminStore.workDays]
   );
 
   // We create this object to have missions filled with stats easily accessible by id to avoid doing costly computations for each entry in the work time table.
@@ -332,7 +474,6 @@ function ActivitiesPanel() {
     [selectedWorkDays, period]
   );
   const ref = React.useRef(null);
-  const width = useWidth();
 
   const classes = useStyles();
   return [
@@ -400,25 +541,15 @@ function ActivitiesPanel() {
             fullWidth
             disableCloseOnSelect={false}
             disableMaskedInput={true}
-            onChange={(val) => {
+            onAccept={(val) => {
               trackEvent(ACTIVITY_FILTER_MIN_DATE);
               setMinDate(isoFormatLocalDate(val));
             }}
             cancelText={null}
             maxDate={today}
-            slotProps={{
-              textField: {
-                size: "small"
-              }
-            }}
+            slotProps={datePickerSlotProps}
             // renderDay is needed to fix issue caused by key being passed with props
-            renderDay={(day, selectedDates, pickersDayProps) => {
-              const { key, ...safeProps } = pickersDayProps;
-              return <PickersDay {...safeProps} />;
-            }}
-            renderInput={(props) => (
-              <TextField {...props} required variant="outlined" size="small" />
-            )}
+            renderDay={renderPickersDay}
           />
         </Grid>
         <Grid item>
@@ -429,25 +560,15 @@ function ActivitiesPanel() {
             fullWidth
             disableCloseOnSelect={false}
             disableMaskedInput={true}
-            onChange={(val) => {
+            onAccept={(val) => {
               trackEvent(ACTIVITY_FILTER_MAX_DATE);
               setMaxDate(isoFormatLocalDate(val));
             }}
             cancelText={null}
-            maxDate={today}
-            slotProps={{
-              textField: {
-                size: "small"
-              }
-            }}
+            maxDate={maxAllowedEndDate > today ? today : maxAllowedEndDate}
+            slotProps={datePickerSlotProps}
             // renderDay is needed to fix issue caused by key being passed with props
-            renderDay={(day, selectedDates, pickersDayProps) => {
-              const { key, ...safeProps } = pickersDayProps;
-              return <PickersDay {...safeProps} />;
-            }}
-            renderInput={(props) => (
-              <TextField {...props} required variant="outlined" size="small" />
-            )}
+            renderDay={renderPickersDay}
           />
         </Grid>
         <Grid item>
@@ -556,29 +677,7 @@ function ActivitiesPanel() {
                     6000
                   );
                   setOpenLogHoliday(false);
-                  refreshWorkDays(
-                    setLoading,
-                    alerts,
-                    api,
-                    adminStore.userId,
-                    minDate,
-                    maxDate,
-                    company.id,
-                    (companiesPayload, newMinDate) =>
-                      adminStore.dispatch({
-                        type: ADMIN_ACTIONS.addWorkDays,
-                        payload: {
-                          companiesPayload,
-                          minDate: newMinDate,
-                          reset: true
-                        }
-                      }),
-                    (companiesPayload) =>
-                      adminStore.dispatch({
-                        type: ADMIN_ACTIONS.addUsers,
-                        payload: { companiesPayload }
-                      })
-                  );
+                  refreshCurrentWorkDays();
                 },
                 "create-holiday",
                 (graphQLError) => {
