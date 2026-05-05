@@ -13,6 +13,7 @@ import classNames from "classnames";
 import { gregorian_fr } from "common/utils/calendarLocale";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { useCalendarStyles } from "../../../common/styles/calendarStyles";
+import { useAccordionSummaryStyles } from "../../../common/styles/accordionStyles";
 
 const controlHistoryDepth =
   Number.parseInt(process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH, 10) || 28;
@@ -24,51 +25,6 @@ const useStyles = makeStyles(theme => ({
   },
   details: {
     display: "block"
-  },
-  summary: {
-    display: "flex",
-    flexDirection: "column",
-    width: "100%"
-  },
-  summaryRow: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%"
-  },
-  summaryLeft: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.spacing(1)
-  },
-  summaryIcons: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    flexShrink: 0
-  },
-  arrowIcon: {
-    transition: "transform 0.2s",
-    display: "block"
-  },
-  arrowIconOpen: {
-    transform: "rotate(180deg)"
-  },
-  deleteButton: {
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-    padding: "4px",
-    display: "flex",
-    alignItems: "center",
-    color: "var(--text-action-high-blue-france)"
-  },
-  alertBadge: {
-    borderRadius: "1rem",
-    backgroundColor: `${theme.palette.error.main} !important`,
-    color: "white !important"
   }
 }));
 
@@ -83,6 +39,7 @@ export function NatinfResultAccordion({
   onDelete
 }) {
   const classes = useStyles();
+  const accordionClasses = useAccordionSummaryStyles();
   const calendarClasses = useCalendarStyles();
 
   if (!controlTime) controlTime = Math.trunc(Date.now() / 1000);
@@ -117,30 +74,30 @@ export function NatinfResultAccordion({
       className={classes.container}
     >
       <AccordionSummary>
-        <div className={classes.summary}>
-          <div className={classes.summaryRow}>
-            <div className={classes.summaryLeft}>
+        <div className={accordionClasses.summary}>
+          <div className={accordionClasses.summaryRow}>
+            <div className={accordionClasses.summaryLeft}>
               <Typography className="bold" color="primary" fontSize="0.875rem">
                 NATINF {natinf.code}
               </Typography>
               {selectedDays.length > 0 && (
-                <Badge small noIcon as="span" className={classes.alertBadge}>
+                <Badge small noIcon as="span" className={accordionClasses.errorAlertBadge}>
                   {selectedDays.length}
                 </Badge>
               )}
             </div>
-            <div className={classes.summaryIcons}>
+            <div className={accordionClasses.summaryIcons}>
               <span
                 className={classNames(
                   "fr-icon-arrow-down-s-line",
-                  classes.arrowIcon,
-                  expanded && classes.arrowIconOpen
+                  accordionClasses.arrowIcon,
+                  expanded && accordionClasses.arrowIconOpen
                 )}
                 aria-hidden="true"
               />
               {onDelete && (
                 <button
-                  className={classes.deleteButton}
+                  className={accordionClasses.deleteButton}
                   onClick={(e) => { e.stopPropagation(); onDelete(); }}
                   title="Supprimer l'infraction"
                   aria-label="Supprimer l'infraction"

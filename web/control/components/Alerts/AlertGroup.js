@@ -19,6 +19,7 @@ import classNames from "classnames";
 import { useInfractions } from "../../../controller/utils/contextInfractions";
 import { useControl } from "../../../controller/utils/contextControl";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
+import { useAccordionSummaryStyles } from "../../../common/styles/accordionStyles";
 
 const useStyles = makeStyles(theme => {
   return {
@@ -36,56 +37,6 @@ const useStyles = makeStyles(theme => {
     reportedAlert: {
       borderColor: theme.palette.primary.main,
       borderWidth: "1px"
-    },
-    summary: {
-      display: "flex",
-      flexDirection: "column",
-      width: "100%"
-    },
-    summaryRow: {
-      display: "flex",
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      width: "100%"
-    },
-    summaryLeft: {
-      display: "flex",
-      flexDirection: "row",
-      alignItems: "center",
-      gap: theme.spacing(1)
-    },
-    summaryIcons: {
-      display: "flex",
-      flexDirection: "row",
-      alignItems: "center",
-      flexShrink: 0
-    },
-    arrowIcon: {
-      transition: "transform 0.2s",
-      display: "block"
-    },
-    arrowIconOpen: {
-      transform: "rotate(180deg)"
-    },
-    deleteButton: {
-      background: "none",
-      border: "none",
-      cursor: "pointer",
-      padding: "4px",
-      display: "flex",
-      alignItems: "center",
-      color: "var(--text-action-high-blue-france)"
-    },
-    alertBadge: {
-      borderRadius: "1rem",
-      backgroundColor: `${theme.palette.info.main} !important`,
-      color: "white !important"
-    },
-    errorAlertBadge: {
-      borderRadius: "1rem",
-      backgroundColor: `${theme.palette.error.main} !important`,
-      color: "white !important"
     }
   };
 });
@@ -136,6 +87,7 @@ export function AlertGroup({
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
+  const accordionClasses = useAccordionSummaryStyles();
   const { isReportingInfractions } = useInfractions();
   const { controlType } = useControl();
 
@@ -184,9 +136,9 @@ export function AlertGroup({
       )}
     >
       <AccordionSummary>
-        <div className={classes.summary}>
-          <div className={classes.summaryRow}>
-            <div className={classes.summaryLeft}>
+        <div className={accordionClasses.summary}>
+          <div className={accordionClasses.summaryRow}>
+            <div className={accordionClasses.summaryLeft}>
               <Typography
                 className="bold"
                 color="primary"
@@ -201,24 +153,24 @@ export function AlertGroup({
                   small
                   noIcon
                   as="span"
-                  className={isSanctionReportable ? classes.errorAlertBadge : classes.alertBadge}
+                  className={isSanctionReportable ? accordionClasses.errorAlertBadge : accordionClasses.alertBadge}
                 >
                   {alertsNumber}
                 </Badge>
               )}
             </div>
-            <div className={classes.summaryIcons}>
+            <div className={accordionClasses.summaryIcons}>
               <span
                 className={classNames(
                   "fr-icon-arrow-down-s-line",
-                  classes.arrowIcon,
-                  open && classes.arrowIconOpen
+                  accordionClasses.arrowIcon,
+                  open && accordionClasses.arrowIconOpen
                 )}
                 aria-hidden="true"
               />
               {onDelete && (
                 <button
-                  className={classes.deleteButton}
+                  className={accordionClasses.deleteButton}
                   onClick={(e) => { e.stopPropagation(); onDelete(); }}
                   title="Supprimer l'infraction"
                   aria-label="Supprimer l'infraction"
