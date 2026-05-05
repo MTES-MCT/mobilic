@@ -42,9 +42,9 @@ export function NatinfResultAccordion({
   const accordionClasses = useAccordionSummaryStyles();
   const calendarClasses = useCalendarStyles();
 
-  if (!controlTime) controlTime = Math.trunc(Date.now() / 1000);
+  const effectiveControlTime = controlTime || Math.trunc(Date.now() / 1000);
 
-  const maxDate = new Date(unixToJSTimestamp(controlTime));
+  const maxDate = new Date(unixToJSTimestamp(effectiveControlTime));
   const minDate = addDaysToDate(new Date(maxDate), -controlHistoryDepth);
 
   const handleDateChange = values => {
