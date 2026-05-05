@@ -314,9 +314,20 @@ const preFormatWorkTimeEntries = (
   workTimeEntries,
   missionsById,
   currentUserId,
-  openMission
-) =>
-  workTimeEntries.flatMap((wte) => {
+  openMission,
+  period
+) => {
+  // Mission-level rows only make sense for the day view; week/month entries are already aggregated per employee.
+  if (period !== "day") {
+    return workTimeEntries.map((wte) => ({
+      ...wte,
+      id: wte.user.id + wte.periodStart.toString(),
+      workerName: formatPersonName(wte.user),
+      selectable: true
+    }));
+  }
+
+  return workTimeEntries.flatMap((wte) => {
     const missionIds = Object.keys(wte.missionNames || {});
     const mostRecentMissionId = getMostRecentMissionId(
       wte,
@@ -367,6 +378,7 @@ const preFormatWorkTimeEntries = (
 
     return entries;
   });
+};
 
 const onRowClick = (entry, trackEvent, openWorkday, openMission) => {
   if (!entry.day || trackEvent === null || openWorkday === null || openMission === null) {
@@ -524,7 +536,8 @@ export function WorkTimeTable({
     workTimeEntries,
     missionsById,
     adminStore.userId,
-    openMission
+    openMission,
+    period
   );
 
   return (
