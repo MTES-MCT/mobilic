@@ -9,10 +9,11 @@ import AdminSvg from "common/assets/images/landing/self-training.svg";
 import SoftwareSvg from "common/assets/images/landing/flow-settings.svg";
 import { Box } from "@mui/material";
 import { LinkButton } from "../../common/LinkButton";
+import { MOBILIC_BLUE } from "common/utils/theme";
 
 const useStyles = makeStyles((theme) => ({
   highlightedText: {
-    color: "#3965EA",
+    color: MOBILIC_BLUE,
   },
 }));
 

@@ -11,11 +11,10 @@ import {
 import { SEND_INVITATIONS_REMINDERS } from "common/utils/apiQueries/employments";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { DAYS, MONTHS } from "common/utils/time";
+import { MOBILIC_BLUE } from "common/utils/theme";
 import { PRETTY_LABELS } from "./RegulatoryRespect/RegulatoryRespectAlertsRecap";
 import { useDayDrawer } from "../drawers/DayDrawer";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
-
-const MOBILIC_BLUE = "#3965EA";
 
 function formatFullDate(dateStr) {
   const d = new Date(dateStr);

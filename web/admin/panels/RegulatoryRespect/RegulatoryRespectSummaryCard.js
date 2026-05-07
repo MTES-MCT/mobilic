@@ -11,10 +11,11 @@ import {
   MONTHS,
   prettyFormatMonth_Date
 } from "common/utils/time";
+import { MOBILIC_BLUE } from "common/utils/theme";
 
 const useStyles = makeStyles((theme) => ({
   card: {
-    borderBottom: `4px solid #3965EA`
+    borderBottom: `4px solid ${MOBILIC_BLUE}`
   },
   title: {
     color: fr.colors.decisions.text.actionHigh.grey.default
