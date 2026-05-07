@@ -189,7 +189,7 @@ export function UserReadAlerts({
     saveInfractions({ infractionsOverride: mergedInfractions });
   };
 
-  const isMinistryOfInterior = controllerUserInfo?.isMinistryOfInterior || false;
+  const isCtt = controllerUserInfo?.isCtt || false;
 
   const _groupedAlerts = groupedAlerts ?? infractionsGroupedAlerts;
   
@@ -207,7 +207,7 @@ export function UserReadAlerts({
   // Section visibility logic
   const showComputedSection = computedInfractions.length > 0 && (!isReportingInfractions || editSection === 'computed');
   const showCustomSection = isReportingInfractions
-    ? editSection === 'custom' && (reportedCustomInfractions.length > 0 || isMinistryOfInterior)
+    ? editSection === 'custom' && (reportedCustomInfractions.length > 0 || !isCtt)
     : reportedCustomInfractions.length > 0;
   
   const businessTypes = React.useMemo(
@@ -412,7 +412,7 @@ export function UserReadAlerts({
           </Grid>
         </Grid>
       </Container>
-      {isReportingInfractions && isMinistryOfInterior && (
+      {isReportingInfractions && !isCtt && (
         <div className={classes.addInfractionBar}>
           <Button
             priority="secondary"
