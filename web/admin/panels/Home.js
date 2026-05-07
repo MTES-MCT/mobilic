@@ -11,17 +11,11 @@ import {
 } from "common/utils/apiQueries/admin";
 import { SEND_INVITATIONS_REMINDERS } from "common/utils/apiQueries/employments";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import { DAYS, MONTHS } from "common/utils/time";
+import { formatCompleteDateFromString } from "common/utils/time";
 import { MOBILIC_BLUE } from "common/utils/theme";
 import { PRETTY_LABELS } from "./RegulatoryRespect/RegulatoryRespectAlertsRecap";
 import { useDayDrawer } from "../drawers/DayDrawer";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
-
-function formatFullDate(dateStr) {
-  const d = new Date(dateStr);
-  const dayName = DAYS[d.getDay()];
-  return `${dayName.charAt(0).toUpperCase() + dayName.slice(1)} ${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
-}
 
 function getStartOfWeek() {
   const now = new Date();
@@ -189,7 +183,7 @@ function AlertRow({ label, count, dayDetails, onClickDay, isLast, defaultExpande
                 "&:hover": { textDecoration: "none" }
               }}
             >
-              {formatFullDate(detail.day)} – {detail.userName}
+              {formatCompleteDateFromString(detail.day)} – {detail.userName}
             </Box>
           ))}
         </Stack>
