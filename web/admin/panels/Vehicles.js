@@ -160,7 +160,7 @@ export default function VehicleAdmin({ company }) {
         lorsqu'ils renseigneront les informations d'une mission dans leur outil
         mobile.
       </Typography>
-      <Box sx={{ marginRight: 10 }}>
+      <Box>
         <AugmentedTable
           columns={vehicleColumns}
           entries={vehicles}
@@ -225,14 +225,13 @@ export default function VehicleAdmin({ company }) {
           </p>
         }
         inputLabel="Immatriculations"
-        inputHintText="Saisissez les immatriculations au format AA-123-AA, et séparez-les par un espace, une virgule ou un point-virgule. Une immatriculation ne doit pas contenir d'espace."
+        inputHintText="Saisissez les immatriculations au format AA-123-AA. Si vous les copiez-collez, veillez à bien les séparer par un espace, une virgule ou un point-virgule dans le fichier d'origine. Une immatriculation ne doit pas contenir d'espace."
         placeholder="BB-222-CC, CC-333-DD, DD-444-EE"
         acceptButtonTitle="Ajouter"
         validationFn={isValidRegistrationNumber}
         normalizeFn={normalizeRegistrationNumber}
         validationErrorMessage="Cette immatriculation n'est pas reconnue. Exemples attendus : AB-123-CD, 1234-AB-56, AB12-CDE, 1-ABC-123."
         trackingEventFn={BATCH_ADD_VEHICLES_SUBMIT}
-        parseOnInput={false}
       />
     </>
   );
