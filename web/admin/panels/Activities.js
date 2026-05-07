@@ -7,7 +7,6 @@ import { PeriodToggle } from "../components/PeriodToggle";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
-import { useWidth } from "common/utils/useWidth";
 import { WorkTimeTable } from "../components/WorkTimeTable";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
 import { useAdminStore, useAdminCompanies } from "../store/store";
@@ -333,7 +332,6 @@ function ActivitiesPanel() {
     [selectedWorkDays, period]
   );
   const ref = React.useRef(null);
-  const width = useWidth();
 
   const classes = useStyles();
   return [
