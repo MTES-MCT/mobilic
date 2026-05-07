@@ -37,7 +37,7 @@ export default function BatchInviteModal({
   title = "",
   description = "",
   inputLabel = "Adresses e-mail ou identifiants Mobilic",
-  inputHintText = "Saisissez des adresses e-mail (prenom.nom@domaine.fr) ou des identifiants Mobilic (nombres entiers), séparés par un espace, une virgule ou un point-virgule.",
+  inputHintText = "Saisissez des adresses e-mail (prenom.nom@domaine.fr) ou des identifiants Mobilic (nombres entiers). Si vous les copiez-collez, veillez à bien les séparer par un espace, une virgule ou un point-virgule dans le fichier d'origine.",
   acceptButtonTitle = "",
   onClose,
   validationFn = isValidEntry,
@@ -45,8 +45,7 @@ export default function BatchInviteModal({
   validationErrorMessage = DEFAULT_VALIDATION_ERROR,
   placeholder = "",
   separatorsRegex = SEPARATORS_REGEX,
-  trackingEventFn = BATCH_INVITE_MODAL_SUBMIT,
-  parseOnInput = true
+  trackingEventFn = BATCH_INVITE_MODAL_SUBMIT
 }) {
   const { trackEvent } = useMatomo();
   const [entries, setEntries] = React.useState([]);
@@ -99,10 +98,6 @@ export default function BatchInviteModal({
     [text, validationFn]
   );
 
-  const handleTextChange = parseOnInput
-    ? e => parseText(e.target.value)
-    : e => setText(e.target.value);
-
   React.useEffect(() => setTooManyEntriesInPastedText(false), [text]);
 
   const tooManyEntries = React.useMemo(
@@ -114,6 +109,10 @@ export default function BatchInviteModal({
     if (onClose) {
       onClose();
     }
+    setEntries([]);
+    setText("");
+    setHasValidated(false);
+    setTooManyEntriesInPastedText(false);
     handleClose();
   };
 
@@ -184,7 +183,7 @@ export default function BatchInviteModal({
             state={isError ? "error" : "default"}
             stateRelatedMessage={errorMessage}
             nativeTextAreaProps={{
-              onChange: handleTextChange,
+              onChange: e => parseText(e.target.value),
               onBlur: e => {
                 parseText(e.target.value, false);
               },
