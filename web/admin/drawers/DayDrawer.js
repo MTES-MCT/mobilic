@@ -1,5 +1,4 @@
 import React from "react";
-import { useWidth } from "common/utils/useWidth";
 import { WorkTimeDetails } from "../components/WorkTimeDetails";
 import { Drawer } from "./Drawer";
 import { useMissionDrawer } from "./MissionDrawer";
@@ -7,7 +6,6 @@ import { useMissionDrawer } from "./MissionDrawer";
 const DayDrawerContext = React.createContext(() => {});
 
 export function DayDrawerContextProvider({ children }) {
-  const width = useWidth();
   const openMission = useMissionDrawer()[1];
   const [workdayOnFocus, setWorkdayOnFocus] = React.useState(null);
 
@@ -31,7 +29,6 @@ export function DayDrawerContextProvider({ children }) {
             handleClose={() => {
               setWorkdayOnFocus(null);
             }}
-            width={width}
           />
         )}
       </Drawer>
