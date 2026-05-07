@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Box, Stack, Typography, CircularProgress } from "@mui/material";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { WarningBadge } from "../../common/WarningBadge";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../store/store";
 import {
@@ -147,20 +148,7 @@ function AlertRow({ label, count, dayDetails, onClickDay, isLast, defaultExpande
       >
         <Typography sx={{ fontWeight: 500 }}>{label}</Typography>
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Box
-            sx={{
-              borderRadius: "4px",
-              backgroundColor: "#FFE9E6",
-              color: "#B34000",
-              fontSize: "0.75rem",
-              fontWeight: 700,
-              lineHeight: "20px",
-              px: 0.75,
-              textTransform: "uppercase"
-            }}
-          >
-            {count}
-          </Box>
+          <WarningBadge>{count}</WarningBadge>
           <Box
             component="span"
             className={

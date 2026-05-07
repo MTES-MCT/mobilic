@@ -52,6 +52,7 @@ import {
 } from "common/utils/apiQueries/employments";
 import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
+import { WarningBadge } from "../../common/WarningBadge";
 
 const STATUS_BADGE = {
   ACTIVE: 0,
@@ -306,9 +307,9 @@ export function Employees({ company, containerRef }) {
     if (isInactive) {
       return (
         <Tooltip title={`Aucun temps de travail saisi depuis le ${formatLastActiveDate(lastActiveAt)}. Pensez à détacher ce salarié.`}>
-          <Badge severity="warning" noIcon small className={classes.badgeCursor}>
+          <WarningBadge className={classes.badgeCursor}>
             {"inactif".toUpperCase()}
-          </Badge>
+          </WarningBadge>
         </Tooltip>
       );
     }
