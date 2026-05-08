@@ -111,9 +111,13 @@ function getInactiveEmployeesToday(employments, workDays) {
   return results;
 }
 
-export function InactiveEmployeesDropdown({ employments, workDays }) {
+export function InactiveEmployeesDropdown({
+  employments,
+  workDays,
+  defaultOpen = false
+}) {
   const classes = useStyles();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   // Only compute inactive employees when dropdown is opened to avoid expensive
   // calculations on every render
@@ -151,6 +155,7 @@ export function InactiveEmployeesDropdown({ employments, workDays }) {
       emptyMessage="Tous vos salariés ont utilisé Mobilic"
       renderItem={renderEmployeeItem}
       onOpenChange={setIsOpen}
+      defaultOpen={defaultOpen}
     />
   );
 }

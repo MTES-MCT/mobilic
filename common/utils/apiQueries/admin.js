@@ -681,6 +681,47 @@ export const UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE = gql`
   }
 `;
 
+export const DASHBOARD_HOME_QUERY = gql`
+  query dashboardHome($id: Int!, $companyIds: [Int], $month: ShortMonth!) {
+    user(id: $id) {
+      adminedCompanies(companyIds: $companyIds) {
+        id
+        dashboardSummary {
+          activeMissionsCount
+          pendingValidationsCount
+          pendingInvitationsCount
+          inactiveEmployeesCount
+          autoValidatedMissionsCount
+          pendingInvitationEmploymentIds
+        }
+        regulatoryAlertsRecap(month: $month) {
+          hasAnyComputation
+          dailyAlerts {
+            alertsType
+            nbAlerts
+            days
+            dayDetails {
+              day
+              userName
+              userId
+            }
+          }
+          weeklyAlerts {
+            alertsType
+            nbAlerts
+            days
+            dayDetails {
+              day
+              userName
+              userId
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const ADMIN_COMPANY_REGULATORY_ALERTS_SUMMARY_QUERY = gql`
   query regulatoryAlertsSummary(
     $id: Int!

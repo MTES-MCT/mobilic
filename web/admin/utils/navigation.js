@@ -1,3 +1,4 @@
+import Home from "../panels/Home";
 import Company from "../panels/Company";
 import Activities from "../panels/Activities";
 import Validations from "../panels/Validations";
@@ -6,10 +7,15 @@ import RegulatoryRespectPanel from "../panels/RegulatoryRespect/RegulatoryRespec
 
 export const ADMIN_VIEWS = [
   {
+    label: "Accueil",
+    path: "/home",
+    component: Home,
+    isDefault: true
+  },
+  {
     label: "Entreprise(s)",
     path: "/company",
-    component: Company,
-    isDefault: true
+    component: Company
   },
   {
     label: "Activités",
