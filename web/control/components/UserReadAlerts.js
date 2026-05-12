@@ -216,6 +216,17 @@ export function UserReadAlerts({
     });
   }
 
+  const handleCancelInfractions = () => {
+    setEditSection(null);
+    clearCustomInfractions();
+    cancelInfractions();
+  }
+
+  const handleSaveInfractions = () => {
+    setEditSection(null);
+    saveInfractions();
+  }
+
   if (natinfViewMode === 'search') {
     return (
       <NatinfSearchView
@@ -226,6 +237,7 @@ export function UserReadAlerts({
         removeDayFromCustomInfraction={removeDayFromCustomInfraction}
         removeCustomInfraction={removeCustomInfraction}
         controlTime={controlData.qrCodeGenerationTime || controlData.controlTime}
+        clearCustomInfractions={clearCustomInfractions}
       />
     );
   }
@@ -429,11 +441,11 @@ export function UserReadAlerts({
           buttons={[
             {
               children: "Annuler",
-              onClick: () => { setEditSection(null); cancelInfractions(); },
+              onClick: handleCancelInfractions,
               priority: "secondary"
             },
             {
-              onClick: () => { setEditSection(null); saveInfractions(); },
+              onClick: handleSaveInfractions,
               children: "Enregistrer"
             },
           ]}

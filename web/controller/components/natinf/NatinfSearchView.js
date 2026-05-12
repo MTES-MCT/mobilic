@@ -87,7 +87,8 @@ export function NatinfSearchView({
   addDayToCustomInfraction,
   removeDayFromCustomInfraction,
   removeCustomInfraction,
-  controlTime
+  controlTime,
+  clearCustomInfractions
 }) {
   const classes = useStyles();
   const api = useApi();
@@ -188,6 +189,12 @@ export function NatinfSearchView({
     return infraction ? infraction.days : [];
   };
 
+  const handleClose = () => {
+    setShowConfirmation(false);
+    clearCustomInfractions();
+    onClose();
+  }
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", width: "100%", height: "100vh" }}>
       <Box
@@ -208,7 +215,7 @@ export function NatinfSearchView({
           priority="tertiary no outline"
           iconId="ri-close-line"
           iconPosition="right"
-          onClick={() => { setShowConfirmation(false); onClose(); }}
+          onClick={handleClose}
           size="small"
         >
           Fermer
