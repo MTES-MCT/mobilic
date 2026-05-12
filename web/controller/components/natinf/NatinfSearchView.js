@@ -112,7 +112,7 @@ export function NatinfSearchView({
         } else {
           localStorage.removeItem('natinf_recent_searches');
         }
-      } catch (e) {
+      } catch {
         alerts.error("Une erreur est survenue", {}, 6000);
         localStorage.removeItem('natinf_recent_searches');
       }

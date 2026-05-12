@@ -27,6 +27,7 @@ import { UserReadAlertsPictures } from "./UserReadAlertsPictures";
 import { useCustomInfractions } from "../../controller/hooks/useCustomInfractions";
 import { NatinfSearchView } from "../../controller/components/natinf/NatinfSearchView";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -54,8 +55,7 @@ const useStyles = makeStyles(theme => ({
     position: "sticky",
     bottom: 0,
     background: "white",
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
+    padding: theme.spacing(2),
     zIndex: 300,
     width: "100%"
   }
@@ -117,6 +117,8 @@ export function UserReadAlerts({
     clearCustomInfractions,
     getCustomInfractionsForAPI
   } = useCustomInfractions();
+
+  const modals = useModals();
 
   const [editSection, setEditSection] = React.useState(null);
 
@@ -202,6 +204,18 @@ export function UserReadAlerts({
     [controlType, isReportingInfractions, controlData.pictures, isDesktop]
   );
 
+  const handleRemoveCustomInfractionsBySanction = async (sanction) => {
+    return new Promise(resolve => {
+      modals.open("confirmationRemoveInfringementModal", {
+        handleCancel: () => resolve(false),
+        handleConfirm: () => {
+          removeCustomInfractionsBySanction(sanction);
+          resolve(true);
+        }
+      });
+    });
+  }
+
   if (natinfViewMode === 'search') {
     return (
       <NatinfSearchView
@@ -237,7 +251,7 @@ export function UserReadAlerts({
                   {!isReportingInfractions ? (
                     <>
                       <TitleContainer>
-                        <FieldTitle uppercaseTitle component="h2">
+                        <FieldTitle component="h2">
                           Infractions calculées par Mobilic
                         </FieldTitle>
                         <Button
@@ -258,7 +272,7 @@ export function UserReadAlerts({
                     </>
                   ) : (
                     <>
-                      <FieldTitle uppercaseTitle component="h2" sx={{ marginTop: 0 }}>
+                      <FieldTitle component="h2" sx={{ marginTop: 0 }}>
                         Infractions calculées par Mobilic
                       </FieldTitle>
                       <Typography>{updateInfractionsTitle}</Typography>
@@ -273,7 +287,7 @@ export function UserReadAlerts({
                 <List
                   sx={{
                     ...(isReportingInfractions && {
-                      overflow: "scroll",
+                      overflow: "auto",
                       maxHeight: "40vh"
                     })
                   }}
@@ -306,7 +320,7 @@ export function UserReadAlerts({
                   {!isReportingInfractions ? (
                     <>
                       <TitleContainer sx={{ marginTop: reportedCustomInfractions.length > 0 ? 3 : 0 }}>
-                        <FieldTitle uppercaseTitle component="h2">
+                        <FieldTitle component="h2">
                           Autre(s) infraction(s) constatée(s)
                         </FieldTitle>
                         <Button
@@ -326,7 +340,7 @@ export function UserReadAlerts({
                       )}
                     </>
                   ) : (
-                    <FieldTitle uppercaseTitle component="h2" sx={{ marginTop: 0 }}>
+                    <FieldTitle component="h2" sx={{ marginTop: 0 }}>
                       Autre(s) infraction(s) constatée(s)
                     </FieldTitle>
                   )}
@@ -334,8 +348,8 @@ export function UserReadAlerts({
                     <List
                       sx={{
                         ...(isReportingInfractions && {
-                          overflow: "scroll",
-                          maxHeight: "30vh"
+                          overflow: "auto",
+                          maxHeight: "40vh"
                         })
                       }}
                     >
@@ -353,7 +367,7 @@ export function UserReadAlerts({
                             readOnlyAlerts={readOnlyAlerts}
                             titleProps={{ component: "h3" }}
                             displayBusinessType={false}
-                            onDelete={isReportingInfractions && editSection === 'custom' ? () => removeCustomInfractionsBySanction(group.sanction) : undefined}
+                            onDelete={isReportingInfractions && editSection === 'custom' ? () => handleRemoveCustomInfractionsBySanction(group.sanction) : undefined}
                           />
                         </ListItem>
                       ))}
@@ -372,6 +386,7 @@ export function UserReadAlerts({
                   size="small"
                   style={{
                     marginTop: 15,
+                    padding: "8px 16px",
                   }}
                 >
                   Ajouter des infractions
@@ -413,16 +428,16 @@ export function UserReadAlerts({
           className={classes.bottomButtons}
           buttons={[
             {
-              onClick: () => { setEditSection(null); saveInfractions(); },
-              children: "Enregistrer"
-            },
-            {
               children: "Annuler",
               onClick: () => { setEditSection(null); cancelInfractions(); },
               priority: "secondary"
-            }
+            },
+            {
+              onClick: () => { setEditSection(null); saveInfractions(); },
+              children: "Enregistrer"
+            },
           ]}
-          inlineLayoutWhen="sm and up"
+          inlineLayoutWhen="always"
           alignment="right"
         />
       )}

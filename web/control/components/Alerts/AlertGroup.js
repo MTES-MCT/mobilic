@@ -19,8 +19,8 @@ import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 import classNames from "classnames";
 import { useInfractions } from "../../../controller/utils/contextInfractions";
 import { useControl } from "../../../controller/utils/contextControl";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => {
   return {
@@ -159,54 +159,69 @@ export function AlertGroup({
         <Grid
           container
           spacing={1}
-          alignItems="center"
+          alignItems="top"
           justifyContent="space-between"
           wrap="nowrap"
         >
           <Grid item xs>
-            <Typography
-              className="bold"
-              color="primary"
-              {...titleProps}
-              fontSize="0.875rem"
-            >
-              {sanction}
-            </Typography>
-            <Typography fontWeight="500">{infringementLabel}</Typography>
-          </Grid>
-          {alertsNumber !== 0 && (
-            <Grid item>
-              <span
-                className={classNames(
-                  classes.alertNumber,
-                  isSanctionReportable
-                    ? classes.reportableAlert
-                    : classes.notReportableAlert
-                )}
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <Typography
+                className="bold"
+                color="primary"
+                {...titleProps}
+                fontSize="0.875rem"
               >
-                {alertsNumber}
-              </span>
-            </Grid>
-          )}
-          <Grid item>
-            <ExpandMoreIcon
-              sx={{
-                transform: open ? "rotate(180deg)" : "none",
-                transition: "transform 0.2s",
-                display: "block"
-              }}
-            />
+                {sanction}
+              </Typography>
+              {alertsNumber !== 0 && (
+                <Grid item>
+                  <span
+                    className={classNames(
+                      classes.alertNumber,
+                      isSanctionReportable
+                        ? classes.reportableAlert
+                        : classes.notReportableAlert
+                    )}
+                  >
+                    {alertsNumber}
+                  </span>
+                </Grid>
+              )}
+            </div>
+            <div>
+              <Typography fontWeight="500">{infringementLabel}</Typography>
+            </div>
+          </Grid>
+
+          <Grid item >
+            {
+              open ? (
+                <div
+                  className="fr-icon-arrow-down-s-line fr-icon--sm"
+                  style={{ color: fr.colors.decisions.text.actionHigh.blueFrance.default }}
+                  aria-hidden="true"
+                />
+                ) : (
+                <div
+                  className="fr-icon-arrow-up-s-line fr-icon--sm"
+                  style={{ color: fr.colors.decisions.text.actionHigh.blueFrance.default }}
+                  
+                  aria-hidden="true"
+                />
+              )
+            }
           </Grid>
           {onDelete && (
             <Grid item>
-              <IconButton
+              <Button
+                iconId="fr-icon-delete-line"
                 size="small"
-                color="primary"
                 onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                priority="tertiary no outline"
+                title="Supprimer l'infraction"
                 aria-label="Supprimer l'infraction"
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
+                className="fr.colors.decisions.text.inverted.blueFrance.default"
+              />
             </Grid>
           )}
         </Grid>
