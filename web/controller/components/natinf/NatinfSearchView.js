@@ -14,6 +14,7 @@ import { NatinfResultAccordion } from "./NatinfResultAccordion";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -31,22 +32,22 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(3)
   },
   recentSearches: {
-    marginBottom: theme.spacing(3)
+    marginBottom: theme.spacing(3),
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing(2)
   },
   recentSearchTitle: {
-    fontSize: "0.875rem",
-    fontWeight: 600,
-    marginBottom: theme.spacing(1.5),
-    color: theme.palette.text.primary
+    fontSize: "0.875rem", // fr-text--sm
+    color: "var(--text-mention-grey)",
   },
   resultsContainer: {
     marginTop: theme.spacing(2)
   },
   resultsTitle: {
-    fontSize: "0.875rem",
-    fontWeight: 600,
+    fontSize: "0.875rem", // fr-text--sm
     marginBottom: theme.spacing(2),
-    color: theme.palette.text.primary
+    color: "var(--text-mention-grey)", //theme.palette.text.primary
   },
   footerActions: {
     position: "fixed",
@@ -70,7 +71,7 @@ const useStyles = makeStyles(theme => ({
     gap: theme.spacing(2)
   },
   footerInfo: {
-    color: theme.palette.text.secondary,
+    color: "var(--text-title-blue-france)",
     fontWeight: 500,
     fontSize: "0.875rem"
   },
@@ -251,6 +252,7 @@ export function NatinfSearchView({
               <Typography className={classes.recentSearchTitle}>
                 Recherches récentes
               </Typography>
+              <div>
               {recentSearches.map(natinf => (
                 <NatinfResultAccordion
                   key={natinf.code}
@@ -263,6 +265,7 @@ export function NatinfSearchView({
                   onChange={handleAccordionChange(natinf)}
                 />
               ))}
+              </div>
             </Box>
           )}
 
@@ -349,7 +352,7 @@ export function NatinfSearchView({
             onClick={handleShowConfirmation}
             disabled={selectedInfractionsCount === 0}
           >
-            Confirmer ({selectedInfractionsCount})
+            Continuer
           </Button>
         </>
       ) : (

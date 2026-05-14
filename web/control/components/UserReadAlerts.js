@@ -58,6 +58,16 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
     zIndex: 300,
     width: "100%"
+  },
+  infringementLabel: {
+    color: "var(--text-title-grey)",
+    fontSize: "1.125rem", // fr-text--lg
+    fontWeight: 600,
+  },
+  customInfractionsSection: {
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing(2)
   }
 }));
 
@@ -98,6 +108,7 @@ export function UserReadAlerts({
     totalAlertsNumber,
     reportedInfractionsLastUpdateTime,
     reportedCustomInfractionsLastUpdateTime,
+    mostRecentInfractionsUpdateTime,
     saveInfractions,
     cancelInfractions,
     setIsReportingInfractions,
@@ -108,7 +119,6 @@ export function UserReadAlerts({
     observedInfractions
   } = useInfractions();
   const { controlType, controlData } = useControl();
-  
   const {
     customInfractions,
     addDayToCustomInfraction,
@@ -255,15 +265,14 @@ export function UserReadAlerts({
             </Grid>
           )}
           <Grid item xs={displayPictures ? 7 : 12}>
-            <Stack direction="column" rowGap={1}>
+            <Stack direction="column" rowGap={2}>
 
-              {/* Computed infractions section */}
-              {showComputedSection && (
-                <>
-                  {!isReportingInfractions ? (
-                    <>
+                {/* Computed infractions section */}
+                {showComputedSection && (
+                  <div className={classes.customInfractionsSection}>
+                    {!isReportingInfractions ? (
                       <TitleContainer>
-                        <FieldTitle component="h2">
+                        <FieldTitle component="h2" className={classes.infringementLabel}>
                           Infractions calculées par Mobilic
                         </FieldTitle>
                         <Button
@@ -274,98 +283,27 @@ export function UserReadAlerts({
                           Modifier
                         </Button>
                       </TitleContainer>
-                      {reportedInfractionsLastUpdateTime && (
-                        <Description noMargin>
-                          {`Dernière modification le ${prettyFormatDayHour(
-                            reportedInfractionsLastUpdateTime
-                          )}`}
-                        </Description>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <FieldTitle component="h2" sx={{ marginTop: 0 }}>
-                        Infractions calculées par Mobilic
-                      </FieldTitle>
-                      <Typography>{updateInfractionsTitle}</Typography>
-                    </>
-                  )}
-                  {controlType === CONTROL_TYPES.MOBILIC.label && isReportingInfractions && (
-                    <WarningComputedAlerts />
-                  )}
-                </>
-              )}
-              {showComputedSection && (
-                <List
-                  sx={{
-                    ...(isReportingInfractions && {
-                      overflow: "auto",
-                      maxHeight: "40vh"
-                    })
-                  }}
-                >
-                  {computedInfractions.sort(sanctionComparator).map(group => (
-                    <ListItem
-                      key={`${group.type}_${group.sanction}`}
-                      disableGutters
-                      disablePadding
-                      sx={{ marginBottom: "8px" }}
-                    >
-                      <AlertGroup
-                        {...group}
-                        setPeriodOnFocus={setPeriodOnFocus}
-                        onChangeTab={onChangeTab}
-                        readOnlyAlerts={readOnlyAlerts}
-                        titleProps={{ component: "h3" }}
-                        displayBusinessType={
-                          businessTypes && businessTypes.length > 1
-                        }
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              )}
-              
-              {/* Custom infractions section */}
-              {showCustomSection && (
-                <>
-                  {!isReportingInfractions ? (
-                    <>
-                      <TitleContainer sx={{ marginTop: reportedCustomInfractions.length > 0 ? 3 : 0 }}>
-                        <FieldTitle component="h2">
-                          Autre(s) infraction(s) constatée(s)
+                    ) : (
+                      <>
+                        <FieldTitle component="h2" className={classes.infringementLabel} sx={{ marginTop: 0 }}>
+                          Infractions calculées par Mobilic
                         </FieldTitle>
-                        <Button
-                          priority="primary"
-                          onClick={() => reportInfraction('custom')}
-                          size="small"
-                        >
-                          Modifier
-                        </Button>
-                      </TitleContainer>
-                      {reportedCustomInfractionsLastUpdateTime && (
-                        <Description noMargin>
-                          {`Dernière modification le ${prettyFormatDayHour(
-                            reportedCustomInfractionsLastUpdateTime
-                          )}`}
-                        </Description>
-                      )}
-                    </>
-                  ) : (
-                    <FieldTitle component="h2" sx={{ marginTop: 0 }}>
-                      Autre(s) infraction(s) constatée(s)
-                    </FieldTitle>
-                  )}
-                  {reportedCustomInfractions.length > 0 ? (
+                        <Typography>{updateInfractionsTitle}</Typography>
+                      </>
+                    )}
+                    {controlType === CONTROL_TYPES.MOBILIC.label && isReportingInfractions && (
+                      <WarningComputedAlerts />
+                    )}
                     <List
                       sx={{
+                        paddingBottom: 0,
                         ...(isReportingInfractions && {
                           overflow: "auto",
                           maxHeight: "40vh"
                         })
                       }}
                     >
-                      {reportedCustomInfractions.sort(sanctionComparator).map(group => (
+                      {computedInfractions.sort(sanctionComparator).map(group => (
                         <ListItem
                           key={`${group.type}_${group.sanction}`}
                           disableGutters
@@ -378,15 +316,76 @@ export function UserReadAlerts({
                             onChangeTab={onChangeTab}
                             readOnlyAlerts={readOnlyAlerts}
                             titleProps={{ component: "h3" }}
-                            displayBusinessType={false}
-                            onDelete={isReportingInfractions && editSection === 'custom' ? () => handleRemoveCustomInfractionsBySanction(group.sanction) : undefined}
+                            displayBusinessType={
+                              businessTypes && businessTypes.length > 1
+                            }
                           />
                         </ListItem>
                       ))}
                     </List>
-                  ) : null}
-                </>
-              )}
+                  </div>
+                )}
+                
+                {/* Custom infractions section */}
+                {showCustomSection && (
+                  <div className={classes.customInfractionsSection}>
+                    {!isReportingInfractions ? (
+                      <TitleContainer>
+                        <FieldTitle component="h2" className={classes.infringementLabel}>
+                          Autre(s) infraction(s) constatée(s)
+                        </FieldTitle>
+                        <Button
+                          priority="primary"
+                          onClick={() => reportInfraction('custom')}
+                          size="small"
+                        >
+                          Modifier
+                        </Button>
+                      </TitleContainer>
+                    ) : (
+                      <FieldTitle component="h2" className={classes.infringementLabel} sx={{ marginTop: 0 }}>
+                        Autre(s) infraction(s) constatée(s)
+                      </FieldTitle>
+                    )}
+                    {reportedCustomInfractions.length > 0 ? (
+                      <List
+                        sx={{
+                          paddingBottom: 0,
+                          ...(isReportingInfractions && {
+                            overflow: "auto",
+                            maxHeight: "40vh"
+                          })
+                        }}
+                      >
+                        {reportedCustomInfractions.sort(sanctionComparator).map(group => (
+                          <ListItem
+                            key={`${group.type}_${group.sanction}`}
+                            disableGutters
+                            disablePadding
+                            sx={{ marginBottom: "8px" }}
+                          >
+                            <AlertGroup
+                              {...group}
+                              setPeriodOnFocus={setPeriodOnFocus}
+                              onChangeTab={onChangeTab}
+                              readOnlyAlerts={readOnlyAlerts}
+                              titleProps={{ component: "h3" }}
+                              displayBusinessType={false}
+                              onDelete={isReportingInfractions && editSection === 'custom' ? () => handleRemoveCustomInfractionsBySanction(group.sanction) : undefined}
+                            />
+                          </ListItem>
+                        ))}
+                      </List>
+                    ) : null}
+                  </div>
+                )}
+                {mostRecentInfractionsUpdateTime && (
+                  <Description noMargin>
+                    {`Dernière modification le ${prettyFormatDayHour(
+                      mostRecentInfractionsUpdateTime
+                    )}`}
+                  </Description>
+                )}
               
               {/* "Ajouter des infractions" visible in both edit sections */}
               {isReportingInfractions && isMinistryOfInterior && (
