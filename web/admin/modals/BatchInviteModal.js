@@ -43,7 +43,6 @@ export default function BatchInviteModal({
   validationFn = isValidEntry,
   normalizeFn = defaultNormalize,
   validationErrorMessage = DEFAULT_VALIDATION_ERROR,
-  placeholder = "",
   separatorsRegex = SEPARATORS_REGEX,
   trackingEventFn = BATCH_INVITE_MODAL_SUBMIT
 }) {
@@ -198,8 +197,7 @@ export default function BatchInviteModal({
                 }
                 parseText(pastedText, false);
               },
-              value: text,
-              ...(placeholder && { placeholder })
+              value: text
             }}
             disabled={tooManyEntries}
           />

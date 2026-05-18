@@ -226,7 +226,6 @@ export default function VehicleAdmin({ company }) {
         }
         inputLabel="Immatriculations"
         inputHintText="Saisissez les immatriculations au format AA-123-AA. Si vous les copiez-collez, veillez à bien les séparer par un espace, une virgule ou un point-virgule dans le fichier d'origine. Une immatriculation ne doit pas contenir d'espace."
-        placeholder="BB-222-CC, CC-333-DD, DD-444-EE"
         acceptButtonTitle="Ajouter"
         validationFn={isValidRegistrationNumber}
         normalizeFn={normalizeRegistrationNumber}
