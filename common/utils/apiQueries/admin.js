@@ -693,6 +693,7 @@ export const DASHBOARD_HOME_QUERY = gql`
           inactiveEmployeesCount
           autoValidatedMissionsCount
           pendingInvitationEmploymentIds
+          hasAnyMissionThisWeek
         }
         regulatoryAlertsRecap(month: $month) {
           hasAnyComputation

@@ -193,7 +193,7 @@ function AlertRow({ label, count, dayDetails, onClickDay, isLast, defaultExpande
   );
 }
 
-function InfractionsSection({ alertsData, onClickDay }) {
+function InfractionsSection({ alertsData, hasAnyMissionThisWeek, onClickDay }) {
   const history = useHistory();
   const allAlerts = [
     ...(alertsData?.dailyAlerts || []),
@@ -240,7 +240,9 @@ function InfractionsSection({ alertsData, onClickDay }) {
             fontSize: "0.875rem"
           }}
         >
-          Tous les seuils réglementaires sont respectés
+          {hasAnyMissionThisWeek
+            ? "Tous les seuils réglementaires sont respectés."
+            : "Calcul des infractions en attente de l'enregistrement d'une mission."}
         </Typography>
       )}
       <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
@@ -542,7 +544,11 @@ export default function Home({ setShouldRefreshData }) {
 
           {/* Row 2, Col 2: alerts */}
           <Box sx={{ alignSelf: "start" }}>
-            <InfractionsSection alertsData={alertsData} onClickDay={handleClickDay} />
+            <InfractionsSection
+              alertsData={alertsData}
+              hasAnyMissionThisWeek={summary.hasAnyMissionThisWeek}
+              onClickDay={handleClickDay}
+            />
           </Box>
         </Box>
       </Box>
