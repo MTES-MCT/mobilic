@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import { Box, Stack, Typography, CircularProgress } from "@mui/material";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
 import { WarningBadge } from "../../common/WarningBadge";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../store/store";
@@ -132,12 +133,11 @@ function AlertRow({ label, count, dayDetails, onClickDay, isLast, defaultExpande
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          py: 1.5,
-          px: 2,
+          padding: "12px 16px",
           cursor: "pointer",
           borderTop: "1px solid #DDDDDD",
-          borderBottom: !expanded && isLast ? "1px solid #DDDDDD" : "none",
-          backgroundColor: expanded ? "#f4f8ff" : "transparent",
+          borderBottom: expanded ? "none" : "1px solid #DDDDDD",
+          backgroundColor: expanded ? "#f4f8ff" : "#FFFFFF",
           "&:hover": { backgroundColor: expanded ? "#f4f8ff" : "#F6F6F6" }
         }}
       >
@@ -169,22 +169,50 @@ function AlertRow({ label, count, dayDetails, onClickDay, isLast, defaultExpande
           {dayDetails.map((detail, i) => (
             <Box
               key={`${detail.day}-${detail.userName}-${i}`}
-              component="button"
-              onClick={() => onClickDay(detail.day, detail.userId)}
               sx={{
-                color: "#000091",
-                fontSize: "0.875rem",
-                textDecoration: "underline",
-                cursor: "pointer",
-                background: "none",
-                border: "none",
-                padding: 0,
-                textAlign: "left",
-                fontFamily: "inherit",
-                "&:hover": { textDecoration: "none" }
+                display: "flex",
+                alignItems: "center",
+                gap: "0.25rem"
               }}
             >
-              {formatCompleteDateFromString(detail.day)} – {detail.userName}
+              <Box
+                component="button"
+                onClick={() => onClickDay(detail.day, detail.userId)}
+                sx={{
+                  color: "#000091",
+                  fontSize: "0.875rem",
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                  background: "none",
+                  border: "none",
+                  padding: 0,
+                  textAlign: "left",
+                  fontFamily: "inherit",
+                  "&:hover": { textDecoration: "none" }
+                }}
+              >
+                {formatCompleteDateFromString(detail.day)} – {detail.userName}
+              </Box>
+              {detail.otherCompanyRelation && (
+                <Tooltip
+                  title={
+                    detail.otherCompanyRelation === "establishment"
+                      ? "Ce salarié a aussi travaillé pour un autre établissement de la même entreprise ce jour-là."
+                      : "Ce salarié a aussi travaillé pour une autre entreprise ce jour-là."
+                  }
+                >
+                  <Box
+                    component="span"
+                    className="fr-icon-warning-fill fr-icon--sm"
+                    aria-label={
+                      detail.otherCompanyRelation === "establishment"
+                        ? "Travail dans un autre établissement de l'entreprise ce jour-là"
+                        : "Travail dans une autre entreprise ce jour-là"
+                    }
+                    sx={{ color: "#B34000" }}
+                  />
+                </Tooltip>
+              )}
             </Box>
           ))}
         </Stack>

@@ -705,6 +705,7 @@ export const DASHBOARD_HOME_QUERY = gql`
               day
               userName
               userId
+              otherCompanyRelation
             }
           }
           weeklyAlerts {
@@ -715,6 +716,7 @@ export const DASHBOARD_HOME_QUERY = gql`
               day
               userName
               userId
+              otherCompanyRelation
             }
           }
         }
