@@ -64,11 +64,16 @@ const useStyles = makeStyles(theme => ({
     fontSize: "1.125rem", // fr-text--lg
     fontWeight: 600,
   },
+  smallInfringementLabel: {
+    fontSize: "0.875rem !important",
+    color: "var(--text-mention-grey)",
+    fontWeight: 500,
+  },
   customInfractionsSection: {
     display: "flex",
     flexDirection: "column",
     gap: theme.spacing(2)
-  }
+  },
 }));
 
 const HELPER_TEXT_SEVERAL_INFRACTIONS = (
@@ -343,7 +348,7 @@ export function UserReadAlerts({
                         </Button>
                       </TitleContainer>
                     ) : (
-                      <FieldTitle component="h2" className={classes.infringementLabel} sx={{ marginTop: 0 }}>
+                      <FieldTitle component="h2" className={classes.smallInfringementLabel} sx={{ marginTop: 0 }}>
                         Autre(s) infraction(s) constatée(s)
                       </FieldTitle>
                     )}
