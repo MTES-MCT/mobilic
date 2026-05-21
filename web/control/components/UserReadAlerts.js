@@ -111,8 +111,6 @@ export function UserReadAlerts({
     groupedAlerts: infractionsGroupedAlerts,
     isReportingInfractions,
     totalAlertsNumber,
-    reportedInfractionsLastUpdateTime,
-    reportedCustomInfractionsLastUpdateTime,
     mostRecentInfractionsUpdateTime,
     saveInfractions,
     cancelInfractions,

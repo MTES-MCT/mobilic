@@ -15,7 +15,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { useModals } from "common/utils/modals";
-import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => ({
   container: {
