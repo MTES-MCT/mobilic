@@ -21,6 +21,7 @@ import ControlHandDeliveryModal from "./controller/components/modals/ControlHand
 import ControlSendEmailModal from "./controller/components/modals/ControlSendEmailModal";
 import ControllerUpdateTimeModal from "./controller/components/modals/ControllerUpdateTime";
 import ConfirmationRemoveInfringementModal from "./controller/components/modals/ConfirmationRemoveInfringementModal";
+import ConfirmationCancelInfringementModal from "./controller/components/modals/ConfirmationCancelInfringementModal";
 
 // admin
 import UpdateCompanyDetailsModal from "./admin/modals/UpdateCompanyDetailsModal";
@@ -96,6 +97,7 @@ export const MODAL_DICT = {
   employeesTeamRevisionModal: EmployeesTeamRevisionModal,
   confirmationCancelControlBulletinModal: ConfirmationCancelControlBulletinModal,
   confirmationRemoveInfringementModal: ConfirmationRemoveInfringementModal,
+  confirmationCancelInfringementModal: ConfirmationCancelInfringementModal,
   typeformModal: TypeformModal,
   updateCompanyDetails: UpdateCompanyDetailsModal,
   blockedTime: BlockedTimeModal,
