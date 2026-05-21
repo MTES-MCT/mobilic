@@ -200,7 +200,7 @@ export function AlertGroup({
                 />
                 ) : (
                 <div
-                  className="fr-icon-arrow-downs-s-line fr-icon--sm"
+                  className="fr-icon-arrow-down-s-line fr-icon--sm"
                   style={{ color: fr.colors.decisions.text.actionHigh.blueFrance.default }}
                   aria-hidden="true"
                 />
