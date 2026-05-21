@@ -304,7 +304,7 @@ export function UserReadAlerts({
                         paddingBottom: 0,
                         ...(isReportingInfractions && {
                           overflow: "auto",
-                          maxHeight: "40vh"
+                          maxHeight: "50vh"
                         })
                       }}
                     >
@@ -358,7 +358,7 @@ export function UserReadAlerts({
                           paddingBottom: 0,
                           ...(isReportingInfractions && {
                             overflow: "auto",
-                            maxHeight: "40vh"
+                            maxHeight: "50vh"
                           })
                         }}
                       >
