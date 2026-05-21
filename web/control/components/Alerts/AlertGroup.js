@@ -20,6 +20,7 @@ import classNames from "classnames";
 import { useInfractions } from "../../../controller/utils/contextInfractions";
 import { useControl } from "../../../controller/utils/contextControl";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { WarningBadge } from "../../../common/WarningBadge";
 import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles(theme => {
@@ -38,8 +39,7 @@ const useStyles = makeStyles(theme => {
     alertNumber: {
       display: "inline-flex",
       whiteSpace: "pre",
-      borderRadius: "100px",
-      color: "white",
+      color: "var(--text-inverted-warning)",
       paddingLeft: theme.spacing(1),
       paddingRight: theme.spacing(1),
       height: theme.spacing(3),
@@ -178,7 +178,7 @@ export function AlertGroup({
           </Grid>
           {alertsNumber !== 0 && (
             <Grid item>
-              <span
+              <WarningBadge
                 className={classNames(
                   classes.alertNumber,
                   isSanctionReportable
@@ -187,7 +187,7 @@ export function AlertGroup({
                 )}
               >
                 {alertsNumber}
-              </span>
+              </WarningBadge>
             </Grid>
           )}
           <Grid item >

@@ -16,6 +16,7 @@ import classNames from "classnames";
 import { gregorian_fr } from "common/utils/calendarLocale";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useCalendarStyles } from "../../../common/styles/calendarStyles";
+import { WarningBadge } from "../../../common/WarningBadge";
 
 const controlHistoryDepth =
   Number.parseInt(process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH, 10) || 28;
@@ -31,8 +32,7 @@ const useStyles = makeStyles(theme => ({
   alertNumber: {
     display: "inline-flex",
     whiteSpace: "pre",
-    borderRadius: "100px",
-    color: "white",
+    color: "var(--text-inverted-warning)",
     paddingLeft: "8px",
     paddingRight: "8px",
     height: "24px",
@@ -99,9 +99,9 @@ export function NatinfResultAccordion({
           </Grid>
           {selectedDays.length > 0 && (
             <Grid item>
-              <span className={classes.alertNumber}>
+              <WarningBadge className={classes.alertNumber}>
                 {selectedDays.length}
-              </span>
+              </WarningBadge>
             </Grid>
           )}
           <Grid item>
