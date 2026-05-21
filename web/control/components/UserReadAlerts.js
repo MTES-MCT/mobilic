@@ -384,7 +384,7 @@ export function UserReadAlerts({
                     ) : null}
                   </div>
                 )}
-                {mostRecentInfractionsUpdateTime && (
+                {!!mostRecentInfractionsUpdateTime && (
                   <Description noMargin>
                     {`Dernière modification le ${prettyFormatDayHour(
                       mostRecentInfractionsUpdateTime
