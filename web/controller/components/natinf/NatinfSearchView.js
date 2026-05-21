@@ -143,6 +143,7 @@ export function NatinfSearchView({
     if (searchQuery.length < 2) {
       return;
     }
+    const searchByCode = searchQuery.match(/^\d+$/);
 
     setIsSearching(true);
     try {
@@ -151,7 +152,12 @@ export function NatinfSearchView({
         { query: searchQuery },
         { context: { nonPublicApi: true } }
       );
-      setSearchResults(response.data.searchNatinf || []);
+
+      const results = (response.data.searchNatinf || [])
+        .filter(natinf => !searchByCode || natinf.code.includes(searchQuery))
+        .sort((a, b) => parseInt(a.code) - parseInt(b.code));
+      
+      setSearchResults(results);
     } catch (err) {
       alerts.error(formatApiError(err), "", 6000);
       setSearchResults([]);
@@ -161,7 +167,6 @@ export function NatinfSearchView({
   };
 
   const handleAccordionChange = (natinf) => (event, isExpanded) => {
-    console.log("Accordion change", natinf);
     setExpandedAccordion(isExpanded ? natinf.code : null);
     if (isExpanded) {
       const updated = [natinf, ...recentSearches.filter(r => r.code !== natinf.code)]
