@@ -14,8 +14,7 @@ import Stack from "@mui/material/Stack";
 import { capitalizeFirstLetter } from "common/utils/string";
 import classNames from "classnames";
 import { gregorian_fr } from "common/utils/calendarLocale";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useCalendarStyles } from "../../../common/styles/calendarStyles";
 
 const controlHistoryDepth =
@@ -106,24 +105,33 @@ export function NatinfResultAccordion({
             </Grid>
           )}
           <Grid item>
-            <ExpandMoreIcon
-              sx={{
-                transform: expanded ? "rotate(180deg)" : "none",
-                transition: "transform 0.2s",
-                display: "block"
-              }}
-            />
+            {
+              expanded ? (
+                <div
+                  className="fr-icon-arrow-up-s-line fr-icon--sm"
+                  style={{ color: fr.colors.decisions.text.actionHigh.blueFrance.default }}
+                  aria-hidden="true"
+                />
+                ) : (
+                <div
+                  className="fr-icon-arrow-down-s-line fr-icon--sm"
+                  style={{ color: fr.colors.decisions.text.actionHigh.blueFrance.default }}
+                  aria-hidden="true"
+                />
+              )
+            }
           </Grid>
           {onDelete && (
             <Grid item>
-              <IconButton
+              <Button
                 size="small"
-                color="primary"
+                iconId="fr-icon-delete-line"
                 onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                priority="tertiary no outline"
+                title="Supprimer l'infraction"
                 aria-label="Supprimer l'infraction"
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
+                className="fr.colors.decisions.text.inverted.blueFrance.default"
+              />
             </Grid>
           )}
         </Grid>
