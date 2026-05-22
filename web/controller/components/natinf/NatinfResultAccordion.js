@@ -13,9 +13,9 @@ import Stack from "@mui/material/Stack";
 import { capitalizeFirstLetter } from "common/utils/string";
 import classNames from "classnames";
 import { gregorian_fr } from "common/utils/calendarLocale";
-import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useCalendarStyles } from "../../../common/styles/calendarStyles";
 import { WarningBadge } from "../../../common/WarningBadge";
+import { AccordionActions } from "../../../common/AccordionActions";
 
 const controlHistoryDepth =
   Number.parseInt(process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH, 10) || 28;
@@ -103,36 +103,7 @@ export function NatinfResultAccordion({
               </WarningBadge>
             </Grid>
           )}
-          <Grid item>
-            {
-              expanded ? (
-                <div
-                  className="fr-icon-arrow-up-s-line fr-icon--sm"
-                  style={{ color: fr.colors.decisions.text.actionHigh.blueFrance.default }}
-                  aria-hidden="true"
-                />
-                ) : (
-                <div
-                  className="fr-icon-arrow-down-s-line fr-icon--sm"
-                  style={{ color: fr.colors.decisions.text.actionHigh.blueFrance.default }}
-                  aria-hidden="true"
-                />
-              )
-            }
-          </Grid>
-          {onDelete && (
-            <Grid item>
-              <Button
-                size="small"
-                iconId="fr-icon-delete-line"
-                onClick={(e) => { e.stopPropagation(); onDelete(); }}
-                priority="tertiary no outline"
-                title="Supprimer l'infraction"
-                aria-label="Supprimer l'infraction"
-                className="fr.colors.decisions.text.inverted.blueFrance.default"
-              />
-            </Grid>
-          )}
+          <AccordionActions open={expanded} onDelete={onDelete} />
         </Grid>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
