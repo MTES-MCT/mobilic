@@ -41,6 +41,10 @@ const useStyles = makeStyles(theme => ({
     fontSize: "0.875rem", // fr-text--sm
     color: "var(--text-mention-grey)",
   },
+  recentSearchesList: {
+    maxHeight: "calc(100vh - 440px)",
+    overflow: "scroll",
+  },
   resultsContainer: {
     marginTop: theme.spacing(2)
   },
@@ -295,19 +299,19 @@ export function NatinfSearchView({
               <Typography className={classes.recentSearchTitle}>
                 Recherches récentes
               </Typography>
-              <div>
-              {recentSearches.map(natinf => (
-                <NatinfResultAccordion
-                  key={natinf.code}
-                  natinf={natinf}
-                  selectedDays={getInfractionDays(natinf.code)}
-                  onDaySelect={addDayToCustomInfraction}
-                  onDayRemove={removeDayFromCustomInfraction}
-                  controlTime={controlTime}
-                  expanded={expandedAccordion === natinf.code}
-                  onChange={handleAccordionChange(natinf)}
-                />
-              ))}
+              <div className={classes.recentSearchesList} >
+                {recentSearches.map(natinf => (
+                  <NatinfResultAccordion
+                    key={natinf.code}
+                    natinf={natinf}
+                    selectedDays={getInfractionDays(natinf.code)}
+                    onDaySelect={addDayToCustomInfraction}
+                    onDayRemove={removeDayFromCustomInfraction}
+                    controlTime={controlTime}
+                    expanded={expandedAccordion === natinf.code}
+                    onChange={handleAccordionChange(natinf)}
+                  />
+                ))}
               </div>
             </Box>
           )}
@@ -323,18 +327,20 @@ export function NatinfSearchView({
               <Typography className={classes.resultsTitle}>
                 Résultats ({searchResults.length})
               </Typography>
-              {searchResults.map(natinf => (
-                <NatinfResultAccordion
-                  key={natinf.code}
-                  natinf={natinf}
-                  selectedDays={getInfractionDays(natinf.code)}
-                  onDaySelect={addDayToCustomInfraction}
-                  onDayRemove={removeDayFromCustomInfraction}
-                  controlTime={controlTime}
-                  expanded={expandedAccordion === natinf.code}
-                  onChange={handleAccordionChange(natinf)}
-                />
-              ))}
+              <div className={classes.recentSearchesList} >
+                {searchResults.map(natinf => (
+                  <NatinfResultAccordion
+                    key={natinf.code}
+                    natinf={natinf}
+                    selectedDays={getInfractionDays(natinf.code)}
+                    onDaySelect={addDayToCustomInfraction}
+                    onDayRemove={removeDayFromCustomInfraction}
+                    controlTime={controlTime}
+                    expanded={expandedAccordion === natinf.code}
+                    onChange={handleAccordionChange(natinf)}
+                  />
+                ))}
+              </div>
             </Box>
           )}
 
