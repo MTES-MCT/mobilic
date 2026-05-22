@@ -61,9 +61,35 @@ export function addWorkDaysReducer(
     };
   });
 
+  // Update missions if present in the payload
+  let missions = state.missions;
+  if (companiesPayload.some(c => c.missions)) {
+    const newMissions = flatMap(
+      companiesPayload.map(c =>
+        c.missions?.edges
+          ? c.missions.edges.map(m => ({
+              ...m.node,
+              companyId: c.id,
+              isDeleted: false
+            }))
+          : []
+      )
+    );
+    
+    if (reset) {
+      missions = newMissions;
+    } else {
+      // Merge and deduplicate (keep new ones)
+      const existingMissionIds = new Set(newMissions.map(m => m.id));
+      const filteredOldMissions = state.missions.filter(m => !existingMissionIds.has(m.id));
+      missions = [...filteredOldMissions, ...newMissions];
+    }
+  }
+
   return {
     ...state,
     workDays: [...(reset ? [] : state.workDays), ...workDaysToAdd],
+    missions,
     minWorkDaysCursor: actualMinCursor
   };
 }

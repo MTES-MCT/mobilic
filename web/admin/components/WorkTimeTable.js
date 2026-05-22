@@ -338,7 +338,7 @@ const preFormatWorkTimeEntries = (
       return [buildAllValidatedEntry(wte)];
     }
 
-    return missionIds
+    const entries = missionIds
       .map((missionId) =>
         buildMissionEntry(
           wte,
@@ -350,6 +350,22 @@ const preFormatWorkTimeEntries = (
         )
       )
       .filter(Boolean);
+
+    if (entries.length === 0) {
+      return [{
+        ...wte,
+        rest: wte.rest || null,
+        service: wte.service || null,
+        totalWork: wte.totalWork || null,
+        regulationComputations: wte.regulationComputations || null,
+        id: wte.user.id + wte.periodStart.toString(),
+        workerName: formatPersonName(wte.user),
+        statusKey: null,
+        selectable: true
+      }];
+    }
+
+    return entries;
   });
 
 const onRowClick = (entry, trackEvent, openWorkday, openMission) => {

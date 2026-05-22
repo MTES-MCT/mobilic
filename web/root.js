@@ -31,6 +31,7 @@ import {
 } from "./common/routes";
 import { SnackbarProvider, useSnackbarAlerts } from "./common/Snackbar";
 import { EnvironmentHeader } from "./common/EnvironmentHeader";
+import { ImpersonationBanner } from "./common/ImpersonationBanner";
 import { LiveChat } from "./common/LiveChat";
 import {
   currentControllerId,
@@ -192,6 +193,12 @@ function RootComponent() {
       sessionStorage.removeItem("fcRedirection");
       return;
     }
+    const impersonationReturn = sessionStorage.getItem("impersonationReturn");
+    if (impersonationReturn) {
+      sessionStorage.removeItem("impersonationReturn");
+      history.replace("/support/impersonation");
+      return;
+    }
 
     if (!isSigningUp && !isInOauthFlow) {
       // Routing priority :
@@ -326,12 +333,14 @@ function RootComponent() {
 
   return (
     <>
-      {(process.env.REACT_APP_SENTRY_ENVIRONMENT === "staging" ||
-        process.env.REACT_APP_SENTRY_ENVIRONMENT === "sandbox") && (
-        <EnvironmentHeader />
-      )}
+      <div style={{ position: "sticky", top: 0, zIndex: 1100 }}>
+        {(process.env.REACT_APP_SENTRY_ENVIRONMENT === "staging" ||
+          process.env.REACT_APP_SENTRY_ENVIRONMENT === "sandbox") && (
+          <EnvironmentHeader />
+        )}
+        <ImpersonationBanner />
+      </div>
       {shouldRenderLiveChat && <LiveChat userId={userId} userInfo={userInfo} />}
-
       {store.userId() && shouldSeeCguModal && (
         <AcceptCguModal
           onAccept={() => setSeeAgainCgu(false)}

@@ -97,6 +97,7 @@ export const CONTROLLER_ROUTE_PREFIX = "/controller";
 // React.lazy avec React Fast Refresh fonctionnel
 const Admin = React.lazy(() => import("../admin/Admin"));
 const OAuth = React.lazy(() => import("../oauth/root"));
+const ImpersonationSearch = React.lazy(() => import("../support/ImpersonationSearch"));
 
 // Wrapper pour encapsuler chaque composant lazy avec son propre Suspense
 function withSuspense(Component) {
@@ -434,11 +435,30 @@ export const ROUTES = [
     menuItemFilter: () => false
   },
   {
+    path: "/support/impersonation",
+    label: "Impersonation",
+    accessible: ({ userInfo }) => !!userInfo?.admin && !!userInfo?.totpEnabled,
+    component: withSuspense(ImpersonationSearch),
+    menuItemFilter: () => false
+  },
+  {
     path: "/home",
     label: "Mes informations",
     accessible: () => true,
     menuItemFilter: () => false,
     component: <Home />
+  },
+  {
+    label: "Support",
+    path: "",
+    accessible: ({ userInfo }) => !!userInfo?.admin && !!userInfo?.totpEnabled,
+    menuItemFilter: ({ userInfo }) => !!userInfo?.admin && !!userInfo?.totpEnabled,
+    subRoutes: [
+      {
+        path: "/support/impersonation",
+        label: "Accès au compte"
+      }
+    ]
   },
   RESOURCES_ROUTE,
   {
@@ -453,7 +473,8 @@ export const ROUTES = [
       },
       {
         path: "/logout",
-        label: "Déconnexion"
+        label: "Déconnexion",
+        accessible: ({ userInfo }) => !userInfo?.isImpersonated
       }
     ]
   },
