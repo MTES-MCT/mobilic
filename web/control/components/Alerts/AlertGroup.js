@@ -104,7 +104,8 @@ export function AlertGroup({
   readOnlyAlerts,
   displayBusinessType = false,
   titleProps = {},
-  onDelete
+  onDelete,
+  textSize = "0.875rem" // fr-text--sm (14px)
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
@@ -139,6 +140,8 @@ export function AlertGroup({
     [alerts]
   );
 
+  const infringementLabelFormatted = infringementLabel.charAt(0).toUpperCase() + infringementLabel.slice(1).toLowerCase();
+
   useEffect(() => {
     if (!isReportingInfractions) {
       setOpen(false);
@@ -172,8 +175,8 @@ export function AlertGroup({
             >
               {sanction}
             </Typography>
-            <Typography fontWeight="500" fontSize="0.875rem" style={{ textTransform: "uppercase" }}>
-              {infringementLabel}
+            <Typography fontWeight="500" fontSize={textSize}>
+              {infringementLabelFormatted}
             </Typography>
           </Grid>
           {alertsNumber !== 0 && (
