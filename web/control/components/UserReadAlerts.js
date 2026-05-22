@@ -72,23 +72,21 @@ const useStyles = makeStyles(theme => ({
   customInfractionsSection: {
     display: "flex",
     flexDirection: "column",
-    gap: theme.spacing(2)
   },
+  infoText: {
+    marginBottom: theme.spacing(1),
+  }
 }));
 
 const HELPER_TEXT_SEVERAL_INFRACTIONS = (
-  <>Sélectionnez la ou les infractions que vous souhaitez verbaliser&nbsp;:</>
-);
-const HELPER_TEXT_SINGLE_INFRACTION = (
-  <>Sélectionnez l’infraction si vous souhaitez la verbaliser&nbsp;:</>
+  <>Sélectionnez des infractions que vous souhaitez verbaliser&nbsp;:</>
 );
 const HELPER_TEXT_LIC_PAPIER = (
   <>
-    Sélectionnez les infractions que vous souhaitez verbaliser à partir du
+    Sélectionnez des infractions que vous souhaitez verbaliser à partir du
     livret individuel de contrôle présenté&nbsp;:
   </>
 );
-
 export const WarningComputedAlerts = () => (
   <Notice
     description="Les infractions calculées par Mobilic se basent sur la version
@@ -200,12 +198,10 @@ export function UserReadAlerts({
 
   const updateInfractionsTitle = React.useMemo(
     () =>
-      controlType === CONTROL_TYPES.LIC_PAPIER.label
+      controlType === CONTROL_TYPES.LIC_PAPIER.label && editSection !== 'custom'
         ? HELPER_TEXT_LIC_PAPIER
-        : totalAlertsNumber === 1
-        ? HELPER_TEXT_SINGLE_INFRACTION
         : HELPER_TEXT_SEVERAL_INFRACTIONS,
-    [totalAlertsNumber, controlType]
+    [totalAlertsNumber, controlType, editSection]
   );
 
   const displayPictures = React.useMemo(
@@ -256,7 +252,7 @@ export function UserReadAlerts({
   }
 
   return (
-    <Container maxWidth={displayPictures ? "lg" : "md"} sx={{ padding: 0, minHeight: "calc(100vh - 200px)" }}>
+    <Container maxWidth={displayPictures ? "lg" : "md"} sx={{ padding: 0, ...(isReportingInfractions ? { height: "calc(100vh - 64px)", overflow: "auto" } : { minHeight: "calc(100vh - 200px)" }) }}>
       {controlType === CONTROL_TYPES.MOBILIC.label && (
         <DisplayBusinessTypes businessTypes={businessTypes} />
       )}
@@ -288,10 +284,13 @@ export function UserReadAlerts({
                       </TitleContainer>
                     ) : (
                       <>
-                        <FieldTitle component="h2" className={classes.infringementLabel} sx={{ marginTop: 0 }}>
-                          Infractions calculées par Mobilic
-                        </FieldTitle>
-                        <Typography>{updateInfractionsTitle}</Typography>
+                        <Typography className={classes.infoText}>{updateInfractionsTitle}</Typography>
+                        {
+                          controlType !== CONTROL_TYPES.LIC_PAPIER.label &&
+                          <FieldTitle component="h2" className={classes.smallInfringementLabel} sx={{ marginTop: 0 }}>
+                            Infractions calculées par Mobilic
+                          </FieldTitle>
+                        }
                       </>
                     )}
                     {controlType === CONTROL_TYPES.MOBILIC.label && isReportingInfractions && (
@@ -302,7 +301,7 @@ export function UserReadAlerts({
                         paddingBottom: 0,
                         ...(isReportingInfractions && {
                           overflow: "auto",
-                          maxHeight: "50vh"
+                          maxHeight: "calc(100vh - 440px)"
                         })
                       }}
                     >
@@ -331,7 +330,7 @@ export function UserReadAlerts({
                 
                 {/* Custom infractions section */}
                 {showCustomSection && (
-                  <div className={classes.customInfractionsSection}>
+                  <div className={classes.customInfractionsSection} style={{ gap: isReportingInfractions ? 0 : "1rem" }}>
                     {!isReportingInfractions ? (
                       <TitleContainer>
                         <FieldTitle component="h2" className={classes.infringementLabel}>
@@ -346,9 +345,12 @@ export function UserReadAlerts({
                         </Button>
                       </TitleContainer>
                     ) : (
-                      <FieldTitle component="h2" className={classes.smallInfringementLabel} sx={{ marginTop: 0 }}>
-                        Autre(s) infraction(s) constatée(s)
-                      </FieldTitle>
+                      <>
+                        <Typography className={classes.infoText}>{updateInfractionsTitle}</Typography>
+                        <FieldTitle component="h2" className={classes.smallInfringementLabel} sx={{ marginTop: 0 }}>
+                          Autre(s) infraction(s) constatée(s)
+                        </FieldTitle>
+                      </>
                     )}
                     {reportedCustomInfractions.length > 0 ? (
                       <List
@@ -356,7 +358,7 @@ export function UserReadAlerts({
                           paddingBottom: 0,
                           ...(isReportingInfractions && {
                             overflow: "auto",
-                            maxHeight: "50vh"
+                            maxHeight: "calc(100vh - 440px)"
                           })
                         }}
                       >
@@ -375,6 +377,7 @@ export function UserReadAlerts({
                               titleProps={{ component: "h3" }}
                               displayBusinessType={false}
                               onDelete={isReportingInfractions && editSection === 'custom' ? () => handleRemoveCustomInfractionsBySanction(group.sanction) : undefined}
+                              textSize="1rem" // fr-text (16px)
                             />
                           </ListItem>
                         ))}
