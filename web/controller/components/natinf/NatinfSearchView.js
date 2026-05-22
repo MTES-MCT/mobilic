@@ -158,7 +158,7 @@ export function NatinfSearchView({
 
       const results = (response.data.searchNatinf || [])
         .filter(natinf => !searchByCode || natinf.code.includes(searchQuery))
-        .sort((a, b) => parseInt(a.code) - parseInt(b.code));
+        .sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code));
       
       setSearchResults(results);
     } catch (err) {
@@ -174,7 +174,7 @@ export function NatinfSearchView({
     if (isExpanded) {
       const updated = [natinf, ...recentSearches.filter(r => r.code !== natinf.code)]
         .slice(0, 5)
-        .sort((a, b) => parseInt(a.code) - parseInt(b.code));
+        .sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code));
       setRecentSearches(updated);
       localStorage.setItem('natinf_recent_searches', JSON.stringify(updated));
     }
