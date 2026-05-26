@@ -125,6 +125,8 @@ export function Partners() {
     return shuffle(partnersSrcs.keys().filter(src => src.startsWith('./')));
   }, []);
 
+  console.log('[DEBUG LOG] shuffledPartners', shuffledPartners);
+
   React.useEffect(() => {
     if (showAllPartners) {
       setPartnersToShow(shuffledPartners);
