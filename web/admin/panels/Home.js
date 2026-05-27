@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Box, Stack, Typography, CircularProgress } from "@mui/material";
+import { fr } from "@codegouvfr/react-dsfr";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
 import { WarningBadge } from "../../common/WarningBadge";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../store/store";
@@ -57,7 +59,7 @@ function KpiCard({ title, count, buttonLabel, onButtonClick }) {
       <Typography
         sx={{
           color: "#3A3A3A",
-          fontSize: "0.875rem"
+          fontSize: "1rem"
         }}
       >
         {title}
@@ -73,7 +75,7 @@ function KpiCard({ title, count, buttonLabel, onButtonClick }) {
         {count}
       </Typography>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button priority="secondary" size="small" onClick={onButtonClick}>
+        <Button priority="secondary" onClick={onButtonClick}>
           {buttonLabel}
         </Button>
       </Box>
@@ -114,7 +116,7 @@ function ClickableLine({ count, label, onClick }) {
       <Box
         component="span"
         className="fr-icon-arrow-right-line"
-        sx={{ color: "#000091" }}
+        sx={{ color: "#000091", fontSize: "1.25rem" }}
       />
     </Box>
   );
@@ -131,12 +133,11 @@ function AlertRow({ label, count, dayDetails, onClickDay, isLast, defaultExpande
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          py: 1.5,
-          px: 2,
+          padding: "12px 16px",
           cursor: "pointer",
           borderTop: "1px solid #DDDDDD",
-          borderBottom: !expanded && isLast ? "1px solid #DDDDDD" : "none",
-          backgroundColor: expanded ? "#f4f8ff" : "transparent",
+          borderBottom: expanded ? "none" : "1px solid #DDDDDD",
+          backgroundColor: expanded ? "#f4f8ff" : "#FFFFFF",
           "&:hover": { backgroundColor: expanded ? "#f4f8ff" : "#F6F6F6" }
         }}
       >
@@ -163,27 +164,55 @@ function AlertRow({ label, count, dayDetails, onClickDay, isLast, defaultExpande
             borderTop: "1px solid #DDDDDD",
             borderBottom: isLast ? "1px solid #DDDDDD" : "none"
           }}
-          spacing={0.5}
+          spacing={1}
         >
           {dayDetails.map((detail, i) => (
             <Box
               key={`${detail.day}-${detail.userName}-${i}`}
-              component="button"
-              onClick={() => onClickDay(detail.day, detail.userId)}
               sx={{
-                color: "#000091",
-                fontSize: "0.875rem",
-                textDecoration: "underline",
-                cursor: "pointer",
-                background: "none",
-                border: "none",
-                padding: 0,
-                textAlign: "left",
-                fontFamily: "inherit",
-                "&:hover": { textDecoration: "none" }
+                display: "flex",
+                alignItems: "center",
+                gap: "0.25rem"
               }}
             >
-              {formatCompleteDateFromString(detail.day)} – {detail.userName}
+              <Box
+                component="button"
+                onClick={() => onClickDay(detail.day, detail.userId)}
+                sx={{
+                  color: "#000091",
+                  fontSize: "0.875rem",
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                  background: "none",
+                  border: "none",
+                  padding: 0,
+                  textAlign: "left",
+                  fontFamily: "inherit",
+                  "&:hover": { textDecoration: "none" }
+                }}
+              >
+                {formatCompleteDateFromString(detail.day)} – {detail.userName}
+              </Box>
+              {detail.otherCompanyRelation && (
+                <Tooltip
+                  title={
+                    detail.otherCompanyRelation === "establishment"
+                      ? "Ce salarié a aussi travaillé pour un autre établissement de la même entreprise ce jour-là."
+                      : "Ce salarié a aussi travaillé pour une autre entreprise ce jour-là."
+                  }
+                >
+                  <Box
+                    component="span"
+                    className="fr-icon-warning-fill fr-icon--sm"
+                    aria-label={
+                      detail.otherCompanyRelation === "establishment"
+                        ? "Travail dans un autre établissement de l'entreprise ce jour-là"
+                        : "Travail dans une autre entreprise ce jour-là"
+                    }
+                    sx={{ color: "#B34000" }}
+                  />
+                </Tooltip>
+              )}
             </Box>
           ))}
         </Stack>
@@ -192,7 +221,7 @@ function AlertRow({ label, count, dayDetails, onClickDay, isLast, defaultExpande
   );
 }
 
-function InfractionsSection({ alertsData, onClickDay }) {
+function InfractionsSection({ alertsData, hasAnyMissionThisWeek, onClickDay }) {
   const history = useHistory();
   const allAlerts = [
     ...(alertsData?.dailyAlerts || []),
@@ -233,36 +262,32 @@ function InfractionsSection({ alertsData, onClickDay }) {
           ))}
         </Box>
       ) : (
-        <Typography sx={{ color: "#3A3A3A", fontStyle: "italic" }}>
-          Tous les seuils réglementaires sont respectés
+        <Typography
+          sx={{
+            color: fr.colors.decisions.text.default.grey.default,
+            fontSize: "0.875rem"
+          }}
+        >
+          {hasAnyMissionThisWeek
+            ? "Tous les seuils réglementaires sont respectés."
+            : "Calcul des infractions en attente de l'enregistrement d'une mission."}
         </Typography>
       )}
       <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
-        <Box
-          component="a"
+        <a
+          className={fr.cx(
+            "fr-link",
+            "fr-icon-arrow-right-line",
+            "fr-link--icon-right"
+          )}
+          href="/admin/regulatory-respect"
           onClick={(e) => {
             e.preventDefault();
             history.push("/admin/regulatory-respect");
           }}
-          href="/admin/regulatory-respect"
-          sx={{
-            color: "#000091",
-            fontSize: "0.875rem",
-            textDecoration: "underline",
-            cursor: "pointer",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 0.5,
-            "&:hover": { textDecoration: "none" }
-          }}
         >
           Voir le respect des seuils
-          <Box
-            component="span"
-            className="fr-icon-arrow-right-line fr-icon--sm"
-            aria-hidden="true"
-          />
-        </Box>
+        </a>
       </Box>
     </Box>
   );
@@ -403,15 +428,24 @@ export default function Home({ setShouldRefreshData }) {
     : "";
 
   return (
-    <Box sx={{ px: 5, py: 3 }}>
-      <Typography
-        sx={{ fontSize: "1.5rem", fontWeight: 700, color: "#161616", mb: 3 }}
+    <Box>
+      <Box
+        sx={{
+          padding: "1.5rem 2.5rem",
+          backgroundColor: fr.colors.decisions.background.alt.grey.default
+        }}
       >
-        Bienvenue sur Mobilic !
-      </Typography>
+        <Typography
+          sx={{ fontSize: "1.5rem", fontWeight: 700, color: "#161616" }}
+        >
+          Bienvenue sur Mobilic !
+        </Typography>
+      </Box>
 
       <Box
         sx={{
+          px: 5,
+          py: 3,
           opacity: refreshing ? 0.5 : 1,
           transition: "opacity 0.2s ease",
           pointerEvents: refreshing ? "none" : "auto"
@@ -429,8 +463,8 @@ export default function Home({ setShouldRefreshData }) {
             {summary.pendingInvitationsCount > 0 && (
               <>
                 <Typography component="span" sx={{ color: "#3A3A3A" }}>
-                  {summary.pendingInvitationsCount} invitation(s) de salariés
-                  sont toujours en attente.
+                  {summary.pendingInvitationsCount} invitation(s) de
+                  salarié(s) en attente.
                 </Typography>
                 <Button
                   priority="secondary"
@@ -465,33 +499,36 @@ export default function Home({ setShouldRefreshData }) {
                 Aujourd'hui
               </Typography>
               {lastUpdate && (
-                <Typography sx={{ color: "#666666", fontSize: "0.875rem" }}>
-                  Dernière mise à jour {formattedUpdate}
-                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                  <Typography sx={{ color: "#666666", fontSize: "0.875rem" }}>
+                    Dernière mise à jour {formattedUpdate}
+                  </Typography>
+                  <Box
+                    component="span"
+                    sx={{
+                      display: "inline-flex",
+                      verticalAlign: "baseline",
+                      "& > button": { padding: 0, minHeight: 0 },
+                      animation: refreshing
+                        ? "spin 1s linear infinite"
+                        : "none",
+                      "@keyframes spin": {
+                        "0%": { transform: "rotate(0deg)" },
+                        "100%": { transform: "rotate(360deg)" }
+                      }
+                    }}
+                  >
+                    <Button
+                      iconId="fr-icon-refresh-line"
+                      title="Rafraîchir"
+                      priority="tertiary no outline"
+                      size="small"
+                      onClick={refreshDashboard}
+                      disabled={refreshing}
+                    />
+                  </Box>
+                </Box>
               )}
-              <Box
-                component="span"
-                sx={{
-                  display: "inline-flex",
-                  verticalAlign: "baseline",
-                  animation: refreshing
-                    ? "spin 1s linear infinite"
-                    : "none",
-                  "@keyframes spin": {
-                    "0%": { transform: "rotate(0deg)" },
-                    "100%": { transform: "rotate(360deg)" }
-                  }
-                }}
-              >
-                <Button
-                  iconId="fr-icon-refresh-line"
-                  title="Rafraîchir"
-                  priority="tertiary no outline"
-                  size="small"
-                  onClick={refreshDashboard}
-                  disabled={refreshing}
-                />
-              </Box>
             </Box>
 
             <Stack direction={{ xs: "column", sm: "row" }} spacing={3} sx={{ mb: 3 }}>
@@ -512,7 +549,7 @@ export default function Home({ setShouldRefreshData }) {
             <Stack spacing={2}>
               <ClickableLine
                 count={summary.inactiveEmployeesCount}
-                label="salariés n'ont pas lancé Mobilic"
+                label="salarié(s) n'ont pas lancé Mobilic"
                 onClick={() =>
                   history.push({
                     pathname: "/admin/activities",
@@ -522,7 +559,7 @@ export default function Home({ setShouldRefreshData }) {
               />
               <ClickableLine
                 count={summary.autoValidatedMissionsCount}
-                label="missions validées automatiquement"
+                label="mission(s) validée(s) automatiquement"
                 onClick={() =>
                   history.push({
                     pathname: "/admin/validations",
@@ -535,7 +572,11 @@ export default function Home({ setShouldRefreshData }) {
 
           {/* Row 2, Col 2: alerts */}
           <Box sx={{ alignSelf: "start" }}>
-            <InfractionsSection alertsData={alertsData} onClickDay={handleClickDay} />
+            <InfractionsSection
+              alertsData={alertsData}
+              hasAnyMissionThisWeek={summary.hasAnyMissionThisWeek}
+              onClickDay={handleClickDay}
+            />
           </Box>
         </Box>
       </Box>
