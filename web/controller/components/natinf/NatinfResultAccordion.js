@@ -5,6 +5,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
+import { alertNumberBase } from "../../../common/styles/alertNumber";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Calendar } from "react-multi-date-picker";
 import { addDaysToDate, textualPrettyFormatDay, unixToJSTimestamp } from "common/utils/time";
@@ -29,17 +30,7 @@ const useStyles = makeStyles(theme => ({
     display: "block"
   },
   alertNumber: {
-    display: "inline-flex",
-    whiteSpace: "pre",
-    color: "var(--text-inverted-warning)",
-    paddingLeft: "8px",
-    paddingRight: "8px",
-    height: "24px",
-    minWidth: "24px",
-    alignItems: "center",
-    justifyContent: "center",
-    fontWeight: "bold",
-    fontSize: "0.75rem",
+    ...alertNumberBase(theme),
     backgroundColor: fr.colors.decisions.background.flat.error.default
   }
 }));
@@ -57,7 +48,9 @@ export function NatinfResultAccordion({
   const classes = useStyles();
   const calendarClasses = useCalendarStyles();
 
-  const maxDate = new Date(unixToJSTimestamp(controlTime));
+  const effectiveControlTime = controlTime || Math.trunc(Date.now() / 1000);
+
+  const maxDate = new Date(unixToJSTimestamp(effectiveControlTime));
   const minDate = addDaysToDate(new Date(maxDate), -controlHistoryDepth);
 
   const handleDateChange = values => {
@@ -85,6 +78,7 @@ export function NatinfResultAccordion({
       onChange={onChange}
       variant="outlined"
       className={classes.container}
+      TransitionProps={{ unmountOnExit: true }}
     >
       <AccordionSummary>
         <Grid container spacing={1} alignItems="center" justifyContent="space-between" wrap="nowrap">
@@ -119,6 +113,7 @@ export function NatinfResultAccordion({
             sort
             minDate={minDate}
             maxDate={maxDate}
+            currentDate={maxDate}
             highlightToday={false}
             weekStartDayIndex={1}
             headerOrder={["MONTH_YEAR", "LEFT_BUTTON", "RIGHT_BUTTON"]}

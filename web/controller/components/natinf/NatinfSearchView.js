@@ -41,9 +41,9 @@ const useStyles = makeStyles(theme => ({
     fontSize: "0.875rem", // fr-text--sm
     color: "var(--text-mention-grey)",
   },
-  recentSearchesList: {
+  infringementList: {
     maxHeight: "calc(100vh - 440px)",
-    overflow: "scroll",
+    overflow: "auto",
   },
   resultsContainer: {
     marginTop: theme.spacing(2)
@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   resultsTitle: {
     fontSize: "0.875rem", // fr-text--sm
     marginBottom: theme.spacing(2),
-    color: "var(--text-mention-grey)", //theme.palette.text.primary
+    color: "var(--text-mention-grey)",
     fontWeight: 500,
   },
   footerActions: {
@@ -233,7 +233,7 @@ export function NatinfSearchView({
 
   }
 
-  const handleRemoveCustomInfraction = async (sanction) => {
+  const handleRemoveCustomInfraction = (sanction) => {
     return new Promise(resolve => {
       modals.open("confirmationRemoveInfringementModal", {
         handleCancel: () => resolve(false),
@@ -299,7 +299,7 @@ export function NatinfSearchView({
               <Typography className={classes.recentSearchTitle}>
                 Recherches récentes
               </Typography>
-              <div className={classes.recentSearchesList} >
+              <div className={classes.infringementList} >
                 {recentSearches.map(natinf => (
                   <NatinfResultAccordion
                     key={natinf.code}
@@ -327,7 +327,7 @@ export function NatinfSearchView({
               <Typography className={classes.resultsTitle}>
                 Résultats ({searchResults.length})
               </Typography>
-              <div className={classes.recentSearchesList} >
+              <div className={classes.infringementList} >
                 {searchResults.map(natinf => (
                   <NatinfResultAccordion
                     key={natinf.code}

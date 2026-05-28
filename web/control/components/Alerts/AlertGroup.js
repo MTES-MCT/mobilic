@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { formatAlertText, RegulatoryAlert } from "../RegulatoryAlert";
 import { makeStyles } from "@mui/styles";
+import { alertNumberBase } from "../../../common/styles/alertNumber";
 import Grid from "@mui/material/Grid";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -35,19 +35,7 @@ const useStyles = makeStyles(theme => {
       margin: 0,
       marginRight: theme.spacing(1)
     },
-    alertNumber: {
-      display: "inline-flex",
-      whiteSpace: "pre",
-      color: "var(--text-inverted-warning)",
-      paddingLeft: theme.spacing(1),
-      paddingRight: theme.spacing(1),
-      height: theme.spacing(3),
-      minWidth: theme.spacing(3),
-      alignItems: "center",
-      justifyContent: "center",
-      fontWeight: "bold",
-      fontSize: "0.75rem"
-    },
+    alertNumber: alertNumberBase(theme),
     reportedAlert: {
       borderColor: theme.palette.primary.main,
       borderWidth: "1px"
@@ -272,7 +260,7 @@ export function AlertCard({ alert }) {
       variant="outlined"
       className={classes.container}
     >
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <AccordionSummary expandIcon={<span className="fr-icon-arrow-down-s-line" aria-hidden="true" />}>
         <Grid
           container
           spacing={2}

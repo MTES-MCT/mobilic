@@ -23,13 +23,13 @@ export const useReportInfractions = (controlData) => {
     setReportedCustomInfractionsLastUpdateTime
   ] = React.useState(controlData.reportedCustomInfractionsLastUpdateTime);
 
-  const [mostRecentInfractionsUpdateTime, setMostRecentInfractionsUpdateTime] =
-    React.useState(
-      Math.max(
-        controlData.reportedInfractionsLastUpdateTime,
-        controlData.reportedCustomInfractionsLastUpdateTime
-      )
-    );
+  const mostRecentInfractionsUpdateTime = React.useMemo(
+    () => Math.max(
+      reportedInfractionsLastUpdateTime ?? 0,
+      reportedCustomInfractionsLastUpdateTime ?? 0
+    ),
+    [reportedInfractionsLastUpdateTime, reportedCustomInfractionsLastUpdateTime]
+  );
 
   const [observedInfractions, setObservedInfractions] = React.useState([]);
 
@@ -51,17 +51,7 @@ export const useReportInfractions = (controlData) => {
     );
   }, [controlData.reportedCustomInfractionsLastUpdateTime]);
 
-  React.useEffect(() => {
-    setMostRecentInfractionsUpdateTime(
-      Math.max(
-        controlData.reportedInfractionsLastUpdateTime,
-        controlData.reportedCustomInfractionsLastUpdateTime
-      )
-    );
-  }, [
-    controlData.reportedInfractionsLastUpdateTime,
-    controlData.reportedCustomInfractionsLastUpdateTime
-  ]);
+
 
   React.useEffect(() => {
     setObservedInfractions(controlData.observedInfractions);
@@ -114,9 +104,7 @@ export const useReportInfractions = (controlData) => {
         setReportedCustomInfractionsLastUpdateTime(
           newReportedCustomInfractionsLastUpdateTime
         );
-        setMostRecentInfractionsUpdateTime(
-          Math.max(newReportedInfractionsLastUpdateTime, newReportedCustomInfractionsLastUpdateTime)
-        );
+
         
         const newObservedInfractionsWithDates = newObservedInfractions.map(
           (o) => ({
