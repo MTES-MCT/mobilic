@@ -14,6 +14,7 @@ import {
 import { SEND_INVITATIONS_REMINDERS } from "common/utils/apiQueries/employments";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatCompleteDateFromString } from "common/utils/time";
+import { formatPersonName } from "common/utils/coworkers";
 import { MOBILIC_BLUE } from "common/utils/theme";
 import { PRETTY_LABELS } from "./RegulatoryRespect/RegulatoryRespectAlertsRecap";
 import { useDayDrawer } from "../drawers/DayDrawer";
@@ -116,7 +117,10 @@ function ClickableLine({ count, label, onClick }) {
       <Box
         component="span"
         className="fr-icon-arrow-right-line"
-        sx={{ color: "#000091", fontSize: "1.25rem" }}
+        sx={{
+          color: "#000091",
+          "&::before": { width: "1.25rem", height: "1.25rem" }
+        }}
       />
     </Box>
   );
@@ -136,7 +140,8 @@ function AlertRow({ label, count, dayDetails, onClickDay, isLast, defaultExpande
           padding: "12px 16px",
           cursor: "pointer",
           borderTop: "1px solid #DDDDDD",
-          borderBottom: expanded ? "none" : "1px solid #DDDDDD",
+          borderBottom:
+            isLast && !expanded ? "1px solid #DDDDDD" : "none",
           backgroundColor: expanded ? "#f4f8ff" : "#FFFFFF",
           "&:hover": { backgroundColor: expanded ? "#f4f8ff" : "#F6F6F6" }
         }}
@@ -398,7 +403,11 @@ export default function Home({ setShouldRefreshData }) {
         "day"
       );
       if (aggregates.length > 0) {
-        openWorkday(aggregates[0]);
+        const aggregate = {
+          ...aggregates[0],
+          workerName: formatPersonName(aggregates[0].user)
+        };
+        openWorkday(aggregate);
       }
     } catch (err) {
       console.error("Day detail load failed:", err);
@@ -431,7 +440,7 @@ export default function Home({ setShouldRefreshData }) {
     <Box>
       <Box
         sx={{
-          padding: "1.5rem 2.5rem",
+          padding: "2rem 2.5rem",
           backgroundColor: fr.colors.decisions.background.alt.grey.default
         }}
       >
@@ -549,7 +558,11 @@ export default function Home({ setShouldRefreshData }) {
             <Stack spacing={2}>
               <ClickableLine
                 count={summary.inactiveEmployeesCount}
-                label="salarié(s) n'ont pas lancé Mobilic"
+                label={
+                  summary.inactiveEmployeesCount === 1
+                    ? "salarié n'a pas lancé Mobilic"
+                    : "salariés n'ont pas lancé Mobilic"
+                }
                 onClick={() =>
                   history.push({
                     pathname: "/admin/activities",
