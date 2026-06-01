@@ -1,5 +1,4 @@
 import React from "react";
-import classNames from "classnames";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
@@ -10,6 +9,7 @@ import Stack from "@mui/material/Stack";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import Notice from "../../common/Notice";
 import { AlertGroup } from "./Alerts/AlertGroup";
+import { ButtonsGroup } from "@codegouvfr/react-dsfr/ButtonsGroup";
 
 import { FieldTitle } from "../../common/typography/FieldTitle";
 import { DisplayBusinessTypes } from "./Alerts/BusinessTypesFromGroupedAlerts";
@@ -27,6 +27,7 @@ import { UserReadAlertsPictures } from "./UserReadAlertsPictures";
 import { useCustomInfractions } from "../../controller/hooks/useCustomInfractions";
 import { NatinfSearchView } from "../../controller/components/natinf/NatinfSearchView";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -51,61 +52,41 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(4)
   },
   bottomButtons: {
+    position: "sticky",
+    bottom: 0,
+    background: "white",
+    padding: theme.spacing(2),
     zIndex: 300,
     width: "100%"
   },
-  bottomButtonsRow: {
+  infringementLabel: {
+    color: "var(--text-title-grey)",
+    fontSize: "1.125rem", // fr-text--lg
+    fontWeight: 600,
+  },
+  smallInfringementLabel: {
+    fontSize: "0.875rem !important",
+    color: "var(--text-mention-grey)",
+    fontWeight: 500,
+  },
+  customInfractionsSection: {
     display: "flex",
     flexDirection: "column",
-    gap: theme.spacing(1),
-    [theme.breakpoints.up("sm")]: {
-      flexDirection: "row"
-    }
   },
-  bottomButton: {
-    width: "100%",
-    justifyContent: "center"
-  },
-  addInfractionBar: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-    paddingBottom: theme.spacing(1),
-    background: "white"
-  },
-  listScroll: {
-    overflow: "auto"
-  },
-  listScrollComputed: {
-    overflow: "scroll",
-    maxHeight: "40vh"
-  },
-  innerContainer: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column"
-  },
-  gridItemFlex: {
-    display: "flex",
-    flexDirection: "column"
-  },
-  stackFlex: {
-    flex: 1
+  infoText: {
+    marginBottom: theme.spacing(1),
   }
 }));
 
 const HELPER_TEXT_SEVERAL_INFRACTIONS = (
-  <>Sélectionnez la ou les infractions que vous souhaitez verbaliser&nbsp;:</>
-);
-const HELPER_TEXT_SINGLE_INFRACTION = (
-  <>Sélectionnez l’infraction si vous souhaitez la verbaliser&nbsp;:</>
+  <>Sélectionnez des infractions que vous souhaitez verbaliser&nbsp;:</>
 );
 const HELPER_TEXT_LIC_PAPIER = (
   <>
-    Sélectionnez les infractions que vous souhaitez verbaliser à partir du
+    Sélectionnez des infractions que vous souhaitez verbaliser à partir du
     livret individuel de contrôle présenté&nbsp;:
   </>
 );
-
 export const WarningComputedAlerts = () => (
   <Notice
     description="Les infractions calculées par Mobilic se basent sur la version
@@ -128,8 +109,7 @@ export function UserReadAlerts({
     groupedAlerts: infractionsGroupedAlerts,
     isReportingInfractions,
     totalAlertsNumber,
-    reportedInfractionsLastUpdateTime,
-    reportedCustomInfractionsLastUpdateTime,
+    mostRecentInfractionsUpdateTime,
     saveInfractions,
     cancelInfractions,
     setIsReportingInfractions,
@@ -140,7 +120,6 @@ export function UserReadAlerts({
     observedInfractions
   } = useInfractions();
   const { controlType, controlData } = useControl();
-  
   const {
     customInfractions,
     addDayToCustomInfraction,
@@ -149,6 +128,8 @@ export function UserReadAlerts({
     clearCustomInfractions,
     getCustomInfractionsForAPI
   } = useCustomInfractions();
+
+  const modals = useModals();
 
   const [editSection, setEditSection] = React.useState(null);
 
@@ -189,7 +170,7 @@ export function UserReadAlerts({
     saveInfractions({ infractionsOverride: mergedInfractions });
   };
 
-  const isCtt = controllerUserInfo?.isCtt || false;
+  const isCtt = controllerUserInfo?.isCtt || false
 
   const _groupedAlerts = groupedAlerts ?? infractionsGroupedAlerts;
   
@@ -217,12 +198,10 @@ export function UserReadAlerts({
 
   const updateInfractionsTitle = React.useMemo(
     () =>
-      controlType === CONTROL_TYPES.LIC_PAPIER.label
+      controlType === CONTROL_TYPES.LIC_PAPIER.label && editSection !== 'custom'
         ? HELPER_TEXT_LIC_PAPIER
-        : totalAlertsNumber === 1
-        ? HELPER_TEXT_SINGLE_INFRACTION
         : HELPER_TEXT_SEVERAL_INFRACTIONS,
-    [totalAlertsNumber, controlType]
+    [totalAlertsNumber, controlType, editSection]
   );
 
   const displayPictures = React.useMemo(
@@ -234,6 +213,29 @@ export function UserReadAlerts({
     [controlType, isReportingInfractions, controlData.pictures, isDesktop]
   );
 
+  const handleRemoveCustomInfractionsBySanction = async (sanction) => {
+    return new Promise(resolve => {
+      modals.open("confirmationRemoveInfringementModal", {
+        handleCancel: () => resolve(false),
+        handleConfirm: () => {
+          removeCustomInfractionsBySanction(sanction);
+          resolve(true);
+        }
+      });
+    });
+  }
+
+  const handleCancelInfractions = () => {
+    setEditSection(null);
+    clearCustomInfractions();
+    cancelInfractions();
+  }
+
+  const handleSaveInfractions = () => {
+    setEditSection(null);
+    saveInfractions();
+  }
+
   if (natinfViewMode === 'search') {
     return (
       <NatinfSearchView
@@ -244,34 +246,34 @@ export function UserReadAlerts({
         removeDayFromCustomInfraction={removeDayFromCustomInfraction}
         removeCustomInfraction={removeCustomInfraction}
         controlTime={controlData.qrCodeGenerationTime || controlData.controlTime}
+        clearCustomInfractions={clearCustomInfractions}
       />
     );
   }
 
   return (
-    <Container maxWidth={displayPictures ? "lg" : "md"} sx={{ padding: 0, minHeight: "calc(100vh - 200px)", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+    <Container maxWidth={displayPictures ? "lg" : "md"} sx={{ padding: 0, ...(isReportingInfractions ? { height: "calc(100vh - 64px)", overflow: "auto" } : { minHeight: "calc(100vh - 200px)" }) }}>
       {controlType === CONTROL_TYPES.MOBILIC.label && (
         <DisplayBusinessTypes businessTypes={businessTypes} />
       )}
-      <Container className={classNames(classes.container, classes.innerContainer)}>
+      <Container className={classes.container}>
         <Grid container spacing={2}>
           {displayPictures && (
             <Grid item xs={5}>
               <UserReadAlertsPictures />
             </Grid>
           )}
-          <Grid item xs={displayPictures ? 7 : 12} className={classes.gridItemFlex}>
-            <Stack direction="column" rowGap={1} className={classes.stackFlex}>
+          <Grid item xs={displayPictures ? 7 : 12}>
+            <Stack direction="column" rowGap={2}>
 
-              {/* Computed infractions section */}
-              {showComputedSection && (
-                <>
-                  {!isReportingInfractions ? (
-                    <>
+                {/* Computed infractions section */}
+                {showComputedSection && (
+                  <div className={classes.customInfractionsSection}>
+                    {!isReportingInfractions ? (
                       <TitleContainer>
-                        <Typography variant="h6" component="h2">
+                        <FieldTitle component="h2" className={classes.infringementLabel}>
                           Infractions calculées par Mobilic
-                        </Typography>
+                        </FieldTitle>
                         <Button
                           priority="primary"
                           onClick={() => reportInfraction('computed')}
@@ -280,84 +282,30 @@ export function UserReadAlerts({
                           Modifier
                         </Button>
                       </TitleContainer>
-                      {reportedInfractionsLastUpdateTime && (
-                        <Description noMargin>
-                          {`Dernière modification le ${prettyFormatDayHour(
-                            reportedInfractionsLastUpdateTime
-                          )}`}
-                        </Description>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <FieldTitle uppercaseTitle component="h2" sx={{ marginTop: 0 }}>
-                        Infractions calculées par Mobilic
-                      </FieldTitle>
-                      <Typography>{updateInfractionsTitle}</Typography>
-                    </>
-                  )}
-                  {controlType === CONTROL_TYPES.MOBILIC.label && isReportingInfractions && (
-                    <WarningComputedAlerts />
-                  )}
-                </>
-              )}
-              {showComputedSection && (
-                <List className={isReportingInfractions ? classes.listScrollComputed : undefined}>
-                  {computedInfractions.sort(sanctionComparator).map(group => (
-                    <ListItem
-                      key={`${group.type}_${group.sanction}`}
-                      disableGutters
-                      disablePadding
-                      sx={{ marginBottom: "8px" }}
-                    >
-                      <AlertGroup
-                        {...group}
-                        setPeriodOnFocus={setPeriodOnFocus}
-                        onChangeTab={onChangeTab}
-                        readOnlyAlerts={readOnlyAlerts}
-                        titleProps={{ component: "h3" }}
-                        displayBusinessType={
-                          businessTypes && businessTypes.length > 1
+                    ) : (
+                      <>
+                        <Typography className={classes.infoText}>{updateInfractionsTitle}</Typography>
+                        {
+                          controlType !== CONTROL_TYPES.LIC_PAPIER.label &&
+                          <FieldTitle component="h2" className={classes.smallInfringementLabel} sx={{ marginTop: 0 }}>
+                            Infractions calculées par Mobilic
+                          </FieldTitle>
                         }
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              )}
-              
-              {/* Custom infractions section */}
-              {showCustomSection && (
-                <>
-                  {!isReportingInfractions ? (
-                    <>
-                      <TitleContainer sx={{ marginTop: reportedCustomInfractions.length > 0 ? 3 : 0 }}>
-                        <Typography variant="h6" component="h2">
-                          Autre(s) infraction(s) constatée(s)
-                        </Typography>
-                        <Button
-                          priority="primary"
-                          onClick={() => reportInfraction('custom')}
-                          size="small"
-                        >
-                          Modifier
-                        </Button>
-                      </TitleContainer>
-                      {reportedCustomInfractionsLastUpdateTime && (
-                        <Description noMargin>
-                          {`Dernière modification le ${prettyFormatDayHour(
-                            reportedCustomInfractionsLastUpdateTime
-                          )}`}
-                        </Description>
-                      )}
-                    </>
-                  ) : (
-                    <FieldTitle uppercaseTitle component="h2" sx={{ marginTop: 0 }}>
-                      Autre(s) infraction(s) constatée(s)
-                    </FieldTitle>
-                  )}
-                  {reportedCustomInfractions.length > 0 ? (
-                    <List className={classes.listScroll}>
-                      {reportedCustomInfractions.sort(sanctionComparator).map(group => (
+                      </>
+                    )}
+                    {controlType === CONTROL_TYPES.MOBILIC.label && isReportingInfractions && (
+                      <WarningComputedAlerts />
+                    )}
+                    <List
+                      sx={{
+                        paddingBottom: 0,
+                        ...(isReportingInfractions && {
+                          overflow: "auto",
+                          maxHeight: "calc(100vh - 440px)"
+                        })
+                      }}
+                    >
+                      {computedInfractions.sort(sanctionComparator).map(group => (
                         <ListItem
                           key={`${group.type}_${group.sanction}`}
                           disableGutters
@@ -370,17 +318,97 @@ export function UserReadAlerts({
                             onChangeTab={onChangeTab}
                             readOnlyAlerts={readOnlyAlerts}
                             titleProps={{ component: "h3" }}
-                            displayBusinessType={false}
-                            onDelete={isReportingInfractions && editSection === 'custom' ? () => removeCustomInfractionsBySanction(group.sanction) : undefined}
+                            displayBusinessType={
+                              businessTypes && businessTypes.length > 1
+                            }
                           />
                         </ListItem>
                       ))}
                     </List>
-                  ) : null}
-                </>
-              )}
+                  </div>
+                )}
+                
+                {/* Custom infractions section */}
+                {showCustomSection && (
+                  <div className={classes.customInfractionsSection} style={{ gap: isReportingInfractions ? 0 : "1rem" }}>
+                    {!isReportingInfractions ? (
+                      <TitleContainer>
+                        <FieldTitle component="h2" className={classes.infringementLabel}>
+                          Autre(s) infraction(s) constatée(s)
+                        </FieldTitle>
+                        <Button
+                          priority="primary"
+                          onClick={() => reportInfraction('custom')}
+                          size="small"
+                        >
+                          Modifier
+                        </Button>
+                      </TitleContainer>
+                    ) : (
+                      <>
+                        <Typography className={classes.infoText}>{updateInfractionsTitle}</Typography>
+                        <FieldTitle component="h2" className={classes.smallInfringementLabel} sx={{ marginTop: 0 }}>
+                          Autre(s) infraction(s) constatée(s)
+                        </FieldTitle>
+                      </>
+                    )}
+                    {reportedCustomInfractions.length > 0 ? (
+                      <List
+                        sx={{
+                          paddingBottom: 0,
+                          ...(isReportingInfractions && {
+                            overflow: "auto",
+                            maxHeight: "calc(100vh - 440px)"
+                          })
+                        }}
+                      >
+                        {reportedCustomInfractions.sort(sanctionComparator).map(group => (
+                          <ListItem
+                            key={`${group.type}_${group.sanction}`}
+                            disableGutters
+                            disablePadding
+                            sx={{ marginBottom: "8px" }}
+                          >
+                            <AlertGroup
+                              {...group}
+                              setPeriodOnFocus={setPeriodOnFocus}
+                              onChangeTab={onChangeTab}
+                              readOnlyAlerts={readOnlyAlerts}
+                              titleProps={{ component: "h3" }}
+                              displayBusinessType={false}
+                              onDelete={isReportingInfractions && editSection === 'custom' ? () => handleRemoveCustomInfractionsBySanction(group.sanction) : undefined}
+                              textSize="1rem" // fr-text (16px)
+                            />
+                          </ListItem>
+                        ))}
+                      </List>
+                    ) : null}
+                  </div>
+                )}
+                {!!mostRecentInfractionsUpdateTime && (
+                  <Description noMargin>
+                    {`Dernière modification le ${prettyFormatDayHour(
+                      mostRecentInfractionsUpdateTime
+                    )}`}
+                  </Description>
+                )}
               
-
+              {/* "Ajouter des infractions" visible in both edit sections */}
+              {isReportingInfractions && !isCtt && (
+                <Button
+                  priority="secondary"
+                  iconId="fr-icon-add-line"
+                  iconPosition="right"
+                  onClick={handleAddCustomInfractions}
+                  size="small"
+                  style={{
+                    marginTop: 15,
+                    padding: "8px 16px",
+                  }}
+                >
+                  Ajouter des infractions
+                </Button>
+              )}
               
               {/* Show message if no infractions at all */}
               {computedInfractions.length === 0 && reportedCustomInfractions.length === 0 && !isReportingInfractions && (
@@ -412,36 +440,23 @@ export function UserReadAlerts({
           </Grid>
         </Grid>
       </Container>
-      {isReportingInfractions && !isCtt && (
-        <div className={classes.addInfractionBar}>
-          <Button
-            priority="secondary"
-            iconId="fr-icon-add-line"
-            iconPosition="right"
-            onClick={handleAddCustomInfractions}
-          >
-            Ajouter des infractions
-          </Button>
-        </div>
-      )}
       {isReportingInfractions && (
-        <div className={classes.bottomButtons}>
-          <div className={classes.bottomButtonsRow}>
-            <Button
-              className={classes.bottomButton}
-              onClick={() => { setEditSection(null); saveInfractions(); }}
-            >
-              Enregistrer
-            </Button>
-            <Button
-              className={classes.bottomButton}
-              priority="secondary"
-              onClick={() => { setEditSection(null); cancelInfractions(); }}
-            >
-              Annuler
-            </Button>
-          </div>
-        </div>
+        <ButtonsGroup
+          className={classes.bottomButtons}
+          buttons={[
+            {
+              children: "Annuler",
+              onClick: handleCancelInfractions,
+              priority: "secondary"
+            },
+            {
+              onClick: handleSaveInfractions,
+              children: "Enregistrer"
+            },
+          ]}
+          inlineLayoutWhen="always"
+          alignment="right"
+        />
       )}
     </Container>
   );

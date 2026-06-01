@@ -14,6 +14,7 @@ import { NatinfResultAccordion } from "./NatinfResultAccordion";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
+import { useModals } from "common/utils/modals";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -31,22 +32,27 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(3)
   },
   recentSearches: {
-    marginBottom: theme.spacing(3)
+    marginBottom: theme.spacing(3),
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing(2)
   },
   recentSearchTitle: {
-    fontSize: "0.875rem",
-    fontWeight: 600,
-    marginBottom: theme.spacing(1.5),
-    color: theme.palette.text.primary
+    fontSize: "0.875rem", // fr-text--sm
+    color: "var(--text-mention-grey)",
+  },
+  infringementList: {
+    maxHeight: "calc(100vh - 440px)",
+    overflow: "auto",
   },
   resultsContainer: {
     marginTop: theme.spacing(2)
   },
   resultsTitle: {
-    fontSize: "0.875rem",
-    fontWeight: 600,
+    fontSize: "0.875rem", // fr-text--sm
     marginBottom: theme.spacing(2),
-    color: theme.palette.text.primary
+    color: "var(--text-mention-grey)",
+    fontWeight: 500,
   },
   footerActions: {
     position: "fixed",
@@ -70,30 +76,15 @@ const useStyles = makeStyles(theme => ({
     gap: theme.spacing(2)
   },
   footerInfo: {
-    color: theme.palette.text.secondary,
+    color: "var(--text-title-blue-france)",
     fontWeight: 500,
     fontSize: "0.875rem"
   },
   confirmationDescription: {
+    fontSize: "1rem",
     marginBottom: theme.spacing(3),
     color: theme.palette.text.secondary
-  },
-  bottomButtons: {
-    zIndex: 300,
-    width: "100%"
-  },
-  bottomButtonsRow: {
-    display: "flex",
-    flexDirection: "column",
-    gap: theme.spacing(1),
-    [theme.breakpoints.up("sm")]: {
-      flexDirection: "row"
-    }
-  },
-  bottomButton: {
-    width: "100%",
-    justifyContent: "center"
-  },
+  }
 }));
 
 export function NatinfSearchView({
@@ -103,11 +94,13 @@ export function NatinfSearchView({
   addDayToCustomInfraction,
   removeDayFromCustomInfraction,
   removeCustomInfraction,
-  controlTime
+  controlTime,
+  clearCustomInfractions
 }) {
   const classes = useStyles();
   const api = useApi();
   const alerts = useSnackbarAlerts();
+  const modals = useModals();
 
   const [searchQuery, setSearchQuery] = React.useState("");
   const [searchResults, setSearchResults] = React.useState([]);
@@ -153,6 +146,7 @@ export function NatinfSearchView({
     if (searchQuery.length < 2) {
       return;
     }
+    const searchByCode = searchQuery.match(/^\d+$/);
 
     setIsSearching(true);
     try {
@@ -161,7 +155,12 @@ export function NatinfSearchView({
         { query: searchQuery },
         { context: { nonPublicApi: true } }
       );
-      setSearchResults(response.data.searchNatinf || []);
+
+      const results = (response.data.searchNatinf || [])
+        .filter(natinf => !searchByCode || natinf.code.includes(searchQuery))
+        .sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code));
+      
+      setSearchResults(results);
     } catch (err) {
       alerts.error(formatApiError(err), "", 6000);
       setSearchResults([]);
@@ -173,18 +172,25 @@ export function NatinfSearchView({
   const handleAccordionChange = (natinf) => (event, isExpanded) => {
     setExpandedAccordion(isExpanded ? natinf.code : null);
     if (isExpanded) {
-      const updated = [natinf, ...recentSearches.filter(r => r.code !== natinf.code)].slice(0, 5);
+      const updated = [natinf, ...recentSearches.filter(r => r.code !== natinf.code)]
+        .slice(0, 5)
+        .sort((a, b) => Number.parseInt(a.code) - Number.parseInt(b.code));
       setRecentSearches(updated);
       localStorage.setItem('natinf_recent_searches', JSON.stringify(updated));
     }
   };
 
+  const resetExpandedAccordion = () => {
+    setExpandedAccordion(null);
+  }
+  
   const handleShowConfirmation = () => {
     if (selectedInfractionsCount === 0) {
       alerts.warning("Veuillez sélectionner au moins une infraction", "", 3000);
       return;
     }
     setShowConfirmation(true);
+    resetExpandedAccordion();
   };
 
   const handleConfirm = () => {
@@ -204,14 +210,47 @@ export function NatinfSearchView({
     return infraction ? infraction.days : [];
   };
 
+  const handleClose = async () => {
+    if (selectedInfractionsCount === 0) {
+      setShowConfirmation(false);
+      clearCustomInfractions();
+      onClose();
+      return;
+    }
+    return new Promise(resolve => {
+      modals.open("confirmationCancelInfringementModal", {
+        handleCancel: () => {
+          setShowConfirmation(false);
+          clearCustomInfractions();
+          onClose();
+          resolve(true)
+        },
+        handleConfirm: () => {
+          resolve(false);
+        }
+      });
+    })
+
+  }
+
+  const handleRemoveCustomInfraction = (sanction) => {
+    return new Promise(resolve => {
+      modals.open("confirmationRemoveInfringementModal", {
+        handleCancel: () => resolve(false),
+        handleConfirm: () => {
+          removeCustomInfraction(sanction);
+          resolve(true);
+        }
+      });
+    });
+  }
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", width: "100%", height: "100vh" }}>
       <Box
         sx={{
           flexShrink: 0,
           backgroundColor: "white",
-          borderBottom: "1px solid",
-          borderColor: "divider",
           display: "flex",
           alignItems: "center",
           justifyContent: "flex-end",
@@ -224,13 +263,13 @@ export function NatinfSearchView({
           priority="tertiary no outline"
           iconId="ri-close-line"
           iconPosition="right"
-          onClick={() => { setShowConfirmation(false); onClose(); }}
+          onClick={() => handleClose()}
           size="small"
         >
           Fermer
         </Button>
       </Box>
-      <Box sx={{ overflowY: "auto", flexGrow: 1, paddingBottom: "200px" }}>
+      <Box sx={{  flexGrow: 1, paddingBottom: "120px" }}>
       <Container maxWidth="md" className={classes.container}>
       {!showConfirmation ? (
         <>
@@ -256,22 +295,24 @@ export function NatinfSearchView({
           />
 
           {!searchQuery && recentSearches.length > 0 && (
-            <Box className={classes.recentSearches}>
+            <Box className={classes.recentSearches} >
               <Typography className={classes.recentSearchTitle}>
                 Recherches récentes
               </Typography>
-              {recentSearches.map(natinf => (
-                <NatinfResultAccordion
-                  key={natinf.code}
-                  natinf={natinf}
-                  selectedDays={getInfractionDays(natinf.code)}
-                  onDaySelect={addDayToCustomInfraction}
-                  onDayRemove={removeDayFromCustomInfraction}
-                  controlTime={controlTime}
-                  expanded={expandedAccordion === natinf.code}
-                  onChange={handleAccordionChange(natinf)}
-                />
-              ))}
+              <div className={classes.infringementList} >
+                {recentSearches.map(natinf => (
+                  <NatinfResultAccordion
+                    key={natinf.code}
+                    natinf={natinf}
+                    selectedDays={getInfractionDays(natinf.code)}
+                    onDaySelect={addDayToCustomInfraction}
+                    onDayRemove={removeDayFromCustomInfraction}
+                    controlTime={controlTime}
+                    expanded={expandedAccordion === natinf.code}
+                    onChange={handleAccordionChange(natinf)}
+                  />
+                ))}
+              </div>
             </Box>
           )}
 
@@ -286,18 +327,20 @@ export function NatinfSearchView({
               <Typography className={classes.resultsTitle}>
                 Résultats ({searchResults.length})
               </Typography>
-              {searchResults.map(natinf => (
-                <NatinfResultAccordion
-                  key={natinf.code}
-                  natinf={natinf}
-                  selectedDays={getInfractionDays(natinf.code)}
-                  onDaySelect={addDayToCustomInfraction}
-                  onDayRemove={removeDayFromCustomInfraction}
-                  controlTime={controlTime}
-                  expanded={expandedAccordion === natinf.code}
-                  onChange={handleAccordionChange(natinf)}
-                />
-              ))}
+              <div className={classes.infringementList} >
+                {searchResults.map(natinf => (
+                  <NatinfResultAccordion
+                    key={natinf.code}
+                    natinf={natinf}
+                    selectedDays={getInfractionDays(natinf.code)}
+                    onDaySelect={addDayToCustomInfraction}
+                    onDayRemove={removeDayFromCustomInfraction}
+                    controlTime={controlTime}
+                    expanded={expandedAccordion === natinf.code}
+                    onChange={handleAccordionChange(natinf)}
+                  />
+                ))}
+              </div>
             </Box>
           )}
 
@@ -339,7 +382,7 @@ export function NatinfSearchView({
                     onChange={(event, isExpanded) =>
                       setExpandedAccordion(isExpanded ? infraction.code : null)
                     }
-                    onDelete={() => removeCustomInfraction(infraction.code)}
+                    onDelete={() => handleRemoveCustomInfraction(infraction.code)}
                   />
                 ))}
             </Stack>
@@ -358,28 +401,28 @@ export function NatinfSearchView({
             onClick={handleShowConfirmation}
             disabled={selectedInfractionsCount === 0}
           >
-            Confirmer ({selectedInfractionsCount})
+            Continuer
           </Button>
         </>
       ) : (
-        <div className={classes.bottomButtons}>
-          <div className={classes.bottomButtonsRow}>
+        <>
           <Button
             onClick={handleConfirm}
             disabled={selectedInfractionsCount === 0}
-            className={classes.bottomButton}
+            size="large"
+            style={{ width: "100%", justifyContent: "center" }}
           >
             Ajouter au contrôle
           </Button>
           <Button
             onClick={() => setShowConfirmation(false)}
             priority="secondary"
-            className={classes.bottomButton}
+            size="large"
+            style={{ width: "100%", justifyContent: "center" }}
           >
             Rechercher d'autres infractions
           </Button>
-          </div>
-        </div>
+        </>
       )}
     </Box>
     </Container>

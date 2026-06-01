@@ -3,7 +3,10 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
+import { alertNumberBase } from "../../../common/styles/alertNumber";
+import { fr } from "@codegouvfr/react-dsfr";
 import { Calendar } from "react-multi-date-picker";
 import { addDaysToDate, textualPrettyFormatDay, unixToJSTimestamp } from "common/utils/time";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
@@ -11,9 +14,9 @@ import Stack from "@mui/material/Stack";
 import { capitalizeFirstLetter } from "common/utils/string";
 import classNames from "classnames";
 import { gregorian_fr } from "common/utils/calendarLocale";
-import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { useCalendarStyles } from "../../../common/styles/calendarStyles";
-import { useAccordionSummaryStyles } from "../../../common/styles/accordionStyles";
+import { WarningBadge } from "../../../common/WarningBadge";
+import { AccordionActions } from "../../../common/AccordionActions";
 
 const controlHistoryDepth =
   Number.parseInt(process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH, 10) || 28;
@@ -25,6 +28,10 @@ const useStyles = makeStyles(theme => ({
   },
   details: {
     display: "block"
+  },
+  alertNumber: {
+    ...alertNumberBase(theme),
+    backgroundColor: fr.colors.decisions.background.flat.error.default
   }
 }));
 
@@ -39,7 +46,6 @@ export function NatinfResultAccordion({
   onDelete
 }) {
   const classes = useStyles();
-  const accordionClasses = useAccordionSummaryStyles();
   const calendarClasses = useCalendarStyles();
 
   const effectiveControlTime = controlTime || Math.trunc(Date.now() / 1000);
@@ -72,68 +78,49 @@ export function NatinfResultAccordion({
       onChange={onChange}
       variant="outlined"
       className={classes.container}
+      TransitionProps={{ unmountOnExit: true }}
     >
       <AccordionSummary>
-        <div className={accordionClasses.summary}>
-          <div className={accordionClasses.summaryRow}>
-            <div className={accordionClasses.summaryLeft}>
-              <Typography className="bold" color="primary" fontSize="0.875rem">
-                NATINF {natinf.code}
-              </Typography>
-              {selectedDays.length > 0 && (
-                <Badge small noIcon as="span" className={accordionClasses.errorAlertBadge}>
-                  {selectedDays.length}
-                </Badge>
-              )}
-            </div>
-            <div className={accordionClasses.summaryIcons}>
-              <span
-                className={classNames(
-                  "fr-icon-arrow-down-s-line",
-                  accordionClasses.arrowIcon,
-                  expanded && accordionClasses.arrowIconOpen
-                )}
-                aria-hidden="true"
-              />
-              {onDelete && (
-                <button
-                  className={accordionClasses.deleteButton}
-                  onClick={(e) => { e.stopPropagation(); onDelete(); }}
-                  title="Supprimer l'infraction"
-                  aria-label="Supprimer l'infraction"
-                >
-                  <span className="fr-icon-delete-line" aria-hidden="true" />
-                </button>
-              )}
-            </div>
-          </div>
-          <Typography fontWeight="500" fontSize="0.875rem" style={{ textTransform: "uppercase" }}>
-            {natinf.label}
-          </Typography>
-        </div>
+        <Grid container spacing={1} alignItems="center" justifyContent="space-between" wrap="nowrap">
+          <Grid item xs>
+            <Typography className="bold" color="primary" fontSize="0.875rem">
+              NATINF {natinf.code}
+            </Typography>
+            <Typography fontWeight="500" fontSize="0.875rem" style={{ textTransform: "uppercase" }}>
+              {natinf.label}
+            </Typography>
+          </Grid>
+          {selectedDays.length > 0 && (
+            <Grid item>
+              <WarningBadge className={classes.alertNumber}>
+                {selectedDays.length}
+              </WarningBadge>
+            </Grid>
+          )}
+          <AccordionActions open={expanded} onDelete={onDelete} />
+        </Grid>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
-        {expanded && (
-          <Stack direction="column" gap={2}>
-            <Typography component="div" style={{ marginBottom: 0 }}>
-              Sélectionnez la ou les journées concernées&nbsp;:
-            </Typography>
-            <Calendar
-              className={classNames(calendarClasses.calendar, "custom-calendar")}
-              value={selectedDates}
-              onChange={handleDateChange}
-              multiple
-              sort
-              minDate={minDate}
-              maxDate={maxDate}
-              currentDate={maxDate}
-              highlightToday={false}
-              weekStartDayIndex={1}
-              headerOrder={["LEFT_BUTTON", "MONTH_YEAR", "RIGHT_BUTTON"]}
-              monthYearSeparator=" "
-              locale={gregorian_fr}
-            />
-            {selectedDays.length > 0 && (
+        <Stack direction="column" gap={2}>
+          <Typography component="div" style={{ marginBottom: 0 }}>
+            Sélectionnez la ou les journées concernées&nbsp;:
+          </Typography>
+          <Calendar
+            className={classNames(calendarClasses.calendar, "custom-calendar")}
+            value={selectedDates}
+            onChange={handleDateChange}
+            multiple
+            sort
+            minDate={minDate}
+            maxDate={maxDate}
+            currentDate={maxDate}
+            highlightToday={false}
+            weekStartDayIndex={1}
+            headerOrder={["MONTH_YEAR", "LEFT_BUTTON", "RIGHT_BUTTON"]}
+            monthYearSeparator=" "
+            locale={gregorian_fr}
+          />
+          {selectedDays.length > 0 && (
             <ul
               className="fr-tag-group"
               style={{ listStyleType: "none", paddingInlineStart: "0" }}
@@ -155,9 +142,8 @@ export function NatinfResultAccordion({
                   </li>
                 ))}
             </ul>
-            )}
-          </Stack>
-        )}
+          )}
+        </Stack>
       </AccordionDetails>
     </Accordion>
   );
