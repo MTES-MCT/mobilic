@@ -202,8 +202,8 @@ function AlertRow({ label, count, dayDetails, onClickDay, isLast, defaultExpande
                 <Tooltip
                   title={
                     detail.otherCompanyRelation === "establishment"
-                      ? "Ce salarié a aussi travaillé pour un autre établissement de la même entreprise ce jour-là."
-                      : "Ce salarié a aussi travaillé pour une autre entreprise ce jour-là."
+                      ? "Infraction réalisée dans un autre établissement de l'entreprise."
+                      : "Infraction réalisée dans une autre entreprise."
                   }
                 >
                   <Box
@@ -211,8 +211,8 @@ function AlertRow({ label, count, dayDetails, onClickDay, isLast, defaultExpande
                     className="fr-icon-warning-fill fr-icon--sm"
                     aria-label={
                       detail.otherCompanyRelation === "establishment"
-                        ? "Travail dans un autre établissement de l'entreprise ce jour-là"
-                        : "Travail dans une autre entreprise ce jour-là"
+                        ? "Infraction réalisée dans un autre établissement"
+                        : "Infraction réalisée dans une autre entreprise"
                     }
                     sx={{ color: "#B34000" }}
                   />
@@ -556,20 +556,35 @@ export default function Home({ setShouldRefreshData }) {
             </Stack>
 
             <Stack spacing={2}>
-              <ClickableLine
-                count={summary.inactiveEmployeesCount}
-                label={
-                  summary.inactiveEmployeesCount === 1
-                    ? "salarié n'a pas lancé Mobilic"
-                    : "salariés n'ont pas lancé Mobilic"
-                }
-                onClick={() =>
-                  history.push({
-                    pathname: "/admin/activities",
-                    state: { openInactiveDropdown: true }
-                  })
-                }
-              />
+              {summary.inactiveEmployeesCount === 0 ? (
+                <Box
+                  sx={{
+                    border: "1px solid #DDDDDD",
+                    borderRadius: "4px",
+                    py: 2,
+                    px: 3
+                  }}
+                >
+                  <Typography>
+                    Tous les salariés ont lancé Mobilic aujourd'hui
+                  </Typography>
+                </Box>
+              ) : (
+                <ClickableLine
+                  count={summary.inactiveEmployeesCount}
+                  label={
+                    summary.inactiveEmployeesCount === 1
+                      ? "salarié n'a pas lancé Mobilic"
+                      : "salariés n'ont pas lancé Mobilic"
+                  }
+                  onClick={() =>
+                    history.push({
+                      pathname: "/admin/activities",
+                      state: { openInactiveDropdown: true }
+                    })
+                  }
+                />
+              )}
               <ClickableLine
                 count={summary.autoValidatedMissionsCount}
                 label="mission(s) validée(s) automatiquement"
