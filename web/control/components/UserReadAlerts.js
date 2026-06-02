@@ -269,6 +269,9 @@ export function UserReadAlerts({
                 {/* Computed infractions section */}
                 {showComputedSection && (
                   <div className={classes.customInfractionsSection}>
+                    {controlType === CONTROL_TYPES.MOBILIC.label && isReportingInfractions && (
+                      <WarningComputedAlerts />
+                    )}
                     {!isReportingInfractions ? (
                       <TitleContainer>
                         <FieldTitle component="h2" className={classes.infringementLabel}>
@@ -292,9 +295,6 @@ export function UserReadAlerts({
                           </FieldTitle>
                         }
                       </>
-                    )}
-                    {controlType === CONTROL_TYPES.MOBILIC.label && isReportingInfractions && (
-                      <WarningComputedAlerts />
                     )}
                     <List
                       sx={{

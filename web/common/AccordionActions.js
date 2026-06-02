@@ -1,12 +1,11 @@
 import React from "react";
-import Grid from "@mui/material/Grid";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { fr } from "@codegouvfr/react-dsfr";
 
 export function AccordionActions({ open, onDelete }) {
   return (
-    <>
-      <Grid item>
+    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+      <div>
         {open ? (
           <div
             className="fr-icon-arrow-up-s-line fr-icon--sm"
@@ -20,9 +19,9 @@ export function AccordionActions({ open, onDelete }) {
             aria-hidden="true"
           />
         )}
-      </Grid>
+      </div>
       {onDelete && (
-        <Grid item>
+        <div>
           <Button
             size="small"
             iconId="fr-icon-delete-line"
@@ -34,8 +33,8 @@ export function AccordionActions({ open, onDelete }) {
             title="Supprimer l'infraction"
             aria-label="Supprimer l'infraction"
           />
-        </Grid>
+        </div>
       )}
-    </>
+    </div>
   );
 }
