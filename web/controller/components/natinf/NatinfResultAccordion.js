@@ -3,7 +3,6 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
 import { makeStyles } from "@mui/styles";
 import { alertNumberBase } from "../../../common/styles/alertNumber";
 import { fr } from "@codegouvfr/react-dsfr";
@@ -81,24 +80,43 @@ export function NatinfResultAccordion({
       TransitionProps={{ unmountOnExit: true }}
     >
       <AccordionSummary>
-        <Grid container spacing={1} alignItems="center" justifyContent="space-between" wrap="nowrap">
-          <Grid item xs>
-            <Typography className="bold" color="primary" fontSize="0.875rem">
-              NATINF {natinf.code}
-            </Typography>
-            <Typography fontWeight="500" fontSize="0.875rem" style={{ textTransform: "uppercase" }}>
-              {natinf.label}
-            </Typography>
-          </Grid>
-          {selectedDays.length > 0 && (
-            <Grid item>
-              <WarningBadge className={classes.alertNumber}>
-                {selectedDays.length}
-              </WarningBadge>
-            </Grid>
-          )}
-          <AccordionActions open={expanded} onDelete={onDelete} />
-        </Grid>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "nowrap",
+            gap: "0.5rem",
+            width: "100%"
+          }}
+        >
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "flex-start", alignContent: "flex-start", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
+                  <Typography className="bold" color="primary" fontSize="0.875rem">
+                    NATINF {natinf.code}
+                  </Typography>          
+                  {
+                    selectedDays.length > 0 && (
+                    <div>
+                      <WarningBadge className={classes.alertNumber}>
+                        {selectedDays.length}
+                      </WarningBadge>
+                    </div>
+                  )}
+   
+                </div>
+                <Typography fontWeight="500" fontSize="0.875rem" style={{ textTransform: "uppercase" }}>
+                  {natinf.label}
+                </Typography>
+              </div>
+              <AccordionActions open={expanded} onDelete={onDelete} />
+            </div>
+
+          </div>
+
+        </div>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
         <Stack direction="column" gap={2}>

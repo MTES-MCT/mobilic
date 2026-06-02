@@ -146,42 +146,51 @@ export function AlertGroup({
       )}
     >
       <AccordionSummary>
-        <Grid
-          container
-          spacing={1}
-          alignItems="center"
-          justifyContent="space-between"
-          wrap="nowrap"
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "nowrap",
+            gap: "0.5rem",
+            width: "100%"
+          }}
         >
-          <Grid item xs>
-            <Typography
-              className="bold"
-              color="primary"
-              {...titleProps}
-              fontSize="0.875rem"
-            >
-              {sanction}
-            </Typography>
-            <Typography fontWeight="500" fontSize={textSize}>
-              {infringementLabelFormatted}
-            </Typography>
-          </Grid>
-          {alertsNumber !== 0 && (
-            <Grid item>
-              <WarningBadge
-                className={classNames(
-                  classes.alertNumber,
-                  isSanctionReportable
-                    ? classes.reportableAlert
-                    : classes.notReportableAlert
-                )}
-              >
-                {alertsNumber}
-              </WarningBadge>
-            </Grid>
-          )}
-          <AccordionActions open={open} onDelete={onDelete} />
-        </Grid>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "flex-start", alignContent: "flex-start", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
+                  <Typography
+                    className="bold"
+                    color="primary"
+                    {...titleProps}
+                    fontSize="0.875rem"
+                  >
+                    {sanction}
+                  </Typography>
+                  {alertsNumber !== 0 && (
+                    <div>
+                      <WarningBadge
+                        className={classNames(
+                          classes.alertNumber,
+                          isSanctionReportable
+                            ? classes.reportableAlert
+                            : classes.notReportableAlert
+                        )}
+                      >
+                        {alertsNumber}
+                      </WarningBadge>
+                    </div>
+                  )}
+                </div>
+                <Typography fontWeight="500" fontSize={textSize}>
+                  {infringementLabelFormatted}
+                </Typography>
+              </div>
+              <AccordionActions open={open} onDelete={onDelete} />
+            </div>
+          </div>
+        </div>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
         {/* TODO refactor: extract in another component */}
