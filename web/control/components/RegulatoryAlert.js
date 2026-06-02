@@ -221,6 +221,7 @@ export function RegulatoryAlert({
               label: "",
               nativeInputProps: {
                 name: "",
+                disabled: !isReportingInfractions,
                 checked: alert.checked,
                 onChange: e => {
                   const alertDate = alert.day || alert.week || alert.month;
