@@ -75,6 +75,12 @@ const useStyles = makeStyles(theme => ({
   },
   infoText: {
     marginBottom: theme.spacing(1),
+  },
+  infractionsSectionHeader: {
+    gap: theme.spacing(2),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
   }
 }));
 
@@ -265,13 +271,9 @@ export function UserReadAlerts({
           )}
           <Grid item xs={displayPictures ? 7 : 12}>
             <Stack direction="column" rowGap={2}>
-
                 {/* Computed infractions section */}
                 {showComputedSection && (
                   <div className={classes.customInfractionsSection}>
-                    {controlType === CONTROL_TYPES.MOBILIC.label && isReportingInfractions && (
-                      <WarningComputedAlerts />
-                    )}
                     {!isReportingInfractions ? (
                       <TitleContainer>
                         <FieldTitle component="h2" className={classes.infringementLabel}>
@@ -286,15 +288,18 @@ export function UserReadAlerts({
                         </Button>
                       </TitleContainer>
                     ) : (
-                      <>
-                        <Typography className={classes.infoText}>{updateInfractionsTitle}</Typography>
+                      <div className={classes.infractionsSectionHeader}>
+                        <Typography>{updateInfractionsTitle}</Typography>
+                        {controlType === CONTROL_TYPES.MOBILIC.label && isReportingInfractions && (
+                          <WarningComputedAlerts />
+                        )}
                         {
                           controlType !== CONTROL_TYPES.LIC_PAPIER.label &&
-                          <FieldTitle component="h2" className={classes.smallInfringementLabel} sx={{ marginTop: 0 }}>
+                          <FieldTitle component="h2" className={classes.smallInfringementLabel} >
                             Infractions calculées par Mobilic
                           </FieldTitle>
                         }
-                      </>
+                      </div>
                     )}
                     <List
                       sx={{
@@ -345,12 +350,12 @@ export function UserReadAlerts({
                         </Button>
                       </TitleContainer>
                     ) : (
-                      <>
-                        <Typography className={classes.infoText}>{updateInfractionsTitle}</Typography>
+                      <div className={classes.infractionsSectionHeader}>
+                        <Typography>{updateInfractionsTitle}</Typography>
                         <FieldTitle component="h2" className={classes.smallInfringementLabel} sx={{ marginTop: 0 }}>
                           Autre(s) infraction(s) constatée(s)
                         </FieldTitle>
-                      </>
+                      </div>
                     )}
                     {reportedCustomInfractions.length > 0 ? (
                       <List
