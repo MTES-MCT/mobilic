@@ -41,10 +41,6 @@ const useStyles = makeStyles(theme => ({
     fontSize: "0.875rem", // fr-text--sm
     color: "var(--text-mention-grey)",
   },
-  infringementList: {
-    maxHeight: "calc(100vh - 440px)",
-    overflow: "auto",
-  },
   resultsContainer: {
     marginTop: theme.spacing(2)
   },
@@ -201,9 +197,7 @@ export function NatinfSearchView({
     onConfirm();
   };
 
-  const selectedInfractionsCount = customInfractions.filter(
-    item => item.days.length > 0
-  ).length;
+  const selectedInfractionsCount = customInfractions.flatMap(item => item.days).length;
 
   const getInfractionDays = (code) => {
     const infraction = customInfractions.find(item => item.code === code);
@@ -299,7 +293,7 @@ export function NatinfSearchView({
               <Typography className={classes.recentSearchTitle}>
                 Recherches récentes
               </Typography>
-              <div className={classes.infringementList} >
+              <div>
                 {recentSearches.map(natinf => (
                   <NatinfResultAccordion
                     key={natinf.code}
@@ -327,7 +321,7 @@ export function NatinfSearchView({
               <Typography className={classes.resultsTitle}>
                 Résultats ({searchResults.length})
               </Typography>
-              <div className={classes.infringementList} >
+              <div>
                 {searchResults.map(natinf => (
                   <NatinfResultAccordion
                     key={natinf.code}

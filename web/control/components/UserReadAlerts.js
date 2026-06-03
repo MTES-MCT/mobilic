@@ -301,15 +301,7 @@ export function UserReadAlerts({
                         }
                       </div>
                     )}
-                    <List
-                      sx={{
-                        paddingBottom: 0,
-                        ...(isReportingInfractions && {
-                          overflow: "auto",
-                          maxHeight: "calc(100vh - 440px)"
-                        })
-                      }}
-                    >
+                    <List>
                       {computedInfractions.sort(sanctionComparator).map(group => (
                         <ListItem
                           key={`${group.type}_${group.sanction}`}
@@ -326,6 +318,7 @@ export function UserReadAlerts({
                             displayBusinessType={
                               businessTypes && businessTypes.length > 1
                             }
+                            textSize="1rem" // fr-text (16px)
                           />
                         </ListItem>
                       ))}
@@ -358,15 +351,7 @@ export function UserReadAlerts({
                       </div>
                     )}
                     {reportedCustomInfractions.length > 0 ? (
-                      <List
-                        sx={{
-                          paddingBottom: 0,
-                          ...(isReportingInfractions && {
-                            overflow: "auto",
-                            maxHeight: "calc(100vh - 440px)"
-                          })
-                        }}
-                      >
+                      <List>
                         {reportedCustomInfractions.sort(sanctionComparator).map(group => (
                           <ListItem
                             key={`${group.type}_${group.sanction}`}
@@ -382,7 +367,6 @@ export function UserReadAlerts({
                               titleProps={{ component: "h3" }}
                               displayBusinessType={false}
                               onDelete={isReportingInfractions && editSection === 'custom' ? () => handleRemoveCustomInfractionsBySanction(group.sanction) : undefined}
-                              textSize="1rem" // fr-text (16px)
                             />
                           </ListItem>
                         ))}

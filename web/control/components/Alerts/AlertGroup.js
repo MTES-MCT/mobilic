@@ -127,7 +127,7 @@ export function AlertGroup({
     [alerts]
   );
 
-  const infringementLabelFormatted = infringementLabel.charAt(0).toUpperCase() + infringementLabel.slice(1).toLowerCase();
+  const infringementLabelFormatted = type === 'custom' ? infringementLabel.toUpperCase() : infringementLabel;
 
   useEffect(() => {
     if (!isReportingInfractions) {
