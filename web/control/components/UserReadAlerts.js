@@ -79,7 +79,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const HELPER_TEXT_SEVERAL_INFRACTIONS = (
-  <>Sélectionnez des infractions que vous souhaitez verbaliser&nbsp;:</>
+  <>Sélectionnez les infractions que vous souhaitez verbaliser&nbsp;:</>
 );
 const HELPER_TEXT_LIC_PAPIER = (
   <>
