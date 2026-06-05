@@ -45,12 +45,12 @@ export const VIDEOS = {
     description: "Utiliser Mobilic au quotidien"
   },
   Tuto_Ctt_IT: {
-    id: "49812121",
+    id: "1198826301",
     title: "Vidéo tuto_CTT et IT_avril 2026",
     description: "Effectuer un contrôle en bord de route"
   },
   Tuto_Police: {
-    id: "49769361",
+    id: "1198827523",
     title: "Vidéo tuto_FSI_avril 2026",
     description: "Effectuer un contrôle en bord de route"
   },
@@ -87,8 +87,7 @@ export const VIDEOS = {
 };
 
 function getCdnUrl(id) {
-  return `https://resana.numerique.gouv.fr/public/perimetre/consulter/790383?information=${id}`
-  // return `https://player.vimeo.com/video/${id}?badge=0&amp;autopause=0&amp;quality_selector=1&amp;progress_bar=1&amp;player_id=0&amp;app_id=58479`;
+  return `https://player.vimeo.com/video/${id}?badge=0&amp;autopause=0&amp;quality_selector=1&amp;progress_bar=1&amp;player_id=0&amp;app_id=58479`;
 }
 
 export const VideoFrame = ({ id, title, aspectRatio = "16/9" }) => (
