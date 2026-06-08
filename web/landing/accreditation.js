@@ -23,14 +23,9 @@ const InnerSecurityAccreditation = () => {
     <>
       <h1>Sécurité</h1>
       <p>
-        Mobilic a obtenu l’homologation sécurité décernée par l’Agence nationale
-        de la sécurité des systèmes d’information (ANSSI) le 28 septembre 2024
-        et ce pour une durée de 6 mois.
-      </p>
-      <p>
-        L’homologation sécurité devra être renouvelée tous les 6 mois dans le
-        cadre d'une démarche continue de renforcement de la sécurité des
-        services numériques de l’Etat.
+        Mobilic a obtenu l’homologation sécurité décernée par l’Agence 
+        nationale de la sécurité des systèmes d’information (ANSSI) 
+        le 22 décembre 2025.
       </p>
       <p>
         Mobilic est hébergé chez{" "}

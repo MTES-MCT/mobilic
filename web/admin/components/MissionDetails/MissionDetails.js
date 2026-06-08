@@ -165,6 +165,7 @@ export function MissionDetails({
       usersToValidate,
       overrideValidationJustification
     );
+    await refreshData();
     setOverrideValidationJustification("");
     setLoading(false);
   };

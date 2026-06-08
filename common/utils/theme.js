@@ -1,5 +1,7 @@
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
+export const MOBILIC_BLUE = "#3965EA";
+
 export const customOptions = {
   components: {
     MuiAccordionSummary: {
@@ -42,7 +44,7 @@ export const customOptions = {
   },
   palette: {
     primary: {
-      main: "#3965EA",
+      main: MOBILIC_BLUE,
       light: "#DAE9FF",
       lighter: "#F4F8FF",
       dark: "#202DA7"

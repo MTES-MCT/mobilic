@@ -235,7 +235,7 @@ async function validateMission(
       payload: { computationRegulationsPayload }
     });
   } catch (err) {
-    console.err(err);
+    console.error(err);
   }
 }
 

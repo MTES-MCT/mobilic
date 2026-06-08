@@ -1,7 +1,7 @@
 import React from "react";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { adminRootReducer } from "./reducers/root";
-import { getStartOfMonth, isoFormatLocalDate, now } from "common/utils/time";
+import { isoFormatLocalDate, startOfMonthAsDate } from "common/utils/time";
 
 export const VIRTUAL_ACTIVITIES_ACTIONS = {
   create: { backendVerb: "log" },
@@ -36,8 +36,8 @@ export function AdminStoreProvider({ children }) {
     activitiesFilters: {
       period: "day",
       users: [],
-      maxDate: isoFormatLocalDate(new Date(Date.now())),
-      minDate: isoFormatLocalDate(getStartOfMonth(now()))
+      maxDate: isoFormatLocalDate(new Date()),
+      minDate: isoFormatLocalDate(startOfMonthAsDate(new Date()))
     },
     validationsFilters: {
       users: [],

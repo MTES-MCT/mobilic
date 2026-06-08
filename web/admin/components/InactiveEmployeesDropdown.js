@@ -65,7 +65,11 @@ function formatLastActiveAt(lastActiveAt) {
 function getInactiveEmployeesToday(employments, workDays) {
   if (!employments?.length) return [];
 
-  const now = Date.now();
+  // Anchor the 30-day window on today's local midnight to match the backend
+  // counter (_count_inactive_employees) which uses today_start - 30 days.
+  // Using Date.now() instead would create a rolling window that drifts
+  // throughout the day and disagree with the home page counter on edge users.
+  const todayStartMs = new Date().setHours(0, 0, 0, 0);
   const today = isoFormatLocalDate(new Date());
 
   const activeUserIdsToday = new Set();
@@ -85,12 +89,15 @@ function getInactiveEmployeesToday(employments, workDays) {
     if (activeUserIdsToday.has(emp.user.id)) continue;
     if (emp.validationStatus !== "approved") continue;
     if (!emp.lastActiveAt) continue;
-    
+    if (emp.dismissedAt) continue;
+    if (emp.hasAdminRights) continue;
+
     // More expensive checks
     if (emp.endDate && emp.endDate < today) continue;
     
     const lastActiveTimestampMs = unixToJSTimestamp(emp.lastActiveAt);
-    if (now - lastActiveTimestampMs > THRESHOLD_30_DAYS * 1000) continue;
+    if (todayStartMs - lastActiveTimestampMs > THRESHOLD_30_DAYS * 1000)
+      continue;
 
     results.push({
       id: emp.user.id,
@@ -111,9 +118,13 @@ function getInactiveEmployeesToday(employments, workDays) {
   return results;
 }
 
-export function InactiveEmployeesDropdown({ employments, workDays }) {
+export function InactiveEmployeesDropdown({
+  employments,
+  workDays,
+  defaultOpen = false
+}) {
   const classes = useStyles();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   // Only compute inactive employees when dropdown is opened to avoid expensive
   // calculations on every render
@@ -151,6 +162,7 @@ export function InactiveEmployeesDropdown({ employments, workDays }) {
       emptyMessage="Tous vos salariés ont utilisé Mobilic"
       renderItem={renderEmployeeItem}
       onOpenChange={setIsOpen}
+      defaultOpen={defaultOpen}
     />
   );
 }

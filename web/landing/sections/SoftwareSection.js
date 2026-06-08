@@ -6,10 +6,11 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { LinkButton } from "../../common/LinkButton";
+import { MOBILIC_BLUE } from "common/utils/theme";
 
 const useStyles = makeStyles((theme) => ({
   highlightedText: {
-    color: "#3965EA",
+    color: MOBILIC_BLUE,
   },
 }));
 

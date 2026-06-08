@@ -145,6 +145,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
     $activityAfter: Date
     $workDaysLimit: Int
     $endedMissionsAfter: TimeStamp
+    $endedMissionsBefore: TimeStamp
     $companyIds: [Int]
   ) {
     user(id: $id) {
@@ -189,7 +190,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
         workDays(fromDate: $activityAfter, first: $workDaysLimit) {
           ...WorkDayData
         }
-        missions(fromTime: $endedMissionsAfter, onlyEndedMissions: false) {
+        missions(fromTime: $endedMissionsAfter, untilTime: $endedMissionsBefore, onlyEndedMissions: false) {
           edges {
             node {
               id
@@ -354,10 +355,14 @@ export const ADMIN_DELETED_MISSIONS_QUERY = gql`
 
 export const ADMIN_WORK_DAYS_QUERY = gql`
   ${WORK_DAYS_DATA_FRAGMENT}
+  ${FRAGMENT_LOCATION_FULL}
+  ${FRAGMENT_ACTIVITY}
   query adminCompanies(
     $id: Int!
     $activityAfter: Date
     $activityBefore: Date
+    $endedMissionsAfter: TimeStamp
+    $endedMissionsBefore: TimeStamp
     $companyIds: [Int]
   ) {
     user(id: $id) {
@@ -370,6 +375,60 @@ export const ADMIN_WORK_DAYS_QUERY = gql`
         }
         workDays(fromDate: $activityAfter, untilDate: $activityBefore) {
           ...WorkDayData
+        }
+        missions(fromTime: $endedMissionsAfter, untilTime: $endedMissionsBefore, onlyEndedMissions: false) {
+          edges {
+            node {
+              id
+              name
+              submitterId
+              submitter {
+                firstName
+                lastName
+              }
+              isHoliday
+              validations {
+                submitterId
+                receptionTime
+                isAdmin
+                isAuto
+                justification
+                userId
+              }
+              vehicle {
+                id
+                name
+                registrationNumber
+              }
+              expenditures {
+                id
+                type
+                userId
+                receptionTime
+                spendingDate
+              }
+              startLocation {
+                ...FullLocation
+              }
+              endLocation {
+                ...FullLocation
+              }
+              activities {
+                ...Activity
+              }
+              comments {
+                id
+                text
+                receptionTime
+                submitter {
+                  id
+                  firstName
+                  lastName
+                }
+              }
+              pastRegistrationJustification
+            }
+          }
         }
         adminRegulationComputationsByUserAndByDay(
           fromDate: $activityAfter
@@ -617,6 +676,50 @@ export const UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE = gql`
       }
       employments(latestPerUser: true) {
         ...FullEmploymentData
+      }
+    }
+  }
+`;
+
+export const DASHBOARD_HOME_QUERY = gql`
+  query dashboardHome($id: Int!, $companyIds: [Int], $month: ShortMonth!) {
+    user(id: $id) {
+      adminedCompanies(companyIds: $companyIds) {
+        id
+        dashboardSummary {
+          activeMissionsCount
+          pendingValidationsCount
+          pendingInvitationsCount
+          inactiveEmployeesCount
+          autoValidatedMissionsCount
+          pendingInvitationEmploymentIds
+          hasAnyMissionThisWeek
+        }
+        regulatoryAlertsRecap(month: $month) {
+          hasAnyComputation
+          dailyAlerts {
+            alertsType
+            nbAlerts
+            days
+            dayDetails {
+              day
+              userName
+              userId
+              otherCompanyRelation
+            }
+          }
+          weeklyAlerts {
+            alertsType
+            nbAlerts
+            days
+            dayDetails {
+              day
+              userName
+              userId
+              otherCompanyRelation
+            }
+          }
+        }
       }
     }
   }

@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { formatAlertText, RegulatoryAlert } from "../RegulatoryAlert";
 import { makeStyles } from "@mui/styles";
+import { alertNumberBase } from "../../../common/styles/alertNumber";
 import Grid from "@mui/material/Grid";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -19,6 +19,8 @@ import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 import classNames from "classnames";
 import { useInfractions } from "../../../controller/utils/contextInfractions";
 import { useControl } from "../../../controller/utils/contextControl";
+import { WarningBadge } from "../../../common/WarningBadge";
+import { AccordionActions } from "../../../common/AccordionActions";
 
 const useStyles = makeStyles(theme => {
   return {
@@ -33,20 +35,7 @@ const useStyles = makeStyles(theme => {
       margin: 0,
       marginRight: theme.spacing(1)
     },
-    alertNumber: {
-      display: "inline-flex",
-      whiteSpace: "pre",
-      borderRadius: "100px",
-      color: "white",
-      paddingLeft: theme.spacing(1),
-      paddingRight: theme.spacing(1),
-      height: theme.spacing(3),
-      minWidth: theme.spacing(3),
-      alignItems: "center",
-      justifyContent: "center",
-      fontWeight: "bold",
-      fontSize: "0.75rem"
-    },
+    alertNumber: alertNumberBase(theme),
     reportedAlert: {
       borderColor: theme.palette.primary.main,
       borderWidth: "1px"
@@ -65,8 +54,12 @@ const getAlertsNumber = (
   alerts,
   isSanctionReportable,
   isReportingInfractions,
-  readOnlyAlerts
+  readOnlyAlerts,
+  type
 ) => {
+  if (type === "custom") {
+    return alerts.filter(alert => !!(alert.day || alert.week)).length || alerts.length;
+  }
   if (readOnlyAlerts || !isSanctionReportable) {
     return alerts.filter(alert => !!(alert.day || alert.week)).length;
   } else if (
@@ -97,7 +90,9 @@ export function AlertGroup({
   onChangeTab,
   readOnlyAlerts,
   displayBusinessType = false,
-  titleProps = {}
+  titleProps = {},
+  onDelete,
+  textSize = "0.875rem" // fr-text--sm (14px)
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
@@ -116,13 +111,23 @@ export function AlertGroup({
     alerts,
     isSanctionReportable,
     isReportingInfractions,
-    readOnlyAlerts
+    readOnlyAlerts,
+    type
   );
 
   const alertsGroupedByBusinessTypes = React.useMemo(
-    () => groupBy(alerts, alert => alert.business.id),
+    () => groupBy(alerts, alert => {
+      // For custom infractions, group by sanction (NATINF code) instead of business
+      // so each NATINF gets its own description displayed
+      if (alert.type === "custom") {
+        return `custom_${alert.sanction}`;
+      }
+      return alert.business?.id ?? "unknown";
+    }),
     [alerts]
   );
+
+  const infringementLabelFormatted = type === 'custom' ? infringementLabel.toUpperCase() : infringementLabel;
 
   useEffect(() => {
     if (!isReportingInfractions) {
@@ -140,44 +145,69 @@ export function AlertGroup({
         isReported ? classes.reportedAlert : ""
       )}
     >
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Grid
-          container
-          spacing={2}
-          alignItems="center"
-          justifyContent="space-between"
-          wrap="nowrap"
+      <AccordionSummary>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "nowrap",
+            gap: "0.5rem",
+            width: "100%"
+          }}
         >
-          <Grid item>
-            <Typography
-              className="bold"
-              color="primary"
-              {...titleProps}
-              fontSize="0.875rem"
-            >
-              {sanction}
-            </Typography>
-            <Typography fontWeight="500">{infringementLabel}</Typography>
-          </Grid>
-          {alertsNumber !== 0 && (
-            <Grid item>
-              <span
-                className={classNames(
-                  classes.alertNumber,
-                  isSanctionReportable
-                    ? classes.reportableAlert
-                    : classes.notReportableAlert
-                )}
-              >
-                {alertsNumber}
-              </span>
-            </Grid>
-          )}
-        </Grid>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "flex-start", alignContent: "flex-start", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
+                  <Typography
+                    className="bold"
+                    color="primary"
+                    {...titleProps}
+                    fontSize="0.875rem"
+                  >
+                    {sanction}
+                  </Typography>
+                  {alertsNumber !== 0 && (
+                    <div>
+                      <WarningBadge
+                        className={classNames(
+                          classes.alertNumber,
+                          isSanctionReportable
+                            ? classes.reportableAlert
+                            : classes.notReportableAlert
+                        )}
+                      >
+                        {alertsNumber}
+                      </WarningBadge>
+                    </div>
+                  )}
+                </div>
+                <Typography fontWeight="500" fontSize={textSize}>
+                  {infringementLabelFormatted}
+                </Typography>
+              </div>
+              <AccordionActions open={open} onDelete={onDelete} />
+            </div>
+          </div>
+        </div>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>
         {/* TODO refactor: extract in another component */}
-        {(controlType === CONTROL_TYPES.MOBILIC.label ||
+        {/* Custom infractions display (NATINF added manually) */}
+        {type === "custom" && (
+          <>
+            <Description noMargin>{alerts[0].description}</Description>
+            {alerts[0].unit === PERIOD_UNITS.DAY && (
+              <InfractionDay alerts={alerts} sanction={sanction} />
+            )}
+            {alerts[0].unit === PERIOD_UNITS.WEEK && (
+              <InfractionWeek alerts={alerts} sanction={sanction} />
+            )}
+          </>
+        )}
+        {/* Computed infractions for MOBILIC/NO_LIC controls */}
+        {type !== "custom" && (controlType === CONTROL_TYPES.MOBILIC.label ||
           controlType === CONTROL_TYPES.NO_LIC.label) &&
           Object.entries(alertsGroupedByBusinessTypes).map(
             ([businessId, alertsByBusiness]) => {
@@ -188,7 +218,7 @@ export function AlertGroup({
               } = firstAlert;
               return (
                 <React.Fragment key={`alertsByBusiness_${businessId}`}>
-                  {displayBusinessType && (
+                  {displayBusinessType && alertBusiness && (
                     <BusinessTypeTitle business={alertBusiness} />
                   )}
                   <Description noMargin>{alertDescription}</Description>
@@ -211,7 +241,7 @@ export function AlertGroup({
               );
             }
           )}
-        {controlType === CONTROL_TYPES.LIC_PAPIER.label && (
+        {type !== "custom" && controlType === CONTROL_TYPES.LIC_PAPIER.label && (
           <>
             <Description>{alerts[0].description}</Description>
             {alerts[0].unit === PERIOD_UNITS.DAY && (
@@ -239,7 +269,7 @@ export function AlertCard({ alert }) {
       variant="outlined"
       className={classes.container}
     >
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <AccordionSummary expandIcon={<span className="fr-icon-arrow-down-s-line" aria-hidden="true" />}>
         <Grid
           container
           spacing={2}

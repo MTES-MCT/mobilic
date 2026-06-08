@@ -58,3 +58,23 @@ export const CHANGE_GENDER_MUTATION = gql`
     }
   }
 `;
+
+export const SETUP_TOTP_MUTATION = gql`
+  mutation setupTotp {
+    account {
+      setupTotp {
+        provisioningUri
+      }
+    }
+  }
+`;
+
+export const VERIFY_TOTP_MUTATION = gql`
+  mutation verifyTotp($code: String!) {
+    account {
+      verifyTotp(code: $code) {
+        success
+      }
+    }
+  }
+`;

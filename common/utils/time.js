@@ -126,6 +126,12 @@ export function formatCompleteDayOfWeekAndDay(unixTimestamp) {
   return `${formatCompleteDayOfWeek(unixTimestamp)} ${prettyFormatDay(unixTimestamp, true)}`
 }
 
+export function formatCompleteDateFromString(dateStr) {
+  const d = new Date(dateStr);
+  const dayName = DAYS[d.getDay()];
+  return `${dayName.charAt(0).toUpperCase() + dayName.slice(1)} ${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
+
 export function getPrettyDateByperiod(date, period) {
   const dateAsUnixTimestamp = date.getTime() / 1000;
   switch (period) {

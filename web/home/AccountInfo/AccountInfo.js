@@ -22,6 +22,7 @@ import { employmentSelector } from "common/store/selectors";
 import AlertEmailNotActivated from "./AlertEmailNotActivated";
 import { getTimezone, getTimezonePrettyName } from "common/utils/timezones";
 import { OAuthTokenSection } from "./OAuthTokensSection";
+import { TotpSetup } from "./TotpSetup";
 import { currentUserId } from "common/utils/cookie";
 import { UserControlSection } from "./UserControlSection";
 import { usePageTitle } from "../../common/UsePageTitle";
@@ -313,6 +314,7 @@ export default function Home() {
                     {!hasActiveEmployments && <NoEmploymentAlert />}
                     <BecomeAdmin mt={2} hasEmployments={hasEmployment} />
                   </Section>
+                  <TotpSetup />
                   <OAuthTokenSection />
                   <UserControlSection />
                 </>

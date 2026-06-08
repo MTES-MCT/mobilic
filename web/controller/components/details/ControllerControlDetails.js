@@ -30,7 +30,9 @@ export function ControllerControlDetails({
     isReportingInfractions,
     setIsReportingInfractions,
     reportedInfractionsLastUpdateTime,
-    groupedAlerts
+    groupedAlerts,
+    natinfViewMode,
+    setNatinfViewMode
   } = useInfractions();
 
   // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
@@ -42,10 +44,14 @@ export function ControllerControlDetails({
   };
 
   const _onClose = () => {
-    if (setIsReportingInfractions) {
-      setIsReportingInfractions(false);
+    if (natinfViewMode === 'search') {
+      setNatinfViewMode('list');
+    } else {
+      if (setIsReportingInfractions) {
+        setIsReportingInfractions(false);
+      }
+      onClose();
     }
-    onClose();
   };
 
   React.useEffect(() => {
@@ -116,10 +122,12 @@ export function ControllerControlDetails({
 
   return (
     <>
-      <ControllerControlHeader
-        controlDate={legacyTokenInfo?.controlTime}
-        onCloseDrawer={_onClose}
-      />
+      {natinfViewMode === 'list' && (
+        <ControllerControlHeader
+          controlDate={legacyTokenInfo?.controlTime}
+          onCloseDrawer={_onClose}
+        />
+      )}
       <UserReadTabs
         tabs={getTabs(checkedAlertsNumber)}
         totalAlertsNumber={totalAlertsNumber}
