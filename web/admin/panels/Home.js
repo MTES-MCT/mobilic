@@ -30,6 +30,13 @@ function getStartOfWeek() {
   return monday;
 }
 
+function formatDateISO(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 function filterDaysThisWeek(days) {
   if (!days || days.length === 0) return [];
   const startOfWeek = getStartOfWeek();
@@ -228,6 +235,7 @@ function AlertRow({ label, count, dayDetails, onClickDay, isLast, defaultExpande
 
 function InfractionsSection({ alertsData, hasAnyMissionThisWeek, onClickDay }) {
   const history = useHistory();
+  const alertsUnavailable = alertsData == null;
   const allAlerts = [
     ...(alertsData?.dailyAlerts || []),
     ...(alertsData?.weeklyAlerts || [])
@@ -273,7 +281,9 @@ function InfractionsSection({ alertsData, hasAnyMissionThisWeek, onClickDay }) {
             fontSize: "0.875rem"
           }}
         >
-          {hasAnyMissionThisWeek
+          {alertsUnavailable
+            ? "Infractions momentanément indisponibles."
+            : hasAnyMissionThisWeek
             ? "Tous les seuils réglementaires sont respectés."
             : "Calcul des infractions en attente de l'enregistrement d'une mission."}
         </Typography>
@@ -324,12 +334,17 @@ export default function Home({ setShouldRefreshData }) {
         }
         const now = new Date();
         const month = now.toISOString().slice(0, 7);
+        const monday = getStartOfWeek();
+        const nextMonday = new Date(monday);
+        nextMonday.setDate(monday.getDate() + 7);
         const res = await api.graphQlQuery(
           DASHBOARD_HOME_QUERY,
           {
             id: adminStore.userId,
             companyIds: [adminStore.companyId],
-            month
+            month,
+            fromDate: formatDateISO(monday),
+            toDate: formatDateISO(nextMonday)
           },
           { fetchPolicy: forceRefresh ? "network-only" : "cache-first" }
         );
