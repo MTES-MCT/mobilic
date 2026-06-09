@@ -30,15 +30,11 @@ function getStartOfWeek() {
   return monday;
 }
 
-function filterDaysThisWeek(days) {
-  if (!days || days.length === 0) return [];
-  const startOfWeek = getStartOfWeek();
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 7);
-  return days.filter((d) => {
-    const date = new Date(d);
-    return date >= startOfWeek && date < endOfWeek;
-  });
+function formatDateISO(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
 function KpiCard({ title, count, buttonLabel, onButtonClick }) {
@@ -228,26 +224,17 @@ function AlertRow({ label, count, dayDetails, onClickDay, isLast, defaultExpande
 
 function InfractionsSection({ alertsData, hasAnyMissionThisWeek, onClickDay }) {
   const history = useHistory();
+  const alertsUnavailable = alertsData == null;
   const allAlerts = [
     ...(alertsData?.dailyAlerts || []),
     ...(alertsData?.weeklyAlerts || [])
   ];
 
-  const startOfWeek = getStartOfWeek();
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 7);
-
+  // Backend already restricts dailyAlerts/weeklyAlerts to the current week
+  // via the fromDate/toDate window — just drop empty groups.
   const weeklyAlerts = allAlerts
     .filter((a) => a.alertsType in PRETTY_LABELS)
-    .map((a) => {
-      const weekDays = filterDaysThisWeek(a.days);
-      const weekDetails = (a.dayDetails || []).filter((d) => {
-        const date = new Date(d.day);
-        return date >= startOfWeek && date < endOfWeek;
-      });
-      return { ...a, weekDays, weekCount: weekDays.length, weekDetails };
-    })
-    .filter((a) => a.weekCount > 0);
+    .filter((a) => (a.days || []).length > 0);
 
   const hasAlerts = weeklyAlerts.length > 0;
 
@@ -259,8 +246,8 @@ function InfractionsSection({ alertsData, hasAnyMissionThisWeek, onClickDay }) {
             <AlertRow
               key={alert.alertsType}
               label={PRETTY_LABELS[alert.alertsType]}
-              count={alert.weekCount}
-              dayDetails={alert.weekDetails}
+              count={alert.days.length}
+              dayDetails={alert.dayDetails || []}
               onClickDay={onClickDay}
               isLast={index === weeklyAlerts.length - 1}
             />
@@ -273,7 +260,9 @@ function InfractionsSection({ alertsData, hasAnyMissionThisWeek, onClickDay }) {
             fontSize: "0.875rem"
           }}
         >
-          {hasAnyMissionThisWeek
+          {alertsUnavailable
+            ? "Infractions momentanément indisponibles."
+            : hasAnyMissionThisWeek
             ? "Tous les seuils réglementaires sont respectés."
             : "Calcul des infractions en attente de l'enregistrement d'une mission."}
         </Typography>
@@ -324,12 +313,17 @@ export default function Home({ setShouldRefreshData }) {
         }
         const now = new Date();
         const month = now.toISOString().slice(0, 7);
+        const monday = getStartOfWeek();
+        const nextMonday = new Date(monday);
+        nextMonday.setDate(monday.getDate() + 7);
         const res = await api.graphQlQuery(
           DASHBOARD_HOME_QUERY,
           {
             id: adminStore.userId,
             companyIds: [adminStore.companyId],
-            month
+            month,
+            fromDate: formatDateISO(monday),
+            toDate: formatDateISO(nextMonday)
           },
           { fetchPolicy: forceRefresh ? "network-only" : "cache-first" }
         );
