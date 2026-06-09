@@ -13,7 +13,7 @@ import { formatApiError } from "common/utils/errors";
 import { makeStyles } from "@mui/styles";
 import { parseActivityPayloadFromBackend } from "common/utils/activities";
 import { captureSentryException } from "common/utils/sentry";
-import { Header } from "../../common/Header";
+import { MobilicHeader } from "../../common/Header";
 import { MISSION_QUERY } from "common/utils/apiQueries/missions";
 
 const useStyles = makeStyles((theme) => ({
@@ -125,7 +125,7 @@ export default function EditPastMission({
 
   return (
     <>
-      <Header forceMobile />
+      <MobilicHeader forceMobile />
       <Container maxWidth={false} className={classes.overview}>
         <Typography variant="h1" align="left" className={classes.title}>
           {mission.name

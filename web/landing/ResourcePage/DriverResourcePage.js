@@ -2,7 +2,7 @@ import React from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import { Header } from "../../common/Header";
+import { MobilicHeader } from "../../common/Header";
 import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import { DriverVideoSection } from "./DriverVideoSection";
@@ -20,7 +20,7 @@ export function DriverResourcePage() {
 
   return (
     <>
-      <Header />
+      <MobilicHeader />
       <Main maxWidth={false} sx={{ marginBottom: 4 }}>
         <Container
           className={`${classes.container} ${classes.whiteSection}`}

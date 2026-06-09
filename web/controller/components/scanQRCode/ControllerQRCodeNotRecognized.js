@@ -1,7 +1,7 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
-import { Header } from "../../../common/Header";
+import { MobilicHeader } from "../../../common/Header";
 import { usePageTitle } from "../../../common/UsePageTitle";
 import Notice from "../../../common/Notice";
 import { Main } from "../../../common/semantics/Main";
@@ -33,7 +33,7 @@ export function ControllerQRCodeNotRecognized() {
 
   return (
     <>
-      <Header />
+      <MobilicHeader />
       <Main
         className={`${classes.container} ${classes.whiteSection}`}
         maxWidth="xl"

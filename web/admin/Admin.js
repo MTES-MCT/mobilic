@@ -23,7 +23,7 @@ import {
   useLoadingScreen
 } from "common/utils/loading";
 
-import { Header } from "../common/Header";
+import { MobilicHeader } from "../common/Header";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthUp, useWidth } from "common/utils/useWidth";
 import { useSnackbarAlerts } from "../common/Snackbar";
@@ -228,7 +228,7 @@ function InternalAdmin() {
           id: adminStore.companyId
         }) && <UpdateCompanyBusinessTypeModal />}
       {!!company && shouldUpdateNbWorker(company) && <UpdateNbWorkerModal />}
-      <Header />
+      <MobilicHeader />
       <MissionDrawerContextProvider
         width={width}
         setShouldRefreshData={shouldRefreshDataSetter}

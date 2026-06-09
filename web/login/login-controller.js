@@ -1,7 +1,7 @@
 import React from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import { Header } from "../common/Header";
+import { MobilicHeader } from "../common/Header";
 import { makeStyles } from "@mui/styles";
 import { PaperContainerTitle } from "../common/PaperContainer";
 import {
@@ -37,7 +37,7 @@ export default function LoginController() {
 
   return (
     <>
-      <Header />
+      <MobilicHeader />
       <Main>
         <Container
           className="centered"

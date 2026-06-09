@@ -2,7 +2,7 @@ import React from "react";
 import Container from "@mui/material/Container";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
-import { Header } from "../common/Header";
+import { MobilicHeader } from "../common/Header";
 import { Footer } from "./footer";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { Button } from "@codegouvfr/react-dsfr/Button";
@@ -76,7 +76,7 @@ export function Certificate() {
 
   return (
     <>
-      <Header />
+      <MobilicHeader />
       <Main sx={{ marginBottom: 15 }}>
         <Container maxWidth="lg">
           <Stack direction="column" textAlign="left" rowGap={4} mt={2}>

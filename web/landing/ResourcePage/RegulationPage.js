@@ -2,7 +2,7 @@ import React from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import { Header } from "../../common/Header";
+import { MobilicHeader } from "../../common/Header";
 import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import { Breadcrumb } from "@codegouvfr/react-dsfr/Breadcrumb";
@@ -45,7 +45,7 @@ export function RegulationPage() {
 
   return (
     <>
-      <Header />
+      <MobilicHeader />
       <Main
         maxWidth={false}
         className={`${classes.container} ${classes.whiteSection}`}

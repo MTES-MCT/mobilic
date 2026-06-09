@@ -6,7 +6,7 @@ import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
-import { Header } from "../../../common/Header";
+import { MobilicHeader } from "../../../common/Header";
 import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
 import { useLocation } from "react-router-dom";
 import { ControlsList } from "../list/ControlsList";
@@ -90,7 +90,7 @@ export function ControllerHome() {
 
   return (
     <>
-      <Header />
+      <MobilicHeader />
       <Main
         className={`${classes.container} ${classes.whiteSection}`}
         maxWidth="xl"

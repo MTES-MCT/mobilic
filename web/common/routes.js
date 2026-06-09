@@ -55,8 +55,21 @@ const RESOURCES_ROUTE = {
   accessible: ({ controllerInfo }) => !controllerInfo?.id,
   subRoutes: [
     {
+      path: "/resources/home",
+      target: "_blank",
+      label: "Documentation"
+    },
+    {
+      path: "/partners",
+      label: "Partenaires et logiciels"
+    },
+    {
+      path: "/certificate",
+      label: "Certificat"
+    },
+    {
       to: "",
-      label: "Foire aux questions",
+      label: "Aide",
       accessible: ({ userInfo, companies }) =>
         // is employee
         !!userInfo?.id && !companies?.some(c => c.admin),
@@ -66,22 +79,13 @@ const RESOURCES_ROUTE = {
     },
     {
       to: "",
-      label: "Foire aux questions",
+      label: "Aide",
       accessible: ({ userInfo, companies }) =>
         // is not employee (not connected or admin or controller)
         !userInfo?.id || companies?.some(c => c.admin),
       target: "_blank",
       href: "https://faq.mobilic.beta.gouv.fr/"
     },
-    {
-      path: "/resources/home",
-      target: "_blank",
-      label: "Documentation"
-    },
-    {
-      path: "/partners",
-      label: "Partenaires et logiciels"
-    }
   ]
 };
 

@@ -7,7 +7,7 @@ import Link from "@mui/material/Link";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import Box from "@mui/material/Box";
 import { LoadingButton } from "common/components/LoadingButton";
-import { Header } from "../common/Header";
+import { MobilicHeader } from "../common/Header";
 import { graphQLErrorMatchesCode } from "common/utils/errors";
 import {
   buildCallbackUrl,
@@ -167,7 +167,7 @@ export default function Login() {
   if (totpStep) {
     return (
       <>
-        <Header />
+        <MobilicHeader />
         <Main>
           <PaperContainer>
             <Container className="centered" maxWidth="xs">
@@ -242,7 +242,7 @@ export default function Login() {
 
   return (
     <>
-      <Header />
+      <MobilicHeader />
       <Main>
         <PaperContainer>
           <Container className="centered" maxWidth="xs">

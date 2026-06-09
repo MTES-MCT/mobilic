@@ -29,6 +29,11 @@ const useStyles = makeStyles((theme) => ({
     color: fr.colors.decisions.background.flat.blueFrance.default,
     fontWeight: "bold",
   },
+  carouselArrowsLowZIndex: {
+    "& .react-multiple-carousel__arrow": {
+      zIndex: "999 !important",
+    },
+  },
 }));
 
 export function TalkingAboutUsSection({ grayBackground }) {
@@ -162,7 +167,7 @@ export function TalkingAboutUsSection({ grayBackground }) {
             <Typography component="h3" className={classes.subTitle}>
               Nos utilisateurs
             </Typography>
-            <Carousel responsive={responsiveTestimonials}>
+            <Carousel responsive={responsiveTestimonials} style={{ zIndex: 0 }}>
               {TESTIMONIALS_TEXT.map(
                 ({ author, position, imageComponent, sentence }) => (
                   <TestimonialCard
@@ -176,7 +181,10 @@ export function TalkingAboutUsSection({ grayBackground }) {
               )}
             </Carousel>
 
-            <Carousel responsive={responsivePressArticles}>
+            <Carousel
+              responsive={responsivePressArticles}
+              className={classes.carouselArrowsLowZIndex}
+            >
               {TESTIMONIALS_VIDEOS.map(({ video }) => (
                 <VideoCard
                   key={video.id}
@@ -192,7 +200,10 @@ export function TalkingAboutUsSection({ grayBackground }) {
             <Typography component="h3" className={classes.subTitle}>
               La presse
             </Typography>
-            <Carousel responsive={responsivePressArticles}>
+            <Carousel 
+              responsive={responsivePressArticles}
+              className={classes.carouselArrowsLowZIndex}
+            >
               {PRESS_ARTICLES.map((article) => (
                 <PressCard
                   key={article.link}

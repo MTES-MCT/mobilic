@@ -32,7 +32,7 @@ import { WarningBreaks } from "../components/WarningBreaks";
 import { useEnoughBreak } from "../../common/useEnoughBreak";
 import Stack from "@mui/material/Stack";
 import { Notifications } from "../components/notifications/Notifications";
-import { Header } from "../../common/Header";
+import { MobilicHeader } from "../../common/Header";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { fr } from "@codegouvfr/react-dsfr";
 
@@ -220,7 +220,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
 
   return (
     <Container maxWidth={false} className={classes.outer} disableGutters>
-      <Header forceMobile />
+      <MobilicHeader forceMobile />
       <Stack
         direction="column"
         alignItems="center"

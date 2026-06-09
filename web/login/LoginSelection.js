@@ -1,6 +1,6 @@
 import React from "react";
 import { ControllerImage, WorkerImage } from "common/utils/icons";
-import { Header } from "../common/Header";
+import { MobilicHeader } from "../common/Header";
 import { usePageTitle } from "../common/UsePageTitle";
 import { RoleCard } from "../common/RoleCard";
 import { RoleSelection } from "../common/RoleSelection";
@@ -12,7 +12,7 @@ export default function LoginSelection() {
 
   return (
     <>
-      <Header />
+      <MobilicHeader />
       <Main style={{ textAlign: "center" }}>
         <RoleSelection title="Se connecter en tant que">
           <RoleCard

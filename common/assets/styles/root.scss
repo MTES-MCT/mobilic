@@ -410,6 +410,63 @@ main {
   overflow: visible !important;
 }
 
+.header-company-details {
+  position: relative;
+
+  summary {
+    border: 1px solid var(--border-default-grey);
+    padding: 0.25rem 0.75rem;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary > .fr-icon-arrow-down-s-line {
+    margin-left: auto;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+
+  &[open] > summary > .fr-icon-arrow-down-s-line {
+    transform: rotate(180deg);
+  }
+
+  ul {
+    position: absolute;
+    background: white;
+    border: 1px solid var(--border-default-grey);
+    padding: 0.5rem;
+    margin: 0;
+    list-style: none;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    width: 100%;
+    text-align: left;
+  }
+
+  li {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+  }
+
+  li.selected {
+    background-color: var(--background-contrast-blue-france);
+    color: var(--text-label-blue-france);
+    font-weight: 700;
+  }
+
+
+}
+
 @media (min-width: 90em) {
   .fr-follow, .fr-footer {
     .fr-container {

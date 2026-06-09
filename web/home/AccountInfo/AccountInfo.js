@@ -6,7 +6,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import { formatPersonName } from "common/utils/coworkers";
-import { Header } from "../../common/Header";
+import { MobilicHeader } from "../../common/Header";
 import { Section } from "../../common/Section";
 import Grid from "@mui/material/Grid";
 import { InfoItem } from "../InfoField";
@@ -109,7 +109,7 @@ export default function Home() {
 
   return (
     <>
-      <Header />
+      <MobilicHeader />
       <Main>
         <PaperContainer>
           <Container
