@@ -21,7 +21,7 @@ export function ControllerControlEmployeeInfo({ name }) {
       <FieldTitle component="h6" className={classes.title}>
         Salarié(e)
       </FieldTitle>
-      <Typography className={classes.value} mt={1}>
+      <Typography className={classes.value} mt={1} mb={2}>
         {name}
       </Typography>
     </div>

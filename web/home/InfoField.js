@@ -25,7 +25,8 @@ export function InfoItem({
   titleProps = {},
   uppercaseTitle = true,
   valuePlaceholder,
-  maxWidth = "70%"
+  maxWidth = "70%",
+  direction = "column"
 }) {
   const classes = useStyles({ bold });
   const typographyClasses = useTypographyStyles();
@@ -42,7 +43,13 @@ export function InfoItem({
         justifyContent="space-between"
         columnGap={1}
       >
-        <Stack direction="column" sx={{ flexGrow: 1, maxWidth }}>
+        <Stack 
+          direction={direction} 
+          component="div"
+          sx={{ flexGrow: 1, maxWidth }}
+          alignItems={direction === "row" ? "baseline" : "flex-start"}
+          columnGap={direction === "row" ? 2 : 0}
+        >
           <FieldTitle uppercaseTitle={uppercaseTitle} {...titleProps}>
             {name}
           </FieldTitle>

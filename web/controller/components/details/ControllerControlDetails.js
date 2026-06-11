@@ -5,13 +5,14 @@ import {
   augmentAndSortMissions,
   parseMissionPayloadFromBackend
 } from "common/utils/mission";
-import { unixToJSTimestamp } from "common/utils/time";
 import { orderEmployments } from "common/utils/employments";
 import { ControllerControlHeader } from "./ControllerControlHeader";
 import _ from "lodash";
 import { ControlBulletinDrawer } from "../controlBulletin/ControlBulletinDrawer";
 import { formatActivity } from "common/utils/businessTypes";
 import { useInfractions } from "../../utils/contextInfractions";
+import { useWorkingDaysAnalysis } from "common/utils/hooks/useWorkingDaysAnalysis";
+import { useTokenInfo } from "common/utils/hooks/useTokenInfo";
 
 export function ControllerControlDetails({
   controlData,
@@ -35,13 +36,17 @@ export function ControllerControlDetails({
     setNatinfViewMode
   } = useInfractions();
 
-  // Keep this Object to Reuse existing tabs. To adapt when unauthenticated control will be removed
-  const legacyTokenInfo = {
-    creationDay: new Date(unixToJSTimestamp(controlData.qrCodeGenerationTime)),
-    historyStartDay: controlData.historyStartDate,
-    creationTime: controlData.creationTime,
-    controlTime: controlData.controlTime
-  };
+  // Transform control data into token format for reusing existing UserRead components
+  const legacyTokenInfo = useTokenInfo({ controlData });
+
+  // Analyze working days from missions to detect:
+  // - Days added "a posteriori" (registered after they occurred)
+  // - Days that were modified (activity versions exist)
+  const workingDaysAnalysis = useWorkingDaysAnalysis(
+    missions,
+    controlData.controlTime || controlData.qrCodeGenerationTime,
+    legacyTokenInfo
+  );
 
   const _onClose = () => {
     if (natinfViewMode === 'search') {
@@ -95,10 +100,12 @@ export function ControllerControlDetails({
     }
 
     if (missionData.length > 0) {
-      const _missions = augmentAndSortMissions(
+      const augmented = augmentAndSortMissions(
         missionData,
         controlData.user.id
-      ).filter(m => m.activities.length > 0);
+      );
+      const _missions = augmented.filter(m => m.activities.length > 0);
+      
       setMissions(_missions);
       setCoworkers(_coworkers);
     } else {
@@ -132,7 +139,7 @@ export function ControllerControlDetails({
         tabs={getTabs(checkedAlertsNumber)}
         totalAlertsNumber={totalAlertsNumber}
         tokenInfo={legacyTokenInfo}
-        controlTime={controlData.qrCodeGenerationTime}
+        controlTime={controlData.controlTime || controlData.qrCodeGenerationTime}
         missions={missions}
         employments={employments}
         businesses={businesses}
@@ -140,13 +147,16 @@ export function ControllerControlDetails({
         vehicles={vehicles}
         periodOnFocus={periodOnFocus}
         setPeriodOnFocus={setPeriodOnFocus}
-        workingDaysNumber={controlData.nbControlledDays || 0}
+        workingDaysNumber={workingDaysAnalysis.workingDaysNumber}
+        daysAddedPosterioriNumber={workingDaysAnalysis.daysAddedPosterioriNumber}
+        daysModifiedNumber={workingDaysAnalysis.daysModifiedNumber}
         allowC1BExport={false}
         controlId={controlData.id}
         companyName={controlData.companyName}
         companySiren={companySiren}
         vehicleRegistrationNumber={controlData.vehicleRegistrationNumber}
         controlData={controlData}
+        regulationComputationsByDay={controlData.regulationComputationsByDay}
         openBulletinControl={() => setIsEditingBC(true)}
         reportedInfractionsLastUpdateTime={reportedInfractionsLastUpdateTime}
         isReportingInfractions={isReportingInfractions}
