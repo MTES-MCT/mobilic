@@ -37,15 +37,20 @@ export const RESOURCES_DOCUMENT = {
     },
     controleur: {
       slideshare:
-        "https://www.slideshare.net/slideshow/embed_code/key/khEsCS5bTemUi7",
+        "https://www.slideshare.net/slideshow/embed_code/key/xrWKif7T7uQot5",
       download:
-        "https://drive.google.com/uc?export=download&id=19XKk9wp6N0O7MVL_xcx6NudeSnKRBeGC"
+        "https://resana.numerique.gouv.fr/public/information/consulterAccessUrl?cle_url=1340910129BmoHYVZeWDMNMQAwVzsCJlM/VGYOLwA5BGsEYQRsDjZUaAM3VTAFMABjAGJRYQ=="
+    },
+    ITAgent: {
+      slideshare: "https://www.slideshare.net/slideshow/embed_code/key/9I72Emjfl2Shwm",
+      download: 
+        "https://resana.numerique.gouv.fr/public/information/consulterAccessUrl?cle_url=2043758308VDgGYAAIWTIGOlBgAGwEIABsUmBTcgM6VDtRNAJqWWFSbgg8B2JVYA1pB2cCMw=="
     },
     controleurConnected: {
       slideshare:
-        "https://www.slideshare.net/slideshow/embed_code/key/A1Ygyj7EIa6gfj",
+        "https://www.slideshare.net/slideshow/embed_code/key/2jcpFVS7vjn3ja",
       download:
-        "https://drive.google.com/uc?export=download&id=16PJFABFEqf4-wy_UYcH8jE8ATbtLz_Qg"
+        "https://resana.numerique.gouv.fr/public/information/consulterAccessUrl?cle_url=1249997410VDgIbgAIUzgFOVZmAm5Xc1A8Dz0HJgE4BmkFYFQ8XWUFOQg8UDVVYAJmUDJWYw=="
     }
   },
   brochure: {
