@@ -74,10 +74,8 @@ const useStyles = makeStyles(theme => ({
   stickyValidationBar: {
     position: "fixed",
     bottom: 0,
-    left: 0,
-    right: 0,
-    width: "100%",
     zIndex: 1000,
+    boxSizing: "border-box",
     backgroundColor: fr.colors.decisions.background.default.grey.default,
     borderTop: `1px solid ${fr.colors.decisions.border.default.grey.default}`,
     padding: theme.spacing(2)
@@ -138,6 +136,11 @@ export function MissionDetails({
   hideHistory = false
 }) {
   const classes = useStyles();
+  const containerRef = React.useRef(null);
+  const [validationBarPosition, setValidationBarPosition] = React.useState({
+    left: 0,
+    width: "100%"
+  });
   const modals = useModals();
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
@@ -245,8 +248,25 @@ export function MissionDetails({
       !mission.validation &&
       !mission.isDeleted;
 
+  React.useEffect(() => {
+    if (!printValidationBtn || !containerRef.current) return;
+
+    const updateValidationBarPosition = () => {
+      const { left, width } = containerRef.current.getBoundingClientRect();
+      setValidationBarPosition({ left, width });
+    };
+
+    updateValidationBarPosition();
+
+    window.addEventListener("resize", updateValidationBarPosition);
+
+    return () => {
+      window.removeEventListener("resize", updateValidationBarPosition);
+    };
+  }, [printValidationBtn]);
+
   return (
-    <Box pb={printValidationBtn ? 8 : 0}>
+    <Box ref={containerRef} pb={printValidationBtn ? 8 : 0}>
       <AlternateColors inverseColors={inverseColors}>
         {!hideHistory && (
           <MissionReviewSection title="Historique des validations">
@@ -553,15 +573,18 @@ export function MissionDetails({
           </List>
         </MissionReviewSection>
         {printValidationBtn && (
-            <Box className={classes.stickyValidationBar}>
-                <LoadingButton
-                  style={{ width: "100%", justifyContent: "center" }}
-                  onClick={handleMissionValidation}
-                >
-                  {validationButtonName}
-                </LoadingButton>
-              </Box>
-          )}
+          <Box
+            className={classes.stickyValidationBar}
+            style={validationBarPosition}
+          >
+            <LoadingButton
+              style={{ width: "100%", justifyContent: "center" }}
+              onClick={handleMissionValidation}
+            >
+              {validationButtonName}
+            </LoadingButton>
+          </Box>
+        )}
         {!hideValidations &&
           (!validateMission ||
             mission.isDeleted ||
