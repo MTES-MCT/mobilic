@@ -4,7 +4,10 @@ import { HOUR } from "../utils/time";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { makeStyles } from "@mui/styles";
-import { ACTIVITIES } from "../utils/activities";
+import {
+  ACTIVITIES,
+  getActivityLabelDependingOnMissionType
+} from "../utils/activities";
 
 const ORDERED_SCALES_IN_HOURS = [0.5, 1, 2, 3, 4, 6, 12, 24];
 
@@ -51,7 +54,8 @@ export function VerticalTimeline({
   heightTarget = 300,
   maxBarWidth = 40,
   idealNumberOfSteps = 5,
-  datetimeFormatter
+  datetimeFormatter,
+  isTeamMission = false
 }) {
   const classes = useStyles();
 
@@ -205,7 +209,7 @@ export function VerticalTimeline({
               noWrap
               variant="caption"
             >
-              {ACTIVITIES[type].label}
+              {getActivityLabelDependingOnMissionType(type, isTeamMission)}
             </Typography>
           </Box>
         ))}

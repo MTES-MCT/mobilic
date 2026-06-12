@@ -8,7 +8,8 @@ import {
   ACTIVITIES_OPERATIONS,
   addBreaksToActivityList,
   computeDurationAndTime,
-  filterActivitiesOverlappingPeriod
+  filterActivitiesOverlappingPeriod,
+  getActivityLabelDependingOnMissionType
 } from "common/utils/activities";
 import {
   formatLongTimer,
@@ -67,6 +68,12 @@ function ActivityItem({
   const isLongBreak =
     isBreak && activity.duration && activity.duration >= LONG_BREAK_DURATION;
 
+  const isTeamMode = teamChanges && Object.keys(teamChanges).length > 0;
+  const activityLabel = getActivityLabelDependingOnMissionType(
+    activity.type,
+    isTeamMode
+  );
+
   return (
     <ListItem disableGutters>
       <ListItemAvatar>
@@ -80,7 +87,7 @@ function ActivityItem({
           <Typography className={isLongBreak ? classes.longBreak : ""}>
             {isLongBreak
               ? "Repos journalier"
-              : `${ACTIVITIES[activity.type].label}${
+              : `${activityLabel}${
                   activity.isMissionDeleted ? " (activité supprimée)" : ""
                 }`}
           </Typography>
@@ -155,7 +162,8 @@ function ActivityItem({
                 cancellable: true,
                 teamChanges,
                 allowTeamMode,
-                nullableEndTime: nullableEndTimeInEditActivity
+                nullableEndTime: nullableEndTimeInEditActivity,
+                isTeamMission: isTeamMode
               })
             }
           >

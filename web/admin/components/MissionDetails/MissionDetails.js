@@ -408,7 +408,8 @@ export function MissionDetails({
                               nullableEndTime: false,
                               defaultTime: mission.startTime || day,
                               forcedUser: e.user,
-                              displayWarningMessage: false
+                              displayWarningMessage: false,
+                              isTeamMission: mission.isTeamMission
                             })
                         : null
                     }
@@ -447,7 +448,8 @@ export function MissionDetails({
                                 });
                                 await refreshData();
                                 handleClose();
-                              }
+                              },
+                              isTeamMission: mission.isTeamMission
                             })
                         : null
                     }
