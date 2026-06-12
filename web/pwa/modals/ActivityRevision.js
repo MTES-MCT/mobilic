@@ -5,7 +5,8 @@ import TextField from "common/utils/TextField";
 import {
   ACTIVITIES,
   ACTIVITIES_OPERATIONS,
-  convertNewActivityIntoActivityOperations
+  convertNewActivityIntoActivityOperations,
+  getActivityLabelDependingOnMissionType
 } from "common/utils/activities";
 import uniq from "lodash/uniq";
 import min from "lodash/min";
@@ -52,7 +53,8 @@ export default function ActivityRevisionOrCreationModal({
   defaultTime = null,
   forcedUser = null,
   displayWarningMessage = true,
-  handleCancelMission = null
+  handleCancelMission = null,
+  isTeamMission = false
 }) {
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
@@ -419,7 +421,11 @@ export default function ActivityRevisionOrCreationModal({
               {filteredActivities().map(activityName => {
                 const activity = ACTIVITIES[activityName];
                 const isDisabled = activityName === ACTIVITIES.support.name;
-                const label = `${activity.label}${
+                const activityLabel = getActivityLabelDependingOnMissionType(
+                  activityName,
+                  isTeamMission
+                );
+                const label = `${activityLabel}${
                   activityName === ACTIVITIES.work.name && otherTaskLabel
                     ? " - " + otherTaskLabel
                     : ""

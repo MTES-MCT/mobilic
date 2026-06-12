@@ -15,7 +15,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 export const SWITCH_ACTIVITIES = {
   drive: {
     name: "drive",
-    label: "Déplacement",
+    label: "Travail",
     renderIcon: props => <TruckIcon {...props} />,
     color: fr.colors.decisions.artwork.major.greenArchipel.default,
     canBeFirst: true
@@ -373,4 +373,15 @@ export function computeDurationAndTime(activities, fromTime, untilTime) {
       duration: endTimeOrNow - startTime
     };
   });
+}
+
+export function getActivityLabelDependingOnMissionType(
+  type,
+  isTeamMission = false
+) {
+  if (!ACTIVITIES[type]) return "";
+  if (isTeamMission && type === ACTIVITIES.drive.name) {
+    return "Conduite";
+  }
+  return ACTIVITIES[type].label;
 }

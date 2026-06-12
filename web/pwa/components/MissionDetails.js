@@ -276,7 +276,8 @@ export function MissionDetails({
                   allowSupportActivity,
                   allowOtherTask,
                   otherTaskLabel,
-                  defaultTime: lastActivityTime || defaultTime
+                  defaultTime: lastActivityTime || defaultTime,
+                  isTeamMission: mission.isTeamMission
                 })
             : null
         }
