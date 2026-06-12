@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Box, Stack, Typography, CircularProgress } from "@mui/material";
+import { fr } from "@codegouvfr/react-dsfr";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
 import { WarningBadge } from "../../common/WarningBadge";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../store/store";
@@ -12,6 +14,7 @@ import {
 import { SEND_INVITATIONS_REMINDERS } from "common/utils/apiQueries/employments";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatCompleteDateFromString } from "common/utils/time";
+import { formatPersonName } from "common/utils/coworkers";
 import { MOBILIC_BLUE } from "common/utils/theme";
 import { PRETTY_LABELS } from "./RegulatoryRespect/RegulatoryRespectAlertsRecap";
 import { useDayDrawer } from "../drawers/DayDrawer";
@@ -27,15 +30,11 @@ function getStartOfWeek() {
   return monday;
 }
 
-function filterDaysThisWeek(days) {
-  if (!days || days.length === 0) return [];
-  const startOfWeek = getStartOfWeek();
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 7);
-  return days.filter((d) => {
-    const date = new Date(d);
-    return date >= startOfWeek && date < endOfWeek;
-  });
+function formatDateISO(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
 function KpiCard({ title, count, buttonLabel, onButtonClick }) {
@@ -57,7 +56,7 @@ function KpiCard({ title, count, buttonLabel, onButtonClick }) {
       <Typography
         sx={{
           color: "#3A3A3A",
-          fontSize: "0.875rem"
+          fontSize: "1rem"
         }}
       >
         {title}
@@ -73,7 +72,7 @@ function KpiCard({ title, count, buttonLabel, onButtonClick }) {
         {count}
       </Typography>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button priority="secondary" size="small" onClick={onButtonClick}>
+        <Button priority="secondary" onClick={onButtonClick}>
           {buttonLabel}
         </Button>
       </Box>
@@ -114,7 +113,10 @@ function ClickableLine({ count, label, onClick }) {
       <Box
         component="span"
         className="fr-icon-arrow-right-line"
-        sx={{ color: "#000091" }}
+        sx={{
+          color: "#000091",
+          "&::before": { width: "1.25rem", height: "1.25rem" }
+        }}
       />
     </Box>
   );
@@ -131,12 +133,12 @@ function AlertRow({ label, count, dayDetails, onClickDay, isLast, defaultExpande
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          py: 1.5,
-          px: 2,
+          padding: "12px 16px",
           cursor: "pointer",
           borderTop: "1px solid #DDDDDD",
-          borderBottom: !expanded && isLast ? "1px solid #DDDDDD" : "none",
-          backgroundColor: expanded ? "#f4f8ff" : "transparent",
+          borderBottom:
+            isLast && !expanded ? "1px solid #DDDDDD" : "none",
+          backgroundColor: expanded ? "#f4f8ff" : "#FFFFFF",
           "&:hover": { backgroundColor: expanded ? "#f4f8ff" : "#F6F6F6" }
         }}
       >
@@ -163,27 +165,55 @@ function AlertRow({ label, count, dayDetails, onClickDay, isLast, defaultExpande
             borderTop: "1px solid #DDDDDD",
             borderBottom: isLast ? "1px solid #DDDDDD" : "none"
           }}
-          spacing={0.5}
+          spacing={1}
         >
           {dayDetails.map((detail, i) => (
             <Box
               key={`${detail.day}-${detail.userName}-${i}`}
-              component="button"
-              onClick={() => onClickDay(detail.day, detail.userId)}
               sx={{
-                color: "#000091",
-                fontSize: "0.875rem",
-                textDecoration: "underline",
-                cursor: "pointer",
-                background: "none",
-                border: "none",
-                padding: 0,
-                textAlign: "left",
-                fontFamily: "inherit",
-                "&:hover": { textDecoration: "none" }
+                display: "flex",
+                alignItems: "center",
+                gap: "0.25rem"
               }}
             >
-              {formatCompleteDateFromString(detail.day)} – {detail.userName}
+              <Box
+                component="button"
+                onClick={() => onClickDay(detail.day, detail.userId)}
+                sx={{
+                  color: "#000091",
+                  fontSize: "0.875rem",
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                  background: "none",
+                  border: "none",
+                  padding: 0,
+                  textAlign: "left",
+                  fontFamily: "inherit",
+                  "&:hover": { textDecoration: "none" }
+                }}
+              >
+                {formatCompleteDateFromString(detail.day)} – {detail.userName}
+              </Box>
+              {detail.otherCompanyRelation && (
+                <Tooltip
+                  title={
+                    detail.otherCompanyRelation === "establishment"
+                      ? "Infraction réalisée dans un autre établissement de l'entreprise."
+                      : "Infraction réalisée dans une autre entreprise."
+                  }
+                >
+                  <Box
+                    component="span"
+                    className="fr-icon-warning-fill fr-icon--sm"
+                    aria-label={
+                      detail.otherCompanyRelation === "establishment"
+                        ? "Infraction réalisée dans un autre établissement"
+                        : "Infraction réalisée dans une autre entreprise"
+                    }
+                    sx={{ color: "#B34000" }}
+                  />
+                </Tooltip>
+              )}
             </Box>
           ))}
         </Stack>
@@ -192,28 +222,19 @@ function AlertRow({ label, count, dayDetails, onClickDay, isLast, defaultExpande
   );
 }
 
-function InfractionsSection({ alertsData, onClickDay }) {
+function InfractionsSection({ alertsData, hasAnyMissionThisWeek, onClickDay }) {
   const history = useHistory();
+  const alertsUnavailable = alertsData == null;
   const allAlerts = [
     ...(alertsData?.dailyAlerts || []),
     ...(alertsData?.weeklyAlerts || [])
   ];
 
-  const startOfWeek = getStartOfWeek();
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 7);
-
+  // Backend already restricts dailyAlerts/weeklyAlerts to the current week
+  // via the fromDate/toDate window — just drop empty groups.
   const weeklyAlerts = allAlerts
     .filter((a) => a.alertsType in PRETTY_LABELS)
-    .map((a) => {
-      const weekDays = filterDaysThisWeek(a.days);
-      const weekDetails = (a.dayDetails || []).filter((d) => {
-        const date = new Date(d.day);
-        return date >= startOfWeek && date < endOfWeek;
-      });
-      return { ...a, weekDays, weekCount: weekDays.length, weekDetails };
-    })
-    .filter((a) => a.weekCount > 0);
+    .filter((a) => (a.days || []).length > 0);
 
   const hasAlerts = weeklyAlerts.length > 0;
 
@@ -225,44 +246,42 @@ function InfractionsSection({ alertsData, onClickDay }) {
             <AlertRow
               key={alert.alertsType}
               label={PRETTY_LABELS[alert.alertsType]}
-              count={alert.weekCount}
-              dayDetails={alert.weekDetails}
+              count={alert.days.length}
+              dayDetails={alert.dayDetails || []}
               onClickDay={onClickDay}
               isLast={index === weeklyAlerts.length - 1}
             />
           ))}
         </Box>
       ) : (
-        <Typography sx={{ color: "#3A3A3A", fontStyle: "italic" }}>
-          Tous les seuils réglementaires sont respectés
+        <Typography
+          sx={{
+            color: fr.colors.decisions.text.default.grey.default,
+            fontSize: "0.875rem"
+          }}
+        >
+          {alertsUnavailable
+            ? "Infractions momentanément indisponibles."
+            : hasAnyMissionThisWeek
+            ? "Tous les seuils réglementaires sont respectés."
+            : "Calcul des infractions en attente de l'enregistrement d'une mission."}
         </Typography>
       )}
       <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
-        <Box
-          component="a"
+        <a
+          className={fr.cx(
+            "fr-link",
+            "fr-icon-arrow-right-line",
+            "fr-link--icon-right"
+          )}
+          href="/admin/regulatory-respect"
           onClick={(e) => {
             e.preventDefault();
             history.push("/admin/regulatory-respect");
           }}
-          href="/admin/regulatory-respect"
-          sx={{
-            color: "#000091",
-            fontSize: "0.875rem",
-            textDecoration: "underline",
-            cursor: "pointer",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 0.5,
-            "&:hover": { textDecoration: "none" }
-          }}
         >
           Voir le respect des seuils
-          <Box
-            component="span"
-            className="fr-icon-arrow-right-line fr-icon--sm"
-            aria-hidden="true"
-          />
-        </Box>
+        </a>
       </Box>
     </Box>
   );
@@ -294,12 +313,17 @@ export default function Home({ setShouldRefreshData }) {
         }
         const now = new Date();
         const month = now.toISOString().slice(0, 7);
+        const monday = getStartOfWeek();
+        const nextMonday = new Date(monday);
+        nextMonday.setDate(monday.getDate() + 7);
         const res = await api.graphQlQuery(
           DASHBOARD_HOME_QUERY,
           {
             id: adminStore.userId,
             companyIds: [adminStore.companyId],
-            month
+            month,
+            fromDate: formatDateISO(monday),
+            toDate: formatDateISO(nextMonday)
           },
           { fetchPolicy: forceRefresh ? "network-only" : "cache-first" }
         );
@@ -373,7 +397,11 @@ export default function Home({ setShouldRefreshData }) {
         "day"
       );
       if (aggregates.length > 0) {
-        openWorkday(aggregates[0]);
+        const aggregate = {
+          ...aggregates[0],
+          workerName: formatPersonName(aggregates[0].user)
+        };
+        openWorkday(aggregate);
       }
     } catch (err) {
       console.error("Day detail load failed:", err);
@@ -403,15 +431,24 @@ export default function Home({ setShouldRefreshData }) {
     : "";
 
   return (
-    <Box sx={{ px: 5, py: 3 }}>
-      <Typography
-        sx={{ fontSize: "1.5rem", fontWeight: 700, color: "#161616", mb: 3 }}
+    <Box>
+      <Box
+        sx={{
+          padding: "2rem 2.5rem",
+          backgroundColor: fr.colors.decisions.background.alt.grey.default
+        }}
       >
-        Bienvenue sur Mobilic !
-      </Typography>
+        <Typography
+          sx={{ fontSize: "1.5rem", fontWeight: 700, color: "#161616" }}
+        >
+          Bienvenue sur Mobilic !
+        </Typography>
+      </Box>
 
       <Box
         sx={{
+          px: 5,
+          py: 3,
           opacity: refreshing ? 0.5 : 1,
           transition: "opacity 0.2s ease",
           pointerEvents: refreshing ? "none" : "auto"
@@ -429,8 +466,8 @@ export default function Home({ setShouldRefreshData }) {
             {summary.pendingInvitationsCount > 0 && (
               <>
                 <Typography component="span" sx={{ color: "#3A3A3A" }}>
-                  {summary.pendingInvitationsCount} invitation(s) de salariés
-                  sont toujours en attente.
+                  {summary.pendingInvitationsCount} invitation(s) de
+                  salarié(s) en attente.
                 </Typography>
                 <Button
                   priority="secondary"
@@ -465,33 +502,36 @@ export default function Home({ setShouldRefreshData }) {
                 Aujourd'hui
               </Typography>
               {lastUpdate && (
-                <Typography sx={{ color: "#666666", fontSize: "0.875rem" }}>
-                  Dernière mise à jour {formattedUpdate}
-                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                  <Typography sx={{ color: "#666666", fontSize: "0.875rem" }}>
+                    Dernière mise à jour {formattedUpdate}
+                  </Typography>
+                  <Box
+                    component="span"
+                    sx={{
+                      display: "inline-flex",
+                      verticalAlign: "baseline",
+                      "& > button": { padding: 0, minHeight: 0 },
+                      animation: refreshing
+                        ? "spin 1s linear infinite"
+                        : "none",
+                      "@keyframes spin": {
+                        "0%": { transform: "rotate(0deg)" },
+                        "100%": { transform: "rotate(360deg)" }
+                      }
+                    }}
+                  >
+                    <Button
+                      iconId="fr-icon-refresh-line"
+                      title="Rafraîchir"
+                      priority="tertiary no outline"
+                      size="small"
+                      onClick={refreshDashboard}
+                      disabled={refreshing}
+                    />
+                  </Box>
+                </Box>
               )}
-              <Box
-                component="span"
-                sx={{
-                  display: "inline-flex",
-                  verticalAlign: "baseline",
-                  animation: refreshing
-                    ? "spin 1s linear infinite"
-                    : "none",
-                  "@keyframes spin": {
-                    "0%": { transform: "rotate(0deg)" },
-                    "100%": { transform: "rotate(360deg)" }
-                  }
-                }}
-              >
-                <Button
-                  iconId="fr-icon-refresh-line"
-                  title="Rafraîchir"
-                  priority="tertiary no outline"
-                  size="small"
-                  onClick={refreshDashboard}
-                  disabled={refreshing}
-                />
-              </Box>
             </Box>
 
             <Stack direction={{ xs: "column", sm: "row" }} spacing={3} sx={{ mb: 3 }}>
@@ -510,19 +550,38 @@ export default function Home({ setShouldRefreshData }) {
             </Stack>
 
             <Stack spacing={2}>
-              <ClickableLine
-                count={summary.inactiveEmployeesCount}
-                label="salariés n'ont pas lancé Mobilic"
-                onClick={() =>
-                  history.push({
-                    pathname: "/admin/activities",
-                    state: { openInactiveDropdown: true }
-                  })
-                }
-              />
+              {summary.inactiveEmployeesCount === 0 ? (
+                <Box
+                  sx={{
+                    border: "1px solid #DDDDDD",
+                    borderRadius: "4px",
+                    py: 2,
+                    px: 3
+                  }}
+                >
+                  <Typography>
+                    Tous les salariés ont lancé Mobilic aujourd'hui
+                  </Typography>
+                </Box>
+              ) : (
+                <ClickableLine
+                  count={summary.inactiveEmployeesCount}
+                  label={
+                    summary.inactiveEmployeesCount === 1
+                      ? "salarié n'a pas lancé Mobilic"
+                      : "salariés n'ont pas lancé Mobilic"
+                  }
+                  onClick={() =>
+                    history.push({
+                      pathname: "/admin/activities",
+                      state: { openInactiveDropdown: true }
+                    })
+                  }
+                />
+              )}
               <ClickableLine
                 count={summary.autoValidatedMissionsCount}
-                label="missions validées automatiquement"
+                label="mission(s) validée(s) automatiquement"
                 onClick={() =>
                   history.push({
                     pathname: "/admin/validations",
@@ -535,7 +594,11 @@ export default function Home({ setShouldRefreshData }) {
 
           {/* Row 2, Col 2: alerts */}
           <Box sx={{ alignSelf: "start" }}>
-            <InfractionsSection alertsData={alertsData} onClickDay={handleClickDay} />
+            <InfractionsSection
+              alertsData={alertsData}
+              hasAnyMissionThisWeek={summary.hasAnyMissionThisWeek}
+              onClickDay={handleClickDay}
+            />
           </Box>
         </Box>
       </Box>

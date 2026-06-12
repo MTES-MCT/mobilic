@@ -20,6 +20,8 @@ import ControlPicture from "./controller/components/modals/ControlPicture";
 import ControlHandDeliveryModal from "./controller/components/modals/ControlHandDeliveryModal";
 import ControlSendEmailModal from "./controller/components/modals/ControlSendEmailModal";
 import ControllerUpdateTimeModal from "./controller/components/modals/ControllerUpdateTime";
+import ConfirmationRemoveInfringementModal from "./controller/components/modals/ConfirmationRemoveInfringementModal";
+import ConfirmationCancelInfringementModal from "./controller/components/modals/ConfirmationCancelInfringementModal";
 
 // admin
 import UpdateCompanyDetailsModal from "./admin/modals/UpdateCompanyDetailsModal";
@@ -94,6 +96,8 @@ export const MODAL_DICT = {
   companyTeamCreationRevisionModal: CompanyTeamCreationRevisionModal,
   employeesTeamRevisionModal: EmployeesTeamRevisionModal,
   confirmationCancelControlBulletinModal: ConfirmationCancelControlBulletinModal,
+  confirmationRemoveInfringementModal: ConfirmationRemoveInfringementModal,
+  confirmationCancelInfringementModal: ConfirmationCancelInfringementModal,
   typeformModal: TypeformModal,
   updateCompanyDetails: UpdateCompanyDetailsModal,
   blockedTime: BlockedTimeModal,
@@ -103,5 +107,5 @@ export const MODAL_DICT = {
   overrideValidation: OverrideValidationJustificationModal,
   handDeliveryConfirmation: ControlHandDeliveryModal,
   controlSendEmail: ControlSendEmailModal,
-  controllerUpdateTime: ControllerUpdateTimeModal
+  controllerUpdateTime: ControllerUpdateTimeModal,
 };

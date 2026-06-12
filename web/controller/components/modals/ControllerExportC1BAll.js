@@ -79,10 +79,10 @@ export default function ControllerExportC1BAll({
                   setExportFilters((prevFilters) => {
                     return {
                       ...prevFilters,
-                      fromDate: isoFormatLocalDate(newFromDate),
+                      fromDate: newFromDate,
                       toDate:
                         newFromDate > new Date(prevFilters.toDate)
-                          ? isoFormatLocalDate(newFromDate)
+                          ? newFromDate
                           : prevFilters.toDate
                     };
                   });
@@ -110,10 +110,10 @@ export default function ControllerExportC1BAll({
                   setExportFilters((prevFilters) => {
                     return {
                       ...prevFilters,
-                      toDate: isoFormatLocalDate(newToDate),
+                      toDate: newToDate,
                       fromDate:
                         newToDate < new Date(prevFilters.fromDate)
-                          ? isoFormatLocalDate(newToDate)
+                          ? newToDate
                           : prevFilters.fromDate
                     };
                   });
@@ -143,8 +143,8 @@ export default function ControllerExportC1BAll({
             onClick={async () => {
               alerts.withApiErrorHandling(async () => {
                 const options = {
-                  min_date: exportFilters.fromDate,
-                  max_date: exportFilters.toDate,
+                  min_date: isoFormatLocalDate(exportFilters.fromDate),
+                  max_date: isoFormatLocalDate(exportFilters.toDate),
                   with_digital_signatures: sign
                 };
                 await api.downloadFileHttpQuery(

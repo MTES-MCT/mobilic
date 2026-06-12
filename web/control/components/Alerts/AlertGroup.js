@@ -4,6 +4,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { formatAlertText, RegulatoryAlert } from "../RegulatoryAlert";
 import { makeStyles } from "@mui/styles";
+import { alertNumberBase } from "../../../common/styles/alertNumber";
 import Grid from "@mui/material/Grid";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -18,8 +19,8 @@ import { PERIOD_UNITS } from "common/utils/regulation/periodUnitsEnum";
 import classNames from "classnames";
 import { useInfractions } from "../../../controller/utils/contextInfractions";
 import { useControl } from "../../../controller/utils/contextControl";
-import { Badge } from "@codegouvfr/react-dsfr/Badge";
-import { useAccordionSummaryStyles } from "../../../common/styles/accordionStyles";
+import { WarningBadge } from "../../../common/WarningBadge";
+import { AccordionActions } from "../../../common/AccordionActions";
 
 const useStyles = makeStyles(theme => {
   return {
@@ -34,9 +35,16 @@ const useStyles = makeStyles(theme => {
       margin: 0,
       marginRight: theme.spacing(1)
     },
+    alertNumber: alertNumberBase(theme),
     reportedAlert: {
       borderColor: theme.palette.primary.main,
       borderWidth: "1px"
+    },
+    reportableAlert: {
+      backgroundColor: theme.palette.error.main
+    },
+    notReportableAlert: {
+      backgroundColor: theme.palette.primary.main
     }
   };
 });
@@ -83,11 +91,11 @@ export function AlertGroup({
   readOnlyAlerts,
   displayBusinessType = false,
   titleProps = {},
-  onDelete
+  onDelete,
+  textSize = "0.875rem" // fr-text--sm (14px)
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
-  const accordionClasses = useAccordionSummaryStyles();
   const { isReportingInfractions } = useInfractions();
   const { controlType } = useControl();
 
@@ -119,6 +127,8 @@ export function AlertGroup({
     [alerts]
   );
 
+  const infringementLabelFormatted = type === 'custom' ? infringementLabel.toUpperCase() : infringementLabel;
+
   useEffect(() => {
     if (!isReportingInfractions) {
       setOpen(false);
@@ -136,51 +146,50 @@ export function AlertGroup({
       )}
     >
       <AccordionSummary>
-        <div className={accordionClasses.summary}>
-          <div className={accordionClasses.summaryRow}>
-            <div className={accordionClasses.summaryLeft}>
-              <Typography
-                className="bold"
-                color="primary"
-                {...titleProps}
-                fontSize="0.875rem"
-              >
-                {sanction}
-              </Typography>
-              {alertsNumber !== 0 && (
-                <Badge
-                  severity={isSanctionReportable ? "error" : "info"}
-                  small
-                  noIcon
-                  as="span"
-                  className={isSanctionReportable ? accordionClasses.errorAlertBadge : accordionClasses.alertBadge}
-                >
-                  {alertsNumber}
-                </Badge>
-              )}
-            </div>
-            <div className={accordionClasses.summaryIcons}>
-              <span
-                className={classNames(
-                  "fr-icon-arrow-down-s-line",
-                  accordionClasses.arrowIcon,
-                  open && accordionClasses.arrowIconOpen
-                )}
-                aria-hidden="true"
-              />
-              {onDelete && (
-                <button
-                  className={accordionClasses.deleteButton}
-                  onClick={(e) => { e.stopPropagation(); onDelete(); }}
-                  title="Supprimer l'infraction"
-                  aria-label="Supprimer l'infraction"
-                >
-                  <span className="fr-icon-delete-line" aria-hidden="true" />
-                </button>
-              )}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "nowrap",
+            gap: "0.5rem",
+            width: "100%"
+          }}
+        >
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "flex-start", alignContent: "flex-start", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
+                  <Typography
+                    className="bold"
+                    color="primary"
+                    {...titleProps}
+                    fontSize="0.875rem"
+                  >
+                    {sanction}
+                  </Typography>
+                  {alertsNumber !== 0 && (
+                    <div>
+                      <WarningBadge
+                        className={classNames(
+                          classes.alertNumber,
+                          isSanctionReportable
+                            ? classes.reportableAlert
+                            : classes.notReportableAlert
+                        )}
+                      >
+                        {alertsNumber}
+                      </WarningBadge>
+                    </div>
+                  )}
+                </div>
+                <Typography fontWeight="500" fontSize={textSize}>
+                  {infringementLabelFormatted}
+                </Typography>
+              </div>
+              <AccordionActions open={open} onDelete={onDelete} />
             </div>
           </div>
-          <Typography fontWeight="500">{infringementLabel}</Typography>
         </div>
       </AccordionSummary>
       <AccordionDetails className={classes.details}>

@@ -682,7 +682,13 @@ export const UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE = gql`
 `;
 
 export const DASHBOARD_HOME_QUERY = gql`
-  query dashboardHome($id: Int!, $companyIds: [Int], $month: ShortMonth!) {
+  query dashboardHome(
+    $id: Int!
+    $companyIds: [Int]
+    $month: ShortMonth!
+    $fromDate: Date
+    $toDate: Date
+  ) {
     user(id: $id) {
       adminedCompanies(companyIds: $companyIds) {
         id
@@ -693,8 +699,9 @@ export const DASHBOARD_HOME_QUERY = gql`
           inactiveEmployeesCount
           autoValidatedMissionsCount
           pendingInvitationEmploymentIds
+          hasAnyMissionThisWeek
         }
-        regulatoryAlertsRecap(month: $month) {
+        regulatoryAlertsRecap(month: $month, fromDate: $fromDate, toDate: $toDate) {
           hasAnyComputation
           dailyAlerts {
             alertsType
@@ -704,6 +711,7 @@ export const DASHBOARD_HOME_QUERY = gql`
               day
               userName
               userId
+              otherCompanyRelation
             }
           }
           weeklyAlerts {
@@ -714,6 +722,7 @@ export const DASHBOARD_HOME_QUERY = gql`
               day
               userName
               userId
+              otherCompanyRelation
             }
           }
         }

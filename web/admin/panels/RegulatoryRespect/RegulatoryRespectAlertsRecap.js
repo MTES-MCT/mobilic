@@ -21,7 +21,8 @@ export const PRETTY_LABELS = {
   minimumDailyRest: "Repos journalier",
   not_enough_break: "Temps de pause",
   too_much_uninterrupted_work_time: "Durée maximale de travail ininterrompu",
-  maximumWorkDayTime: "Durée du travail quotidien"
+  maximumWorkDayTime: "Durée du travail quotidien",
+  maximumNightWorkDayTime: "Durée du travail de nuit"
 };
 
 const useStyles = makeStyles((theme) => ({
