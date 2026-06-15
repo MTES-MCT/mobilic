@@ -29,6 +29,7 @@ import { Header } from "@codegouvfr/react-dsfr/Header";
 import { Select } from "@codegouvfr/react-dsfr/Select";
 import { useIsHeaderMenuModalOpen } from "@codegouvfr/react-dsfr/Header/useIsHeaderMenuModalOpen";
 import MobilicLogoWithText from "common/assets/images/mobilic-logo-with-text.svg";
+import { useIsWidthDown } from "common/utils/useWidth";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -243,7 +244,7 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies, isLastR
   );
 }
 
-export function NavigationMenu({ open, setOpen }) {
+export function NavigationMenu({ open, setOpen, fullScreen = false }) {
   const store = useStoreSyncedWithLocalStorage();
   const userInfo = store.userInfo();
   const companies = store.companies();
@@ -264,7 +265,7 @@ export function NavigationMenu({ open, setOpen }) {
   const userEmail = userInfo?.email || "email non renseigné";
   
   return (
-    <Navigation open={open} setOpen={setOpen}>
+    <Navigation open={open} setOpen={setOpen} fullScreen={fullScreen}>
       <div className={classes.navTopSection}>
         {userInfo?.hasActivatedEmail && userInfo?.id && (
           <>
@@ -437,6 +438,7 @@ function AppHeader() {
   const classes = useStyles();
   const userInfo = store.userInfo();
   const isHeaderMenuModalOpen = useIsHeaderMenuModalOpen();
+  const isSmDown = useIsWidthDown("sm");
 
   const openNavigationMenu = React.useCallback(() => {
     setOpenNavDrawer(true);
@@ -562,6 +564,7 @@ function AppHeader() {
             key={1}
             open={openNavDrawer}
             setOpen={setOpenNavDrawer}
+            fullScreen={isSmDown}
           />
       }
       </>
