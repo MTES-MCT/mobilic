@@ -219,7 +219,7 @@ export function UserRead() {
   const TABS = getTabs(alertNumber);
 
   return [
-    <MobilicHeader key={0} disableMenu />,
+    <MobilicHeader key={0} />,
     error ? (
       <Container key={1}>
         <Typography align="center" color="error">

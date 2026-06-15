@@ -97,7 +97,7 @@ export default function OAuth() {
 
   return (
     <>
-      <MobilicHeader disableMenu={true} />
+      <MobilicHeader />
       <Main maxWidth="md" className={classes.container}>
         <Switch>
           {userId && (

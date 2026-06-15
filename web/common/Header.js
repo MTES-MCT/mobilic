@@ -1,7 +1,6 @@
 import React from "react";
 import Box from "@mui/material/Box";
 import { formatPersonName } from "common/utils/coworkers";
-import IconButton from "@mui/material/IconButton";
 import {
   CERTIFICATE_ROUTE,
   getAccessibleRoutes,
@@ -9,15 +8,10 @@ import {
 } from "./routes";
 import { useHistory, useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import { Logos } from "./Logos";
-import MenuIcon from "@mui/icons-material/Menu";
 import useTheme from "@mui/styles/useTheme";
-import { useIsWidthUp } from "common/utils/useWidth";
 import { makeStyles } from "@mui/styles";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import Tooltip from "@mui/material/Tooltip";
-import { Link, LinkButton } from "./LinkButton";
-import Grid from "@mui/material/Grid";
+import { Link } from "./LinkButton";
 import { useAdminStore, useAdminCompanies } from "../admin/store/store";
 import {
   useCertificationInfo,
@@ -25,10 +19,7 @@ import {
 } from "../admin/utils/certificationInfo";
 import { TextWithBadge } from "./TextWithBadge";
 import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
-import TextField from "common/utils/TextField";
-import { MenuItem } from "@mui/material";
 import { ControllerHeader } from "../controller/components/header/ControllerHeader";
-import { LoadingButton } from "common/components/LoadingButton";
 import classNames from "classnames";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Navigation } from "./Navigation";
@@ -36,16 +27,16 @@ import { useModals } from "common/utils/modals";
 import { useStoreMissions } from "common/store/contextMissions";
 import { Header } from "@codegouvfr/react-dsfr/Header";
 import { Select } from "@codegouvfr/react-dsfr/Select";
-
+import { useIsHeaderMenuModalOpen } from "@codegouvfr/react-dsfr/Header/useIsHeaderMenuModalOpen";
 import MobilicLogoWithText from "common/assets/images/mobilic-logo-with-text.svg";
 
-
-const currentPathname = window.location.pathname;
 
 const useStyles = makeStyles((theme) => ({
   navItemButton: {
     borderRadius: 2,
-    padding: "0"
+    padding: "0",
+    fontSize: "1rem",
+    fontWeight: 400,
   },
   companyDrowndown: {
     display: "inline-flex",
@@ -70,16 +61,15 @@ const useStyles = makeStyles((theme) => ({
   },
   navListItem: {
     width: "100%",
-    // paddingLeft: theme.spacing(4),
-    // paddingRight: theme.spacing(6),
-    // paddingBottom: theme.spacing(2),
     display: "block",
     padding: "0.75rem 0",
     "&:hover": {
       color: theme.palette.primary.main,
       backgroundColor: theme.palette.background.default
     },
-    fontWeight: 500
+    fontSize: "1rem",
+    fontWeight: 400,
+    color: fr.colors.decisions.text.default.grey.default
   },
   navList: {
     display: "flex",
@@ -88,20 +78,20 @@ const useStyles = makeStyles((theme) => ({
     padding: 0,
     margin: 0,
     listStyle: "none",
-    // rowGap: theme.spacing(1),
   },
   navListItemWrapper: {
     width: "100%"
   },
+  mainLeafNavListItemWrapper: {
+    padding: "0.75rem 1rem"
+  },
   selectedNavListItem: {
-    background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.main} 5px, ${theme.palette.background.default} 5px, ${theme.palette.background.default})`
+    color: fr.colors.decisions.text.active.blueFrance.default,
   },
   nestedListSubheader: {
+    padding: "0.75rem 0",
     color:  fr.colors.decisions.text.title.grey.default,
     fontWeight: 600
-  },
-  subRoute: {
-    fontWeight: 500
   },
   userName: {
     maxWidth: 500,
@@ -122,11 +112,11 @@ const useStyles = makeStyles((theme) => ({
   },
   headerTopSection: {
     padding: '0.75rem 1.5rem 1.5rem 1.5rem !important',
+    gap: '1rem !important'
   },
   navTopSection: {
     display: "flex",
     flexDirection: "column",
-    // rowGap: theme.spacing(1),
     marginBottom: theme.spacing(2),
     alignItems: "flex-start",
   },
@@ -134,7 +124,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     width: "100%",
-    rowGap: theme.spacing(1),
+    // rowGap: theme.spacing(1),
     alignItems: "flex-start",
     padding: '0.75rem 1.5rem',
   },
@@ -143,9 +133,6 @@ const useStyles = makeStyles((theme) => ({
     border: 0,
     borderTop: "1px solid var(--border-default-grey)",
     margin: 0
-  },
-  desktopHeader: {
-    flexWrap: "wrap"
   },
   headerToolsLinks: {
     "& .fr-btns-group": {
@@ -180,7 +167,7 @@ export const HeaderComponent = ({ fitContainer, children }) => {
 };
 
 
-export function ListRouteItem({ route, closeDrawer, userInfo, companies }) {
+export function ListRouteItem({ route, closeDrawer, userInfo, companies, isLastRoute = false, isSubRoute = false }) {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
@@ -200,27 +187,35 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies }) {
     <>
       <section key={route.path + "subRoutes"} className={classes.navSections}>
         <p className={classes.nestedListSubheader + " fr-text--md fr-mb-0"}>{route.label}</p>
-        <div className={classes.navLis + ' row-gap-0'}>
-          {route.subRoutes
-            .filter(
-              (subRoute) =>
-                !subRoute.accessible ||
-                subRoute.accessible({ userInfo, companies })
-            )
-            .map((subRoute) => (
-              <ListRouteItem
-                key={subRoute.path || subRoute.label}
-                route={{ ...subRoute, path: `${route.path}${subRoute.path}` }}
-                closeDrawer={closeDrawer}
-              />
-            ))}
-        </div>
+        {route.subRoutes
+          .filter(
+            (subRoute) =>
+              !subRoute.accessible ||
+              subRoute.accessible({ userInfo, companies })
+          )
+          .map((subRoute, index) => (
+            <ListRouteItem
+              key={subRoute.path || subRoute.label}
+              route={{ ...subRoute, path: `${route.path}${subRoute.path}` }}
+              closeDrawer={closeDrawer}
+              isSubRoute={true}
+            />
+          ))}
       </section>
-      <hr className={` hr-unstyled ${classes.navDivider}`} />
+      {
+        !isLastRoute &&
+        <hr className={` hr-unstyled ${classes.navDivider}`} />
+      }
     </>
 
   ) : (
-    <div className={classes.navListItemWrapper} key={route.path || route.label}>
+    <div
+      className={
+        classes.navListItemWrapper +
+        (!isSubRoute ? ` ${classes.mainLeafNavListItemWrapper}` : "")
+      }
+      key={route.path || route.label}
+    >
       <Link
         className={`${classes.navListItem} ${
           selected && classes.selectedNavListItem
@@ -287,7 +282,7 @@ export function NavigationMenu({ open, setOpen }) {
               <Button
                 priority="tertiary no outline"
                 iconPosition="left"
-                iconId="fr-icon-add-line"
+                iconId={displayCurrentMission ? "fr-icon-play-circle-line" : "fr-icon-add-line"}
                 onClick={
                   location.pathname === "/app"
                     ? () => setOpen(false)
@@ -308,7 +303,7 @@ export function NavigationMenu({ open, setOpen }) {
                 }
                 className={classes.navItemButton}
               >
-                Mes missions passées
+                Historique
               </Button>
               <Button
                 priority="tertiary no outline"
@@ -326,21 +321,22 @@ export function NavigationMenu({ open, setOpen }) {
           </>
         )}
         <div className={classes.navList}>
-          {routes
-            .filter(
+          {(() => {
+            const filteredRoutes = routes.filter(
               (r) =>
                 !r.menuItemFilter || r.menuItemFilter({ userInfo, companies })
-            )
-            .map((route) => 
+            );
+            return filteredRoutes.map((route, index) =>
               <ListRouteItem
                 userInfo={userInfo}
                 companies={companies}
                 key={route.path || route.label}
                 route={route}
                 closeDrawer={() => setOpen(false)}
+                isLastRoute={index === filteredRoutes.length - 1}
               />
-            )
-          }
+            );
+          })()}
         </div>
       </div>
     </Navigation>
@@ -405,85 +401,70 @@ const HeaderCompaniesDropdown = () => {
   );
 };
 
-/*const HeaderCompaniesDropdown = () => {
-  const adminStore = useAdminStore();
-  const [companies, company] = useAdminCompanies();
-
-  const classes = useStyles();
-
-  if (!companies || companies.length <= 1 || !company) {
-    return null;
+const quickAccessItemsPublic = [
+  {
+    iconId: 'fr-icon-mail-line',
+    linkProps: {
+      to: "mailto:contact@mobilic.beta.gouv.fr",
+      target: '_blank',
+      rel: 'noopener noreferrer'
+    },
+    text: 'Nous contacter',
+  },
+  {
+    iconId: 'fr-icon-add-circle-line',
+    linkProps: {
+      to: '/signup/role_selection',
+      target: '_self'
+    },
+    text: 'Créer un compte',
+  },
+  {
+    iconId: 'fr-icon-lock-line',
+    linkProps: {
+      to: '/login-selection',
+      target: '_self'
+    },
+    text: 'Se connecter',
   }
+];
 
-  return (
-   // Modified common/utils/TextField to accept children so we can use it here
-    // Good idea ? Should we do this everywhere ?
-    <TextField
-      id="select-company-id"
-      className={classes.companyDrowndown}
-      select
-      value={company ? company.id : 0}
-      onChange={(e) => {
-        adminStore.dispatch({
-          type: ADMIN_ACTIONS.updateCompanyId,
-          payload: { companyId: e.target.value }
-        });
-      }}
-    >
-      {companies.map((c) => (
-        <MenuItem key={c.id} value={c.id}>
-          {c.name}
-        </MenuItem>
-      ))}
-    </TextField>
-  );
-};*/
-
-function DesktopHeader({ disableMenu }) {
+function AppHeader() {
   const store = useStoreSyncedWithLocalStorage();
-  const adminStore = useAdminStore();
 
   const location = useLocation();
-  const history = useHistory();
-
   const [openNavDrawer, setOpenNavDrawer] = React.useState(false);
-
   const classes = useStyles();
   const userInfo = store.userInfo();
-  const companies = store.companies();
-  const company = companies.find((c) => c.id === adminStore.companyId);
-  const companyName = company ? company.name : null;
-  const routes = getAccessibleRoutes({ userInfo, companies });
+  const isHeaderMenuModalOpen = useIsHeaderMenuModalOpen();
 
-  const quickAccessItemsPublic = [
-    {
-      iconId: 'fr-icon-mail-line',
-      linkProps: {
-        to: "mailto:contact@mobilic.beta.gouv.fr",
-        target: '_blank',
-        rel: 'noopener noreferrer'
-      },
-      text: 'Nous contacter',
-    },
-    {
-      iconId: 'fr-icon-add-circle-line',
-      linkProps: {
-        to: '/signup/role_selection',
-        target: '_self'
-      },
-      text: 'Créer un compte',
-    },
-    {
-      iconId: 'fr-icon-lock-line',
-      linkProps: {
-        to: '/login-selection',
-        target: '_self'
-      },
-      text: 'Se connecter',
+  const openNavigationMenu = React.useCallback(() => {
+    setOpenNavDrawer(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (!isHeaderMenuModalOpen) {
+      return;
     }
-  ]
 
-  const quickAccessItemsConnected = [
+    openNavigationMenu();
+
+    requestAnimationFrame(() => {
+      const closeBtn =
+        document.querySelector(
+          "#fr-header-simple-header-connected-mobile-overlay-button-close"
+        ) ||
+        document.querySelector(
+          "#fr-header-simple-header-connected-modal .fr-link--close"
+        );
+
+      if (closeBtn) {
+        closeBtn.click();
+      }
+    });
+  }, [isHeaderMenuModalOpen, openNavigationMenu]);
+
+  const quickAccessItemsConnected = React.useMemo(() => [
     {
       iconId: '',
       buttonProps: {
@@ -507,42 +488,30 @@ function DesktopHeader({ disableMenu }) {
       buttonProps: {
         type: "button",
         disabled: false,
-        onClick: () => setOpenNavDrawer(true)
+        onClick: openNavigationMenu
       },
       text: <span className="fr-icon-menu-fill fr-icon--sm" aria-hidden="true"></span>,
     },
-  ]
+  ], [userInfo, openNavigationMenu]);
 
-  const navigation = [
+  const navigation = React.useMemo(() => [
     {
-      linkProps: {
-        to: '/',
-        target: '_self'
-      },
+      linkProps: { to: '/', target: '_self' },
       text: 'Accueil',
       isActive: location.pathname === '/'
     },
     {
-      linkProps: {
-        to: '/resources/home',
-        target: '_self'
-      },
+      linkProps: { to: '/resources/home', target: '_self' },
       text: 'Documentation',
       isActive: location.pathname === '/resources/home'
     },
     {
-      linkProps: {
-        to: '/partners',
-        target: '_self'
-      },
+      linkProps: { to: '/partners', target: '_self' },
       text: 'Partenaires et logiciels',
       isActive: location.pathname === '/partners'
     },
     {
-      linkProps: {
-        to: '/certificate',
-        target: '_self'
-      },
+      linkProps: { to: '/certificate', target: '_self' },
       text: 'Certificat',
       isActive: location.pathname === '/certificate'
     },
@@ -554,7 +523,7 @@ function DesktopHeader({ disableMenu }) {
       },
       text: (
         <>
-          Aide
+          Centre d'aide
           <span
             className="fr-icon-external-link-line fr-icon--sm fr-ml-2v"
             aria-hidden="true"
@@ -563,73 +532,73 @@ function DesktopHeader({ disableMenu }) {
       ),
       isActive: false,
     }
-  ];
+  ], [location.pathname]);
 
-    if (store.userId()) {
-      return(
-        <>
-          <Header
-            brandTop={<>RÉPUBLIQUE<br />FRANÇAISE</>}
-            homeLinkProps={{
-              to: '/',
-              title: 'Accueil - Mobilic'
-            }}
-            id="fr-header-simple-header-connected"
-            operatorLogo={{
-              alt: 'Mobilic',
-              imgUrl: MobilicLogoWithText,
-              orientation: 'horizontal'
-            }}
-            quickAccessItems={quickAccessItemsConnected}
-            navigation={navigation}
-            classes={{
-              root: "mobilic-dsfr-header",
-              toolsLinks: classes.headerToolsLinks
-            }}
-          />
-          {
-            openNavDrawer &&
-            <NavigationMenu
-              key={1}
-              open={openNavDrawer}
-              setOpen={setOpenNavDrawer}
-            />
-        }
-        </>
-      )
-    } else {
-      return (
+  if (store.userId()) {
+    return(
+      <>
         <Header
           brandTop={<>RÉPUBLIQUE<br />FRANÇAISE</>}
           homeLinkProps={{
             to: '/',
             title: 'Accueil - Mobilic'
           }}
-          id="fr-header-simple-header"
+          id="fr-header-simple-header-connected"
           operatorLogo={{
             alt: 'Mobilic',
             imgUrl: MobilicLogoWithText,
             orientation: 'horizontal'
           }}
-          navigation={navigation}
-          quickAccessItems={quickAccessItemsPublic}
+          quickAccessItems={isHeaderMenuModalOpen ? [] : quickAccessItemsConnected}
+          navigation={[]}
           classes={{
             root: "mobilic-dsfr-header",
+            toolsLinks: classes.headerToolsLinks
           }}
         />
-      )
-    }
+        {
+          openNavDrawer &&
+          <NavigationMenu
+            key={1}
+            open={openNavDrawer}
+            setOpen={setOpenNavDrawer}
+          />
+      }
+      </>
+    )
+  } else {
+    return (
+      <Header
+        brandTop={<>RÉPUBLIQUE<br />FRANÇAISE</>}
+        homeLinkProps={{
+          to: '/',
+          title: 'Accueil - Mobilic'
+        }}
+        id="fr-header-simple-header"
+        operatorLogo={{
+          alt: 'Mobilic',
+          imgUrl: MobilicLogoWithText,
+          orientation: 'horizontal'
+        }}
+        navigation={navigation}
+        quickAccessItems={quickAccessItemsPublic}
+        classes={{
+          root: "mobilic-dsfr-header",
+        }}
+      />
+    )
+  }
 }
 
-export function MobilicHeader({ disableMenu, forceMobile = false }) {
+export function MobilicHeader({ forceMobile = false }) {
   const store = useStoreSyncedWithLocalStorage();
   const controllerId = store.controllerId();
-  const isMdUp = useIsWidthUp("md");
+
   return controllerId ? (
     <ControllerHeader />
   ) : (
     <HeaderComponent fitContainer={forceMobile}>
-        <DesktopHeader disableMenu={disableMenu} />
+      <AppHeader />
     </HeaderComponent>
   );
 }

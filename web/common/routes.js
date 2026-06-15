@@ -64,12 +64,8 @@ const RESOURCES_ROUTE = {
       label: "Partenaires et logiciels"
     },
     {
-      path: "/certificate",
-      label: "Certificat"
-    },
-    {
       to: "",
-      label: "Aide",
+      label: "Centre d'aide",
       accessible: ({ userInfo, companies }) =>
         // is employee
         !!userInfo?.id && !companies?.some(c => c.admin),
@@ -79,7 +75,7 @@ const RESOURCES_ROUTE = {
     },
     {
       to: "",
-      label: "Aide",
+      label: "Centre d'aide",
       accessible: ({ userInfo, companies }) =>
         // is not employee (not connected or admin or controller)
         !userInfo?.id || companies?.some(c => c.admin),
@@ -168,6 +164,14 @@ export const ROUTES = [
       {
         label: "Saisies à valider",
         path: "/validations"
+      },
+      {
+        label: "Respect des seuils",
+        path: "/regulatory-respect"
+      },
+      {
+        label: "Certificat",
+        path: "/certificate"
       }
     ]
   },
