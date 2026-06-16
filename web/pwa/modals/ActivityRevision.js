@@ -418,8 +418,6 @@ export default function ActivityRevisionOrCreationModal({
               onChange={e => setNewActivityType(e.target.value)}
             >
               {filteredActivities().map(activityName => {
-                const activity = ACTIVITIES[activityName];
-                const isDisabled = activityName === ACTIVITIES.support.name;
                 const activityLabel = getActivityLabelDependingOnMissionType(
                   activityName,
                   allowSupportActivity
@@ -430,11 +428,7 @@ export default function ActivityRevisionOrCreationModal({
                     : ""
                 }`;
                 return (
-                  <MenuItem
-                    disabled={isDisabled}
-                    key={activityName}
-                    value={activityName}
-                  >
+                  <MenuItem key={activityName} value={activityName}>
                     {label}
                   </MenuItem>
                 );
