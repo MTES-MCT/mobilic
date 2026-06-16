@@ -329,7 +329,8 @@ export default function ActivityRevisionOrCreationModal({
       isCreation &&
       (newActivityType === ACTIVITIES.drive.name ||
         newActivityType === ACTIVITIES.support.name) &&
-      (allowSupportActivity || (teamMode && team.length > 1))
+      teamMode &&
+      team.length > 1
     );
   }
 
