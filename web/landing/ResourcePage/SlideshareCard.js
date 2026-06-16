@@ -26,7 +26,7 @@ export function SlideshareCard({
     <Card variant="outlined" className={commonCardsClasses.card}>
       <Typography variant={"h4"} className={commonCardsClasses.description}>
         {description}
-        <Link className={classes.downloadLink} href={downloadLink}>
+        <Link className={classes.downloadLink} href={downloadLink} target="_blank">
           Télécharger
         </Link>
       </Typography>

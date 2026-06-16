@@ -8,7 +8,8 @@ import {
   ACTIVITIES_OPERATIONS,
   addBreaksToActivityList,
   computeDurationAndTime,
-  filterActivitiesOverlappingPeriod
+  filterActivitiesOverlappingPeriod,
+  getActivityLabelDependingOnMissionType
 } from "common/utils/activities";
 import {
   formatLongTimer,
@@ -58,6 +59,7 @@ function ActivityItem({
   teamChanges,
   nullableEndTimeInEditActivity,
   allowTeamMode,
+  allowSupportActivity = false,
   datetimeFormatter = formatTimeOfDay
 }) {
   const modals = useModals();
@@ -66,6 +68,11 @@ function ActivityItem({
   const isBreak = activity.type === ACTIVITIES.break.name;
   const isLongBreak =
     isBreak && activity.duration && activity.duration >= LONG_BREAK_DURATION;
+
+  const activityLabel = getActivityLabelDependingOnMissionType(
+    activity.type,
+    allowSupportActivity
+  );
 
   return (
     <ListItem disableGutters>
@@ -80,7 +87,7 @@ function ActivityItem({
           <Typography className={isLongBreak ? classes.longBreak : ""}>
             {isLongBreak
               ? "Repos journalier"
-              : `${ACTIVITIES[activity.type].label}${
+              : `${activityLabel}${
                   activity.isMissionDeleted ? " (activité supprimée)" : ""
                 }`}
           </Typography>
@@ -155,7 +162,8 @@ function ActivityItem({
                 cancellable: true,
                 teamChanges,
                 allowTeamMode,
-                nullableEndTime: nullableEndTimeInEditActivity
+                nullableEndTime: nullableEndTimeInEditActivity,
+                allowSupportActivity
               })
             }
           >
@@ -175,6 +183,7 @@ export function ActivityList({
   createActivity,
   teamChanges,
   allowTeamMode = false,
+  allowSupportActivity = false,
   nullableEndTimeInEditActivity,
   isMissionEnded,
   fromTime = null,
@@ -291,6 +300,7 @@ export function ActivityList({
               previousMissionEnd={previousMissionEnd}
               teamChanges={teamChanges}
               allowTeamMode={allowTeamMode}
+              allowSupportActivity={allowSupportActivity}
               nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
               key={activity.id ? "a" + activity.id : index}
               datetimeFormatter={datetimeFormatter}
@@ -310,6 +320,7 @@ export function ActivityList({
           datetimeFormatter={datetimeFormatter}
           width={ref.current.offsetWidth}
           activities={augmentedAndSortedActivities}
+          allowSupportActivity={allowSupportActivity}
         />
       )}
       {hasActivitiesAfterMaxTime && (

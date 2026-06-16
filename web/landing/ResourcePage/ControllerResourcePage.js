@@ -19,6 +19,11 @@ export function ControllerResourcePage() {
   usePageTitle("Documentation Contrôleur - Mobilic");
   const classes = resourcePagesClasses();
 
+  const allNoticesLink =
+    "https://drive.google.com/drive/folders/1b87UFjE7BL-nk-dQy_Seghs1gcgBB-A8";
+  const allVideosLink =
+    "https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos";
+
   return (
     <>
       <Header />
@@ -31,23 +36,23 @@ export function ControllerResourcePage() {
             <Breadcrumb
               currentPageLabel="Contrôleur"
               homeLinkProps={{
-                to: "/"
+                to: "/",
               }}
               segments={[
                 {
                   label: "Documentation",
                   linkProps: {
-                    to: "/resources/home"
-                  }
-                }
+                    to: "/resources/home",
+                  },
+                },
               ]}
             />
             <PaperContainerTitle variant="h1" className={classes.title}>
               Je suis contrôleur
             </PaperContainerTitle>
             <Typography variant={"h3"} className={classes.resourceSubtitle}>
-              Je suis contrôleur des transports terrestres ou inspecteur du
-              travail, et j'apprends à utiliser Mobilic
+              Je suis contrôleur des transports terrestres et j’apprends à
+              utiliser Mobilic
             </Typography>
             <Grid container direction="row" alignItems="stretch" spacing={10}>
               <Grid item sm={6}>
@@ -69,9 +74,8 @@ export function ControllerResourcePage() {
                   size="small"
                   className={classes.viewAllButton}
                   linkProps={{
-                    href:
-                      "https://drive.google.com/drive/folders/1b87UFjE7BL-nk-dQy_Seghs1gcgBB-A8",
-                    target: "_blank"
+                    href: allNoticesLink,
+                    target: "_blank",
                   }}
                 >
                   Voir toutes les notices
@@ -79,16 +83,15 @@ export function ControllerResourcePage() {
               </Grid>
               <Grid item sm={6}>
                 <Box>
-                  <VideoCard video={VIDEOS.Tuto_Ctt} />
+                  <VideoCard video={VIDEOS.Tuto_Ctt_IT} />
                 </Box>
                 <Button
                   priority="secondary"
                   size="small"
                   className={classes.viewAllButton}
                   linkProps={{
-                    href:
-                      "https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos",
-                    target: "_blank"
+                    href: allVideosLink,
+                    target: "_blank",
                   }}
                 >
                   Voir toutes les vidéos
@@ -99,8 +102,56 @@ export function ControllerResourcePage() {
               variant={"h3"}
               className={classes.itAgentResourceSubtitle}
             >
-              Je fais partie des forces en tenue et j'apprends à utiliser
-              Mobilic
+              Je suis inspecteur du travail et j’apprends à utiliser Mobilic
+            </Typography>
+            <Grid container direction="row" alignItems="stretch" spacing={10}>
+              <Grid item sm={6}>
+                <Box>
+                  <SlideshareCard
+                    description="Notice d'utilisation"
+                    slideshareUrl={
+                      RESOURCES_DOCUMENT.noticeUtilisation.ITAgent.slideshare
+                    }
+                    downloadLink={
+                      RESOURCES_DOCUMENT.noticeUtilisation.ITAgent.download
+                    }
+                  />
+                </Box>
+                <Button
+                  priority="secondary"
+                  size="small"
+                  className={classes.viewAllButton}
+                  linkProps={{
+                    href: allNoticesLink,
+                    target: "_blank",
+                  }}
+                >
+                  Voir toutes les notices
+                </Button>
+              </Grid>
+              <Grid item sm={6}>
+                <Box>
+                  <VideoCard video={VIDEOS.Tuto_Ctt_IT} />
+                </Box>
+                <Button
+                  priority="secondary"
+                  size="small"
+                  className={classes.viewAllButton}
+                  linkProps={{
+                    href: allVideosLink,
+                    target: "_blank",
+                  }}
+                >
+                  Voir toutes les vidéos
+                </Button>
+              </Grid>
+            </Grid>
+            <Typography
+              variant={"h3"}
+              className={classes.itAgentResourceSubtitle}
+            >
+              Je fais partie des forces de sécurité intérieure et j’apprends à
+              utiliser Mobilic
             </Typography>
             <Grid container direction="row" alignItems="stretch" spacing={10}>
               <Grid item sm={6}>
@@ -120,9 +171,8 @@ export function ControllerResourcePage() {
                   size="small"
                   className={classes.viewAllButton}
                   linkProps={{
-                    href:
-                      "https://drive.google.com/drive/folders/1b87UFjE7BL-nk-dQy_Seghs1gcgBB-A8",
-                    target: "_blank"
+                    href: allNoticesLink,
+                    target: "_blank",
                   }}
                 >
                   Voir toutes les notices
@@ -137,9 +187,8 @@ export function ControllerResourcePage() {
                   size="small"
                   className={classes.viewAllButton}
                   linkProps={{
-                    href:
-                      "https://www.youtube.com/channel/UCqJlEoGiU1jcFjJWAr1BcVg/videos",
-                    target: "_blank"
+                    href: allVideosLink,
+                    target: "_blank",
                   }}
                 >
                   Voir toutes les vidéos

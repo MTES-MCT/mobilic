@@ -408,7 +408,7 @@ export function MissionDetails({
                               nullableEndTime: false,
                               defaultTime: mission.startTime || day,
                               forcedUser: e.user,
-                              displayWarningMessage: false
+                              displayWarningMessage: false,
                             })
                         : null
                     }
@@ -447,7 +447,7 @@ export function MissionDetails({
                                 });
                                 await refreshData();
                                 handleClose();
-                              }
+                              },
                             })
                         : null
                     }

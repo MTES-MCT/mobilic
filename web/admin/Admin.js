@@ -25,7 +25,7 @@ import {
 
 import { Header } from "../common/Header";
 import { makeStyles } from "@mui/styles";
-import { useIsWidthUp, useWidth } from "common/utils/useWidth";
+import { useIsWidthUp } from "common/utils/useWidth";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { ADMIN_VIEWS } from "./utils/navigation";
 import { ADMIN_ACTIONS } from "./store/reducers/root";
@@ -76,7 +76,6 @@ function InternalAdmin() {
   });
 
   const location = useLocation();
-  const width = useWidth();
   const isMdUp = useIsWidthUp("md");
 
   const views = ADMIN_VIEWS.map((view) => {
@@ -230,7 +229,6 @@ function InternalAdmin() {
       {!!company && shouldUpdateNbWorker(company) && <UpdateNbWorkerModal />}
       <Header />
       <MissionDrawerContextProvider
-        width={width}
         setShouldRefreshData={shouldRefreshDataSetter}
         refreshData={refreshData}
       >

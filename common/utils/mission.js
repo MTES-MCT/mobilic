@@ -71,6 +71,7 @@ export function augmentMissionWithProperties(mission, userId, companies = []) {
   const company =
     mission.company || companies.find(c => c.id === mission.companyId);
   const activities = mission.allActivities.filter(a => a.userId === userId);
+
   return {
     ...mission,
     company,

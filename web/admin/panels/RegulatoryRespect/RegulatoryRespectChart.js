@@ -4,43 +4,27 @@ import { useRegulatoryAlertsSummaryContext } from "../../utils/contextRegulatory
 import { SegmentedControl } from "@codegouvfr/react-dsfr/SegmentedControl";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { Chart } from "./Chart";
+import { PRETTY_LABELS } from "./RegulatoryRespectAlertsRecap";
 
-const ALERTS_DATA = {
-  maximumWorkedDaysInWeek: {
-    label: "Repos hebdomadaire",
-    color: "#81EEF5"
-  },
-  maximumWorkInCalendarWeek: {
-    label: "Durée du travail hebdomadaire",
-    color: "#B478F1"
-  },
-  minimumDailyRest: {
-    label: "Repos journalier",
-    color: "#31A7AE"
-  },
-  not_enough_break: {
-    label: "Temps de pause",
-    color: "#5C68E5"
-  },
-  too_much_uninterrupted_work_time: {
-    label: "Durée maximale de travail ininterrompu",
-    color: "#29598F"
-  },
-  maximumWorkDayTime: {
-    label: "Durée du travail quotidien",
-    color: "#115ADF"
-  }
+const ALERT_COLORS = {
+  maximumWorkedDaysInWeek: "#81EEF5",
+  maximumWorkInCalendarWeek: "#B478F1",
+  minimumDailyRest: "#31A7AE",
+  not_enough_break: "#5C68E5",
+  too_much_uninterrupted_work_time: "#29598F",
+  maximumWorkDayTime: "#115ADF",
+  maximumNightWorkDayTime: "#1F1A4A"
 };
 
 export const RegulatoryRespectChart = () => {
   const { summary } = useRegulatoryAlertsSummaryContext();
   const [selectedView, setSelectedView] = useState("chart");
   const data = [...summary.dailyAlerts, ...summary.weeklyAlerts]
-    .filter((alert) => alert.alertsType in ALERTS_DATA)
+    .filter((alert) => alert.alertsType in ALERT_COLORS)
     .map((alert) => ({
-      name: ALERTS_DATA[alert.alertsType].label,
+      name: PRETTY_LABELS[alert.alertsType],
       value: alert.nbAlerts,
-      fill: ALERTS_DATA[alert.alertsType].color
+      fill: ALERT_COLORS[alert.alertsType]
     }))
     .filter((d) => d.value > 0);
 

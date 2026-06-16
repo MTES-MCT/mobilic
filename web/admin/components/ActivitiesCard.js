@@ -6,7 +6,7 @@ import { formatTimeOfDay, formatTimer, now } from "common/utils/time";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 import { AugmentedTable } from "./AugmentedTable";
 import { MissionInfoCard } from "./MissionInfoCard";
-import { ACTIVITIES } from "common/utils/activities";
+import { getActivityLabelDependingOnMissionType } from "common/utils/activities";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useActivitiesCardStyles } from "./styles/ActivitiesCardStyle";
 import SvgIcon from "@mui/material/SvgIcon";
@@ -31,7 +31,8 @@ export function ActivitiesCard({
   datetimeFormatter = formatTimeOfDay,
   titleProps = {},
   actionButtonLabel = "",
-  onActionButtonClick = null
+  onActionButtonClick = null,
+  allowSupportActivity = false
 }) {
   const classes = useActivitiesCardStyles();
   const ref = React.useRef();
@@ -47,7 +48,8 @@ export function ActivitiesCard({
     {
       label: "Activité",
       name: "type",
-      format: type => ACTIVITIES[type].label,
+      format: type =>
+        getActivityLabelDependingOnMissionType(type, allowSupportActivity),
       maxWidth: 185,
       minWidth: 150
     },
@@ -163,6 +165,7 @@ export function ActivitiesCard({
                 width={300}
                 activities={activities}
                 datetimeFormatter={datetimeFormatter}
+                allowSupportActivity={allowSupportActivity}
               />
             </Grid>,
             <Grid

@@ -5,7 +5,8 @@ import TextField from "common/utils/TextField";
 import {
   ACTIVITIES,
   ACTIVITIES_OPERATIONS,
-  convertNewActivityIntoActivityOperations
+  convertNewActivityIntoActivityOperations,
+  getActivityLabelDependingOnMissionType
 } from "common/utils/activities";
 import uniq from "lodash/uniq";
 import min from "lodash/min";
@@ -328,7 +329,8 @@ export default function ActivityRevisionOrCreationModal({
       isCreation &&
       (newActivityType === ACTIVITIES.drive.name ||
         newActivityType === ACTIVITIES.support.name) &&
-      (allowSupportActivity || (teamMode && team.length > 1))
+      teamMode &&
+      team.length > 1
     );
   }
 
@@ -417,19 +419,17 @@ export default function ActivityRevisionOrCreationModal({
               onChange={e => setNewActivityType(e.target.value)}
             >
               {filteredActivities().map(activityName => {
-                const activity = ACTIVITIES[activityName];
-                const isDisabled = activityName === ACTIVITIES.support.name;
-                const label = `${activity.label}${
+                const activityLabel = getActivityLabelDependingOnMissionType(
+                  activityName,
+                  allowSupportActivity
+                );
+                const label = `${activityLabel}${
                   activityName === ACTIVITIES.work.name && otherTaskLabel
                     ? " - " + otherTaskLabel
                     : ""
                 }`;
                 return (
-                  <MenuItem
-                    disabled={isDisabled}
-                    key={activityName}
-                    value={activityName}
-                  >
+                  <MenuItem key={activityName} value={activityName}>
                     {label}
                   </MenuItem>
                 );
