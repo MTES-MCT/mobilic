@@ -173,9 +173,9 @@ export function MissionDetails({
     !mission.submittedBySomeoneElse;
 
   const allowSupportActivity =
-    mission?.company?.settings?.requireSupportActivity || true;
+    mission?.company?.settings?.requireSupportActivity ?? true;
 
-  const allowOtherTask = mission.company?.settings?.allowOtherTask || true;
+  const allowOtherTask = mission?.company?.settings?.allowOtherTask ?? true;
   const otherTaskLabel = mission.company?.settings?.otherTaskLabel || "";
 
   const teamAtMissionEnd = [
