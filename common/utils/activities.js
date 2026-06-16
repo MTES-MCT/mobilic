@@ -377,10 +377,10 @@ export function computeDurationAndTime(activities, fromTime, untilTime) {
 
 export function getActivityLabelDependingOnMissionType(
   type,
-  isTeamMission = false
+  allowSupportActivity = false
 ) {
   if (!ACTIVITIES[type]) return "";
-  if (isTeamMission && type === ACTIVITIES.drive.name) {
+  if (allowSupportActivity && type === ACTIVITIES.drive.name) {
     return "Conduite";
   }
   return ACTIVITIES[type].label;

@@ -67,21 +67,10 @@ export function linkMissionsWithRelations(missions, relationMap) {
   return values(augmentedMissions);
 }
 
-export function computeIsTeamMission(activities = []) {
-  return (
-    new Set(
-      activities
-        .map(a => a.userId || a.user?.id)
-        .filter(id => id !== undefined && id !== null)
-    ).size > 1
-  );
-}
-
 export function augmentMissionWithProperties(mission, userId, companies = []) {
   const company =
     mission.company || companies.find(c => c.id === mission.companyId);
   const activities = mission.allActivities.filter(a => a.userId === userId);
-  const isTeamMission = computeIsTeamMission(mission.allActivities);
 
   return {
     ...mission,
@@ -102,7 +91,6 @@ export function augmentMissionWithProperties(mission, userId, companies = []) {
     ended:
       mission.isDeleted ||
       (mission.ended && activities.every(a => !!a.endTime)),
-    isTeamMission,
     submittedBySomeoneElse:
       mission.submitter && mission.submitter.id !== userId,
     lastActivityStartTime: activities[activities.length - 1]?.startTime
@@ -129,7 +117,6 @@ export function computeMissionStats(m, users) {
     activitiesWithUserId.map(a => a.user),
     u => u.id
   );
-  const isTeamMission = computeIsTeamMission(activitiesWithUserId);
   const validatorIds = m.validations.map(v => v.userId);
   const adminValidatedForMemberIds = m.validations
     .filter(v => v.isAdmin)
@@ -219,7 +206,6 @@ export function computeMissionStats(m, users) {
     endTime,
     endTimeOrNow: endTime || now1,
     isComplete,
-    isTeamMission,
     validatedByAllMembers,
     validatedByAdminForAllMembers,
     userStats,

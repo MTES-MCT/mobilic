@@ -173,9 +173,9 @@ export function MissionDetails({
     !mission.submittedBySomeoneElse;
 
   const allowSupportActivity =
-    mission?.company?.settings?.requireSupportActivity || true;
+    mission?.company?.settings?.requireSupportActivity ?? true;
 
-  const allowOtherTask = mission.company?.settings?.allowOtherTask || true;
+  const allowOtherTask = mission?.company?.settings?.allowOtherTask ?? true;
   const otherTaskLabel = mission.company?.settings?.otherTaskLabel || "";
 
   const teamAtMissionEnd = [
@@ -315,8 +315,7 @@ export function MissionDetails({
                     allowSupportActivity,
                     allowOtherTask,
                     otherTaskLabel,
-                    defaultTime: lastActivityTime || defaultTime,
-                    isTeamMission: mission.isTeamMission
+                    defaultTime: lastActivityTime || defaultTime
                   })
               : null
           }
@@ -335,6 +334,7 @@ export function MissionDetails({
             previousMissionEnd={previousMissionEnd}
             teamChanges={teamChanges}
             allowTeamMode={allowTeamActions}
+            allowSupportActivity={allowSupportActivity}
             nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
             isMissionEnded={isMissionEnded}
             fromTime={fromTime}

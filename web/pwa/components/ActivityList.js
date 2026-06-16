@@ -59,6 +59,7 @@ function ActivityItem({
   teamChanges,
   nullableEndTimeInEditActivity,
   allowTeamMode,
+  allowSupportActivity = false,
   datetimeFormatter = formatTimeOfDay
 }) {
   const modals = useModals();
@@ -68,10 +69,9 @@ function ActivityItem({
   const isLongBreak =
     isBreak && activity.duration && activity.duration >= LONG_BREAK_DURATION;
 
-  const isTeamMode = teamChanges && Object.keys(teamChanges).length > 0;
   const activityLabel = getActivityLabelDependingOnMissionType(
     activity.type,
-    isTeamMode
+    allowSupportActivity
   );
 
   return (
@@ -163,7 +163,7 @@ function ActivityItem({
                 teamChanges,
                 allowTeamMode,
                 nullableEndTime: nullableEndTimeInEditActivity,
-                isTeamMission: isTeamMode
+                allowSupportActivity
               })
             }
           >
@@ -183,6 +183,7 @@ export function ActivityList({
   createActivity,
   teamChanges,
   allowTeamMode = false,
+  allowSupportActivity = false,
   nullableEndTimeInEditActivity,
   isMissionEnded,
   fromTime = null,
@@ -299,6 +300,7 @@ export function ActivityList({
               previousMissionEnd={previousMissionEnd}
               teamChanges={teamChanges}
               allowTeamMode={allowTeamMode}
+              allowSupportActivity={allowSupportActivity}
               nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
               key={activity.id ? "a" + activity.id : index}
               datetimeFormatter={datetimeFormatter}
@@ -318,6 +320,7 @@ export function ActivityList({
           datetimeFormatter={datetimeFormatter}
           width={ref.current.offsetWidth}
           activities={augmentedAndSortedActivities}
+          allowSupportActivity={allowSupportActivity}
         />
       )}
       {hasActivitiesAfterMaxTime && (

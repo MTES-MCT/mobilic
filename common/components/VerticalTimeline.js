@@ -55,7 +55,7 @@ export function VerticalTimeline({
   maxBarWidth = 40,
   idealNumberOfSteps = 5,
   datetimeFormatter,
-  isTeamMission = false
+  allowSupportActivity = false
 }) {
   const classes = useStyles();
 
@@ -209,7 +209,10 @@ export function VerticalTimeline({
               noWrap
               variant="caption"
             >
-              {getActivityLabelDependingOnMissionType(type, isTeamMission)}
+              {getActivityLabelDependingOnMissionType(
+                type,
+                allowSupportActivity
+              )}
             </Typography>
           </Box>
         ))}
