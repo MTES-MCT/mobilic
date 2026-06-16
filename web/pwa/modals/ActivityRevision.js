@@ -53,8 +53,7 @@ export default function ActivityRevisionOrCreationModal({
   defaultTime = null,
   forcedUser = null,
   displayWarningMessage = true,
-  handleCancelMission = null,
-  isTeamMission = false
+  handleCancelMission = null
 }) {
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
@@ -423,7 +422,7 @@ export default function ActivityRevisionOrCreationModal({
                 const isDisabled = activityName === ACTIVITIES.support.name;
                 const activityLabel = getActivityLabelDependingOnMissionType(
                   activityName,
-                  isTeamMission
+                  allowSupportActivity
                 );
                 const label = `${activityLabel}${
                   activityName === ACTIVITIES.work.name && otherTaskLabel

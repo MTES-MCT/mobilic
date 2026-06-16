@@ -293,7 +293,9 @@ export function MissionEmployeeCard({
                   onActionButtonClick: overrideValidation,
                   actionButtonLabel: "J'ai été absent : modifier les saisies"
                 })}
-              isTeamMission={mission.isTeamMission}
+              allowSupportActivity={
+                mission?.company?.settings?.requireSupportActivity ?? true
+              }
             />
           </Grid>
           {showExpenditures && (

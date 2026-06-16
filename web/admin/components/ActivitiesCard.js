@@ -32,7 +32,7 @@ export function ActivitiesCard({
   titleProps = {},
   actionButtonLabel = "",
   onActionButtonClick = null,
-  isTeamMission = false,
+  allowSupportActivity = false
 }) {
   const classes = useActivitiesCardStyles();
   const ref = React.useRef();
@@ -49,7 +49,7 @@ export function ActivitiesCard({
       label: "Activité",
       name: "type",
       format: type =>
-        getActivityLabelDependingOnMissionType(type, isTeamMission),
+        getActivityLabelDependingOnMissionType(type, allowSupportActivity),
       maxWidth: 185,
       minWidth: 150
     },
@@ -165,7 +165,7 @@ export function ActivitiesCard({
                 width={300}
                 activities={activities}
                 datetimeFormatter={datetimeFormatter}
-                isTeamMission={isTeamMission}
+                allowSupportActivity={allowSupportActivity}
               />
             </Grid>,
             <Grid

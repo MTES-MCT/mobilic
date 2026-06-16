@@ -315,8 +315,7 @@ export function MissionDetails({
                     allowSupportActivity,
                     allowOtherTask,
                     otherTaskLabel,
-                    defaultTime: lastActivityTime || defaultTime,
-                    isTeamMission: mission.isTeamMission
+                    defaultTime: lastActivityTime || defaultTime
                   })
               : null
           }
@@ -335,6 +334,7 @@ export function MissionDetails({
             previousMissionEnd={previousMissionEnd}
             teamChanges={teamChanges}
             allowTeamMode={allowTeamActions}
+            allowSupportActivity={allowSupportActivity}
             nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
             isMissionEnded={isMissionEnded}
             fromTime={fromTime}
