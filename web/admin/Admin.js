@@ -252,6 +252,7 @@ function InternalAdmin() {
                         setShouldRefreshData={(val) =>
                           setShouldRefreshData(shouldRefreshDataSetter)
                         }
+                        refreshData={refreshData}
                       />
                     )}
                   />

@@ -13,7 +13,12 @@ const formatMissionName = (mission) =>
     mission.startTime
   )}`;
 
-function ValidationMission({ tab, mission, entriesToValidateByAdmin }) {
+function ValidationMission({
+  tab,
+  mission,
+  entriesToValidateByAdmin,
+  refreshData
+}) {
   const { trackEvent } = useMatomo();
   const classes = useStyles();
   const missionActions = useMissionActions(mission);
@@ -38,7 +43,8 @@ function ValidationMission({ tab, mission, entriesToValidateByAdmin }) {
                 (entryToValidate) => entryToValidate.missionId === mission.id
               )
               .map((workerEntryToValidate) => workerEntryToValidate.user.id);
-            missionActions.validateMission(usersToValidate);
+            await missionActions.validateMission(usersToValidate);
+            if (refreshData) await refreshData();
           }}
         >
           Valider
