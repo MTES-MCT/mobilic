@@ -69,7 +69,7 @@ const VALIDATION_TABS = [
   }
 ];
 
-function ValidationPanel() {
+function ValidationPanel({ refreshData }) {
   usePageTitle("Validation Saisie(s) - Mobilic");
   const adminStore = useAdminStore();
   const location = useLocation();
@@ -446,6 +446,7 @@ function ValidationPanel() {
               tab={tab}
               mission={entry}
               entriesToValidateByAdmin={entriesToValidateByAdmin}
+              refreshData={refreshData}
             />
           ),
           groupProps: ["name", "startTime", "isHoliday", "endTime"]
