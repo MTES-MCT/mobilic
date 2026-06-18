@@ -11,11 +11,22 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(5)
   },
   comments: {
-    paddingLeft: theme.spacing(3)
+    display: "flex",
+    flexDirection: "column"
   },
   observationSection: {
     flexDirection: "row",
-    backgroundColor: theme.palette.background.default
+    backgroundColor: theme.palette.background.default,
+    marginTop: theme.spacing(5),
+    marginBottom: theme.spacing(5)
+  },
+  addEmployeeButton: {
+    marginBottom: theme.spacing(5)
+  },
+  separator: {
+    height: 1,
+    alignSelf: "stretch",
+    background: fr.colors.decisions.border.default.grey.default
   },
   kilometers: {
     fontSize: 16,
@@ -29,6 +40,9 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
   vehicle: {
     flexShrink: 0,
     marginRight: theme.spacing(2)
+  },
+  employeeList: {
+    marginTop: theme.spacing(3)
   },
   employeeCard: {
     width: "100%"

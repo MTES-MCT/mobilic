@@ -28,6 +28,12 @@ const useStyles = makeStyles(theme => ({
     fontSize: "16px !important",
     flexShrink: 0
   },
+  checkIcon: {
+    color: blueFrance,
+    fontSize: "14px !important",
+    flexShrink: 0,
+    marginLeft: 1
+  },
   label: {
     color: blueFrance,
     fontSize: 16,
@@ -64,7 +70,7 @@ export function AdminMissionValidations({ mission, validations, userId }) {
   const adminAutoValidation = adminValidations.find(v => v.isAuto);
   const adminManualValidation = adminValidations.find(v => !v.isAuto);
 
-  const checkIcon = <CheckCircleIcon className={classes.icon} />;
+  const checkIcon = <CheckCircleIcon className={classes.checkIcon} />;
   const waitIcon = <AccessTimeIcon className={classes.icon} />;
 
   return (

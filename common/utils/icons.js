@@ -11,6 +11,7 @@ import { ReactComponent as BedIcon_ } from "../assets/images/Bed2.svg";
 import { ReactComponent as MarianneIcon_ } from "common/assets/images/marianne.svg";
 import { ReactComponent as OdometerIcon_ } from "../assets/images/Odometer.svg";
 import { ReactComponent as CheckCircleIcon_ } from "../assets/images/CheckCircle.svg";
+import { ReactComponent as DeleteIcon_ } from "../assets/images/Delete.svg";
 import _ManagerImage from "../assets/images/Manager.svg";
 import _WorkerImage from "../assets/images/worker.svg";
 import _SoftwareImage from "../assets/images/software.svg";
@@ -138,6 +139,17 @@ export function CheckCircleIcon(props) {
       {...props}
       viewBox="0 0 14 14"
       component={CheckCircleIcon_}
+    />
+  );
+}
+
+export function DeleteIcon(props) {
+  return (
+    <SvgIcon
+      titleAccess="supprimer"
+      {...props}
+      viewBox="0 0 14 14"
+      component={DeleteIcon_}
     />
   );
 }

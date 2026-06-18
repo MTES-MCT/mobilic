@@ -19,7 +19,6 @@ const grey = fr.colors.decisions.text.default.grey.default;
 
 const useStyles = makeStyles(theme => ({
   container: {
-    paddingTop: theme.spacing(4),
     marginBottom: theme.spacing(2)
   },
   title: {

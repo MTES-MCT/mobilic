@@ -23,7 +23,6 @@ import ListItem from "@mui/material/ListItem";
 import { ADMIN_ACTIONS } from "../../store/reducers/root";
 import { useMissionActions } from "../../utils/missionActions";
 import { useMissionWithStats } from "../../utils/missionWithStats";
-import { MissionDetailsSection } from "../MissionDetailsSection";
 import { useMissionDetailsStyles } from "./MissionDetailsStyle";
 import {
   DEFAULT_LAST_ACTIVITY_TOO_LONG,
@@ -47,6 +46,8 @@ import Notice from "../../../common/Notice";
 import { PastMissionNotice } from "./PastMissionNotice";
 import { MISSION_QUERY } from "common/utils/apiQueries/missions";
 import { MissionDrawerHeader } from "../../drawers/DrawerHeader";
+import { MissionDetailsObservations } from "./MissionDetailsObservations";
+import { ToValidateTag, WaitingTag, ValidatedTag, DeletedTag } from "../../drawers/Tags";
 
 export function MissionDetails({
   missionId,
@@ -260,7 +261,7 @@ export function MissionDetails({
         doesMissionSpanOnMultipleDays={doesMissionSpanOnMultipleDays}
         day={day}
       />
-      <Box px={4} pt={0}>
+      <Box px={4} py={5}>
         {isMissionDeleted && (
           <Notice
             type="info"
@@ -324,232 +325,213 @@ export function MissionDetails({
               </span>
             </Typography>
           )}
-        {(entriesToValidateByAdmin?.length > 0 ||
-          workerEntries?.length === 0) && (
-          <MissionDetailsSection
-            key={3}
-            title="Saisie(s) à valider"
-            actionButtonLabel="Ajouter un salarié"
-            className={classes.validationSection}
-            action={
-              globalFieldsEditable
-                ? () => {
-                    trackEvent(ADD_EMPLOYEE_IN_MISSION_PANEL);
-                    modals.open("selectEmployee", {
-                      users: adminStore.users.filter(
-                        (u) =>
-                          u.companyId === mission.companyId &&
-                          !userIdsWithEntries.includes(u.id) &&
-                          !usersToAdd.map((u2) => u2.id).includes(u.id)
-                      ),
-                      handleSelect: (user) =>
-                        setUsersToAdd((users) => [
-                          ...users.filter((u) => u.id !== user.id),
-                          user
-                        ])
-                    });
-                  }
-                : null
-            }
-            actionProps={{ iconId: "fr-icon-add-line", iconPosition: "left" }}
-            titleProps={{ component: "h2" }}
-          >
-            <List>
-              {entriesToValidateByAdmin.map((e) => (
-                <ListItem key={e.user.id} disableGutters className={classes.employeeListItem}>
-                  <MissionEmployeeCard
-                    className={classes.employeeCard}
-                    mission={mission}
-                    user={e.user}
-                    showUserName={hasMultipleWorkers}
-                    showExpenditures={showExpenditures}
-                    headingComponent="h3"
-                    onCreateActivity={
-                      entryToBeValidatedByAdmin(
-                        e,
-                        adminStore.userId,
-                        adminMayOverrideValidation,
-                        overrideValidationJustification
-                      ) || !e.activities
-                        ? () =>
-                            modals.open("activityRevision", {
-                              otherActivities: mission.activities,
-                              handleSeveralActions: (actions) =>
-                                missionActions.severalActionsActivity({
-                                  actions,
-                                  user: e.user
-                                }),
-                              adminMode: true,
-                              allowTransfers,
-                              allowSupportActivity,
-                              allowOtherTask,
-                              otherTaskLabel,
-                              nullableEndTime: false,
-                              defaultTime: mission.startTime || day,
-                              forcedUser: e.user,
-                              displayWarningMessage: false,
-                            })
-                        : null
-                    }
-                    onEditActivity={
-                      entryToBeValidatedByAdmin(
-                        e,
-                        adminStore.userId,
-                        adminMayOverrideValidation,
-                        overrideValidationJustification
-                      ) || !e.activities
-                        ? async (entry) =>
-                            modals.open("activityRevision", {
-                              event: entry,
-                              otherActivities:
-                                entry.type === ACTIVITIES.break.name
-                                  ? mission.activities
-                                  : mission.activities.filter(
-                                      (a) => a.startTime !== entry.startTime
-                                    ),
-                              handleSeveralActions: (actions) =>
-                                missionActions.severalActionsActivity({
-                                  actions,
-                                  user: e.user
-                                }),
-                              adminMode: true,
-                              allowTransfers,
-                              allowSupportActivity,
-                              allowOtherTask,
-                              otherTaskLabel,
-                              nullableEndTime: false,
-                              forcedUser: e.user,
-                              displayWarningMessage: false,
-                              handleCancelMission: async () => {
-                                await missionActions.cancelMission({
-                                  user: e.user
-                                });
-                                await refreshData();
-                                handleClose();
-                              },
-                            })
-                        : null
-                    }
-                    onEditExpenditures={
-                      entryToBeValidatedByAdmin(
-                        e,
-                        adminStore.userId,
-                        adminMayOverrideValidation,
-                        overrideValidationJustification
-                      ) || !e.activities
-                        ? (newExps, oldExps) =>
-                            editUserExpenditures(
-                              newExps,
-                              oldExps,
-                              mission.id,
-                              missionActions.createExpenditure,
-                              missionActions.cancelExpenditure,
-                              e.user.id
-                            )
-                        : null
-                    }
-                    removeUser={() =>
-                      setUsersToAdd((users) =>
-                        users.filter((u) => u.id !== e.user.id)
-                      )
-                    }
-                    alwaysOpen
-                    missionActions={missionActions}
-                    day={day}
-                  />
-                </ListItem>
-              ))}
-            </List>
-            {entriesToValidateByAdmin?.length > 0 && (
-              <Box>
-                <Notice
-                  type="info"
-                  description="Il ne vous sera plus possible de modifier les données après
-                  validation, y compris les données globales de la mission
-                  (Lieux, Véhicules)."
-                />
-                <LoadingButton
-                  size="large"
-                  className={classes.validationButton}
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    trackEvent(VALIDATE_MISSION_IN_MISSION_PANEL);
-                    onValidate();
-                  }}
-                >
-                  Valider les saisies
-                </LoadingButton>
-              </Box>
-            )}
-          </MissionDetailsSection>
-        )}
-        {entriesToValidateByWorker?.length > 0 && (
-          <MissionDetailsSection key={6} title="Saisie(s) en cours">
+        <MissionDetailsObservations
+          mission={mission}
+          missionActions={missionActions}
+          titleProps={{ component: "h2" }}
+          addEmployeeAction={
+            globalFieldsEditable
+              ? () => {
+                  trackEvent(ADD_EMPLOYEE_IN_MISSION_PANEL);
+                  modals.open("selectEmployee", {
+                    users: adminStore.users.filter(
+                      (u) =>
+                        u.companyId === mission.companyId &&
+                        !userIdsWithEntries.includes(u.id) &&
+                        !usersToAdd.map((u2) => u2.id).includes(u.id)
+                    ),
+                    handleSelect: (user) =>
+                      setUsersToAdd((users) => [
+                        ...users.filter((u) => u.id !== user.id),
+                        user
+                      ])
+                  });
+                }
+              : null
+          }
+        />
+        <List className={classes.employeeList}>
+          {entriesToValidateByAdmin.map((e) => (
+            <ListItem key={`admin-${e.user.id}`} disableGutters className={classes.employeeListItem}>
+              <MissionEmployeeCard
+                className={classes.employeeCard}
+                mission={mission}
+                user={e.user}
+                showUserName={hasMultipleWorkers}
+                showExpenditures={showExpenditures}
+                headingComponent="h3"
+                statusTag={hasMultipleWorkers ? <ToValidateTag /> : null}
+                onCreateActivity={
+                  entryToBeValidatedByAdmin(
+                    e,
+                    adminStore.userId,
+                    adminMayOverrideValidation,
+                    overrideValidationJustification
+                  ) || !e.activities
+                    ? () =>
+                        modals.open("activityRevision", {
+                          otherActivities: mission.activities,
+                          handleSeveralActions: (actions) =>
+                            missionActions.severalActionsActivity({
+                              actions,
+                              user: e.user
+                            }),
+                          adminMode: true,
+                          allowTransfers,
+                          allowSupportActivity,
+                          allowOtherTask,
+                          otherTaskLabel,
+                          nullableEndTime: false,
+                          defaultTime: mission.startTime || day,
+                          forcedUser: e.user,
+                          displayWarningMessage: false,
+                        })
+                    : null
+                }
+                onEditActivity={
+                  entryToBeValidatedByAdmin(
+                    e,
+                    adminStore.userId,
+                    adminMayOverrideValidation,
+                    overrideValidationJustification
+                  ) || !e.activities
+                    ? async (entry) =>
+                        modals.open("activityRevision", {
+                          event: entry,
+                          otherActivities:
+                            entry.type === ACTIVITIES.break.name
+                              ? mission.activities
+                              : mission.activities.filter(
+                                  (a) => a.startTime !== entry.startTime
+                                ),
+                          handleSeveralActions: (actions) =>
+                            missionActions.severalActionsActivity({
+                              actions,
+                              user: e.user
+                            }),
+                          adminMode: true,
+                          allowTransfers,
+                          allowSupportActivity,
+                          allowOtherTask,
+                          otherTaskLabel,
+                          nullableEndTime: false,
+                          forcedUser: e.user,
+                          displayWarningMessage: false,
+                          handleCancelMission: async () => {
+                            await missionActions.cancelMission({
+                              user: e.user
+                            });
+                            await refreshData();
+                            handleClose();
+                          },
+                        })
+                    : null
+                }
+                onEditExpenditures={
+                  entryToBeValidatedByAdmin(
+                    e,
+                    adminStore.userId,
+                    adminMayOverrideValidation,
+                    overrideValidationJustification
+                  ) || !e.activities
+                    ? (newExps, oldExps) =>
+                        editUserExpenditures(
+                          newExps,
+                          oldExps,
+                          mission.id,
+                          missionActions.createExpenditure,
+                          missionActions.cancelExpenditure,
+                          e.user.id
+                        )
+                    : null
+                }
+                removeUser={() =>
+                  setUsersToAdd((users) =>
+                    users.filter((u) => u.id !== e.user.id)
+                  )
+                }
+                alwaysOpen
+                missionActions={missionActions}
+                day={day}
+              />
+            </ListItem>
+          ))}
+          {entriesToValidateByWorker.length > 0 && (
             <Notice
               type="info"
               description="Vous aurez accès à la validation de ces saisies lorsque le salarié
               les aura validées."
             />
-            <List>
-              {entriesToValidateByWorker.map((e) => (
-                <ListItem key={e.user.id} disableGutters className={classes.employeeListItem}>
-                  <MissionEmployeeCard
-                    className={classes.employeeCard}
-                    mission={mission}
-                    user={e.user}
-                    showUserName={hasMultipleWorkers}
-                    showExpenditures={showExpenditures}
-                    alwaysOpen
-                    missionActions={missionActions}
-                    day={day}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </MissionDetailsSection>
-        )}
-        {entriesValidatedByAdmin?.length > 0 && (
-          <MissionDetailsSection key={7} title="Saisie(s) validée(s)">
-            <List>
-              {entriesValidatedByAdmin.map((e) => (
-                <ListItem key={e.user.id} disableGutters className={classes.employeeListItem}>
-                  <MissionEmployeeCard
-                    className={classes.employeeCard}
-                    mission={mission}
-                    user={e.user}
-                    showUserName={hasMultipleWorkers}
-                    showExpenditures={showExpenditures}
-                    missionActions={missionActions}
-                    alwaysOpen
-                    simplified
-                    day={day}
-                    overrideValidation={overrideValidation}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </MissionDetailsSection>
-        )}
-        {entriesDeleted?.length > 0 && (
-          <MissionDetailsSection key={8} title="Saisie(s) supprimée(s)">
-            <List>
-              {entriesDeleted.map((e) => (
-                <ListItem key={e.user.id} disableGutters className={classes.employeeListItem}>
-                  <MissionEmployeeCard
-                    className={classes.employeeCard}
-                    mission={mission}
-                    user={e.user}
-                    showUserName={hasMultipleWorkers}
-                    showExpenditures={showExpenditures}
-                    missionActions={missionActions}
-                    alwaysOpen
-                    day={day}
-                    isDeleted={true}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </MissionDetailsSection>
+          )}
+          {entriesToValidateByWorker.map((e) => (
+            <ListItem key={`worker-${e.user.id}`} disableGutters className={classes.employeeListItem}>
+              <MissionEmployeeCard
+                className={classes.employeeCard}
+                mission={mission}
+                user={e.user}
+                showUserName={hasMultipleWorkers}
+                showExpenditures={showExpenditures}
+                statusTag={hasMultipleWorkers ? <WaitingTag /> : null}
+                alwaysOpen
+                missionActions={missionActions}
+                day={day}
+              />
+            </ListItem>
+          ))}
+          {entriesValidatedByAdmin.map((e) => (
+            <ListItem key={`validated-${e.user.id}`} disableGutters className={classes.employeeListItem}>
+              <MissionEmployeeCard
+                className={classes.employeeCard}
+                mission={mission}
+                user={e.user}
+                showUserName={hasMultipleWorkers}
+                showExpenditures={showExpenditures}
+                statusTag={hasMultipleWorkers ? <ValidatedTag /> : null}
+                missionActions={missionActions}
+                alwaysOpen
+                simplified
+                day={day}
+                overrideValidation={overrideValidation}
+              />
+            </ListItem>
+          ))}
+          {entriesDeleted.map((e) => (
+            <ListItem key={`deleted-${e.user.id}`} disableGutters className={classes.employeeListItem}>
+              <MissionEmployeeCard
+                className={classes.employeeCard}
+                mission={mission}
+                user={e.user}
+                showUserName={hasMultipleWorkers}
+                showExpenditures={showExpenditures}
+                statusTag={hasMultipleWorkers ? <DeletedTag /> : null}
+                missionActions={missionActions}
+                alwaysOpen
+                day={day}
+                isDeleted={true}
+              />
+            </ListItem>
+          ))}
+        </List>
+        {entriesToValidateByAdmin?.length > 0 && (
+          <Box textAlign="center" mt={4}>
+            <Notice
+              type="info"
+              description="Il ne vous sera plus possible de modifier les données après
+              validation, y compris les données globales de la mission
+              (Lieux, Véhicules)."
+            />
+            <LoadingButton
+              size="large"
+              className={classes.validationButton}
+              onClick={async (e) => {
+                e.stopPropagation();
+                trackEvent(VALIDATE_MISSION_IN_MISSION_PANEL);
+                onValidate();
+              }}
+            >
+              Valider les saisies
+            </LoadingButton>
+          </Box>
         )}
       </Box>
     </Box>

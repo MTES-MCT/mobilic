@@ -16,8 +16,8 @@ import {
 } from "common/utils/activities";
 import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { DeleteIcon } from "common/utils/icons";
 import Hidden from "@mui/material/Hidden";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { useCacheContradictoryInfoInAdminStore } from "common/utils/contradictory";
@@ -55,9 +55,28 @@ const useStyles = makeStyles(theme => ({
   },
   userNameRow: {
     display: "flex",
-    justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 16
+    marginBottom: 32
+  },
+  userName: {
+    fontWeight: 700,
+    fontSize: 24,
+    lineHeight: "32px",
+    color: fr.colors.decisions.text.title.blueFrance.default
+  },
+  removeButton: {
+    marginLeft: "auto"
+  },
+  statusTag: {
+    marginLeft: theme.spacing(2),
+    "& .fr-tag": {
+      padding: "4px 12px",
+      height: 32,
+      borderRadius: 16,
+      fontSize: 14,
+      fontWeight: 400,
+      lineHeight: "24px"
+    }
   },
   alwaysOpenContainer: {
     width: "100%"
@@ -81,7 +100,8 @@ export function MissionEmployeeCard({
   showUserName = false,
   simplified = false,
   headingComponent,
-  overrideValidation = null
+  overrideValidation = null,
+  statusTag = null
 }) {
   const stats = mission.userStats[user.id.toString()] || {};
   const activities = stats.activities || [];
@@ -133,24 +153,33 @@ export function MissionEmployeeCard({
       {(showUserName || (activities.length === 0 && removeUser)) && (
         <div className={classes.userNameRow}>
           {showUserName && (
-            <Typography
-              variant="h6"
-              component={headingComponent || "h3"}
-            >
-              {formatPersonName(user)}
-            </Typography>
+            <>
+              <Typography
+                component={headingComponent || "h3"}
+                className={classes.userName}
+              >
+                {formatPersonName(user)}
+              </Typography>
+              {statusTag && (
+                <span className={classes.statusTag}>{statusTag}</span>
+              )}
+            </>
           )}
           {activities.length === 0 && removeUser && (
-            <IconButton
-              className="no-margin-no-padding"
+            <Button
+              className={classes.removeButton}
+              priority="tertiary"
+              size="small"
+              iconId="fr-icon-delete-line"
+              iconPosition="right"
               onClick={removeUser}
             >
-              <CloseIcon />
-            </IconButton>
+              Retirer
+            </Button>
           )}
         </div>
       )}
-      <Grid item container spacing={2} alignItems="stretch">
+      <Grid item container spacing={3} alignItems="stretch">
         <Grid xs={12} sm={6} item className={classes.cardRecapKPIContainer}>
           <MetricCard
             className={classes.cardRecapKPI}
@@ -254,18 +283,6 @@ export function MissionEmployeeCard({
           simplified={simplified}
         />
       </Grid>
-      {missionActions && (
-        <Grid item xs={12} className={classes.sectionSpacing}>
-          <MissionDetailsObservations
-            mission={mission}
-            missionActions={missionActions}
-            titleProps={{
-              variant: "h5",
-              component: getNextHeadingComponent(headingComponent)
-            }}
-          />
-        </Grid>
-      )}
       {showExpenditures && (
         <Grid item xs={12} className={classes.sectionSpacing}>
           <ExpendituresCard

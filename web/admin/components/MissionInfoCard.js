@@ -13,8 +13,9 @@ export const useStyles = makeStyles(theme => ({
     textAlign: "left"
   },
   titleContainer: {
-    paddingBottom: theme.spacing(2)
+    paddingBottom: theme.spacing(3)
   },
+
   extraPadding: {
     paddingBottom: theme.spacing(4)
   }

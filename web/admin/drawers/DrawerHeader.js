@@ -23,6 +23,16 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(4),
     paddingRight: theme.spacing(4)
   },
+  missionTags: {
+    "& .fr-tag": {
+      padding: "4px 12px",
+      height: 32,
+      borderRadius: 16,
+      fontSize: 14,
+      fontWeight: 400,
+      lineHeight: "24px"
+    }
+  },
   workerName: {
     color: fr.colors.decisions.background.flat.blueFrance.default,
     fontWeight: "500",
@@ -119,6 +129,7 @@ export const MissionDrawerHeader = ({
   day,
   onClose,
 }) => {
+  const classes = useStyles();
   const stillRunning = !mission.isComplete;
   const { name: missionName, isHoliday, startTime } = mission;
   const formattedDay =
@@ -137,6 +148,9 @@ export const MissionDrawerHeader = ({
     if (values.length === 0) {
       return "";
     }
+    if (values.length > 1) {
+      return `${values.length} coéquipiers`;
+    }
     const { firstName, lastName } = values[0].user;
     return `${firstName} ${lastName}`;
   }, [mission]);
@@ -152,17 +166,20 @@ export const MissionDrawerHeader = ({
           missionPrefix={!isHoliday}
           mb={1}
         />
-        {!isHoliday &&
-          (stillRunning ? (
-            <RunningTag />
-          ) : (
-            <>
-              {noEmployeeValidation && <WaitingTag />}
-              {!noEmployeeValidation && toBeValidatedByAdmin && (
-          <ToValidateTag />
+        {!isHoliday && (
+          <Box className={classes.missionTags}>
+            {stillRunning ? (
+              <RunningTag />
+            ) : (
+              <>
+                {noEmployeeValidation && <WaitingTag />}
+                {!noEmployeeValidation && toBeValidatedByAdmin && (
+                  <ToValidateTag />
+                )}
+              </>
+            )}
+          </Box>
         )}
-            </>
-          ))}
       </>
     </DrawerHeader>
   );
