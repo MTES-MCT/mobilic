@@ -1,4 +1,5 @@
 import { makeStyles } from "@mui/styles";
+import { fr } from "@codegouvfr/react-dsfr";
 
 export const useMissionDetailsStyles = makeStyles(theme => ({
   missionSubTitle: {
@@ -17,7 +18,13 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.default
   },
   kilometers: {
-    paddingBottom: theme.spacing(5)
+    fontSize: 16,
+    fontWeight: 500,
+    lineHeight: "24px",
+    color: fr.colors.decisions.text.title.grey.default
+  },
+  kilometersValue: {
+    fontWeight: 400
   },
   vehicle: {
     flexShrink: 0,

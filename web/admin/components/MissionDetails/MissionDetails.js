@@ -314,12 +314,10 @@ export function MissionDetails({
           mission.endLocation.kilometerReading >=
             mission.startLocation.kilometerReading && (
             <Typography
-              variant="h5"
-              component="span"
               className={classes.kilometers}
             >
               Distance parcourue :{" "}
-              <span style={{ fontSize: "1rem", fontWeight: "normal" }}>
+              <span className={classes.kilometersValue}>
                 {mission.endLocation.kilometerReading -
                   mission.startLocation.kilometerReading}{" "}
                 km

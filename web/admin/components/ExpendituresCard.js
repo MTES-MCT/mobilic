@@ -17,12 +17,12 @@ const useStyles = makeStyles(theme => ({
   expenditureChip: {
     "&.MuiChip-root": {
       backgroundColor: fr.colors.decisions.background.contrast.grey.default,
-      borderRadius: theme.spacing(2),
-      height: theme.spacing(4),
-      padding: `${theme.spacing(0.5)}px ${theme.spacing(1.5)}px`,
+      borderRadius: 16,
+      height: 32,
+      padding: "4px 12px",
       fontSize: 14,
       fontWeight: 400,
-      lineHeight: `${theme.spacing(3)}px`,
+      lineHeight: "24px",
       color: fr.colors.decisions.text.label.grey.default
     },
     "& .MuiChip-label": {

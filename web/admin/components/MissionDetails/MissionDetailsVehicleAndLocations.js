@@ -20,7 +20,7 @@ const grey = fr.colors.decisions.text.default.grey.default;
 const useStyles = makeStyles(theme => ({
   container: {
     paddingTop: theme.spacing(4),
-    marginBottom: theme.spacing(5)
+    marginBottom: theme.spacing(2)
   },
   title: {
     fontWeight: 700,
@@ -29,16 +29,16 @@ const useStyles = makeStyles(theme => ({
   row: {
     display: "flex",
     alignItems: "center",
-    minHeight: 40,
+    minHeight: 32,
     gap: theme.spacing(2),
     paddingTop: theme.spacing(0.5),
     paddingBottom: theme.spacing(0.5)
   },
   label: {
     minWidth: 120,
-    fontSize: 14,
-    fontWeight: 400,
-    color: grey,
+    fontSize: 16,
+    fontWeight: 500,
+    color: fr.colors.decisions.text.title.grey.default,
     flexShrink: 0
   },
   valueGroup: {

@@ -9,14 +9,15 @@ import { CheckCircleIcon } from "common/utils/icons";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
 const blueFrance = fr.colors.decisions.text.actionHigh.blueFrance.default;
-const borderGrey = fr.colors.decisions.background.contrast.grey.default;
+const borderGrey = fr.colors.decisions.border.default.grey.default;
 
 const useStyles = makeStyles(theme => ({
   row: {
     display: "flex",
     alignItems: "center",
-    gap: theme.spacing(1.5),
-    padding: `${theme.spacing(1.5)}px 0`,
+    minHeight: 48,
+    gap: 12,
+    padding: "12px 16px",
     borderBottom: `1px solid ${borderGrey}`,
     "&:first-child": {
       borderTop: `1px solid ${borderGrey}`
@@ -24,14 +25,14 @@ const useStyles = makeStyles(theme => ({
   },
   icon: {
     color: blueFrance,
-    fontSize: "18px !important",
+    fontSize: "16px !important",
     flexShrink: 0
   },
   label: {
     color: blueFrance,
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 500,
-    lineHeight: `${theme.spacing(3)}px`
+    lineHeight: "24px"
   }
 }));
 
