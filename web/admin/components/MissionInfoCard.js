@@ -28,6 +28,7 @@ export function MissionInfoCard({
   loading = false,
   children,
   actionButtonLabel,
+  actionButtonPriority = "tertiary",
   ...other
 }) {
   const classes = useStyles();
@@ -56,7 +57,7 @@ export function MissionInfoCard({
           {onActionButtonClick && (
             <Grid item>
               <Button
-                priority="tertiary"
+                priority={actionButtonPriority}
                 size="small"
                 onClick={onActionButtonClick}
               >

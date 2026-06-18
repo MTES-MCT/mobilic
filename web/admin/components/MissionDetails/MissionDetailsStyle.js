@@ -7,18 +7,17 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
   },
   validationSection: {
     textAlign: "center",
-    paddingTop: theme.spacing(4)
+    paddingTop: theme.spacing(5)
   },
   comments: {
     paddingLeft: theme.spacing(3)
   },
   observationSection: {
     flexDirection: "row",
-    backgroundColor: theme.palette.background.default,
-    paddingTop: theme.spacing(2)
+    backgroundColor: theme.palette.background.default
   },
   kilometers: {
-    paddingBottom: theme.spacing(4)
+    paddingBottom: theme.spacing(5)
   },
   vehicle: {
     flexShrink: 0,
@@ -26,6 +25,11 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
   },
   employeeCard: {
     width: "100%"
+  },
+  employeeListItem: {
+    "&:not(:first-child)": {
+      marginTop: theme.spacing(5)
+    }
   },
   validationButton: {
     marginTop: theme.spacing(4)

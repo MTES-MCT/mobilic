@@ -23,7 +23,7 @@ export function MissionDetailsSection({
         mb={2}
       >
         <Grid item>
-          <Typography variant="h4" {...titleProps}>
+          <Typography variant="h5" {...titleProps}>
             {title}
           </Typography>
         </Grid>

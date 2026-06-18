@@ -78,6 +78,15 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
           a.id === activity.id
             ? {
                 ...a,
+                __virtualAction: "edit",
+                __virtualEdits: [
+                  ...(a.__virtualEdits || []),
+                  {
+                    before: { startTime: a.startTime, endTime: a.endTime },
+                    after: { startTime: newStartTime, endTime: newEndTime },
+                    context: payload.context || null
+                  }
+                ],
                 startTime: newStartTime,
                 endTime: newEndTime,
                 lastSubmitterId: currentUserId()
@@ -114,7 +123,7 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
       const activity = apiResponse.data.output;
       mission.activities = [
         ...mission.activities,
-        { ...activity, user: modalArgs.user }
+        { ...activity, user: modalArgs.user, __virtualAction: "create", __virtualContext: payload.context || null }
       ];
       toDispatch.push({
         type: ADMIN_ACTIONS.addVirtualActivity,

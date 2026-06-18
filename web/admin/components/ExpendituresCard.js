@@ -10,6 +10,26 @@ import React from "react";
 import Grid from "@mui/material/Grid";
 import { useModals } from "common/utils/modals";
 import { Description } from "../../common/typography/Description";
+import { makeStyles } from "@mui/styles";
+import { fr } from "@codegouvfr/react-dsfr";
+
+const useStyles = makeStyles(theme => ({
+  expenditureChip: {
+    "&.MuiChip-root": {
+      backgroundColor: fr.colors.decisions.background.contrast.grey.default,
+      borderRadius: theme.spacing(2),
+      height: theme.spacing(4),
+      padding: `${theme.spacing(0.5)}px ${theme.spacing(1.5)}px`,
+      fontSize: 14,
+      fontWeight: 400,
+      lineHeight: `${theme.spacing(3)}px`,
+      color: fr.colors.decisions.text.label.grey.default
+    },
+    "& .MuiChip-label": {
+      padding: 0
+    }
+  }
+}));
 
 export function ExpendituresCard({
   title,
@@ -19,9 +39,11 @@ export function ExpendituresCard({
   minSpendingDate,
   maxSpendingDate,
   loading,
-  titleProps = {}
+  titleProps = {},
+  cardClassName = ""
 }) {
   const modals = useModals();
+  const classes = useStyles();
 
   const expenditureCount = Array.isArray(expenditures)
     ? countExpendituresByType(expenditures)
@@ -33,6 +55,7 @@ export function ExpendituresCard({
 
   return (
     <MissionInfoCard
+      className={cardClassName}
       loading={loading}
       title={title}
       onActionButtonClick={
@@ -50,7 +73,8 @@ export function ExpendituresCard({
             }
           : null
       }
-      actionButtonLabel="Modifier"
+      actionButtonLabel="Modifier les frais"
+      actionButtonPriority="secondary"
       titleProps={titleProps}
     >
       {hasExpenditures ? (
@@ -63,7 +87,7 @@ export function ExpendituresCard({
             return (
               expCount > 0 && (
                 <Grid item key={exp}>
-                  <Chip label={label} />
+                  <Chip label={label} className={classes.expenditureChip} />
                 </Grid>
               )
             );

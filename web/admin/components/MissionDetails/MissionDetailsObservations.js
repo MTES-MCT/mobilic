@@ -18,7 +18,7 @@ export function MissionDetailsObservations({
   const modals = useModals();
   return (
     <Box
-      pb={4}
+      pb={0}
       style={{ alignItems: "center" }}
       className={classes.observationSection}
     >

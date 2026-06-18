@@ -2,8 +2,6 @@ import React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {
-  formatDateTime,
-  formatTimeOfDay,
   frenchFormatDateStringOrTimeStamp,
   getStartOfDay,
   unixTimestampToDate,
@@ -44,9 +42,7 @@ import {
   ADD_EMPLOYEE_IN_MISSION_PANEL,
   VALIDATE_MISSION_IN_MISSION_PANEL
 } from "common/utils/matomoTags";
-import { MissionDetailsVehicle } from "./MissionDetailsVehicle";
-import { MissionDetailsLocations } from "./MissionDetailsLocations";
-import { MissionDetailsObservations } from "./MissionDetailsObservations";
+import { MissionDetailsVehicleAndLocations } from "./MissionDetailsVehicleAndLocations";
 import Notice from "../../../common/Notice";
 import { PastMissionNotice } from "./PastMissionNotice";
 import { MISSION_QUERY } from "common/utils/apiQueries/missions";
@@ -242,15 +238,13 @@ export function MissionDetails({
   const allowSupportActivity = adminSettings.requireSupportActivity;
   const editableMissionName = adminSettings.requireMissionName;
 
+  const hasMultipleWorkers = workerEntries.length > 1;
+
   const doesMissionSpanOnMultipleDays =
     mission.startTime &&
     mission.endTimeOrNow &&
     getStartOfDay(mission.startTime) !==
       getStartOfDay(mission.endTimeOrNow - 1);
-  const dateTimeFormatter = doesMissionSpanOnMultipleDays
-    ? formatDateTime
-    : formatTimeOfDay;
-
   return (
     <Box>
       <MissionDrawerHeader
@@ -266,7 +260,7 @@ export function MissionDetails({
         doesMissionSpanOnMultipleDays={doesMissionSpanOnMultipleDays}
         day={day}
       />
-      <Box px={4} pt={2}>
+      <Box px={4} pt={0}>
         {isMissionDeleted && (
           <Notice
             type="info"
@@ -305,25 +299,11 @@ export function MissionDetails({
             className={classes.missionTooLongWarning}
           />
         )}
-        {!isMissionHoliday && (
-          <MissionDetailsVehicle
-            mission={mission}
-            missionActions={missionActions}
-            isEditable={globalFieldsEditable}
-            titleProps={{ component: "h2" }}
-          />
-        )}
-        <MissionDetailsLocations
+        <MissionDetailsVehicleAndLocations
           mission={mission}
           missionActions={missionActions}
-          dateTimeFormatter={dateTimeFormatter}
           isEditable={globalFieldsEditable}
           showKilometerReading={showKilometerReading}
-          titleProps={{ component: "h2" }}
-        />
-        <MissionDetailsObservations
-          mission={mission}
-          missionActions={missionActions}
           titleProps={{ component: "h2" }}
         />
         {showKilometerReading &&
@@ -378,11 +358,12 @@ export function MissionDetails({
           >
             <List>
               {entriesToValidateByAdmin.map((e) => (
-                <ListItem key={e.user.id} disableGutters>
+                <ListItem key={e.user.id} disableGutters className={classes.employeeListItem}>
                   <MissionEmployeeCard
                     className={classes.employeeCard}
                     mission={mission}
                     user={e.user}
+                    showUserName={hasMultipleWorkers}
                     showExpenditures={showExpenditures}
                     headingComponent="h3"
                     onCreateActivity={
@@ -474,9 +455,9 @@ export function MissionDetails({
                         users.filter((u) => u.id !== e.user.id)
                       )
                     }
-                    defaultOpen={workerEntries.length === 1}
+                    alwaysOpen
+                    missionActions={missionActions}
                     day={day}
-                    displayIcon={false}
                   />
                 </ListItem>
               ))}
@@ -513,12 +494,15 @@ export function MissionDetails({
             />
             <List>
               {entriesToValidateByWorker.map((e) => (
-                <ListItem key={e.user.id} disableGutters>
+                <ListItem key={e.user.id} disableGutters className={classes.employeeListItem}>
                   <MissionEmployeeCard
                     className={classes.employeeCard}
                     mission={mission}
                     user={e.user}
+                    showUserName={hasMultipleWorkers}
                     showExpenditures={showExpenditures}
+                    alwaysOpen
+                    missionActions={missionActions}
                     day={day}
                   />
                 </ListItem>
@@ -530,14 +514,17 @@ export function MissionDetails({
           <MissionDetailsSection key={7} title="Saisie(s) validée(s)">
             <List>
               {entriesValidatedByAdmin.map((e) => (
-                <ListItem key={e.user.id} disableGutters>
+                <ListItem key={e.user.id} disableGutters className={classes.employeeListItem}>
                   <MissionEmployeeCard
                     className={classes.employeeCard}
                     mission={mission}
                     user={e.user}
+                    showUserName={hasMultipleWorkers}
                     showExpenditures={showExpenditures}
+                    missionActions={missionActions}
+                    alwaysOpen
+                    simplified
                     day={day}
-                    displayIcon={false}
                     overrideValidation={overrideValidation}
                   />
                 </ListItem>
@@ -549,14 +536,16 @@ export function MissionDetails({
           <MissionDetailsSection key={8} title="Saisie(s) supprimée(s)">
             <List>
               {entriesDeleted.map((e) => (
-                <ListItem key={e.user.id} disableGutters>
+                <ListItem key={e.user.id} disableGutters className={classes.employeeListItem}>
                   <MissionEmployeeCard
                     className={classes.employeeCard}
                     mission={mission}
                     user={e.user}
+                    showUserName={hasMultipleWorkers}
                     showExpenditures={showExpenditures}
+                    missionActions={missionActions}
+                    alwaysOpen
                     day={day}
-                    displayIcon={false}
                     isDeleted={true}
                   />
                 </ListItem>

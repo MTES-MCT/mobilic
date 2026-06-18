@@ -9,6 +9,8 @@ import { ReactComponent as HammerWenchIcon_ } from "../assets/images/Work.svg";
 import { ReactComponent as TrainIcon_ } from "../assets/images/Train.svg";
 import { ReactComponent as BedIcon_ } from "../assets/images/Bed2.svg";
 import { ReactComponent as MarianneIcon_ } from "common/assets/images/marianne.svg";
+import { ReactComponent as OdometerIcon_ } from "../assets/images/Odometer.svg";
+import { ReactComponent as CheckCircleIcon_ } from "../assets/images/CheckCircle.svg";
 import _ManagerImage from "../assets/images/Manager.svg";
 import _WorkerImage from "../assets/images/worker.svg";
 import _SoftwareImage from "../assets/images/software.svg";
@@ -114,6 +116,28 @@ export function RestIcon(props) {
       {...props}
       viewBox="0 0 166.12 185.92"
       component={BedIcon_}
+    />
+  );
+}
+
+export function OdometerIcon(props) {
+  return (
+    <SvgIcon
+      titleAccess="compteur kilométrique"
+      {...props}
+      viewBox="0 0 14 14"
+      component={OdometerIcon_}
+    />
+  );
+}
+
+export function CheckCircleIcon(props) {
+  return (
+    <SvgIcon
+      titleAccess="validé"
+      {...props}
+      viewBox="0 0 14 14"
+      component={CheckCircleIcon_}
     />
   );
 }
