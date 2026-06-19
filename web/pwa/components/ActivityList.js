@@ -1,4 +1,5 @@
 import React from "react";
+import { fr } from "@codegouvfr/react-dsfr";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Avatar from "@mui/material/Avatar";
@@ -20,8 +21,7 @@ import {
 } from "common/utils/time";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
-import IconButton from "@mui/material/IconButton";
-import CreateIcon from "@mui/icons-material/Create";
+import Button from "@mui/material/Button";
 import { useModals } from "common/utils/modals";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
@@ -47,6 +47,9 @@ const useStyles = makeStyles(theme => ({
     "& .MuiSwitch-track": {
       backgroundColor: theme.palette.secondary.main
     }
+  },
+  editButton: {
+    color: fr.colors.decisions.text.actionHigh.blueFrance.default
   }
 }));
 
@@ -130,9 +133,9 @@ function ActivityItem({
       />
       {editActivityEvent && (
         <ListItemSecondaryAction>
-          <IconButton
-            edge="end"
-            color="primary"
+          <Button
+            size="small"
+            className={classes.editButton}
             onClick={() =>
               modals.open("activityRevision", {
                 event: activity,
@@ -167,8 +170,8 @@ function ActivityItem({
               })
             }
           >
-            <CreateIcon />
-          </IconButton>
+            Modifier
+          </Button>
         </ListItemSecondaryAction>
       )}
     </ListItem>
