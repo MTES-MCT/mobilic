@@ -70,8 +70,15 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
 
       // update
       if (shouldCancel) {
-        mission.activities = mission.activities.filter(
-          (a) => a.id !== activity.id
+        mission.activities = mission.activities.map((a) =>
+          a.id === activity.id
+            ? {
+                ...a,
+                __virtualAction: "cancel",
+                __virtualContext: payload.context || null,
+                dismissedAt: Date.now() / 1000
+              }
+            : a
         );
       } else {
         mission.activities = mission.activities.map((a) =>

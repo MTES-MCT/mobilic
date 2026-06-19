@@ -42,12 +42,13 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2)
   },
   employeeList: {
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(4)
   },
   employeeCard: {
     width: "100%"
   },
   employeeListItem: {
+    paddingTop: 0,
     "&:not(:first-child)": {
       marginTop: theme.spacing(5)
     }

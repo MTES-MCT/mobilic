@@ -456,9 +456,31 @@ export function MissionDetails({
               />
             </ListItem>
           ))}
+          {entriesToValidateByAdmin?.length > 0 && (
+            <Box textAlign="center" mt={4}>
+              <Notice
+                type="info"
+                description="Il ne vous sera plus possible de modifier les données après
+                validation, y compris les données globales de la mission
+                (Lieux, Véhicules)."
+              />
+              <LoadingButton
+                size="large"
+                className={classes.validationButton}
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  trackEvent(VALIDATE_MISSION_IN_MISSION_PANEL);
+                  onValidate();
+                }}
+              >
+                Valider les saisies
+              </LoadingButton>
+            </Box>
+          )}
           {entriesToValidateByWorker.length > 0 && (
             <Notice
               type="info"
+              sx={{ mt: 5 }}
               description="Vous aurez accès à la validation de ces saisies lorsque le salarié
               les aura validées."
             />
@@ -512,27 +534,6 @@ export function MissionDetails({
             </ListItem>
           ))}
         </List>
-        {entriesToValidateByAdmin?.length > 0 && (
-          <Box textAlign="center" mt={4}>
-            <Notice
-              type="info"
-              description="Il ne vous sera plus possible de modifier les données après
-              validation, y compris les données globales de la mission
-              (Lieux, Véhicules)."
-            />
-            <LoadingButton
-              size="large"
-              className={classes.validationButton}
-              onClick={async (e) => {
-                e.stopPropagation();
-                trackEvent(VALIDATE_MISSION_IN_MISSION_PANEL);
-                onValidate();
-              }}
-            >
-              Valider les saisies
-            </LoadingButton>
-          </Box>
-        )}
       </Box>
     </Box>
   );

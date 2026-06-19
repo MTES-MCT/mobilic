@@ -54,20 +54,27 @@ export function useActivityHistory({
   const [expandedActivities, setExpandedActivities] = React.useState({});
 
   // cache invalidation on activities change
-  const [historyVersion, setHistoryVersion] = React.useState(0);
-  const activitiesRef = React.useRef(activities);
+  const activitiesKeyRef = React.useRef("");
+  const historyLoadedRef = React.useRef(false);
 
-  if (activitiesRef.current !== activities) {
-    activitiesRef.current = activities;
-    if (mission?.resourcesWithHistory) {
+  const activitiesKey = React.useMemo(
+    () => (mission?.id || "") + ":" + activities.map(a => a.id).sort().join(","),
+    [mission?.id, activities]
+  );
+
+  if (activitiesKeyRef.current !== activitiesKey) {
+    const isFirstLoad = activitiesKeyRef.current === "";
+    activitiesKeyRef.current = activitiesKey;
+    if (!isFirstLoad && mission?.resourcesWithHistory) {
       delete mission.resourcesWithHistory;
-      setHistoryVersion(v => v + 1);
+      historyLoadedRef.current = false;
     }
   }
 
   // fetch persisted history
   React.useEffect(() => {
-    if (!mission || !cacheContradictoryInfoInStore) return;
+    if (!mission || !cacheContradictoryInfoInStore || historyLoadedRef.current) return;
+    historyLoadedRef.current = true;
 
     async function loadHistory() {
       try {
@@ -101,7 +108,7 @@ export function useActivityHistory({
       }
     }
     loadHistory();
-  }, [mission, cacheContradictoryInfoInStore, historyVersion]);
+  }, [mission, cacheContradictoryInfoInStore]);
 
   // build virtual events from __virtualAction tags set by missionActions.js "create" or "edit"
   const virtualEventsByActivityId = React.useMemo(() => {
@@ -122,6 +129,17 @@ export function useActivityHistory({
             before: edit.before,
             context: edit.context
           });
+        });
+      } else if (a.__virtualAction === "cancel") {
+        if (!grouped[id]) grouped[id] = [];
+        grouped[id].push({
+          type: "DELETE",
+          time: timestamp,
+          submitter: null,
+          __virtual: true,
+          after: null,
+          before: { startTime: a.startTime, endTime: a.endTime },
+          context: a.__virtualContext
         });
       } else if (a.__virtualAction === "create") {
         if (!grouped[id]) grouped[id] = [];
@@ -174,8 +192,6 @@ export function useActivityHistory({
         result.push(activity);
       }
     });
-
-    if (simplified) return result;
 
     // add dismissed activities (not in main query)
     const existingIds = new Set(activitiesWithIds.map(a => a.id));
