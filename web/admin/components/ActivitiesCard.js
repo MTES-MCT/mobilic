@@ -73,6 +73,18 @@ export function ActivitiesCard({
 
   const showEditColumn = !!(onEditActivity || simplified);
 
+  const commentByTimestamp = React.useMemo(() => {
+    const map = new Map();
+    allActivityEvents.forEach(e => {
+      const c = e.after?.context;
+      const comment = c?.comment || c?.userComment;
+      if (comment && !map.has(Math.round(e.time))) {
+        map.set(Math.round(e.time), comment);
+      }
+    });
+    return map;
+  }, [allActivityEvents]);
+
   function getComment(event) {
     const ctx = event.__virtual
       ? event.context || event.after?.context
@@ -81,12 +93,7 @@ export function ActivitiesCard({
         : event.after?.context;
     let comment = ctx?.comment || ctx?.userComment;
     if (!comment && !event.__virtual && (isRetroactiveCreate(event) || event.type === "DELETE")) {
-      for (const e of allActivityEvents) {
-        if (Math.abs(e.time - event.time) > 1) continue;
-        const c = e.after?.context;
-        comment = c?.comment || c?.userComment;
-        if (comment) break;
-      }
+      comment = commentByTimestamp.get(Math.round(event.time));
     }
     return comment;
   }

@@ -57,7 +57,7 @@ export function useActivityHistory({
   const historyLoadedRef = React.useRef(false);
 
   const activitiesKey = React.useMemo(
-    () => (mission?.id || "") + ":" + activities.map(a => a.id).sort().join(","),
+    () => (mission?.id || "") + ":" + activities.map(a => a.id).join(","),
     [mission?.id, activities]
   );
 
