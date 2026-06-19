@@ -26,7 +26,8 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
   separator: {
     height: 1,
     alignSelf: "stretch",
-    background: fr.colors.decisions.border.default.grey.default
+    background: fr.colors.decisions.border.default.grey.default,
+    marginBottom: theme.spacing(5)
   },
   kilometers: {
     fontSize: 16,
@@ -42,7 +43,7 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2)
   },
   employeeList: {
-    marginTop: theme.spacing(4)
+    paddingTop: 0
   },
   employeeCard: {
     width: "100%"

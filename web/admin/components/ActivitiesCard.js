@@ -81,7 +81,7 @@ export function ActivitiesCard({
         ? event.before?.dismissContext
         : event.after?.context;
     let comment = ctx?.comment || ctx?.userComment;
-    if (!comment && (isRetroactiveCreate(event) || event.type === "DELETE")) {
+    if (!comment && !event.__virtual && (isRetroactiveCreate(event) || event.type === "DELETE")) {
       for (const e of allActivityEvents) {
         if (Math.abs(e.time - event.time) > 1) continue;
         const c = e.after?.context;
