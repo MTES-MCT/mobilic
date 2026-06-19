@@ -68,8 +68,7 @@ export function ActivitiesCard({
   } = useActivityHistory({
     activities,
     mission,
-    cacheContradictoryInfoInStore,
-    simplified
+    cacheContradictoryInfoInStore
   });
 
   const showEditColumn = !!(onEditActivity || simplified);

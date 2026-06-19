@@ -17,12 +17,10 @@ import {
 import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import { DeleteIcon } from "common/utils/icons";
 import Hidden from "@mui/material/Hidden";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { useCacheContradictoryInfoInAdminStore } from "common/utils/contradictory";
 import { getNextHeadingComponent } from "common/utils/html";
-import { MissionDetailsObservations } from "./MissionDetails/MissionDetailsObservations";
 import { AdminMissionValidations } from "./AdminMissionValidations";
 import { MissionValidations } from "../../pwa/components/MissionValidations";
 import Notice from "../../common/Notice";
@@ -92,7 +90,6 @@ export function MissionEmployeeCard({
   day,
   showExpenditures,
   onEditExpenditures,
-  missionActions = null,
   removeUser,
   isDeleted = false,
   defaultOpen = false,

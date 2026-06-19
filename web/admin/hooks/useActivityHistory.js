@@ -44,8 +44,7 @@ export { isRetroactiveCreate };
 export function useActivityHistory({
   activities,
   mission,
-  cacheContradictoryInfoInStore,
-  simplified
+  cacheContradictoryInfoInStore
 }) {
   const api = useApi();
   const [historyByActivityId, setHistoryByActivityId] = React.useState({});
