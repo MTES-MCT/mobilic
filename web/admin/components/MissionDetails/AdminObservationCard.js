@@ -77,6 +77,7 @@ export function AdminObservationCard({ comment, onDelete }) {
         {canDelete && (
           <IconButton
             size="small"
+            aria-label="Supprimer l'observation"
             onClick={() =>
               modals.open("confirmation", {
                 title: "Confirmer suppression de l'observation",

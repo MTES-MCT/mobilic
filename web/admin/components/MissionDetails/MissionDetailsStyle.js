@@ -16,6 +16,7 @@ export const useMissionDetailsStyles = makeStyles(theme => ({
   },
   observationSection: {
     flexDirection: "row",
+    alignItems: "center",
     backgroundColor: theme.palette.background.default,
     marginTop: theme.spacing(5),
     marginBottom: theme.spacing(5)

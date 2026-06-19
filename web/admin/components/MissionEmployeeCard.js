@@ -78,6 +78,9 @@ const useStyles = makeStyles(theme => ({
   },
   alwaysOpenContainer: {
     width: "100%"
+  },
+  accordionDetails: {
+    display: "block"
   }
 }));
 
@@ -390,23 +393,26 @@ export function MissionEmployeeCard({
                 )
               ]}
           </Grid>
-          {activities.length === 0 && (
+          {activities.length === 0 && removeUser && (
             <Grid item>
-              <IconButton
-                className="no-margin-no-padding"
+              <Button
+                priority="tertiary"
+                size="small"
+                iconId="fr-icon-delete-line"
+                iconPosition="right"
                 onClick={e => {
                   e.preventDefault();
                   e.stopPropagation();
                   removeUser();
                 }}
               >
-                <CloseIcon />
-              </IconButton>
+                Retirer
+              </Button>
             </Grid>
           )}
         </Grid>
       </AccordionSummary>
-      <AccordionDetails style={{ display: "block" }}>
+      <AccordionDetails className={classes.accordionDetails}>
         {cardContent}
       </AccordionDetails>
     </Accordion>

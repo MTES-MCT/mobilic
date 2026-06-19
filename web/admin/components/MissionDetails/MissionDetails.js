@@ -451,7 +451,6 @@ export function MissionDetails({
                   )
                 }
                 alwaysOpen
-                missionActions={missionActions}
                 day={day}
               />
             </ListItem>
@@ -495,7 +494,6 @@ export function MissionDetails({
                 showExpenditures={showExpenditures}
                 statusTag={hasMultipleWorkers ? <WaitingTag /> : null}
                 alwaysOpen
-                missionActions={missionActions}
                 day={day}
               />
             </ListItem>

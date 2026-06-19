@@ -169,7 +169,7 @@ export function MissionDetailsVehicleAndLocations({
   );
 
   const missionCompany = adminStore.companies.find(
-    c => c.id === mission.companyId
+    c => c.id === mission?.companyId
   );
   const defaultAddresses = adminStore.knownAddresses.filter(
     a => missionCompany && a.companyId === missionCompany.id

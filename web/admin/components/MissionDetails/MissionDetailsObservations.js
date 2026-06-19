@@ -20,8 +20,6 @@ export function MissionDetailsObservations({
   return (
   <>
     <Box
-      pb={0}
-      style={{ alignItems: "center" }}
       className={classes.observationSection}
     >
       <Grid
