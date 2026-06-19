@@ -70,8 +70,8 @@ export function AdminMissionValidations({ mission, validations, userId }) {
   const adminAutoValidation = adminValidations.find(v => v.isAuto);
   const adminManualValidation = adminValidations.find(v => !v.isAuto);
 
-  const checkIcon = <CheckCircleIcon className={classes.checkIcon} />;
-  const waitIcon = <AccessTimeIcon className={classes.icon} />;
+  const checkIcon = <CheckCircleIcon className={classes.checkIcon} aria-hidden="true" />;
+  const waitIcon = <AccessTimeIcon className={classes.icon} aria-hidden="true" />;
 
   return (
     <Box>

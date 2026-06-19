@@ -104,7 +104,7 @@ function LocationRow({
     <Box className={classes.row}>
       <span className={classes.label}>{label}</span>
       <Box className={classes.valueGroup}>
-        <span className={`fr-icon--sm fr-icon-map-pin-2-line ${classes.dsfrIcon}`} />
+        <span className={`fr-icon--sm fr-icon-map-pin-2-line ${classes.dsfrIcon}`} aria-hidden="true" />
         <EditableMissionInfo
           fullWidth
           value={location}
@@ -125,7 +125,7 @@ function LocationRow({
       </Box>
       {showKm && location && kmReading != null && (
         <Box className={classes.kmGroup}>
-          <OdometerIcon className={classes.icon} />
+          <OdometerIcon className={classes.icon} aria-hidden="true" />
           <EditableMissionInfo
             value={kmReading}
             format={formatKm}
@@ -186,7 +186,7 @@ export function MissionDetailsVehicleAndLocations({
       <Box className={classes.row}>
         <span className={classes.label}>Véhicule</span>
         <Box className={classes.valueGroup}>
-          <DirectionsCarOutlinedIcon className={classes.icon} />
+          <DirectionsCarOutlinedIcon className={classes.icon} aria-hidden="true" />
           <MissionVehicleInfo
             vehicle={mission.vehicle}
             editVehicle={isEditable ? missionActions.updateVehicle : null}
