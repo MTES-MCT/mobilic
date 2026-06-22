@@ -79,6 +79,16 @@ export function formatLongTimer(timerDuration) {
   } ${pluralize(timerDurationInMinutes % 60, "minute")}`;
 }
 
+export function formatShortTimer(timerDuration) {
+  if (!timerDuration && timerDuration !== 0) return null;
+  const minutes = Math.trunc(timerDuration / 60);
+  const hours = Math.trunc(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  if (hours > 0 && remainingMinutes > 0) return `${hours} h ${remainingMinutes} min`;
+  if (hours > 0) return `${hours} h`;
+  return `${remainingMinutes} min`;
+}
+
 export function formatWarningDurationTime(timerDurationInSeconds) {
   if (!timerDurationInSeconds && timerDurationInSeconds !== 0) return null;
   const timerDurationInMinutes = (timerDurationInSeconds / 60) >> 0;

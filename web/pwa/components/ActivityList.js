@@ -13,7 +13,7 @@ import {
   getActivityLabelDependingOnMissionType
 } from "common/utils/activities";
 import {
-  formatLongTimer,
+  formatShortTimer,
   formatTimeOfDay,
   LONG_BREAK_DURATION,
   now,
@@ -50,6 +50,9 @@ const useStyles = makeStyles(theme => ({
   },
   editButton: {
     color: fr.colors.decisions.text.actionHigh.blueFrance.default
+  },
+  activityItem: {
+    paddingRight: 100
   }
 }));
 
@@ -78,7 +81,7 @@ function ActivityItem({
   );
 
   return (
-    <ListItem disableGutters>
+    <ListItem disableGutters className={editActivityEvent ? classes.activityItem : ""}>
       <ListItemAvatar>
         <Avatar className={classes.avatar}>
           {ACTIVITIES[activity.type].renderIcon()}
@@ -110,7 +113,7 @@ function ActivityItem({
                 activity.displayedEndTime
                   ? `${datetimeFormatter(
                       activity.displayedEndTime
-                    )} - ${formatLongTimer(activity.duration)}`
+                    )} - ${formatShortTimer(activity.duration)}`
                   : "En cours"
               }`}
             </Typography>
@@ -120,7 +123,7 @@ function ActivityItem({
                   activity.operation.endTime
                     ? `${datetimeFormatter(
                         activity.operation.endTime
-                      )} - ${formatLongTimer(
+                      )} - ${formatShortTimer(
                         activity.operation.endTime -
                           activity.operation.startTime
                       )}`
