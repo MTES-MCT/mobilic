@@ -21,7 +21,7 @@ import {
 } from "common/utils/time";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
-import Button from "@mui/material/Button";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useModals } from "common/utils/modals";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
@@ -135,7 +135,7 @@ function ActivityItem({
         <ListItemSecondaryAction>
           <Button
             size="small"
-            className={classes.editButton}
+            priority="tertiary no outline"
             onClick={() =>
               modals.open("activityRevision", {
                 event: activity,
