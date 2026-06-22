@@ -81,8 +81,8 @@ export function formatLongTimer(timerDuration) {
 
 export function formatShortTimer(timerDuration) {
   if (!timerDuration && timerDuration !== 0) return null;
-  const minutes = (timerDuration / 60) >> 0;
-  const hours = (minutes / 60) >> 0;
+  const minutes = Math.trunc(timerDuration / 60);
+  const hours = Math.trunc(minutes / 60);
   const remainingMinutes = minutes % 60;
   if (hours > 0 && remainingMinutes > 0) return `${hours} h ${remainingMinutes} min`;
   if (hours > 0) return `${hours} h`;
