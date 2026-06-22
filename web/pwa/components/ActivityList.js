@@ -1,4 +1,5 @@
 import React from "react";
+import { fr } from "@codegouvfr/react-dsfr";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Avatar from "@mui/material/Avatar";
@@ -12,7 +13,7 @@ import {
   getActivityLabelDependingOnMissionType
 } from "common/utils/activities";
 import {
-  formatLongTimer,
+  formatShortTimer,
   formatTimeOfDay,
   LONG_BREAK_DURATION,
   now,
@@ -20,8 +21,7 @@ import {
 } from "common/utils/time";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
-import IconButton from "@mui/material/IconButton";
-import CreateIcon from "@mui/icons-material/Create";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useModals } from "common/utils/modals";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
@@ -47,6 +47,12 @@ const useStyles = makeStyles(theme => ({
     "& .MuiSwitch-track": {
       backgroundColor: theme.palette.secondary.main
     }
+  },
+  editButton: {
+    color: fr.colors.decisions.text.actionHigh.blueFrance.default
+  },
+  activityItem: {
+    paddingRight: 100
   }
 }));
 
@@ -75,7 +81,7 @@ function ActivityItem({
   );
 
   return (
-    <ListItem disableGutters>
+    <ListItem disableGutters className={editActivityEvent ? classes.activityItem : ""}>
       <ListItemAvatar>
         <Avatar className={classes.avatar}>
           {ACTIVITIES[activity.type].renderIcon()}
@@ -107,7 +113,7 @@ function ActivityItem({
                 activity.displayedEndTime
                   ? `${datetimeFormatter(
                       activity.displayedEndTime
-                    )} - ${formatLongTimer(activity.duration)}`
+                    )} - ${formatShortTimer(activity.duration)}`
                   : "En cours"
               }`}
             </Typography>
@@ -117,7 +123,7 @@ function ActivityItem({
                   activity.operation.endTime
                     ? `${datetimeFormatter(
                         activity.operation.endTime
-                      )} - ${formatLongTimer(
+                      )} - ${formatShortTimer(
                         activity.operation.endTime -
                           activity.operation.startTime
                       )}`
@@ -130,9 +136,9 @@ function ActivityItem({
       />
       {editActivityEvent && (
         <ListItemSecondaryAction>
-          <IconButton
-            edge="end"
-            color="primary"
+          <Button
+            size="small"
+            priority="tertiary no outline"
             onClick={() =>
               modals.open("activityRevision", {
                 event: activity,
@@ -167,8 +173,8 @@ function ActivityItem({
               })
             }
           >
-            <CreateIcon />
-          </IconButton>
+            Modifier
+          </Button>
         </ListItemSecondaryAction>
       )}
     </ListItem>
