@@ -63,7 +63,7 @@ export function DaySummary({
       </Grid>
       <InfoCard elevation={0}>
         <MissionReviewSection
-          title="Activités de la journée"
+          title="Activités"
           className="no-margin-no-padding"
           titleProps={{ component: "h2" }}
         >

@@ -1,9 +1,5 @@
 import React from "react";
 import { fr } from "@codegouvfr/react-dsfr";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import Avatar from "@mui/material/Avatar";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
 import {
   ACTIVITIES,
   ACTIVITIES_OPERATIONS,
@@ -13,17 +9,14 @@ import {
   getActivityLabelDependingOnMissionType
 } from "common/utils/activities";
 import {
-  formatShortTimer,
+  formatTimerWithMinSuffix,
   formatTimeOfDay,
   LONG_BREAK_DURATION,
   now,
   useDateTimeFormatter
 } from "common/utils/time";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useModals } from "common/utils/modals";
-import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import { VerticalTimeline } from "common/components/VerticalTimeline";
@@ -34,12 +27,101 @@ import { Box } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
   longBreak: {
-    color: theme.palette.success.main
+    "& *": {
+      color: `${theme.palette.success.main} !important`
+    },
+    color: `${theme.palette.success.main} !important`
+  },
+  activityCard: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    padding: "8px 0",
+    background: fr.colors.decisions.background.alt.blueFrance.default,
+    marginBottom: theme.spacing(1),
+    "&:last-child": {
+      marginBottom: 0
+    }
+  },
+  activityRow: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    padding: "8px 12px 8px 16px",
+    gap: 12,
+    width: "100%"
   },
   avatar: props => ({
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: props.color,
-    color: theme.palette.primary.contrastText
+    color: fr.colors.decisions.background.default.grey.default,
+    width: 44,
+    height: 44,
+    borderRadius: "50%",
+    flexShrink: 0
   }),
+  avatarIcon: {
+    width: 28,
+    height: 28
+  },
+  activityInfo: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    flexGrow: 1,
+    minWidth: 0
+  },
+  activityName: {
+    fontWeight: 500,
+    fontSize: 16,
+    lineHeight: "24px",
+    color: fr.colors.decisions.text.title.grey.default
+  },
+  infoRow: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap"
+  },
+  durationGroup: {
+    display: "flex",
+    alignItems: "center",
+    flexShrink: 0
+  },
+  durationIcon: {
+    "&::before": {
+      "--icon-size": "14px"
+    },
+    color: fr.colors.decisions.text.active.blueFrance.default
+  },
+  duration: {
+    fontWeight: 500,
+    fontSize: 14,
+    lineHeight: "24px",
+    color: fr.colors.decisions.text.active.blueFrance.default,
+    marginLeft: 2,
+    marginRight: 4
+  },
+  horaires: {
+    fontWeight: 400,
+    fontSize: 14,
+    lineHeight: "24px",
+    color: fr.colors.decisions.text.mention.grey.default
+  },
+  strikethrough: {
+    textDecoration: "line-through"
+  },
+  editButtonWrapper: {
+    flexShrink: 0,
+    marginLeft: "auto"
+  },
+  activityListContainer: {
+    marginTop: theme.spacing(2)
+  },
   switch: {
     "& .MuiSwitch-thumb": {
       color: theme.palette.secondary.main
@@ -47,12 +129,6 @@ const useStyles = makeStyles(theme => ({
     "& .MuiSwitch-track": {
       backgroundColor: theme.palette.secondary.main
     }
-  },
-  editButton: {
-    color: fr.colors.decisions.text.actionHigh.blueFrance.default
-  },
-  activityItem: {
-    paddingRight: 100
   }
 }));
 
@@ -81,61 +157,52 @@ function ActivityItem({
   );
 
   return (
-    <ListItem disableGutters className={editActivityEvent ? classes.activityItem : ""}>
-      <ListItemAvatar>
-        <Avatar className={classes.avatar}>
-          {ACTIVITIES[activity.type].renderIcon()}
-        </Avatar>
-      </ListItemAvatar>
-      <ListItemText
-        disableTypography
-        primary={
-          <Typography className={isLongBreak ? classes.longBreak : ""}>
+    <div className={classes.activityCard}>
+      <div className={classes.activityRow}>
+        <div className={classes.avatar}>
+          {ACTIVITIES[activity.type].renderIcon({ className: classes.avatarIcon })}
+        </div>
+        <div className={`${classes.activityInfo} ${isLongBreak ? classes.longBreak : ""}`}>
+          <span className={isLongBreak ? "" : classes.activityName}>
             {isLongBreak
               ? "Repos journalier"
               : `${activityLabel}${
                   activity.isMissionDeleted ? " (activité supprimée)" : ""
                 }`}
-          </Typography>
-        }
-        secondary={
-          <>
-            <Typography
-              color={!isBreak ? "primary" : "textSecondary"}
-              className={isLongBreak ? classes.longBreak : ""}
-              style={
-                activity.operation?.type === ACTIVITIES_OPERATIONS.update
-                  ? { textDecoration: "line-through" }
-                  : {}
-              }
-            >
-              {`${datetimeFormatter(activity.displayedStartTime)} - ${
-                activity.displayedEndTime
-                  ? `${datetimeFormatter(
-                      activity.displayedEndTime
-                    )} - ${formatShortTimer(activity.duration)}`
-                  : "En cours"
-              }`}
-            </Typography>
-            {activity.operation?.type === ACTIVITIES_OPERATIONS.update && (
-              <Typography color="primary">
-                {`${datetimeFormatter(activity.operation.startTime)} - ${
-                  activity.operation.endTime
-                    ? `${datetimeFormatter(
-                        activity.operation.endTime
-                      )} - ${formatShortTimer(
-                        activity.operation.endTime -
-                          activity.operation.startTime
-                      )}`
-                    : "En cours"
-                }`}
-              </Typography>
+          </span>
+          <span className={`${classes.infoRow} ${activity.operation?.type === ACTIVITIES_OPERATIONS.update ? classes.strikethrough : ""}`}>
+            <span className={classes.durationGroup}>
+              <span className={`fr-icon--sm fr-icon-time-line ${classes.durationIcon}`} aria-hidden="true" />
+              <span className={classes.duration}>
+                {activity.displayedEndTime
+                  ? formatTimerWithMinSuffix(activity.duration)
+                  : "En cours"}
+              </span>
+            </span>
+            {activity.displayedEndTime && (
+              <span className={classes.horaires}>
+                {`${datetimeFormatter(activity.displayedStartTime)} - ${datetimeFormatter(activity.displayedEndTime)}`}
+              </span>
             )}
-          </>
-        }
-      />
-      {editActivityEvent && (
-        <ListItemSecondaryAction>
+          </span>
+          {activity.operation?.type === ACTIVITIES_OPERATIONS.update && (
+            <span className={classes.infoRow}>
+              <span className={`fr-icon--sm fr-icon-time-line ${classes.durationIcon}`} aria-hidden="true" />
+              <span className={classes.duration}>
+                {activity.operation.endTime
+                  ? formatTimerWithMinSuffix(activity.operation.endTime - activity.operation.startTime)
+                  : "En cours"}
+              </span>
+              {activity.operation.endTime && (
+                <span className={classes.horaires}>
+                  {`${datetimeFormatter(activity.operation.startTime)} - ${datetimeFormatter(activity.operation.endTime)}`}
+                </span>
+              )}
+            </span>
+          )}
+        </div>
+        {editActivityEvent && (
+          <div className={classes.editButtonWrapper}>
           <Button
             size="small"
             priority="tertiary no outline"
@@ -175,9 +242,10 @@ function ActivityItem({
           >
             Modifier
           </Button>
-        </ListItemSecondaryAction>
-      )}
-    </ListItem>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -292,7 +360,7 @@ export function ActivityList({
         </Box>
       )}
       {(view === "list" || !canDisplayChart) && (
-        <List dense>
+        <div className={classes.activityListContainer}>
           {augmentedAndSortedActivities.length === 0 &&
             !disableEmptyMessage && (
               <Description>Pas d'activités sur cette journée</Description>
@@ -312,7 +380,7 @@ export function ActivityList({
               datetimeFormatter={datetimeFormatter}
             />
           ))}
-        </List>
+        </div>
       )}
       {view === "chart" && canDisplayChart && (
         <ActivitiesPieChart
