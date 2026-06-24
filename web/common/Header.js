@@ -257,6 +257,11 @@ export function NavigationMenu({ open, setOpen, fullScreen = false }) {
   const userName = formatPersonName(userInfo);
   const userEmail = userInfo?.email || "email non renseigné";
   
+  const filteredRoutes = routes.filter(
+    (r) =>
+      !r.menuItemFilter || r.menuItemFilter({ userInfo, companies })
+  );
+
   return (
     <Navigation open={open} setOpen={setOpen} fullScreen={fullScreen}>
       <div className={classes.navTopSection}>
@@ -315,12 +320,8 @@ export function NavigationMenu({ open, setOpen, fullScreen = false }) {
           </>
         )}
         <div className={classes.navList}>
-          {(() => {
-            const filteredRoutes = routes.filter(
-              (r) =>
-                !r.menuItemFilter || r.menuItemFilter({ userInfo, companies })
-            );
-            return filteredRoutes.map((route, index) =>
+          {
+            filteredRoutes.map((route, index) =>
               <ListRouteItem
                 userInfo={userInfo}
                 companies={companies}
@@ -329,8 +330,8 @@ export function NavigationMenu({ open, setOpen, fullScreen = false }) {
                 closeDrawer={() => setOpen(false)}
                 isLastRoute={index === filteredRoutes.length - 1}
               />
-            );
-          })()}
+            )
+          }
         </div>
       </div>
     </Navigation>
