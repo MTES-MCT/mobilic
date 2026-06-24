@@ -119,7 +119,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     width: "100%",
-    // rowGap: theme.spacing(1),
     alignItems: "flex-start",
     padding: '0.75rem 1.5rem',
   },
