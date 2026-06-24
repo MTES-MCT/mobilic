@@ -53,12 +53,6 @@ const useStyles = makeStyles((theme) => ({
       outlineWidth: 0,
       outlineOffset: 0
     },
-    "&:focus": {
-      border: '1px solid red',
-    },
-    // marginLeft: theme.spacing(2),
-    // marginRight: theme.spacing(2),
-    // maxWidth: 500
   },
   navListItem: {
     width: "100%",
