@@ -20,7 +20,11 @@ export const LOCAL_STORAGE_SCHEMA = {
   missions: Map,
   expenditures: Map,
   vehicles: Map,
-  regulationComputationsByDay: List
+  regulationComputationsByDay: List,
+  lastSelectedCompanyId: {
+    deserialize: value => (value ? parseInt(value) : value),
+    serialize: String.serialize
+  }
 };
 
 export const NON_PERSISTENT_SCHEMA = {

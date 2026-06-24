@@ -119,6 +119,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   const companies = store.companies();
   const userId = store.userId();
   const userInfo = store.userInfo();
+  const lastCompanyId = store.lastSelectedCompanyId();
 
   const areAllCompaniesWithoutAdmins = React.useMemo(
     () => companies.every(c => !!c.hasNoAdmin),
@@ -165,6 +166,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
     } else {
       modals.open("newMission", {
         companies,
+        currentCompanyId: lastCompanyId,
         companyAddresses: store.getEntity("knownAddresses"),
         handleContinue: missionInfos => {
           const company = companies.find(c => c.id === missionInfos.company.id);

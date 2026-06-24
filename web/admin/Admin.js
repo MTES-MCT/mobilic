@@ -13,6 +13,7 @@ import {
   loadCompanyDetails
 } from "./utils/loadCompaniesData";
 import { useApi } from "common/utils/api";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import {
   AdminStoreProvider,
   useAdminStore,
@@ -63,6 +64,7 @@ const useStyles = makeStyles((theme) => ({
 
 function InternalAdmin() {
   const api = useApi();
+  const store = useStoreSyncedWithLocalStorage();
   const adminStore = useAdminStore();
   const [, company] = useAdminCompanies();
   const withLoadingScreen = useLoadingScreen();
@@ -101,7 +103,10 @@ function InternalAdmin() {
                 payload: { companiesPayload: companies }
               });
 
-              const companyId = companies[0].id;
+              const lastSelectedCompanyId = store.lastSelectedCompanyId();
+              const companyId = companies.find(
+                (company) => company.id === lastSelectedCompanyId
+              )?.id || companies[0].id;
 
               adminStore.dispatch({
                 type: ADMIN_ACTIONS.updateCompanyId,
@@ -169,6 +174,12 @@ function InternalAdmin() {
 
   React.useEffect(() => {
     if (adminStore.companyId) loadDataCompanyDetails();
+  }, [adminStore.companyId]);
+
+  React.useEffect(() => {
+    if (adminStore.companyId) {
+      store.setItems({ lastSelectedCompanyId: adminStore.companyId });
+    }
   }, [adminStore.companyId]);
 
   const isFirstMinDateRendered = React.useRef(true);
