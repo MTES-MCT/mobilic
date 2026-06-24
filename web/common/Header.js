@@ -476,7 +476,7 @@ function AppHeader() {
         disabled: false,
         onClick: openNavigationMenu
       },
-      text: <span className="fr-icon-menu-fill fr-icon--sm" aria-hidden="true"></span>,
+      text: <span className="fr-icon-menu-fill fr-icon--sm" aria-label="Menu" title="Menu"></span>,
     },
   ], [userInfo, openNavigationMenu]);
 
