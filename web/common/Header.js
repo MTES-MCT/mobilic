@@ -187,7 +187,7 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies, isLastR
               !subRoute.accessible ||
               subRoute.accessible({ userInfo, companies })
           )
-          .map((subRoute, index) => (
+          .map((subRoute) => (
             <ListRouteItem
               key={subRoute.path || subRoute.label}
               route={{ ...subRoute, path: `${route.path}${subRoute.path}` }}
