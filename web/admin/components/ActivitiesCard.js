@@ -72,18 +72,7 @@ export function ActivitiesCard({
   });
 
   const showEditColumn = !!(onEditActivity || simplified);
-
-  const commentByTimestamp = React.useMemo(() => {
-    const map = new Map();
-    allActivityEvents.forEach(e => {
-      const c = e.after?.context;
-      const comment = c?.comment || c?.userComment;
-      if (comment && !map.has(Math.round(e.time))) {
-        map.set(Math.round(e.time), comment);
-      }
-    });
-    return map;
-  }, [allActivityEvents]);
+  const colCount = showEditColumn ? 5 : 4;
 
   function getComment(event) {
     const ctx = event.__virtual
@@ -92,8 +81,14 @@ export function ActivitiesCard({
         ? event.before?.dismissContext
         : event.after?.context;
     let comment = ctx?.comment || ctx?.userComment;
+    // fallback: find comment from a concurrent event (same user, within 1s)
     if (!comment && !event.__virtual && (isRetroactiveCreate(event) || event.type === "DELETE")) {
-      comment = commentByTimestamp.get(Math.round(event.time));
+      const concurrent = allActivityEvents.find(
+        e => e.userId === event.userId && Math.abs(e.time - event.time) <= 1 && (e.after?.context?.comment || e.after?.context?.userComment)
+      );
+      if (concurrent) {
+        comment = concurrent.after.context.comment || concurrent.after.context.userComment;
+      }
     }
     return comment;
   }
@@ -131,10 +126,10 @@ export function ActivitiesCard({
     const motif = formatMotif(getComment(event));
 
     if (event.__virtual) {
-      const author = currentUserInfo ? formatPersonName(currentUserInfo) : "Vous";
+      const author = formatPersonName(currentUserInfo) || "Vous";
       return (
         <TableRow key={entry.id} className={classes.historyRow}>
-          <TableCell colSpan={99} className={classes.historySubRow}>
+          <TableCell colSpan={colCount} className={classes.historySubRow}>
             {getVirtualSentences(event).map((s, i) => (
               <HistoryLine key={i} author={author} dateLabel="(non sauvegardé)" text={`${s}${motif}`} />
             ))}
@@ -150,7 +145,7 @@ export function ActivitiesCard({
       const label = isRetroactiveCreate(event) ? `a ajouté l'activité` : `a supprimé l'activité`;
       return (
         <TableRow key={entry.id} className={classes.historyRow}>
-          <TableCell colSpan={99} className={classes.historySubRow}>
+          <TableCell colSpan={colCount} className={classes.historySubRow}>
             <HistoryLine author={author} dateLabel={dateLabel} text={`${label}${motif}`} />
           </TableCell>
         </TableRow>
@@ -159,7 +154,7 @@ export function ActivitiesCard({
 
     return (
       <TableRow key={entry.id} className={classes.historyRow}>
-        <TableCell colSpan={99} className={classes.historySubRow}>
+        <TableCell colSpan={colCount} className={classes.historySubRow}>
           {getChangeIconAndText(event).map((change, i) => (
             <HistoryLine key={i} author={author} dateLabel={dateLabel} text={`${change.text}${motif}`} />
           ))}
@@ -208,7 +203,14 @@ export function ActivitiesCard({
         {showEditColumn && (
           <TableCell className={classes.cellAction}>
             {simplified && config ? (
-              <KeyboardArrowDownIcon className={`${classes.chevron} ${isExpanded ? classes.chevronExpanded : ""}`} />
+              <IconButton
+                size="small"
+                aria-expanded={isExpanded}
+                aria-label="Afficher l'historique"
+                onClick={e => e.stopPropagation()}
+              >
+                <KeyboardArrowDownIcon className={`${classes.chevron} ${isExpanded ? classes.chevronExpanded : ""}`} />
+              </IconButton>
             ) : simplified || entry.__tagType === "SUPPRESSION" ? null : (
               <IconButton
                 className={classes.editButton}

@@ -6,12 +6,12 @@ import {
   MISSION_RESOURCE_TYPES
 } from "common/utils/contradictory";
 
+// activity created with an endTime = retroactive (past entry by employee or admin)
 function isRetroactiveCreate(event) {
   return (
     event.type === "CREATE" &&
     event.after &&
-    event.after.endTime &&
-    (event.submitterId !== event.userId || event.after.endTime)
+    event.after.endTime
   );
 }
 
@@ -61,14 +61,15 @@ export function useActivityHistory({
     [mission?.id, activities]
   );
 
-  if (activitiesKeyRef.current !== activitiesKey) {
+  // invalidate cache when activities change (not on first load)
+  React.useEffect(() => {
     const isFirstLoad = activitiesKeyRef.current === "";
     activitiesKeyRef.current = activitiesKey;
     if (!isFirstLoad && mission?.resourcesWithHistory) {
       delete mission.resourcesWithHistory;
       historyLoadedRef.current = false;
     }
-  }
+  }, [activitiesKey]);
 
   // fetch persisted history
   React.useEffect(() => {
@@ -178,14 +179,6 @@ export function useActivityHistory({
           ...activity,
           __hasModification: true,
           __tagType: tagType
-        });
-        events.forEach((event, idx) => {
-          result.push({
-            id: `${activity.id}_history_${idx}`,
-            __historyEntry: true,
-            __event: event,
-            __parentId: activity.id
-          });
         });
       } else {
         result.push(activity);

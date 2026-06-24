@@ -60,7 +60,7 @@ export function AdminObservationCard({ comment, onDelete }) {
 
   const canDelete =
     onDelete &&
-    (comment.submitterId || comment.submitter?.id) === store.userId();
+    (comment.submitter?.id ?? store.userId()) === store.userId();
 
   return (
     <Box className={classes.container}>

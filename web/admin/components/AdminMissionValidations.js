@@ -53,7 +53,7 @@ function ValidationRow({ icon, label, classes }) {
 
 export function AdminMissionValidations({ mission, validations, userId }) {
   const classes = useStyles();
-  const doNotDisplayValidations = mission.isDeleted && !mission.complete;
+  const doNotDisplayValidations = mission.isDeleted && !mission.isComplete;
 
   if (doNotDisplayValidations) {
     return null;
