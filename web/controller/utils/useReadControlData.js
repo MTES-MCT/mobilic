@@ -31,7 +31,7 @@ export const useReadControlData = (controlId, controlType) => {
 
   const [controlData, setControlData] = React.useState({});
 
-  React.useEffect(() => {
+  const loadControlData = React.useCallback(async () => {
     if (!controlId) return;
     
     withLoadingScreen(async () => {
@@ -61,6 +61,10 @@ export const useReadControlData = (controlId, controlType) => {
       });
     });
   }, [controlId, controlType, api, alerts, withLoadingScreen]);
+
+  React.useEffect(() => {
+    loadControlData();
+  }, [loadControlData]);
 
   const canDownloadBDC = React.useMemo(
     () => _canDownloadBDC(controlData, controllerUserInfo),
