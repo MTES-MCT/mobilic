@@ -467,24 +467,8 @@ function AppHeader() {
   }, [isHeaderMenuModalOpen, openNavigationMenu]);
 
   const quickAccessItemsConnected = React.useMemo(() => [
-    {
-      iconId: '',
-      buttonProps: {
-        type: "button",
-        disabled: true
-      },
-      text: <span style={{ color: 'var(--text-action-high-grey)' }}>{formatPersonName(userInfo)}</span>,
-    },
-    {
-      iconId: '',
-      buttonProps: {
-        type: "button",
-        disabled: true
-      },
-      text: (
-        <HeaderCompaniesDropdown />
-      ),
-    },
+    <span style={{ color: 'var(--text-action-high-grey)' }}>{formatPersonName(userInfo)}</span>,
+    <HeaderCompaniesDropdown />,
     {
       iconId: '',
       buttonProps: {
