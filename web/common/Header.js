@@ -424,6 +424,19 @@ const quickAccessItemsPublic = [
   }
 ];
 
+const commonHeaderProps = {
+  brandTop: <>RÉPUBLIQUE<br />FRANÇAISE</>,
+  homeLinkProps: {
+    to: '/',
+    title: 'Accueil - Mobilic'
+  },
+  operatorLogo: {
+    alt: 'Mobilic',
+    imgUrl: MobilicLogoWithText,
+    orientation: 'horizontal'
+  },
+};
+
 function AppHeader() {
   const store = useStoreSyncedWithLocalStorage();
 
@@ -518,17 +531,8 @@ function AppHeader() {
     return(
       <>
         <Header
-          brandTop={<>RÉPUBLIQUE<br />FRANÇAISE</>}
-          homeLinkProps={{
-            to: '/',
-            title: 'Accueil - Mobilic'
-          }}
+          {...commonHeaderProps}
           id="fr-header-simple-header-connected"
-          operatorLogo={{
-            alt: 'Mobilic',
-            imgUrl: MobilicLogoWithText,
-            orientation: 'horizontal'
-          }}
           quickAccessItems={isHeaderMenuModalOpen ? [] : quickAccessItemsConnected}
           navigation={[]}
           classes={{
@@ -549,17 +553,8 @@ function AppHeader() {
   } else {
     return (
       <Header
-        brandTop={<>RÉPUBLIQUE<br />FRANÇAISE</>}
-        homeLinkProps={{
-          to: '/',
-          title: 'Accueil - Mobilic'
-        }}
+        {...commonHeaderProps}
         id="fr-header-simple-header"
-        operatorLogo={{
-          alt: 'Mobilic',
-          imgUrl: MobilicLogoWithText,
-          orientation: 'horizontal'
-        }}
         navigation={navigation}
         quickAccessItems={quickAccessItemsPublic}
       />
