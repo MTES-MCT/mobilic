@@ -1,5 +1,5 @@
 import React from "react";
-import { unixToJSTimestamp } from "../time";
+import { unixToJSTimestamp, CONTROL_HISTORY_DEPTH, isoFormatLocalDate } from "../time";
 
 // Custom hook to normalize control/token data into a standard tokenInfo format
 export function useTokenInfo({ tokenInfo, controlTime, controlData }) {
@@ -9,7 +9,7 @@ export function useTokenInfo({ tokenInfo, controlTime, controlData }) {
       const timeValue = controlData.controlTime || controlData.qrCodeGenerationTime;
       if (!timeValue) {
         return {
-          creationDay: new Date().toISOString().split('T')[0],
+          creationDay: isoFormatLocalDate(new Date()),
           historyStartDay: null,
           creationTime: null,
           controlTime: null
@@ -24,7 +24,7 @@ export function useTokenInfo({ tokenInfo, controlTime, controlData }) {
           const historyDate = new Date(controlData.historyStartDate);
           
           if (!isNaN(historyDate.getTime())) {
-            historyStartDay = historyDate.toISOString().split('T')[0];
+            historyStartDay = isoFormatLocalDate(historyDate);
           }
         } catch (err) {
           console.error('[useTokenInfo] Error parsing historyStartDate', err);
@@ -32,7 +32,7 @@ export function useTokenInfo({ tokenInfo, controlTime, controlData }) {
       }
       
       return {
-        creationDay: controlDate.toISOString().split('T')[0],
+        creationDay: isoFormatLocalDate(controlDate),
         historyStartDay: historyStartDay,
         creationTime: controlData.creationTime,
         controlTime: controlData.controlTime
@@ -44,14 +44,13 @@ export function useTokenInfo({ tokenInfo, controlTime, controlData }) {
     
     if (controlTime) {
       const controlDate = new Date(unixToJSTimestamp(controlTime));
-      const HISTORY_DEPTH_DAYS = parseInt(process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH || "28");
       const historyStartDate = new Date(controlDate);
-      historyStartDate.setDate(historyStartDate.getDate() - HISTORY_DEPTH_DAYS);
+      historyStartDate.setDate(historyStartDate.getDate() - CONTROL_HISTORY_DEPTH);
       
       return {
         ...tokenInfo,
-        creationDay: controlDate.toISOString().split('T')[0],
-        historyStartDay: historyStartDate.toISOString().split('T')[0]
+        creationDay: isoFormatLocalDate(controlDate),
+        historyStartDay: isoFormatLocalDate(historyStartDate)
       };
     }
     

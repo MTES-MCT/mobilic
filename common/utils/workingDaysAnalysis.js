@@ -50,7 +50,12 @@ export function analyzeWorkingDays(missions, referenceDate) {
 
         // Check if activity was modified (has versions)
         if (activity.versions?.length > 0) {
-          const firstVersion = activity.versions[0];
+          // Sort versions explicitly by versionNumber to ensure we get the first/original version
+          // This makes the code independent of the API's ordering
+          const sortedVersions = [...activity.versions].sort((a, b) => 
+            a.versionNumber - b.versionNumber
+          );
+          const firstVersion = sortedVersions[0];
           const hasChanged = 
             firstVersion.startTime !== activity.startTime ||
             firstVersion.endTime !== activity.endTime;
@@ -76,51 +81,4 @@ export function analyzeWorkingDays(missions, referenceDate) {
     daysAddedPosterioriNumber: daysAddedPosteriori.size,
     daysModifiedNumber: daysModified.size
   };
-}
-
-// Get detailed modifications grouped by day
-export function getDetailedModificationsByDay(missions) {
-  const modificationsByDay = new Map();
-
-  missions.forEach((mission) => {
-    const missionAddedLate = isMissionPosteriori(mission);
-    
-    mission.allActivities?.forEach((activity) => {
-      const activityDays = getDaysBetweenTwoDates(
-        activity.startTime,
-        activity.endTime
-      );
-
-      activityDays.forEach((day) => {
-        if (!modificationsByDay.has(day)) {
-          modificationsByDay.set(day, {
-            activities: [],
-            hasPosterioriAddition: false,
-            hasModification: false,
-            modificationsCount: 0
-          });
-        }
-
-        const dayInfo = modificationsByDay.get(day);
-        
-        if (missionAddedLate || isActivityAddedLate(activity, day)) {
-          dayInfo.hasPosterioriAddition = true;
-        }
-
-        if (activity.versions?.length > 0) {
-          dayInfo.hasModification = true;
-          dayInfo.modificationsCount += activity.versions.length;
-        }
-
-        dayInfo.activities.push({
-          activityId: activity.id,
-          type: activity.type,
-          receptionTime: activity.receptionTime,
-          versionsCount: activity.versions?.length || 0
-        });
-      });
-    });
-  });
-
-  return modificationsByDay;
 }

@@ -1,11 +1,8 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import { formatDay } from "common/utils/time";
+import { formatDay, CONTROL_HISTORY_DEPTH } from "common/utils/time";
 import { Description } from "../../../common/typography/Description";
 import { Stack } from "@mui/material";
-
-const controlHistoryDepth =
-  process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH || 28;
 
 export function ControllerControlHistory({
   tokenInfo
@@ -14,7 +11,7 @@ export function ControllerControlHistory({
     <Stack rowGap={1}>
       <>
         <Typography variant="h6" component="h2" sx={{ lineHeight: "0.5rem" }}>
-          Les {controlHistoryDepth} derniers jours
+          Les {CONTROL_HISTORY_DEPTH} derniers jours
         </Typography>
         <Description noMargin>
           Depuis le {" "}

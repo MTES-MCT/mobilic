@@ -5,7 +5,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { Calendar } from "react-multi-date-picker";
-import { addDaysToDate, textualPrettyFormatDay, unixToJSTimestamp } from "common/utils/time";
+import { addDaysToDate, textualPrettyFormatDay, unixToJSTimestamp, CONTROL_HISTORY_DEPTH } from "common/utils/time";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
 import Stack from "@mui/material/Stack";
 import { capitalizeFirstLetter } from "common/utils/string";
@@ -14,9 +14,6 @@ import { gregorian_fr } from "common/utils/calendarLocale";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { useCalendarStyles } from "../../../common/styles/calendarStyles";
 import { useAccordionSummaryStyles } from "../../../common/styles/accordionStyles";
-
-const controlHistoryDepth =
-  Number.parseInt(process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH, 10) || 28;
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -45,7 +42,7 @@ export function NatinfResultAccordion({
   const effectiveControlTime = controlTime || Math.trunc(Date.now() / 1000);
 
   const maxDate = new Date(unixToJSTimestamp(effectiveControlTime));
-  const minDate = addDaysToDate(new Date(maxDate), -controlHistoryDepth);
+  const minDate = addDaysToDate(new Date(maxDate), -CONTROL_HISTORY_DEPTH);
 
   const handleDateChange = values => {
     const newDays = values.map(dateObj => {

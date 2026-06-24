@@ -109,9 +109,6 @@ export function ControllerControlNbCards({
           </Stack>
         }
         footer={<a href="#" className="fr-link fr-icon-arrow-right-line fr-link--icon-right" onClick={(e) => { e.preventDefault(); onChangeTab("history"); }}>Voir le détail</a>}
-        linkProps={{
-          href: '#'
-        }}
         size="medium"
         title={
           <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">

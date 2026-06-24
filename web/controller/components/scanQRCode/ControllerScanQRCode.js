@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom";
 import { CONTROLLER_ROUTE_PREFIX } from "../../../common/routes";
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
-import { prettyFormatDayHour } from "common/utils/time";
+import { prettyFormatDayHour, CONTROL_HISTORY_DEPTH } from "common/utils/time";
 import { useLoadingScreen } from "common/utils/loading";
 import Typography from "@mui/material/Typography";
 import { Header } from "../../../common/Header";
@@ -134,9 +134,6 @@ export function ControllerScanQRCode() {
     });
   };
 
-  const controlHistoryDepth =
-    process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH || 28;
-
   return (
     <>
       <Header />
@@ -147,7 +144,7 @@ export function ControllerScanQRCode() {
         <ControllerBackButton label="Accueil" route="/home" />
         <h3 className={classes.titleScan}>Scannez un QR Code Mobilic</h3>
         <Typography>
-          Afin d'accéder à l'historique du salarié ({controlHistoryDepth}{" "}
+          Afin d'accéder à l'historique du salarié ({CONTROL_HISTORY_DEPTH}{" "}
           jours), positionnez son QR Code dans le cadre.
         </Typography>
         <Grid

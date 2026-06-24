@@ -31,8 +31,10 @@ export const useReadControlData = (controlId, controlType) => {
 
   const [controlData, setControlData] = React.useState({});
 
-  const loadControlData = React.useCallback(async () => {
-    if (controlId) {
+  React.useEffect(() => {
+    if (!controlId) return;
+    
+    withLoadingScreen(async () => {
       await alerts.withApiErrorHandling(async () => {
         const apiResponse = await api.graphQlMutate(
           controlType === CONTROL_TYPES.MOBILIC.label
@@ -57,18 +59,8 @@ export const useReadControlData = (controlId, controlType) => {
           )
         });
       });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [controlId, controlType]);
-
-  React.useEffect(() => {
-    if (controlId) {
-      withLoadingScreen(async () => {
-        await loadControlData();
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [controlId]);
+    });
+  }, [controlId, controlType, api, alerts, withLoadingScreen]);
 
   const canDownloadBDC = React.useMemo(
     () => _canDownloadBDC(controlData, controllerUserInfo),
