@@ -254,7 +254,7 @@ export function NavigationMenu({ open, setOpen, fullScreen = false }) {
 
   const { displayCurrentMission } = useStoreMissions();
 
-  const userName = userInfo ? formatPersonName(userInfo) : "Utilisateur";
+  const userName = formatPersonName(userInfo);
   const userEmail = userInfo?.email || "email non renseigné";
   
   return (
