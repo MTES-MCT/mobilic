@@ -25,6 +25,23 @@ function isMissionPosteriori(mission) {
   });
 }
 
+// Helper: get days modified by an activity (original + current), or empty array
+function getModifiedDays(activity) {
+  if (!activity.versions?.length) return [];
+  const sortedVersions = [...activity.versions].sort(
+    (a, b) => a.versionNumber - b.versionNumber
+  );
+  const firstVersion = sortedVersions[0];
+  const hasChanged =
+    firstVersion.startTime !== activity.startTime ||
+    firstVersion.endTime !== activity.endTime;
+  if (!hasChanged) return [];
+  return [
+    ...getDaysBetweenTwoDates(firstVersion.startTime, firstVersion.endTime),
+    ...getDaysBetweenTwoDates(activity.startTime, activity.endTime),
+  ];
+}
+
 // Analyze working days and detect posteriori additions and modifications
 export function analyzeWorkingDays(missions, referenceDate) {
   const allWorkingDays = new Set();
@@ -49,26 +66,7 @@ export function analyzeWorkingDays(missions, referenceDate) {
         }
 
         // Check if activity was modified (has versions)
-        if (activity.versions?.length > 0) {
-          // Sort versions explicitly by versionNumber to ensure we get the first/original version
-          // This makes the code independent of the API's ordering
-          const sortedVersions = [...activity.versions].sort((a, b) => 
-            a.versionNumber - b.versionNumber
-          );
-          const firstVersion = sortedVersions[0];
-          const hasChanged = 
-            firstVersion.startTime !== activity.startTime ||
-            firstVersion.endTime !== activity.endTime;
-
-          if (hasChanged) {
-            const originalDays = getDaysBetweenTwoDates(
-              firstVersion.startTime,
-              firstVersion.endTime
-            );
-            originalDays.forEach(d => daysModified.add(d));
-            activityDays.forEach(d => daysModified.add(d));
-          }
-        }
+        getModifiedDays(activity).forEach(d => daysModified.add(d));
       });
     });
   });
