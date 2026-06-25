@@ -12,7 +12,8 @@ const BUSINESS_OPTIONS = {
   TRM: [
     { value: "LONG_DISTANCE", label: "Longue distance" },
     { value: "SHORT_DISTANCE", label: "Courte distance" },
-    { value: "SHIPPING", label: "Messagerie, Fonds et valeur" }
+    { value: "SHIPPING", label: "Messagerie, Fonds et valeur" },
+    { value: "MOVE", label: "Déménagement" },
   ],
   TRV: [
     { value: "FREQUENT", label: "Lignes régulières" },

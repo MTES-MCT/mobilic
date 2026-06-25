@@ -12,6 +12,10 @@ export const BUSINESS_TYPES = [
     label: "TRM - Messagerie, Fonds et valeur"
   },
   {
+    value: "MOVE",
+    label: "TRM - Déménagement"
+  },
+  {
     value: "FREQUENT",
     label: "TRV - Lignes régulières"
   },
