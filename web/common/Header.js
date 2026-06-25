@@ -446,7 +446,7 @@ function AppHeader() {
   const classes = useStyles();
   const userInfo = store.userInfo();
   const isHeaderMenuModalOpen = useIsHeaderMenuModalOpen();
-  const isSmDown = useIsWidthDown("sm");
+  const isLgDown = useIsWidthDown("lg");
 
   const openNavigationMenu = React.useCallback(() => {
     setOpenNavDrawer(true);
@@ -537,7 +537,7 @@ function AppHeader() {
           quickAccessItems={isHeaderMenuModalOpen ? [] : quickAccessItemsConnected}
           navigation={[]}
           classes={{
-            root: "mobilic-dsfr-header",
+            root: isLgDown ? "" : "mobilic-dsfr-header",
             toolsLinks: classes.headerToolsLinks,
           }}
         />
@@ -547,7 +547,7 @@ function AppHeader() {
             key={1}
             open={openNavDrawer}
             setOpen={setOpenNavDrawer}
-            fullScreen={isSmDown}
+            fullScreen={isLgDown}
           />
       }
       </>
