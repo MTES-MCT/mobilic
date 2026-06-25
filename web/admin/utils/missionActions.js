@@ -70,14 +70,30 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
 
       // update
       if (shouldCancel) {
-        mission.activities = mission.activities.filter(
-          (a) => a.id !== activity.id
+        mission.activities = mission.activities.map((a) =>
+          a.id === activity.id
+            ? {
+                ...a,
+                __virtualAction: "cancel",
+                __virtualContext: payload.context || null,
+                dismissedAt: Date.now() / 1000
+              }
+            : a
         );
       } else {
         mission.activities = mission.activities.map((a) =>
           a.id === activity.id
             ? {
                 ...a,
+                __virtualAction: "edit",
+                __virtualEdits: [
+                  ...(a.__virtualEdits || []),
+                  {
+                    before: { startTime: a.startTime, endTime: a.endTime },
+                    after: { startTime: newStartTime, endTime: newEndTime },
+                    context: payload.context || null
+                  }
+                ],
                 startTime: newStartTime,
                 endTime: newEndTime,
                 lastSubmitterId: currentUserId()
@@ -114,7 +130,7 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
       const activity = apiResponse.data.output;
       mission.activities = [
         ...mission.activities,
-        { ...activity, user: modalArgs.user }
+        { ...activity, user: modalArgs.user, __virtualAction: "create", __virtualContext: payload.context || null }
       ];
       toDispatch.push({
         type: ADMIN_ACTIONS.addVirtualActivity,
