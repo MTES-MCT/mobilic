@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "baseline",
     justifyContent: "space-between",
     border: '1px solid var(--border-default-grey)',
-    padding: '0.25rem 0.5rem 0.25rem 0.75rem',
+    padding: '0.25rem 0 0.25rem 0.75rem',
     gap: theme.spacing(1),
     "& .noFocusRingSelect:focus": {
       outline: "none",
@@ -375,13 +375,14 @@ const HeaderCompaniesDropdown = () => {
           boxShadow: 'none',
           margin: 0,
           padding: 0,
+          paddingLeft: '0',
+          paddingTop: '0',
+          paddingBottom: '0',
+          paddingRight: '2.5rem',
         }
       }}
       className={classes.companyDrowndown}
     >
-      <option value="" disabled>
-        Selectionnez une entreprise
-      </option>
       {
         companies.map((c) => (
           <option 
