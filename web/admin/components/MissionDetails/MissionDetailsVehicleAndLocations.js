@@ -142,7 +142,7 @@ function LocationRow({
               />
             )}
             onEdit={editKm}
-            disabledEdit={() => kmError}
+            disabledEdit={() => !!kmError}
           />
         </Box>
       )}

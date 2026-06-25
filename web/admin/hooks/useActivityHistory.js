@@ -117,16 +117,19 @@ export function useActivityHistory({
     activities.forEach(a => {
       if (!a.__virtualAction) return;
       const id = a.id;
+      const activityType = a.type;
+      const resourceType = MISSION_RESOURCE_TYPES.activity;
       if (a.__virtualAction === "edit" && a.__virtualEdits) {
         if (!grouped[id]) grouped[id] = [];
         a.__virtualEdits.forEach(edit => {
           grouped[id].push({
             type: "UPDATE",
+            resourceType,
             time: timestamp,
             submitter: null,
             __virtual: true,
-            after: edit.after,
-            before: edit.before,
+            after: { ...edit.after, type: activityType },
+            before: { ...edit.before, type: activityType },
             context: edit.context
           });
         });
@@ -134,21 +137,23 @@ export function useActivityHistory({
         if (!grouped[id]) grouped[id] = [];
         grouped[id].push({
           type: "DELETE",
+          resourceType,
           time: timestamp,
           submitter: null,
           __virtual: true,
           after: null,
-          before: { startTime: a.startTime, endTime: a.endTime },
+          before: { startTime: a.startTime, endTime: a.endTime, type: activityType },
           context: a.__virtualContext
         });
       } else if (a.__virtualAction === "create") {
         if (!grouped[id]) grouped[id] = [];
         grouped[id].push({
           type: "CREATE",
+          resourceType,
           time: timestamp,
           submitter: null,
           __virtual: true,
-          after: { startTime: a.startTime, endTime: a.endTime },
+          after: { startTime: a.startTime, endTime: a.endTime, type: activityType },
           before: null,
           context: a.__virtualContext
         });

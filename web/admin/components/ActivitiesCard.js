@@ -108,54 +108,21 @@ export function ActivitiesCard({
     );
   }
 
-  function getVirtualSentences(event) {
-    if (event.type === "DELETE") return [`a supprimé l'activité`];
-    if (event.type === "CREATE") return [`a ajouté l'activité`];
-    const sentences = [];
-    if (event.before && event.after) {
-      if (event.after.startTime !== event.before.startTime)
-        sentences.push(`a décalé le début de l'activité de ${formatTimeOfDay(event.before.startTime)} à ${formatTimeOfDay(event.after.startTime)}`);
-      if (event.after.endTime !== event.before.endTime && event.before.endTime && event.after.endTime)
-        sentences.push(`a décalé la fin de l'activité de ${formatTimeOfDay(event.before.endTime)} à ${formatTimeOfDay(event.after.endTime)}`);
-    }
-    return sentences.length > 0 ? sentences : [`a modifié l'activité`];
-  }
-
   function renderHistoryRow(entry) {
     const event = entry.__event;
     const motif = formatMotif(getComment(event));
-
-    if (event.__virtual) {
-      const author = formatPersonName(currentUserInfo) || "Vous";
-      return (
-        <TableRow key={entry.id} className={classes.historyRow}>
-          <TableCell colSpan={colCount} className={classes.historySubRow}>
-            {getVirtualSentences(event).map((s, i) => (
-              <HistoryLine key={i} author={author} dateLabel="(non sauvegardé)" text={`${s}${motif}`} />
-            ))}
-          </TableCell>
-        </TableRow>
-      );
-    }
-
-    const author = event.submitter ? formatPersonName(event.submitter) : "Inconnu";
-    const dateLabel = `le ${formatDay(event.time, true)} à ${formatTimeOfDay(event.time)}`;
-
-    if (isRetroactiveCreate(event) || event.type === "DELETE") {
-      const label = isRetroactiveCreate(event) ? `a ajouté l'activité` : `a supprimé l'activité`;
-      return (
-        <TableRow key={entry.id} className={classes.historyRow}>
-          <TableCell colSpan={colCount} className={classes.historySubRow}>
-            <HistoryLine author={author} dateLabel={dateLabel} text={`${label}${motif}`} />
-          </TableCell>
-        </TableRow>
-      );
-    }
+    const changes = getChangeIconAndText(event);
+    const author = event.__virtual
+      ? formatPersonName(currentUserInfo) || "Vous"
+      : event.submitter ? formatPersonName(event.submitter) : "Inconnu";
+    const dateLabel = event.__virtual
+      ? "(non sauvegardé)"
+      : `le ${formatDay(event.time, true)} à ${formatTimeOfDay(event.time)}`;
 
     return (
       <TableRow key={entry.id} className={classes.historyRow}>
         <TableCell colSpan={colCount} className={classes.historySubRow}>
-          {getChangeIconAndText(event).map((change, i) => (
+          {changes.map((change, i) => (
             <HistoryLine key={i} author={author} dateLabel={dateLabel} text={`${change.text}${motif}`} />
           ))}
         </TableCell>
