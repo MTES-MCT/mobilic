@@ -536,7 +536,8 @@ function AppHeader() {
           quickAccessItems={isHeaderMenuModalOpen ? [] : quickAccessItemsConnected}
           navigation={[]}
           classes={{
-            toolsLinks: classes.headerToolsLinks
+            root: "mobilic-dsfr-header",
+            toolsLinks: classes.headerToolsLinks,
           }}
         />
         {
