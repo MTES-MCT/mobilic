@@ -95,7 +95,7 @@ export function DaySummary({
     () =>
       [...activitiesWithNextAndPreviousDay, ...dismissedActivities]
         .map(a =>
-          disputeUpdates[a.id] !== undefined
+          a.id in disputeUpdates
             ? { ...a, dispute: disputeUpdates[a.id] }
             : a
         )
@@ -133,7 +133,7 @@ export function DaySummary({
   const hasActiveDispute = React.useMemo(
     () =>
       activitiesWithDisputeUpdates.some(
-        a => a.dispute && a.dispute.status === "created"
+        a => a.dispute?.status === "created"
       ),
     [activitiesWithDisputeUpdates]
   );

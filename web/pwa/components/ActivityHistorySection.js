@@ -133,7 +133,7 @@ export function ActivityHistorySection({
   const [expanded, setExpanded] = React.useState(false);
 
   const dispute = activity?.dispute;
-  const isDisputed = dispute && dispute.status === "created";
+  const isDisputed = dispute?.status === "created";
 
   const filteredEvents = React.useMemo(() => {
     return activityEvents.filter(event => {
@@ -217,6 +217,7 @@ export function ActivityHistorySection({
                     e.preventDefault();
                     onCancelDispute(activity.id);
                   }}
+                  role="button"
                   aria-label="Annuler la contestation"
                 >
                   Annuler

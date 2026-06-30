@@ -102,7 +102,7 @@ export function ContradictoryChanges({
   const disputeEvents = React.useMemo(() => {
     const activities = mission.allActivities || mission.activities || [];
     return activities
-      .filter(a => a.dispute && a.dispute.status === "created" && a.userId === userId)
+      .filter(a => a.dispute?.status === "created" && a.userId === userId)
       .map(a => ({
         type: "DISPUTE",
         resourceType: MISSION_RESOURCE_TYPES.activity,
