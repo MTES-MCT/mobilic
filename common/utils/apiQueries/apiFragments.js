@@ -34,6 +34,7 @@ export const FRAGMENT_ACTIVITY = gql`
     endTime
     lastUpdateTime
     lastSubmitterId
+    dispute
     user {
       id
       firstName
@@ -95,6 +96,7 @@ export const FULL_MISSION_FRAGMENT = gql`
       userId
       submitterId
       lastSubmitterId
+      dispute
       user {
         id
         firstName

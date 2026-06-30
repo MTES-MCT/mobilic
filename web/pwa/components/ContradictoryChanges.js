@@ -5,10 +5,12 @@ import List from "@mui/material/List";
 import { useToggleContradictory } from "./history/toggleContradictory";
 import Skeleton from "@mui/material/Skeleton";
 import { makeStyles } from "@mui/styles";
+import { fr } from "@codegouvfr/react-dsfr";
 import { Event } from "../../common/Event";
 import { MISSION_RESOURCE_TYPES } from "common/utils/contradictory";
 import { getChangeIconAndText } from "../../common/logEvent";
 import { now } from "common/utils/time";
+import { getActivityLabelDependingOnMissionType } from "common/utils/activities";
 import { isConnectionError } from "common/utils/errors";
 import { Accordion, AccordionDetails } from "@mui/material";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -48,6 +50,12 @@ export const useStyles = makeStyles(theme => ({
   },
   accordionTitle: {
     padding: 0
+  },
+  disputeEvent: {
+    backgroundColor: fr.colors.decisions.background.flat.warning.default,
+    "& .fr-icon-warning-fill": {
+      marginTop: -2
+    }
   }
 }));
 
@@ -91,11 +99,33 @@ export function ContradictoryChanges({
   const contradictoryComputationError =
     contradictoryInfo.contradictoryComputationError;
 
-  const userChangesHistory = changesHistory.filter(
-    c =>
-      (c.userId === userId || !c.userId) &&
-      (showEventsBeforeValidation || c.time >= (validationTime || now()))
-  );
+  const disputeEvents = React.useMemo(() => {
+    const activities = mission.allActivities || mission.activities || [];
+    return activities
+      .filter(a => a.dispute && a.dispute.status === "created" && a.userId === userId)
+      .map(a => ({
+        type: "DISPUTE",
+        resourceType: MISSION_RESOURCE_TYPES.activity,
+        resourceId: a.id,
+        time: a.dispute.time,
+        submitter: null,
+        submitterId: a.dispute.submitter_id,
+        userId: a.userId,
+        before: a,
+        after: null,
+        _disputeText: a.dispute.text,
+        _activityType: a.type
+      }));
+  }, [mission, userId]);
+
+  const userChangesHistory = [
+    ...changesHistory.filter(
+      c =>
+        (c.userId === userId || !c.userId) &&
+        (showEventsBeforeValidation || c.time >= (validationTime || now()))
+    ),
+    ...disputeEvents
+  ].sort((a, b) => a.time - b.time);
   return (
     <Accordion
       elevation={0}
@@ -129,6 +159,24 @@ export function ContradictoryChanges({
           <>
             <List dense>
               {userChangesHistory.map(userChange => {
+                if (userChange.type === "DISPUTE") {
+                  const activityLabel = getActivityLabelDependingOnMissionType(
+                    userChange._activityType
+                  );
+                  const text = `a contesté la modification de l'activité ${activityLabel} (motif : "${userChange._disputeText}")`;
+                  return (
+                    <Event
+                      key={`dispute-${userChange.resourceId}`}
+                      icon={<span className="fr-icon-warning-fill" aria-hidden="true" />}
+                      iconClassName={classes.disputeEvent}
+                      iconBackgroundColor={fr.colors.decisions.background.flat.warning.default}
+                      text={text}
+                      submitterId={userChange.submitterId}
+                      time={userChange.time}
+                      withFullDate={true}
+                    />
+                  );
+                }
                 const changes = getChangeIconAndText(userChange);
                 return changes.map(({ icon, text, color }) => (
                   <Event

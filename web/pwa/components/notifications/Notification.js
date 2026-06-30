@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme => ({
   })
 }));
 
-export const Notification = ({ title, content, historyOnClick, read }) => {
+export const Notification = ({ title, content, historyOnClick, read, buttonLabel }) => {
   const classes = useStyles({ read });
   return (
     <Stack direction="column" width="100%" p={2} className={classes.container}>
@@ -67,7 +67,7 @@ export const Notification = ({ title, content, historyOnClick, read }) => {
         iconPosition="right"
         className={classes.link}
       >
-        Afficher l'historique
+        {buttonLabel || "Afficher l'historique"}
       </Button>
     </Stack>
   );

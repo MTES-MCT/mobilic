@@ -46,6 +46,7 @@ import {
 } from "common/utils/matomoTags";
 import { MissionDetailsVehicle } from "./MissionDetailsVehicle";
 import { MissionDetailsLocations } from "./MissionDetailsLocations";
+import { DisputeBanner } from "./DisputeBanner";
 import { MissionDetailsObservations } from "./MissionDetailsObservations";
 import Notice from "../../../common/Notice";
 import { PastMissionNotice } from "./PastMissionNotice";
@@ -313,6 +314,7 @@ export function MissionDetails({
             titleProps={{ component: "h2" }}
           />
         )}
+        <DisputeBanner mission={mission} />
         <MissionDetailsLocations
           mission={mission}
           missionActions={missionActions}

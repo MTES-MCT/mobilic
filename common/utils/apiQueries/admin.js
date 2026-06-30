@@ -28,6 +28,7 @@ export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
         lastUpdateTime
         dismissedAt
         lastSubmitterId
+        dispute
         submitter {
           id
           firstName
@@ -43,6 +44,7 @@ export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
           startTime
           endTime
           receptionTime
+          context
           submitter {
             id
             firstName

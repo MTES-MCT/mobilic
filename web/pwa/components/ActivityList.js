@@ -1,5 +1,6 @@
 import React from "react";
 import { fr } from "@codegouvfr/react-dsfr";
+import { ActivityHistorySection } from "./ActivityHistorySection";
 import {
   ACTIVITIES,
   ACTIVITIES_OPERATIONS,
@@ -43,6 +44,35 @@ const useStyles = makeStyles(theme => ({
     "&:last-child": {
       marginBottom: 0
     }
+  },
+  activityCardDismissed: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    padding: "8px 0",
+    background: fr.colors.decisions.background.alt.grey.default,
+    marginBottom: 8,
+    "&:last-child": {
+      marginBottom: 0
+    }
+  },
+  dismissedAvatar: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: fr.colors.decisions.background.disabled.grey.default,
+    color: fr.colors.decisions.background.default.grey.default,
+    width: 44,
+    height: 44,
+    borderRadius: "50%",
+    flexShrink: 0
+  },
+  dismissedText: {
+    "& *": {
+      color: `${fr.colors.decisions.text.disabled.grey.default} !important`
+    },
+    color: `${fr.colors.decisions.text.disabled.grey.default} !important`
   },
   activityRow: {
     display: "flex",
@@ -142,11 +172,17 @@ function ActivityItem({
   nullableEndTimeInEditActivity,
   allowTeamMode,
   allowSupportActivity = false,
-  datetimeFormatter = formatTimeOfDay
+  datetimeFormatter = formatTimeOfDay,
+  activityEvents = [],
+  shouldDisplayInitialEmployeeVersion = false,
+  employeeValidationTime = null,
+  onDispute = null,
+  onCancelDispute = null
 }) {
   const modals = useModals();
   const classes = useStyles({ color: ACTIVITIES[activity.type].color });
 
+  const isDismissed = !!activity.dismissedAt;
   const isBreak = activity.type === ACTIVITIES.break.name;
   const isLongBreak =
     isBreak && activity.duration && activity.duration >= LONG_BREAK_DURATION;
@@ -157,12 +193,12 @@ function ActivityItem({
   );
 
   return (
-    <div className={classes.activityCard}>
+    <div className={isDismissed ? classes.activityCardDismissed : classes.activityCard}>
       <div className={classes.activityRow}>
-        <div className={classes.avatar}>
+        <div className={isDismissed ? classes.dismissedAvatar : classes.avatar}>
           {ACTIVITIES[activity.type].renderIcon({ className: classes.avatarIcon })}
         </div>
-        <div className={`${classes.activityInfo} ${isLongBreak ? classes.longBreak : ""}`}>
+        <div className={`${classes.activityInfo} ${isDismissed ? classes.dismissedText : ""} ${isLongBreak ? classes.longBreak : ""}`}>
           <span className={isLongBreak ? "" : classes.activityName}>
             {isLongBreak
               ? "Repos journalier"
@@ -245,6 +281,16 @@ function ActivityItem({
           </div>
         )}
       </div>
+      {activityEvents.length > 0 && (
+        <ActivityHistorySection
+          activityEvents={activityEvents}
+          shouldDisplayInitialEmployeeVersion={shouldDisplayInitialEmployeeVersion}
+          validationTime={employeeValidationTime}
+          activity={activity}
+          onDispute={onDispute}
+          onCancelDispute={onCancelDispute}
+        />
+      )}
     </div>
   );
 }
@@ -263,7 +309,12 @@ export function ActivityList({
   fromTime = null,
   untilTime = null,
   disableEmptyMessage = false,
-  hideChart = false
+  hideChart = false,
+  eventsHistory = [],
+  shouldDisplayInitialEmployeeVersion = false,
+  employeeValidationTime = null,
+  onDispute = null,
+  onCancelDispute = null
 }) {
   const ref = React.useRef();
   const now1 = now();
@@ -273,6 +324,18 @@ export function ActivityList({
     fromTime,
     untilTime
   );
+
+  const eventsByActivityId = React.useMemo(() => {
+    const map = new Map();
+    eventsHistory.forEach((e) => {
+      if (e.resourceType === "activity") {
+        const list = map.get(e.resourceId) || [];
+        list.push(e);
+        map.set(e.resourceId, list);
+      }
+    });
+    return map;
+  }, [eventsHistory]);
 
   const hasActivitiesBeforeMinTime =
     fromTime && filteredActivities.some(a => a.startTime < fromTime);
@@ -378,6 +441,11 @@ export function ActivityList({
               nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
               key={activity.id ? "a" + activity.id : index}
               datetimeFormatter={datetimeFormatter}
+              activityEvents={eventsByActivityId.get(activity.id) || []}
+              shouldDisplayInitialEmployeeVersion={shouldDisplayInitialEmployeeVersion}
+              employeeValidationTime={employeeValidationTime}
+              onDispute={onDispute}
+              onCancelDispute={onCancelDispute}
             />
           ))}
         </div>
