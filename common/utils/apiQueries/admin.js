@@ -27,6 +27,7 @@ export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
         receptionTime
         lastUpdateTime
         dismissedAt
+        dismissContext
         lastSubmitterId
         dispute
         submitter {
