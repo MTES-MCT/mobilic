@@ -1,5 +1,6 @@
 import React from "react";
 import Box from "@mui/material/Box";
+import { MobileHeader } from "./MobileHeader";
 import { formatPersonName } from "common/utils/coworkers";
 import {
   CERTIFICATE_ROUTE,
@@ -445,34 +446,11 @@ function AppHeader() {
   const [openNavDrawer, setOpenNavDrawer] = React.useState(false);
   const classes = useStyles();
   const userInfo = store.userInfo();
-  const isHeaderMenuModalOpen = useIsHeaderMenuModalOpen();
   const isLgDown = useIsWidthDown("lg");
 
   const openNavigationMenu = React.useCallback(() => {
     setOpenNavDrawer(true);
   }, []);
-
-  React.useEffect(() => {
-    if (!isHeaderMenuModalOpen) {
-      return;
-    }
-
-    openNavigationMenu();
-
-    requestAnimationFrame(() => {
-      const closeBtn =
-        document.querySelector(
-          "#fr-header-simple-header-connected-mobile-overlay-button-close"
-        ) ||
-        document.querySelector(
-          "#fr-header-simple-header-connected-modal .fr-link--close"
-        );
-
-      if (closeBtn) {
-        closeBtn.click();
-      }
-    });
-  }, [isHeaderMenuModalOpen, openNavigationMenu]);
 
   const quickAccessItemsConnected = React.useMemo(() => [
     <span style={{ color: 'var(--text-action-high-grey)' }}>{formatPersonName(userInfo)}</span>,
@@ -531,16 +509,21 @@ function AppHeader() {
   if (store.userId()) {
     return(
       <>
-        <Header
-          {...commonHeaderProps}
-          id="fr-header-simple-header-connected"
-          quickAccessItems={isHeaderMenuModalOpen ? [] : quickAccessItemsConnected}
-          navigation={[]}
-          classes={{
-            root: isLgDown ? "" : "mobilic-dsfr-header",
-            toolsLinks: classes.headerToolsLinks,
-          }}
-        />
+        {
+          !isLgDown ? 
+          <Header
+            {...commonHeaderProps}
+            id="fr-header-simple-header-connected"
+            quickAccessItems={quickAccessItemsConnected}
+            classes={{
+              root: isLgDown ? "" : "mobilic-dsfr-header",
+              toolsLinks: classes.headerToolsLinks,
+            }}
+          /> : (
+            <MobileHeader openNavigationMenu={openNavigationMenu} />
+          )
+        }
+
         {
           openNavDrawer &&
           <NavigationMenu
@@ -549,7 +532,7 @@ function AppHeader() {
             setOpen={setOpenNavDrawer}
             fullScreen={isLgDown}
           />
-      }
+        }
       </>
     )
   } else {
