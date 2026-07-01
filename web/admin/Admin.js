@@ -62,6 +62,10 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+function resolveCompanyId(companies, lastSelectedCompanyId) {
+  return companies.find((company) => company.id === lastSelectedCompanyId)?.id || companies[0].id;
+}
+
 function InternalAdmin() {
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
@@ -104,9 +108,7 @@ function InternalAdmin() {
               });
 
               const lastSelectedCompanyId = store.lastSelectedCompanyId();
-              const companyId = companies.find(
-                (company) => company.id === lastSelectedCompanyId
-              )?.id || companies[0].id;
+              const companyId = resolveCompanyId(companies, lastSelectedCompanyId);
 
               adminStore.dispatch({
                 type: ADMIN_ACTIONS.updateCompanyId,
