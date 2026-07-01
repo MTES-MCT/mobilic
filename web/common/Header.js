@@ -452,8 +452,8 @@ function AppHeader() {
   }, []);
 
   const quickAccessItemsConnected = React.useMemo(() => [
-    <span style={{ color: 'var(--text-action-high-grey)' }}>{formatPersonName(userInfo)}</span>,
-    <HeaderCompaniesDropdown />,
+    <span key="user-name" style={{ color: 'var(--text-action-high-grey)' }}>{formatPersonName(userInfo)}</span>,
+    <HeaderCompaniesDropdown key="company-dropdown" />,
     {
       iconId: '',
       buttonProps: {
