@@ -10,9 +10,9 @@ export function Footer({ withFollow = true }) {
       <DSFooter
         brandTop={
           <>
-            RÉPUBLIQUE
+            MINISTĒRE DES
             <br />
-            FRANÇAISE
+            TRANSPORTS
           </>
         }
         homeLinkProps={{
