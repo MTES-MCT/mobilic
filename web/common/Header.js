@@ -28,7 +28,6 @@ import { useModals } from "common/utils/modals";
 import { useStoreMissions } from "common/store/contextMissions";
 import { Header } from "@codegouvfr/react-dsfr/Header";
 import { Select } from "@codegouvfr/react-dsfr/Select";
-import { useIsHeaderMenuModalOpen } from "@codegouvfr/react-dsfr/Header/useIsHeaderMenuModalOpen";
 import MobilicLogoWithText from "common/assets/images/mobilic-logo-with-text.svg";
 import { useIsWidthDown } from "common/utils/useWidth";
 
@@ -207,7 +206,7 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies, isLastR
     <div
       className={
         classes.navListItemWrapper +
-        (!isSubRoute ? ` ${classes.mainLeafNavListItemWrapper}` : "")
+        (isSubRoute ? "" : ` ${classes.mainLeafNavListItemWrapper}`)
       }
       key={route.path || route.label}
     >
