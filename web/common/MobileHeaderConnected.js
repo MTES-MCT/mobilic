@@ -1,6 +1,6 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
+import { Link } from "./LinkButton";
 import MobilicLogoWithText from "common/assets/images/mobilic-logo-with-text.svg";
 import MarianneLogo from "common/assets/images/marianne.svg";
 
@@ -19,6 +19,8 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: "row",
         alignItems: "center",
         gap: "2rem",
+        cursor: "pointer",
+        textDecoration: "none",
         "& img": {
           height: "4rem",
         }
@@ -34,15 +36,14 @@ const useStyles = makeStyles((theme) => ({
 
 
 export const MobileHeaderConnected = ({ openNavigationMenu }) => {
-  const history = useHistory();
   const classes = useStyles();
 
   return (
     <header className={`${classes.header} fr-header fr-px-5w fr-py-2w`}>
-      <div className={classes.logoSection} onClick={() => { history.push('/') }}>
+      <Link to="/" className={classes.logoSection} underline="none">
         <img src={MarianneLogo} alt="Marianne" />
         <img src={MobilicLogoWithText} alt="Mobilic" />
-      </div>
+      </Link>
       <button onClick={openNavigationMenu} className={classes.burgerIcon}>
         <span className="fr-icon-menu-fill" aria-label="Menu" title="Menu"></span>
       </button>
