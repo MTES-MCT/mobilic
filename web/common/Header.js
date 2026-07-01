@@ -1,6 +1,6 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import { MobileHeader } from "./MobileHeader";
+import { MobileHeaderConnected } from "./MobileHeaderConnected";
 import { formatPersonName } from "common/utils/coworkers";
 import {
   CERTIFICATE_ROUTE,
@@ -509,17 +509,18 @@ function AppHeader() {
     return(
       <>
         {
-          !isLgDown ? 
-          <Header
-            {...commonHeaderProps}
-            id="fr-header-simple-header-connected"
-            quickAccessItems={quickAccessItemsConnected}
-            classes={{
-              root: isLgDown ? "" : "mobilic-dsfr-header",
-              toolsLinks: classes.headerToolsLinks,
-            }}
-          /> : (
-            <MobileHeader openNavigationMenu={openNavigationMenu} />
+          isLgDown ? (
+            <MobileHeaderConnected openNavigationMenu={openNavigationMenu} />
+          ) : (
+            <Header
+              {...commonHeaderProps}
+              id="fr-header-simple-header-connected"
+              quickAccessItems={quickAccessItemsConnected}
+              classes={{
+                root: "mobilic-dsfr-header",
+                toolsLinks: classes.headerToolsLinks,
+              }}
+            />
           )
         }
 

@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export const MobileHeader = ({ openNavigationMenu }) => {
+export const MobileHeaderConnected = ({ openNavigationMenu }) => {
   const history = useHistory();
   const classes = useStyles();
 
