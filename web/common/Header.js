@@ -494,7 +494,7 @@ function AppHeader() {
       },
       text: (
         <>
-          Centre d'aide
+          {"Centre d'aide"}
           <span
             className="fr-icon-external-link-line fr-icon--sm fr-ml-2v"
             aria-hidden="true"
