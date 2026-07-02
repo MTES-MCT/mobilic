@@ -154,6 +154,10 @@ export const ROUTES = [
     component: withSuspense(Admin),
     subRoutes: [
       {
+        path: "/home",
+        label: "Accueil"
+      },
+      {
         path: "/company",
         label: "Entreprise(s)"
       },

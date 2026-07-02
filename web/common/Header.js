@@ -7,7 +7,7 @@ import {
   getAccessibleRoutes,
   getBadgeRoutes
 } from "./routes";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import useTheme from "@mui/styles/useTheme";
 import { makeStyles } from "@mui/styles";
@@ -121,6 +121,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     alignItems: "flex-start",
     padding: '0.75rem 1.5rem',
+    gap: "0.25rem",
   },
   navDivider: {
     width: "100%",
@@ -379,6 +380,7 @@ const HeaderCompaniesDropdown = () => {
           paddingTop: '0',
           paddingBottom: '0',
           paddingRight: '2.5rem',
+          textOverflow: 'ellipsis',
         }
       }}
       className={classes.companyDrowndown}
@@ -427,10 +429,6 @@ const quickAccessItemsPublic = [
 
 const commonHeaderProps = {
   brandTop: <>RÉPUBLIQUE<br />FRANÇAISE</>,
-  homeLinkProps: {
-    to: '/',
-    title: 'Accueil - Mobilic'
-  },
   operatorLogo: {
     alt: 'Mobilic',
     imgUrl: MobilicLogoWithText,
@@ -447,12 +445,15 @@ function AppHeader() {
   const userInfo = store.userInfo();
   const isLgDown = useIsWidthDown("lg");
 
+  const { path } = useRouteMatch();
+  const homePath = path.includes("/admin") ? "/admin/home" : "/app";
+
   const openNavigationMenu = React.useCallback(() => {
     setOpenNavDrawer(true);
   }, []);
 
   const quickAccessItemsConnected = React.useMemo(() => [
-    <span key="user-name" style={{ color: 'var(--text-action-high-grey)' }}>{formatPersonName(userInfo)}</span>,
+    <span key="user-name" style={{ color: 'var(--text-action-high-grey)', marginRight: '0.5rem' }}>{formatPersonName(userInfo)}</span>,
     <HeaderCompaniesDropdown key="company-dropdown" />,
     {
       iconId: '',
@@ -510,10 +511,14 @@ function AppHeader() {
       <>
         {
           isLgDown ? (
-            <MobileHeaderConnected openNavigationMenu={openNavigationMenu} />
+            <MobileHeaderConnected openNavigationMenu={openNavigationMenu} homePath={homePath} />
           ) : (
             <Header
               {...commonHeaderProps}
+              homeLinkProps={{
+                to: homePath,
+                title: 'Accueil - Mobilic Connecté'
+              }}
               id="fr-header-simple-header-connected"
               quickAccessItems={quickAccessItemsConnected}
               classes={{
@@ -539,6 +544,10 @@ function AppHeader() {
     return (
       <Header
         {...commonHeaderProps}
+        homeLinkProps={{
+          to: '/',
+          title: 'Accueil - Mobilic'
+        }}
         id="fr-header-simple-header"
         navigation={navigation}
         quickAccessItems={quickAccessItemsPublic}

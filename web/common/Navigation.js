@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "flex-end"
   },
   navDrawer: {
-    minWidth: 200
+    width: 300,
   },
   navDrawerFullScreen: {
     minWidth: "100%"

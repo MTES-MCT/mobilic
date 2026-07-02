@@ -35,12 +35,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export const MobileHeaderConnected = ({ openNavigationMenu }) => {
+export const MobileHeaderConnected = ({ openNavigationMenu, homePath }) => {
   const classes = useStyles();
 
   return (
-    <header className={`${classes.header} fr-header fr-px-5w fr-py-2w`}>
-      <Link to="/" className={classes.logoSection} underline="none">
+    <header className={`${classes.header} fr-header fr-px-2w fr-py-2w`}>
+      <Link to={homePath} className={classes.logoSection} underline="none">
         <img src={MarianneLogo} alt="Marianne" />
         <img src={MobilicLogoWithText} alt="Mobilic" />
       </Link>
