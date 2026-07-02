@@ -1,6 +1,6 @@
 import React from "react";
 import { useDropzone } from "react-dropzone";
-import { Header } from "../common/Header";
+import { MobilicHeader } from "../common/Header";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
@@ -191,7 +191,7 @@ export function XlsxVerifier() {
 
   return (
     <>
-      <Header disableMenu />
+      <MobilicHeader />
       <PaperContainer>
         <Container className={`centered ${classes.root}`} maxWidth="sm">
           <PaperContainerTitle>

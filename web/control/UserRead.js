@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { useApi } from "common/utils/api";
-import { Header } from "../common/Header";
+import { MobilicHeader } from "../common/Header";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { useLoadingScreen } from "common/utils/loading";
@@ -219,7 +219,7 @@ export function UserRead() {
   const TABS = getTabs(alertNumber);
 
   return [
-    <Header key={0} disableMenu />,
+    <MobilicHeader key={0} />,
     error ? (
       <Container key={1}>
         <Typography align="center" color="error">

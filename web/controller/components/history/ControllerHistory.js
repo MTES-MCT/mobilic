@@ -7,7 +7,7 @@ import {
   startOfMonthAsDate
 } from "common/utils/time";
 import React from "react";
-import { Header } from "../../../common/Header";
+import { MobilicHeader } from "../../../common/Header";
 import { useLoadControls } from "../../utils/loadControls";
 import { ControllerControlDrawer } from "../details/ControllerControlDrawer";
 import { ControlsList } from "../list/ControlsList";
@@ -58,7 +58,7 @@ export function ControllerHistory() {
   }, [controlFilters]);
   return (
     <>
-      <Header />
+      <MobilicHeader />
       <Main
         className={`${classes.container} ${classes.whiteSection}`}
         maxWidth="xl"

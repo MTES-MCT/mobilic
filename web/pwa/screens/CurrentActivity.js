@@ -14,7 +14,7 @@ import WarningEndMissionModalContainer from "../components/WarningEndMissionModa
 import { useModals } from "common/utils/modals";
 import { missionLastLessThanAMinute } from "common/utils/mission";
 import Notice from "../../common/Notice";
-import { Header } from "../../common/Header";
+import { MobilicHeader } from "../../common/Header";
 
 export function CurrentActivity({
   latestActivity,
@@ -69,7 +69,7 @@ export function CurrentActivity({
 
   return (
     <>
-      <Header forceMobile />
+      <MobilicHeader forceMobile />
       <CurrentActivityOverview
         currentDayStart={currentMission.startTime}
         currentMission={currentMission}
