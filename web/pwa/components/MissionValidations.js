@@ -117,7 +117,7 @@ const NoAdminValidation = () => (
 );
 
 export const MissionValidations = ({ mission, validations, userId }) => {
-  const doNotDisplayValidations = mission.isDeleted && !mission.complete;
+  const doNotDisplayValidations = mission.isDeleted && !mission.isComplete;
 
   if (doNotDisplayValidations) {
     return;

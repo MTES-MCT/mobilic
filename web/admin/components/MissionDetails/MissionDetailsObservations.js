@@ -2,8 +2,8 @@ import React from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import List from "@mui/material/List";
-import { Event } from "../../../common/Event";
+
+import { AdminObservationCard } from "./AdminObservationCard";
 import { useMissionDetailsStyles } from "./MissionDetailsStyle";
 import { useModals } from "common/utils/modals";
 import { Button } from "@codegouvfr/react-dsfr/Button";
@@ -12,14 +12,14 @@ import { Description } from "../../../common/typography/Description";
 export function MissionDetailsObservations({
   mission,
   missionActions,
-  titleProps = {}
+  titleProps = {},
+  addEmployeeAction = null
 }) {
   const classes = useMissionDetailsStyles();
   const modals = useModals();
   return (
+  <>
     <Box
-      pb={4}
-      style={{ alignItems: "center" }}
       className={classes.observationSection}
     >
       <Grid
@@ -37,8 +37,6 @@ export function MissionDetailsObservations({
           <Button
             priority="secondary"
             size="small"
-            iconId="fr-icon-add-line"
-            iconPosition="left"
             onClick={() => {
               modals.open("commentInput", {
                 handleContinue: missionActions.createComment
@@ -50,22 +48,32 @@ export function MissionDetailsObservations({
         </Grid>
       </Grid>
       {mission.comments.length > 0 ? (
-        <List className={classes.comments}>
+        <Box className={classes.comments}>
           {mission.comments.map(comment => (
-            <Event
+            <AdminObservationCard
               key={comment.id}
-              text={comment.text}
-              time={comment.receptionTime}
-              submitter={comment.submitter}
-              submitterId={comment.submitterId}
-              withFullDate={true}
-              cancel={() => missionActions.deleteComment(comment)}
+              comment={comment}
+              onDelete={() => missionActions.deleteComment(comment)}
             />
           ))}
-        </List>
+        </Box>
       ) : (
         <Description>Aucune observation sur cette mission</Description>
       )}
     </Box>
+    {addEmployeeAction && (
+      <Box className={classes.addEmployeeButton}>
+        <Button
+          priority="tertiary"
+          iconId="fr-icon-add-line"
+          iconPosition="right"
+          onClick={addEmployeeAction}
+        >
+          Ajouter un coéquipier
+        </Button>
+      </Box>
+    )}
+    <Box className={classes.separator} />
+  </>
   );
 }
