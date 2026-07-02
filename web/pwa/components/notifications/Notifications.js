@@ -47,7 +47,7 @@ const InnerNotification = React.memo(
       return null;
     }
 
-    const { title, content, missionId } = details;
+    const { title, content, missionId, buttonLabel } = details;
     return (
       <Notification
         title={title}
@@ -55,6 +55,7 @@ const InnerNotification = React.memo(
         missionId={missionId}
         historyOnClick={() => onNotificationClick(missionId)}
         read={read}
+        buttonLabel={buttonLabel}
       />
     );
   }
