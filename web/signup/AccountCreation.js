@@ -202,23 +202,27 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                       <p className="fr-hr" />
                     </div>
                   )}
-                  <div className="fr-mb-6v">
-                    <h6>Via FranceConnect</h6>
-                    <FranceConnectContainer
-                      onButtonClick={() => {
-                        const callbackUrl = buildCallbackUrl(
-                          employeeInvite,
-                          true,
-                          isAdmin
-                        );
-                        window.location.href =
-                          buildFranceConnectUrl(callbackUrl);
-                      }}
-                    />
-                  </div>
-                  <p className="fr-hr-or">ou</p>
+                  {isAdmin && (
+                    <>
+                      <div className="fr-mb-6v">
+                        <h6>Via FranceConnect</h6>
+                        <FranceConnectContainer
+                          onButtonClick={() => {
+                            const callbackUrl = buildCallbackUrl(
+                              employeeInvite,
+                              true,
+                              isAdmin
+                            );
+                            window.location.href =
+                              buildFranceConnectUrl(callbackUrl);
+                          }}
+                        />
+                      </div>
+                      <p className="fr-hr-or">ou</p>
+                    </>
+                  )}
                   <div>
-                    <h6>Via le formulaire d'inscription</h6>
+                    <h6>{isAdmin ? "Via le formulaire d'inscription" : "Formulaire d'inscription"}</h6>
                     <MandatoryField />
                     <form
                       className="vertical-form centered"
