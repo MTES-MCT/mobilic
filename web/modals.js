@@ -49,6 +49,7 @@ import TeamSelectionModal from "./pwa/modals/TeamSelectionModal";
 import NewMissionModal from "./pwa/modals/NewMissionModal";
 import DriverSelectionModal from "./pwa/modals/DriverSelectionModal";
 import CommentInputModal from "./pwa/modals/CommentInputModal";
+import AbandonMissionModal from "./pwa/modals/AbandonMissionModal";
 import ActivityRevisionOrCreationModal from "./pwa/modals/ActivityRevision";
 import UpdateVehicleModal from "./pwa/modals/VehicleBookingModal";
 import WarningEndMissionModal from "./pwa/modals/WarningEndMissionModal";
@@ -66,6 +67,7 @@ export const MODAL_DICT = {
   logHoliday: LogHolidayModal,
   driverSelection: DriverSelectionModal,
   commentInput: CommentInputModal,
+  abandonMission: AbandonMissionModal,
   activityRevision: ActivityRevisionOrCreationModal,
   updateVehicle: UpdateVehicleModal,
   dataExport: ExcelExportModal,
