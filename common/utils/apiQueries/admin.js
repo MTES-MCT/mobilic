@@ -137,17 +137,10 @@ export const THIRD_PARTY_CLIENTS_COMPANY_QUERY = gql`
 `;
 
 export const ADMIN_COMPANIES_QUERY = gql`
-  ${WORK_DAYS_DATA_FRAGMENT}
   ${COMPANY_SETTINGS_FRAGMENT}
-  ${FRAGMENT_LOCATION_FULL}
-  ${FRAGMENT_ACTIVITY}
-  ${FULL_EMPLOYMENT_FRAGMENT}
   query adminCompanies(
     $id: Int!
     $activityAfter: Date
-    $workDaysLimit: Int
-    $endedMissionsAfter: TimeStamp
-    $endedMissionsBefore: TimeStamp
     $companyIds: [Int]
   ) {
     user(id: $id) {
@@ -188,63 +181,6 @@ export const ADMIN_COMPANIES_QUERY = gql`
           name
           postalCode
           city
-        }
-        workDays(fromDate: $activityAfter, first: $workDaysLimit) {
-          ...WorkDayData
-        }
-        missions(fromTime: $endedMissionsAfter, untilTime: $endedMissionsBefore, onlyEndedMissions: false) {
-          edges {
-            node {
-              id
-              name
-              submitterId
-              submitter {
-                firstName
-                lastName
-              }
-              isHoliday
-              validations {
-                submitterId
-                receptionTime
-                isAdmin
-                isAuto
-                justification
-                userId
-              }
-              vehicle {
-                id
-                name
-                registrationNumber
-              }
-              expenditures {
-                id
-                type
-                userId
-                receptionTime
-                spendingDate
-              }
-              startLocation {
-                ...FullLocation
-              }
-              endLocation {
-                ...FullLocation
-              }
-              activities {
-                ...Activity
-              }
-              comments {
-                id
-                text
-                receptionTime
-                submitter {
-                  id
-                  firstName
-                  lastName
-                }
-              }
-              pastRegistrationJustification
-            }
-          }
         }
         vehicles {
           id

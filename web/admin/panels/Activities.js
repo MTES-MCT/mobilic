@@ -33,6 +33,7 @@ import { useApi } from "common/utils/api";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { loadCompanyData } from "../utils/loadCompaniesData";
 import {
   ACTIVITY_FILTER_EMPLOYEE,
   ACTIVITY_FILTER_MAX_DATE,
@@ -65,6 +66,7 @@ import {
 } from "common/utils/apiQueries/missions";
 import { InactiveEmployeesDropdown } from "../components/InactiveEmployeesDropdown";
 import { missionWithStats } from "../selectors/missionSelectors";
+import { useLoadingScreen } from "common/utils/loading";
 
 const useStyles = makeStyles((theme) => ({
   pageHeader: {
@@ -208,6 +210,7 @@ function ActivitiesPanel() {
   const location = useLocation();
   const { trackEvent } = useMatomo();
   const { getUsersSinceDate } = useGetUsersSinceDate();
+  const withLoadingScreen = useLoadingScreen();
 
   const [users, setUsers] = React.useState(adminStore.activitiesFilters.users);
   const [teams, setTeams] = React.useState(adminStore.activitiesFilters.teams);
@@ -233,25 +236,54 @@ function ActivitiesPanel() {
   const minDateOfFetchedData = adminStore.minWorkDaysDate;
 
   const datePickerSlotProps = {
-  textField: {
-    size: "small",
-    required: true,
-    variant: "outlined",
-    error: !!dateRangeError,
-    helperText: dateRangeError,
-    FormHelperTextProps: {
-      sx: {
-        position: "absolute",
-        bottom: "-22px",
-        left: 0,
-        color: "error.main",
-        fontSize: "0.75rem",
-        margin: 0,
-        whiteSpace: "nowrap"
+    textField: {
+      size: "small",
+      required: true,
+      variant: "outlined",
+      error: !!dateRangeError,
+      helperText: dateRangeError,
+      FormHelperTextProps: {
+        sx: {
+          position: "absolute",
+          bottom: "-22px",
+          left: 0,
+          color: "error.main",
+          fontSize: "0.75rem",
+          margin: 0,
+          whiteSpace: "nowrap"
+        }
       }
     }
-  }
-};
+  };
+
+  const loadDataCompanyData = async () => {
+    const userId = adminStore.userId;
+    const companyId = adminStore.companyId;
+    if (userId && companyId) {
+      withLoadingScreen(
+        async () =>
+          await alerts.withApiErrorHandling(
+            async () => {
+              const minDate = adminStore.activitiesFilters.minDate;
+              const maxDate = adminStore.activitiesFilters.maxDate;
+              const companyData = await loadCompanyData(
+                api,
+                userId,
+                minDate,
+                maxDate,
+                companyId
+              );
+              adminStore.dispatch({
+                type: ADMIN_ACTIONS.updateCompanyActivities,
+                payload: { companiesData: companyData, minDate }
+              });
+            },
+            "load-company-data",
+            null
+          )
+      );
+    }
+  };
 
   const refreshCurrentWorkDays = () =>
     refreshWorkDays(
@@ -287,6 +319,12 @@ function ActivitiesPanel() {
     );
     return daysDiff <= 365;
   }, []);
+
+  React.useEffect(() => {
+    if (adminStore.companyId) {
+      loadDataCompanyData();
+    }
+  }, [adminStore.companyId]);
 
   // Validate date range
   React.useEffect(() => {

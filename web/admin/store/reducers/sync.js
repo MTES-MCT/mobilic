@@ -102,11 +102,6 @@ export function updateCompanyDetailsReducer(
   state,
   { companiesPayload, minDate }
 ) {
-  const stateWithWorkDays = addWorkDaysReducer(state, {
-    companiesPayload,
-    minDate,
-    reset: true
-  });
 
   const users = flatMap(
     companiesPayload.map(c => c.users.map(u => ({ ...u, companyId: c.id })))
@@ -136,18 +131,9 @@ export function updateCompanyDetailsReducer(
     teams
   );
 
-  const regularMissions = flatMap(
-    companiesPayload.map(c =>
-      c.missions.edges.map(m => ({
-        ...m.node,
-        companyId: c.id,
-        isDeleted: false
-      }))
-    )
-  );
 
   return {
-    ...stateWithWorkDays,
+    ...state,
     users,
     currentUsers,
     teams: teams,
@@ -178,7 +164,6 @@ export function updateCompanyDetailsReducer(
           )
       )
     ),
-    missions: regularMissions,
     activitiesFilters: {
       ...state.activitiesFilters,
       teams: usersAndTeamsFilters.activitiesFilters.teams,
@@ -196,4 +181,12 @@ export function updateCompanyDetailsReducer(
       users: usersAndTeamsFilters.exportFilters.users
     }
   };
+}
+
+export function updateCompanyActivitiesReducer(state, { companiesData, minDate }) {
+  return addWorkDaysReducer(state, {
+    companiesPayload: companiesData,
+    minDate,
+    reset: true
+  });
 }
