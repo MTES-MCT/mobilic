@@ -317,17 +317,7 @@ class Actions {
 
     api.registerResponseHandler("cancelMission", {
       onSuccess: (apiResponse, { missionId, userId }) => {
-        const activities = values(this.store.getEntity("activities")).filter(
-          (a) => a.missionId === missionId && a.userId === userId
-        );
-        activities.forEach((a) =>
-          this.store.deleteEntityObject(a.id, "activities")
-        );
-        this.store.updateEntityObject({
-          objectId: missionId,
-          entity: "missions",
-          update: { isDeleted: true, deletedAt: now() }
-        });
+        this._applyCancelMission(missionId, userId);
       },
       onError: (error) => {
         if (isGraphQLError(error)) {
@@ -335,7 +325,7 @@ class Actions {
             graphQLErrors: error.graphQLErrors,
             actionDescription: "L'abandon de la mission",
             hasRequestFailed: true,
-            isActionDescriptionFemale: true
+            isActionDescriptionFemale: false
           });
         }
       }
@@ -1267,23 +1257,29 @@ class Actions {
     ]);
   };
 
+  // triggers immediate redirect via displayCurrentMission; on reload, dismissed activities are excluded by the fragment
+  // for team missions, isDeleted is only local — coworkers' stores are unaffected
+  _applyCancelMission(missionId, userId, requestId = null) {
+    const activities = values(this.store.getEntity("activities")).filter(
+      (a) => a.missionId === missionId && a.userId === userId
+    );
+    activities.forEach((a) =>
+      this.store.deleteEntityObject(a.id, "activities", requestId)
+    );
+    this.store.updateEntityObject({
+      objectId: missionId,
+      entity: "missions",
+      update: { isDeleted: true, deletedAt: now() },
+      ...(requestId && { pendingRequestId: requestId })
+    });
+  }
+
   cancelMission = async (mission) => {
     const missionId = mission.id;
     const userId = this.store.userId();
 
     const updateStore = (store, requestId) => {
-      const activities = values(this.store.getEntity("activities")).filter(
-        (a) => a.missionId === missionId && a.userId === userId
-      );
-      activities.forEach((a) =>
-        this.store.deleteEntityObject(a.id, "activities", requestId)
-      );
-      this.store.updateEntityObject({
-        objectId: missionId,
-        entity: "missions",
-        update: { isDeleted: true, deletedAt: now() },
-        pendingRequestId: requestId
-      });
+      this._applyCancelMission(missionId, userId, requestId);
       return { missionId, userId };
     };
 
