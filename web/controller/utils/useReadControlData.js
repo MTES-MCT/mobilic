@@ -31,33 +31,40 @@ export const useReadControlData = (controlId, controlType) => {
 
   const [controlData, setControlData] = React.useState({});
 
-  React.useEffect(() => {
-    if (controlId) {
-      withLoadingScreen(async () => {
-        await alerts.withApiErrorHandling(async () => {
-          const apiResponse = await api.graphQlMutate(
-            controlType === CONTROL_TYPES.MOBILIC.label
-              ? CONTROLLER_READ_CONTROL_DATA
-              : CONTROLLER_READ_CONTROL_DATA_NO_LIC,
-            { controlId },
-            { context: { nonPublicApi: true } }
-          );
-          const controlData = apiResponse.data.controlData;
-          setControlData({
-            ...controlData,
-            observedInfractions: controlData.observedInfractions.map(
-              (infraction) => ({
-                ...infraction,
-                date: infraction.date
-                  ? strToUnixTimestamp(infraction.date)
-                  : null
-              })
-            )
-          });
+  const loadControlData = React.useCallback(async () => {
+    if (!controlId) return;
+    
+    withLoadingScreen(async () => {
+      await alerts.withApiErrorHandling(async () => {
+        const apiResponse = await api.graphQlMutate(
+          controlType === CONTROL_TYPES.MOBILIC.label
+            ? CONTROLLER_READ_CONTROL_DATA
+            : CONTROLLER_READ_CONTROL_DATA_NO_LIC,
+          { controlId },
+          { 
+            context: { nonPublicApi: true },
+            fetchPolicy: 'no-cache'
+          }
+        );
+        const controlData = apiResponse.data.controlData;
+        setControlData({
+          ...controlData,
+          observedInfractions: controlData.observedInfractions.map(
+            (infraction) => ({
+              ...infraction,
+              date: infraction.date
+                ? strToUnixTimestamp(infraction.date)
+                : null
+            })
+          )
         });
       });
-    }
-  }, [controlId]);
+    });
+  }, [controlId, controlType, api, alerts, withLoadingScreen]);
+
+  React.useEffect(() => {
+    loadControlData();
+  }, [loadControlData]);
 
   const canDownloadBDC = React.useMemo(
     () => _canDownloadBDC(controlData, controllerUserInfo),
@@ -112,7 +119,8 @@ export const useReadControlData = (controlId, controlType) => {
   const updateControlTime = async () => {
     modals.open("controllerUpdateTime", {
       controlData,
-      setControlData
+      setControlData,
+      loadControlData
     });
   };
 

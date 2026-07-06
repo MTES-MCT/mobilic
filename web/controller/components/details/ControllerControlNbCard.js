@@ -5,6 +5,8 @@ import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
 import { FieldTitle } from "../../../common/typography/FieldTitle";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Card } from "@codegouvfr/react-dsfr/Card";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import Box from "@mui/material/Box";
 
 const useStyles = makeStyles(theme => ({
@@ -64,17 +66,59 @@ export function ControllerControlNbCard({
 export function ControllerControlNbCards({
   nbAlerts = null,
   nbWorkingDays = null,
+  daysAddedPosterioriNumber = null,
+  daysModifiedNumber = null,
   onChangeTab
 }) {
   return (
     <Stack direction="row" columnGap={1}>
+      
       {(nbWorkingDays || nbWorkingDays === 0) && (
-        <ControllerControlNbCard
-          label="Journées enregistrées"
-          buttonLabel="Historique"
-          nbElem={nbWorkingDays}
-          onClick={() => onChangeTab("history")}
-        />
+        <Card 
+        className="fr-card" style={{ flexGrow: 1, boxShadow: "0 5px var(--text-action-high-blue-france)" }}
+        background
+        border
+        desc={
+          <Stack direction="column" rowGap={1}>
+            <Box display="flex" alignItems="center" gap={1}>
+              <Box display="flex" alignItems="center" gap={1} flexGrow={1}>
+                <i className="fr-icon-corner-down-right-line" style={{ color: "var(--text-action-high-blue-france)" }} aria-hidden="true" />
+                <Typography component="span">
+                  dont ajoutées à posteriori
+                </Typography>
+              </Box>
+              <Box minWidth="60px" display="flex" justifyContent="center">
+                <Typography component="span" fontWeight={600}>
+                  {daysAddedPosterioriNumber || 0}
+                </Typography>
+              </Box>
+            </Box>
+            <Box display="flex" alignItems="center" gap={1}>
+              <Box display="flex" alignItems="center" gap={1} flexGrow={1}>
+                <i className="fr-icon-corner-down-right-line" style={{ color: "var(--text-action-high-blue-france)" }} aria-hidden="true" />
+                <Typography component="span">
+                  dont modifiées
+                </Typography>
+              </Box>
+              <Box minWidth="60px" display="flex" justifyContent="center">
+                <Typography component="span" fontWeight={600}>
+                  {daysModifiedNumber || 0}
+                </Typography>
+              </Box>
+            </Box>
+          </Stack>
+        }
+        footer={<a href="#" className="fr-link fr-icon-arrow-right-line fr-link--icon-right" onClick={(e) => { e.preventDefault(); onChangeTab("history"); }}>Voir le détail</a>}
+        size="medium"
+        title={
+          <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
+            <span>Journées enregistrées</span>
+            <Box minWidth="60px" display="flex" justifyContent="center">
+              <Badge noIcon severity="info">{nbWorkingDays}</Badge>
+            </Box>
+          </Box>
+        }
+        titleAs="h3"/>
       )}
       {(nbAlerts || nbAlerts === 0) && (
         <ControllerControlNbCard

@@ -95,10 +95,22 @@ export const FULL_MISSION_FRAGMENT = gql`
       userId
       submitterId
       lastSubmitterId
+      receptionTime
       user {
         id
         firstName
         lastName
+      }
+      versions {
+        id
+        startTime
+        endTime
+        receptionTime
+        submitter {
+          id
+          firstName
+          lastName
+        }
       }
     }
     comments {
