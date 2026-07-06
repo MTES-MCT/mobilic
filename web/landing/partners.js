@@ -73,6 +73,8 @@ const interfacedSrcs = require.context(
   /\.(png|jpe?g|svg)$/
 );
 
+const reducedInterfacedLogos = ['perff'];
+
 const useStyles = makeStyles(theme => ({
   whiteSection: {
     backgroundColor: theme.palette.background.paper
@@ -112,6 +114,10 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.up("md")]: {
       height: 80
     }
+  },
+  interfacedImageSmall: {
+    maxWidth: 180,
+    height: "auto"
   }
 }));
 
@@ -249,7 +255,7 @@ export function Partners() {
                           <img
                             alt={src}
                             src={imgSrc}
-                            className={classes.interfacedImage}
+                            className={reducedInterfacedLogos.some(logo => src.includes(logo)) ? classes.interfacedImageSmall : classes.interfacedImage}
                           />
                         </Grid>
                       );
