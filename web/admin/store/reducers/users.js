@@ -1,6 +1,7 @@
 import flatMap from "lodash/flatMap";
 import uniqBy from "lodash/uniqBy";
 import { computeUsersAndTeamFilters } from "./team";
+import { preserveSelected } from "./sync";
 
 export function addUsersReducer(state, { companiesPayload }) {
   const users = flatMap(
@@ -19,8 +20,8 @@ export function addUsersReducer(state, { companiesPayload }) {
     users: newUsers,
     activitiesFilters: {
       ...state.activitiesFilters,
-      teams: usersAndTeamsFilters.activitiesFilters.teams,
-      users: usersAndTeamsFilters.activitiesFilters.users
+      teams: preserveSelected(usersAndTeamsFilters.activitiesFilters.teams, state.activitiesFilters.teams),
+      users: preserveSelected(usersAndTeamsFilters.activitiesFilters.users, state.activitiesFilters.users)
     },
     validationsFilters: {
       ...state.validationsFilters,
