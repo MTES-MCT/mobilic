@@ -60,7 +60,7 @@ export const useReadControlData = (controlId, controlType) => {
         });
       });
     });
-  }, [controlId, controlType, api, alerts, withLoadingScreen]);
+  }, [controlId, controlType]);
 
   React.useEffect(() => {
     loadControlData();
