@@ -191,7 +191,7 @@ export function XlsxVerifier() {
 
   return (
     <>
-      <MobilicHeader />
+      <MobilicHeader disableMenu />
       <PaperContainer>
         <Container className={`centered ${classes.root}`} maxWidth="sm">
           <PaperContainerTitle>

@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export const MobileHeaderConnected = ({ openNavigationMenu, homePath }) => {
+export const MobileHeaderConnected = ({ openNavigationMenu, homePath, open, disableMenu = false }) => {
   const classes = useStyles();
 
   return (
@@ -44,9 +44,17 @@ export const MobileHeaderConnected = ({ openNavigationMenu, homePath }) => {
         <img src={MarianneLogo} alt="Marianne" />
         <img src={MobilicLogoWithText} alt="Mobilic" />
       </Link>
-      <button onClick={openNavigationMenu} className={classes.burgerIcon}>
-        <span className="fr-icon-menu-fill" aria-label="Menu" title="Menu"></span>
-      </button>
+      {!disableMenu && (
+        <button
+          onClick={openNavigationMenu}
+          className={classes.burgerIcon}
+          aria-expanded={open}
+          aria-controls="navigation-drawer"
+          aria-haspopup="dialog"
+        >
+          <span className="fr-icon-menu-fill" aria-label="Menu" title="Menu"></span>
+        </button>
+      )}
     </header>
   )
 }

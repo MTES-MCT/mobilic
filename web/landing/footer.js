@@ -10,7 +10,7 @@ export function Footer({ withFollow = true }) {
       <DSFooter
         brandTop={
           <>
-            MINISTĒRE DES
+            MINISTÈRE DES
             <br />
             TRANSPORTS
           </>
@@ -30,7 +30,7 @@ export function Footer({ withFollow = true }) {
               rel="noopener noreferrer"
               style={{ textDecoration: "underline" }}
             >
-              La Fabrique Numérique de l'Ecologie (MTE-MCT)
+              La Fabrique Numérique de l'Écologie (MTE-MCT)
             </a>{" "}
             et sponsorisé par la <span style={{ fontWeight: "bold" }}>Direction générale des infrastructures, des
             transports et des mobilités.</span>

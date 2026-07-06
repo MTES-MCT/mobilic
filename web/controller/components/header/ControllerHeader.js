@@ -10,7 +10,7 @@ export function ControllerHeader() {
   const isMdUp = useIsWidthUp("md");
   return (
     <HeaderComponent>
-      <Box py={1} pl={2} pr={1} width="100%">
+      <Box component="header" role="banner" py={1} pl={2} pr={1} width="100%">
         {isMdUp ? <ControllerDesktopHeader /> : <ControllerMobileHeader />}
       </Box>
       <Divider className="full-width-divider hr-unstyled" />

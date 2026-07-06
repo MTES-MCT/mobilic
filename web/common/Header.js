@@ -148,8 +148,6 @@ export const HeaderComponent = ({ fitContainer, children }) => {
   const theme = useTheme();
   return (
     <Box
-      component="header"
-      role="banner"
       className={classNames(
         "header-container",
         fitContainer ? "fit-container" : ""
@@ -224,8 +222,7 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies, isLastR
         onClick={(e) => {
           if (!route.href && !route.target) {
             e.preventDefault();
-            if (!selected) 
-              history.push(route.path);
+            if (!selected) history.push(route.path);
             closeDrawer();
           }
         }}
@@ -375,11 +372,7 @@ const HeaderCompaniesDropdown = () => {
           fontSize: 'inherit',
           boxShadow: 'none',
           margin: 0,
-          padding: 0,
-          paddingLeft: '0',
-          paddingTop: '0',
-          paddingBottom: '0',
-          paddingRight: '2.5rem',
+          padding: '0 2.5rem 0 0',
           textOverflow: 'ellipsis',
         }
       }}
@@ -403,9 +396,7 @@ const quickAccessItemsPublic = [
   {
     iconId: 'fr-icon-mail-line',
     linkProps: {
-      to: "mailto:contact@mobilic.beta.gouv.fr",
-      target: '_blank',
-      rel: 'noopener noreferrer'
+      href: "mailto:contact@mobilic.beta.gouv.fr",
     },
     text: 'Nous contacter',
   },
@@ -436,7 +427,7 @@ const commonHeaderProps = {
   },
 };
 
-function AppHeader() {
+function AppHeader({ forceMobile = false, disableMenu = false }) {
   const store = useStoreSyncedWithLocalStorage();
 
   const location = useLocation();
@@ -444,6 +435,7 @@ function AppHeader() {
   const classes = useStyles();
   const userInfo = store.userInfo();
   const isLgDown = useIsWidthDown("lg");
+  const isMobile = isLgDown || forceMobile;
 
   const { path } = useRouteMatch();
   const homePath = path.includes("/admin") ? "/admin/home" : "/app";
@@ -460,7 +452,10 @@ function AppHeader() {
       buttonProps: {
         type: "button",
         disabled: false,
-        onClick: openNavigationMenu
+        onClick: openNavigationMenu,
+        "aria-expanded": openNavDrawer,
+        "aria-controls": "navigation-drawer",
+        "aria-haspopup": "dialog"
       },
       text: <span className="fr-icon-menu-fill fr-icon--sm" aria-label="Menu" title="Menu"></span>,
     },
@@ -510,8 +505,8 @@ function AppHeader() {
     return(
       <>
         {
-          isLgDown ? (
-            <MobileHeaderConnected openNavigationMenu={openNavigationMenu} homePath={homePath} />
+          isMobile ? (
+            <MobileHeaderConnected openNavigationMenu={openNavigationMenu} homePath={homePath} open={openNavDrawer} disableMenu={disableMenu} />
           ) : (
             <Header
               {...commonHeaderProps}
@@ -520,7 +515,7 @@ function AppHeader() {
                 title: 'Accueil - Mobilic Connecté'
               }}
               id="fr-header-simple-header-connected"
-              quickAccessItems={quickAccessItemsConnected}
+              quickAccessItems={disableMenu ? undefined : quickAccessItemsConnected}
               classes={{
                 root: "mobilic-dsfr-header",
                 toolsLinks: classes.headerToolsLinks,
@@ -535,7 +530,7 @@ function AppHeader() {
             key={1}
             open={openNavDrawer}
             setOpen={setOpenNavDrawer}
-            fullScreen={isLgDown}
+            fullScreen={isMobile}
           />
         }
       </>
@@ -549,14 +544,14 @@ function AppHeader() {
           title: 'Accueil - Mobilic'
         }}
         id="fr-header-simple-header"
-        navigation={navigation}
-        quickAccessItems={quickAccessItemsPublic}
+        navigation={disableMenu ? undefined : navigation}
+        quickAccessItems={disableMenu ? undefined : quickAccessItemsPublic}
       />
     )
   }
 }
 
-export function MobilicHeader({ forceMobile = false }) {
+export function MobilicHeader({ forceMobile = false, disableMenu = false }) {
   const store = useStoreSyncedWithLocalStorage();
   const controllerId = store.controllerId();
 
@@ -564,7 +559,7 @@ export function MobilicHeader({ forceMobile = false }) {
     <ControllerHeader />
   ) : (
     <HeaderComponent fitContainer={forceMobile}>
-      <AppHeader />
+      <AppHeader forceMobile={forceMobile} disableMenu={disableMenu} />
     </HeaderComponent>
   );
 }

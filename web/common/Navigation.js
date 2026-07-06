@@ -24,7 +24,7 @@ export function Navigation({ open, setOpen, fullScreen = false, children }) {
       anchor="right"
       open={open}
       onClose={() => setOpen(false)}
-      PaperProps={{ className: fullScreen ? classes.navDrawerFullScreen : classes.navDrawer }}
+      PaperProps={{ id: "navigation-drawer", className: fullScreen ? classes.navDrawerFullScreen : classes.navDrawer }}
     >
       <Box className={classes.closeNavButton} pt={2} mr={2} mb={4}>
         <button
