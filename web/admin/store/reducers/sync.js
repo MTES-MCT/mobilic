@@ -188,7 +188,12 @@ export function updateCompanyDetailsReducer(
     validationsFilters: {
       ...state.validationsFilters,
       teams: usersAndTeamsFilters.validationsFilters.teams,
-      users: usersAndTeamsFilters.validationsFilters.users
+      users: usersAndTeamsFilters.validationsFilters.users.map(user => {
+        const existingUser = state.validationsFilters.users?.find(
+          u => u.id === user.id
+        );
+        return existingUser ? { ...user, selected: existingUser.selected } : user;
+    })
     },
     exportFilters: {
       ...state.exportFilters,
