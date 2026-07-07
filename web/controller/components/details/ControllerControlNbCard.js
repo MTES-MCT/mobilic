@@ -10,7 +10,6 @@ import { Card } from "@codegouvfr/react-dsfr/Card";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import Box from "@mui/material/Box";
 
-
 const useStyles = makeStyles(theme => ({
   card: {
     borderRadius: "4px",
@@ -34,14 +33,14 @@ const useStyles = makeStyles(theme => ({
   },
   compactCard: {
     "& .fr-card__content": {
-      padding: props => props.isOnDesktop ? "0.5rem  2rem" : "0.5rem 1rem",
+      padding: props => props.isOnDesktop ? "0.5rem  2rem" : "0.5rem 0.5rem 0.5rem 1rem",
       fontSize: props => props.isOnDesktop ? "1rem" : "0.875rem"
     },
     "& .fr-card__end": {
       display: "none"
     },
     "& .fr-card__footer": {
-      padding: props => props.isOnDesktop ? "0.5rem 2rem" : "0.5rem 1rem",
+      padding: props => props.isOnDesktop ? "0.5rem 2rem" : "0.5rem 0.5rem 0.5rem 1rem",
       fontSize: props => props.isOnDesktop ? "1rem" : "0.875rem"
     }
   },
@@ -49,6 +48,9 @@ const useStyles = makeStyles(theme => ({
     "&::before": {
       "--icon-size": props => props.isOnDesktop ? "1rem !important" : "0.75rem !important"
     }
+  },
+  details: {
+    fontSize: props => props.isOnDesktop ? "1rem" : "0.875rem"
   }
 }));
 export function ControllerControlNbCard({
@@ -107,7 +109,7 @@ export function ControllerControlNbCards({
               <Box display="flex" alignItems="center" gap={1} flexGrow={1}>
                 <i className={`fr-icon-corner-down-right-line ${classes.smallIcon}`} style={{ color: "var(--text-action-high-blue-france)" }} aria-hidden="true" />
                 <Typography component="span" variant="body2" color="text.secondary">
-                  dont ajoutées à posteriori
+                  dont ajoutées a posteriori
                 </Typography>
               </Box>
               <Box minWidth="60px" display="flex" justifyContent="center">
@@ -131,7 +133,7 @@ export function ControllerControlNbCards({
             </Box>
           </Stack>
         }
-        footer={<a href="#" className="fr-link fr-icon-arrow-right-line fr-link--icon-right" onClick={(e) => { e.preventDefault(); onChangeTab("history"); }}>Voir le détail</a>}
+        footer={<a href="#" className={`fr-link fr-icon-arrow-right-line fr-link--icon-right ${classes.details}`} onClick={(e) => { e.preventDefault(); onChangeTab("history"); }}>Voir le détail</a>}
         size="medium"
         title={
           <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
