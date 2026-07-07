@@ -19,6 +19,8 @@ import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 import { fr } from "@codegouvfr/react-dsfr";
 import { InfoItem } from "../../home/InfoField";
 import { formatDateTime } from "common/utils/time";
+import { useIsWidthUp } from "common/utils/useWidth";
+import Button from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles((theme) => ({
   exportButton: {
@@ -53,6 +55,7 @@ export function UserReadInfo({
 }) {
   const { controlData, updateControlTime } = useControl() ?? {};
   const [userName, setUserName] = React.useState("");
+  const isOnDesktop = useIsWidthUp("md");
 
   React.useEffect(() => {
     if (userInfo) {
@@ -83,16 +86,25 @@ export function UserReadInfo({
     <Stack direction="column" maxWidth="100%" width="100%">
       <Box className={classes.header}>
         <ControllerControlEmployeeInfo name={userName} />
-        <InfoItem
-          name="Horaire de contrôle"
-          value={formatDateTime(controlData?.controlTime || controlTime || tokenInfo.controlTime, true)}
-          uppercaseTitle={false}
-          titleProps={{
-            component: "h2"
-          }}
-          direction="row"
-          maxWidth="100%"
-        />
+        {!isOnDesktop && (
+          <Stack direction="row" marginBottom={3}rowGap={5} columnGap={2} alignItems="center" justifyContent="space-between" flexWrap="wrap">
+            <InfoItem
+              name="Horaire de contrôle"
+              value={formatDateTime(controlData?.controlTime || controlTime || tokenInfo.controlTime, true)}
+              uppercaseTitle={false}
+              titleProps={{
+                component: "h2"
+              }}
+              direction={isOnDesktop ? "row" : "column"}
+              maxWidth="100%"
+            />
+            <Button size="small" priority="tertiary" onClick={updateControlTime}>
+              Modifier
+            </Button>
+          </Stack>
+            
+          
+        )}
         {vehicleRegistrationNumber && (
           <InfoItem
             name="Véhicule"
@@ -101,11 +113,10 @@ export function UserReadInfo({
             titleProps={{
               component: "h2"
             }}
-            direction="row"
+            direction={isOnDesktop ? "row" : "column"}
             maxWidth="100%"
           />
         )}
-        
       </Box>
       <Stack direction="column" p={3} rowGap={3}>
         {!!currentControllerId() && (

@@ -23,6 +23,7 @@ export function InfoItem({
   action,
   alertComponent,
   titleProps = {},
+  valueProps = {},
   uppercaseTitle = true,
   valuePlaceholder,
   maxWidth = "70%",
@@ -57,6 +58,7 @@ export function InfoItem({
             noWrap
             align="left"
             className={value ? classes.fieldValue : typographyClasses.disabled}
+            {...valueProps}
           >
             {value || valuePlaceholder}
           </Typography>
