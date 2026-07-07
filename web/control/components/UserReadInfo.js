@@ -20,7 +20,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { InfoItem } from "../../home/InfoField";
 import { formatDateTime } from "common/utils/time";
 import { useIsWidthUp } from "common/utils/useWidth";
-import Button from "@codegouvfr/react-dsfr/Button";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles((theme) => ({
   exportButton: {
