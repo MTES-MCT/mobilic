@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: "4px",
     border: "1px solid",
     borderColor: fr.colors.decisions.border.default.grey.default,
-    padding: "8px 12px 12px 12px",
+    //padding: "8px 12px 12px 12px",
     [theme.breakpoints.up("sm")]: {
       maxWidth: "50%"
     }
@@ -33,15 +33,15 @@ const useStyles = makeStyles(theme => ({
   },
   compactCard: {
     "& .fr-card__content": {
-      padding: props => props.isOnDesktop ? "0.5rem  2rem" : "0.5rem 0.5rem 0.5rem 1rem",
+      padding: "0.75rem 1rem 0",
       fontSize: props => props.isOnDesktop ? "1rem" : "0.875rem"
     },
     "& .fr-card__end": {
       display: "none"
     },
     "& .fr-card__footer": {
-      padding: props => props.isOnDesktop ? "0.5rem 2rem" : "0.5rem 0.5rem 0.5rem 1rem",
-      fontSize: props => props.isOnDesktop ? "1rem" : "0.875rem"
+      padding: "1rem",
+      fontSize: "0.875rem"
     }
   },
   smallIcon: {
@@ -112,7 +112,7 @@ export function ControllerControlNbCards({
                   dont ajoutées a posteriori
                 </Typography>
               </Box>
-              <Box minWidth="60px" display="flex" justifyContent="center">
+              <Box display="flex">
                 <Typography component="span" fontWeight={600} fontSize={15} style={{ color: "var(--text-action-high-blue-france)" }}>
                   {daysAddedPosterioriNumber || 0}
                 </Typography>
@@ -125,7 +125,7 @@ export function ControllerControlNbCards({
                   dont modifiées
                 </Typography>
               </Box>
-              <Box minWidth="60px" display="flex" justifyContent="center">
+              <Box display="flex">
                 <Typography component="span" fontWeight={600} fontSize={15} style={{ color: "var(--text-action-high-blue-france)" }}>
                   {daysModifiedNumber || 0}
                 </Typography>
@@ -140,7 +140,7 @@ export function ControllerControlNbCards({
             <Typography component="span" variant="body1" fontWeight={600}>
               Journées enregistrées
             </Typography>
-            <Box minWidth="60px" display="flex" justifyContent="center">
+            <Box display="flex" justifyContent="center">
               <Badge noIcon severity="info">{nbWorkingDays}</Badge>
             </Box>
           </Box>
