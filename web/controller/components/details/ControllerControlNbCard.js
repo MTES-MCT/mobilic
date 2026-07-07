@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   details: {
-    fontSize: props => props.isOnDesktop ? "1rem" : "0.875rem"
+    fontSize: "0.875rem"
   }
 }));
 export function ControllerControlNbCard({
