@@ -418,8 +418,10 @@ const quickAccessItemsPublic = [
   }
 ];
 
+export const DSFR_BRAND_TOP = <>MINISTÈRE DES<br />TRANSPORTS</>;
+
 const commonHeaderProps = {
-  brandTop: <>RÉPUBLIQUE<br />FRANÇAISE</>,
+  brandTop: DSFR_BRAND_TOP,
   operatorLogo: {
     alt: 'Mobilic',
     imgUrl: MobilicLogoWithText,
