@@ -25,8 +25,8 @@ export function addUsersReducer(state, { companiesPayload }) {
     },
     validationsFilters: {
       ...state.validationsFilters,
-      teams: usersAndTeamsFilters.validationsFilters.teams,
-      users: usersAndTeamsFilters.validationsFilters.users
+      teams: preserveSelected(usersAndTeamsFilters.validationsFilters.teams, state.validationsFilters.teams),
+      users: preserveSelected(usersAndTeamsFilters.validationsFilters.users, state.validationsFilters.users)
     },
     exportFilters: {
       ...state.exportFilters,
