@@ -12,7 +12,7 @@
     "@apollo/client": "^4.0.9",
     "@babel/core": "^7.26.10",
     "@babel/runtime": "^7.26.10",
-    "@codegouvfr/react-dsfr": "^1.26.0",
+    "@codegouvfr/react-dsfr": "^1.32.2",
     "@datapunt/matomo-tracker-react": "0.5.1",
     "@emotion/react": "^11.8.1",
     "@emotion/styled": "^11.8.1",

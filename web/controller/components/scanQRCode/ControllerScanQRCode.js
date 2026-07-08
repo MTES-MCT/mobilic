@@ -10,7 +10,7 @@ import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { prettyFormatDayHour, CONTROL_HISTORY_DEPTH } from "common/utils/time";
 import { useLoadingScreen } from "common/utils/loading";
 import Typography from "@mui/material/Typography";
-import { Header } from "../../../common/Header";
+import { MobilicHeader } from "../../../common/Header";
 import { CONTROL_TYPES } from "../../utils/useReadControlData";
 import { usePageTitle } from "../../../common/UsePageTitle";
 import Notice from "../../../common/Notice";
@@ -136,7 +136,7 @@ export function ControllerScanQRCode() {
 
   return (
     <>
-      <Header />
+      <MobilicHeader />
       <Main
         className={`${classes.container} ${classes.whiteSection}`}
         maxWidth="xl"

@@ -12,6 +12,7 @@ export default function NewMissionModal({
   handleClose,
   handleContinue,
   companies,
+  currentCompanyId = null,
   companyAddresses = [],
   disableCurrentPosition = false,
   disableKilometerReading = false,
@@ -52,6 +53,7 @@ export default function NewMissionModal({
       <NewMissionForm
         handleSubmit={handleContinue}
         companies={companies}
+        companyId={currentCompanyId}
         companyAddresses={companyAddresses}
         currentPosition={disableCurrentPosition ? null : currentPosition}
         disableKilometerReading={disableKilometerReading}

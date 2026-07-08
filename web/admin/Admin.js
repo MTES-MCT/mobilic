@@ -13,6 +13,7 @@ import {
   loadCompanyDetails
 } from "./utils/loadCompaniesData";
 import { useApi } from "common/utils/api";
+import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import {
   AdminStoreProvider,
   useAdminStore,
@@ -23,7 +24,7 @@ import {
   useLoadingScreen
 } from "common/utils/loading";
 
-import { Header } from "../common/Header";
+import { MobilicHeader } from "../common/Header";
 import { makeStyles } from "@mui/styles";
 import { useIsWidthUp } from "common/utils/useWidth";
 import { useSnackbarAlerts } from "../common/Snackbar";
@@ -61,8 +62,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+function resolveCompanyId(companies, lastSelectedCompanyId) {
+  return companies.find((company) => company.id === lastSelectedCompanyId)?.id || companies[0].id;
+}
+
 function InternalAdmin() {
   const api = useApi();
+  const store = useStoreSyncedWithLocalStorage();
   const adminStore = useAdminStore();
   const [, company] = useAdminCompanies();
   const withLoadingScreen = useLoadingScreen();
@@ -100,7 +106,8 @@ function InternalAdmin() {
                 payload: { companiesPayload: companies }
               });
 
-              const companyId = companies[0].id;
+              const lastSelectedCompanyId = store.lastSelectedCompanyId();
+              const companyId = resolveCompanyId(companies, lastSelectedCompanyId);
 
               adminStore.dispatch({
                 type: ADMIN_ACTIONS.updateCompanyId,
@@ -170,6 +177,12 @@ function InternalAdmin() {
     if (adminStore.companyId) loadDataCompanyDetails();
   }, [adminStore.companyId]);
 
+  React.useEffect(() => {
+    if (adminStore.companyId) {
+      store.setItems({ lastSelectedCompanyId: adminStore.companyId });
+    }
+  }, [adminStore.companyId]);
+
   const isFirstMinDateRendered = React.useRef(true);
   
   // Update company details when changing the min date filter in the activities panel 
@@ -227,7 +240,7 @@ function InternalAdmin() {
           id: adminStore.companyId
         }) && <UpdateCompanyBusinessTypeModal />}
       {!!company && shouldUpdateNbWorker(company) && <UpdateNbWorkerModal />}
-      <Header />
+      <MobilicHeader />
       <MissionDrawerContextProvider
         setShouldRefreshData={shouldRefreshDataSetter}
         refreshData={refreshData}
