@@ -2,6 +2,12 @@ import flatMap from "lodash/flatMap";
 import { addWorkDaysReducer } from "./workDays";
 import { computeUsersAndTeamFilters } from "./team";
 
+export const preserveSelected = (newItems, existingItems) =>
+  newItems.map(item => {
+    const existing = existingItems?.find(e => e.id === item.id);
+    return existing ? { ...item, selected: existing.selected } : item;
+  });
+
 export function updateCompanyIdReducer(state, { companyId }) {
   return {
     ...state,
@@ -181,14 +187,14 @@ export function updateCompanyDetailsReducer(
     missions: regularMissions,
     activitiesFilters: {
       ...state.activitiesFilters,
-      teams: usersAndTeamsFilters.activitiesFilters.teams,
-      users: usersAndTeamsFilters.activitiesFilters.users,
-      minDate
+      teams: preserveSelected(usersAndTeamsFilters.activitiesFilters.teams, state.activitiesFilters.teams),
+      users: preserveSelected(usersAndTeamsFilters.activitiesFilters.users, state.activitiesFilters.users),
+      minDate,
     },
     validationsFilters: {
       ...state.validationsFilters,
-      teams: usersAndTeamsFilters.validationsFilters.teams,
-      users: usersAndTeamsFilters.validationsFilters.users
+      teams: preserveSelected(usersAndTeamsFilters.validationsFilters.teams, state.validationsFilters.teams),
+      users: preserveSelected(usersAndTeamsFilters.validationsFilters.users, state.validationsFilters.users),
     },
     exportFilters: {
       ...state.exportFilters,

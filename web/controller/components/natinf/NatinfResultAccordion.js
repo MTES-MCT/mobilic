@@ -7,7 +7,7 @@ import { makeStyles } from "@mui/styles";
 import { alertNumberBase } from "../../../common/styles/alertNumber";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Calendar } from "react-multi-date-picker";
-import { addDaysToDate, textualPrettyFormatDay, unixToJSTimestamp } from "common/utils/time";
+import { addDaysToDate, textualPrettyFormatDay, unixToJSTimestamp, CONTROL_HISTORY_DEPTH } from "common/utils/time";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
 import Stack from "@mui/material/Stack";
 import { capitalizeFirstLetter } from "common/utils/string";
@@ -16,9 +16,6 @@ import { gregorian_fr } from "common/utils/calendarLocale";
 import { useCalendarStyles } from "../../../common/styles/calendarStyles";
 import { WarningBadge } from "../../../common/WarningBadge";
 import { AccordionActions } from "../../../common/AccordionActions";
-
-const controlHistoryDepth =
-  Number.parseInt(process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH, 10) || 28;
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -50,7 +47,7 @@ export function NatinfResultAccordion({
   const effectiveControlTime = controlTime || Math.trunc(Date.now() / 1000);
 
   const maxDate = new Date(unixToJSTimestamp(effectiveControlTime));
-  const minDate = addDaysToDate(new Date(maxDate), -controlHistoryDepth);
+  const minDate = addDaysToDate(new Date(maxDate), -CONTROL_HISTORY_DEPTH);
 
   const handleDateChange = values => {
     const newDays = values.map(dateObj => {
