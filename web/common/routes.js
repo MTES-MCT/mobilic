@@ -55,8 +55,17 @@ const RESOURCES_ROUTE = {
   accessible: ({ controllerInfo }) => !controllerInfo?.id,
   subRoutes: [
     {
+      path: "/resources/home",
+      target: "_blank",
+      label: "Documentation"
+    },
+    {
+      path: "/partners",
+      label: "Partenaires et logiciels"
+    },
+    {
       to: "",
-      label: "Foire aux questions",
+      label: "Centre d'aide",
       accessible: ({ userInfo, companies }) =>
         // is employee
         !!userInfo?.id && !companies?.some(c => c.admin),
@@ -66,22 +75,13 @@ const RESOURCES_ROUTE = {
     },
     {
       to: "",
-      label: "Foire aux questions",
+      label: "Centre d'aide",
       accessible: ({ userInfo, companies }) =>
         // is not employee (not connected or admin or controller)
         !userInfo?.id || companies?.some(c => c.admin),
       target: "_blank",
       href: "https://faq.mobilic.beta.gouv.fr/"
     },
-    {
-      path: "/resources/home",
-      target: "_blank",
-      label: "Documentation"
-    },
-    {
-      path: "/partners",
-      label: "Partenaires et logiciels"
-    }
   ]
 };
 
@@ -154,6 +154,10 @@ export const ROUTES = [
     component: withSuspense(Admin),
     subRoutes: [
       {
+        path: "/home",
+        label: "Accueil"
+      },
+      {
         path: "/company",
         label: "Entreprise(s)"
       },
@@ -164,6 +168,14 @@ export const ROUTES = [
       {
         label: "Saisies à valider",
         path: "/validations"
+      },
+      {
+        label: "Respect des seuils",
+        path: "/regulatory-respect"
+      },
+      {
+        label: "Certificat",
+        path: "/certificate"
       }
     ]
   },
