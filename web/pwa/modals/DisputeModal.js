@@ -39,8 +39,8 @@ export default function DisputeModal({
             Annuler
           </Button>
           <Button
-            onClick={() => {
-              handleSubmit(text.trim());
+            onClick={async () => {
+              await handleSubmit(text.trim());
               handleClose();
             }}
             disabled={!text.trim()}

@@ -26,6 +26,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
+// synced with DISPUTE_EXPIRY_DAYS in app/controllers/activity.py
 const DISPUTE_DELAY_DAYS = 15;
 const DISPUTE_DELAY_SECONDS = DISPUTE_DELAY_DAYS * 24 * 3600;
 

@@ -8,7 +8,6 @@ import { getChangeIconAndText } from "../../common/logEvent";
 import { formatPersonName } from "common/utils/coworkers";
 import { formatDay, formatTimeOfDay } from "common/utils/time";
 import { useModals } from "common/utils/modals";
-import { useStoreSyncedWithLocalStorage } from "common/store/store";
 
 const BADGE_CONFIG = {
   SUPPRESSION: {
@@ -129,7 +128,6 @@ export function ActivityHistorySection({
 }) {
   const classes = useStyles();
   const modals = useModals();
-  const store = useStoreSyncedWithLocalStorage();
   const [expanded, setExpanded] = React.useState(false);
 
   const dispute = activity?.dispute;
@@ -202,7 +200,7 @@ export function ActivityHistorySection({
             <div className={classes.disputeBox}>
               <div>
                 <span className={classes.disputeTitle}>
-                  {formatPersonName(store.userInfo())} a contesté :
+                  {formatPersonName(activity.user)} a contesté :
                 </span>
                 {" "}
                 <span className={classes.disputeMotif}>

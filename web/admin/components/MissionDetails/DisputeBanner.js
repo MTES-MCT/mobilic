@@ -61,15 +61,18 @@ export function DisputeBanner({ mission }) {
         }
         groups[empId].disputes.push(a);
       });
-    return Object.values(groups);
+    return Object.entries(groups).map(([empId, group]) => ({
+      empId,
+      ...group
+    }));
   }, [activities]);
 
   if (byEmployee.length === 0) return null;
 
   return (
     <>
-      {byEmployee.map(({ employeeName, disputes }) => (
-        <Box key={employeeName} className={classes.banner}>
+      {byEmployee.map(({ empId, employeeName, disputes }) => (
+        <Box key={empId} className={classes.banner}>
           <span
             className={`fr-icon-warning-fill ${classes.icon}`}
             aria-hidden="true"
