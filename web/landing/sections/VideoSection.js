@@ -71,7 +71,7 @@ export function VideoSection() {
                 cabotage de marchandises effectuées par des véhicules de plus de
                 2,5 tonnes.
               </Typography>
-              <Typography>
+              <Typography component="div">
                 <span style={{ fontWeight: 500 }}>
                   Mettre en place Mobilic c’est :
                 </span>
