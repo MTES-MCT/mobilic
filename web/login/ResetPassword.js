@@ -11,7 +11,7 @@ import { graphQLErrorMatchesCode } from "common/utils/errors";
 import {jwtDecode} from "jwt-decode";
 import Grid from "@mui/material/Grid";
 import { useLoadingScreen } from "common/utils/loading";
-import { MobilicHeader } from "../common/Header";
+import { Header } from "../common/Header";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 import { EmailField } from "../common/EmailField";
@@ -119,7 +119,7 @@ export function ResetPassword() {
 
   return (
     <>
-      <MobilicHeader />
+      <Header />
       <Main>
         <PaperContainer>
           {tokenError ? (
@@ -232,7 +232,7 @@ export function RequestResetPassword() {
 
   return (
     <>
-      <MobilicHeader />
+      <Header />
       <Main>
         <PaperContainer>
           <Container className="centered" maxWidth="sm">

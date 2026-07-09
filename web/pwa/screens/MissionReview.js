@@ -11,7 +11,7 @@ import {
 import { prettyFormatDay } from "common/utils/time";
 import { MissionDetails } from "../components/MissionDetails";
 import { fr } from "@codegouvfr/react-dsfr";
-import { MobilicHeader } from "../../common/Header";
+import { Header } from "../../common/Header";
 
 const useStyles = makeStyles(theme => ({
   overviewTimersContainer: {
@@ -41,7 +41,7 @@ export function MissionReview({
   const classes = useStyles();
   return (
     <Container style={{ flexGrow: 1 }} className="flex-column" disableGutters>
-      <MobilicHeader forceMobile />
+      <Header forceMobile />
       <Box p={2} pt={2} pb={4} className={classes.overviewTimersContainer}>
         <Typography
           className={classes.overviewTimersTitle}

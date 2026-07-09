@@ -27,10 +27,6 @@ export const useWebinars = (setCantDisplayWebinarsBecauseNoneOrError) => {
   }
 
   React.useEffect(() => {
-    if (!process.env.REACT_APP_FETCH_WEBINARS) {
-      setWebinarsLoaded(true);
-      return;
-    }
     if (webinars.length === 0 && !webinarsLoaded) {
       fetchWebinars();
     }

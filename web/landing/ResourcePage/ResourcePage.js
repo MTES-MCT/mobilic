@@ -2,7 +2,7 @@ import React from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import { MobilicHeader } from "../../common/Header";
+import { Header } from "../../common/Header";
 import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import { FaqCard } from "./FaqCard";
@@ -67,7 +67,7 @@ export function ResourcePage() {
 
   return (
     <>
-      <MobilicHeader />
+      <Header />
       <Main maxWidth={false} sx={{ marginBottom: 4 }}>
         <Container
           className={`${classes.container} ${classes.whiteSection}`}

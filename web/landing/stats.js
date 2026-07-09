@@ -1,5 +1,5 @@
 import React from "react";
-import { MobilicHeader } from "../common/Header";
+import { Header } from "../common/Header";
 import { makeStyles } from "@mui/styles";
 import { usePageTitle } from "../common/UsePageTitle";
 import { Main } from "../common/semantics/Main";
@@ -19,7 +19,7 @@ export default function Stats() {
 
   return (
     <>
-      <MobilicHeader />
+      <Header />
       <Main maxWidth={false} className={classes.container}>
         <iframe
           title="Métriques publiques"

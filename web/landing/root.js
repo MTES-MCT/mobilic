@@ -1,5 +1,5 @@
 import React from "react";
-import { MobilicHeader } from "../common/Header";
+import { Header } from "../common/Header";
 import { Footer } from "./footer";
 import { WebinarListSection } from "./sections/WebinarListSection";
 import { IntroSection } from "./sections/IntroSection";
@@ -7,6 +7,7 @@ import { TalkingAboutUsSection } from "./sections/TalkingAboutUsSection";
 import { usePageTitle } from "../common/UsePageTitle";
 import { VideoSection } from "./sections/VideoSection";
 import { Main } from "../common/semantics/Main";
+import { LoginBanner } from "./components/LoginBanner";
 import { AdminSection } from "./sections/AdminSection";
 import { SoftwareSection } from "./sections/SoftwareSection";
 
@@ -14,8 +15,9 @@ export const Landing = () => {
   usePageTitle("Accueil - Mobilic");
   return (
     <>
-      <MobilicHeader />
+      <Header />
       <Main maxWidth={false}>
+        <LoginBanner />
         <IntroSection />
         <VideoSection />
         <AdminSection />

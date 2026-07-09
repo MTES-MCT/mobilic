@@ -1,5 +1,5 @@
 import React from "react";
-import { MobilicHeader } from "../../common/Header";
+import { Header } from "../../common/Header";
 import { Main } from "../../common/semantics/Main";
 import { Footer } from "../footer";
 import { makeStyles } from "@mui/styles";
@@ -21,7 +21,7 @@ export const FullPageComponent = ({ children }) => {
   const classes = useStyles();
   return (
     <>
-      <MobilicHeader />
+      <Header />
       <Main className={classes.container}>{children}</Main>
       <Footer />
     </>

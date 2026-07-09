@@ -1,6 +1,6 @@
 import React from "react";
 import { ManagerImage, WorkerImage } from "common/utils/icons";
-import { MobilicHeader } from "../common/Header";
+import { Header } from "../common/Header";
 import { RoleCard } from "../common/RoleCard";
 import { RoleSelection } from "../common/RoleSelection";
 import { usePageTitle } from "../common/UsePageTitle";
@@ -11,7 +11,7 @@ export function SignupSelection() {
 
   return (
     <>
-      <MobilicHeader />
+      <Header />
       <Main>
         <RoleSelection title="Quel est votre métier ?">
           <RoleCard

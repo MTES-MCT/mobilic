@@ -10,21 +10,19 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "flex-end"
   },
   navDrawer: {
-    width: 300,
-  },
-  navDrawerFullScreen: {
-    minWidth: "100%"
+    minWidth: 200
   }
 }));
 
-export function Navigation({ open, setOpen, fullScreen = false, children }) {
+export function Navigation({ open, setOpen, children }) {
   const classes = useStyles();
+
   return (
     <Drawer
       anchor="right"
       open={open}
       onClose={() => setOpen(false)}
-      PaperProps={{ id: "navigation-drawer", className: fullScreen ? classes.navDrawerFullScreen : classes.navDrawer }}
+      PaperProps={{ className: classes.navDrawer }}
     >
       <Box className={classes.closeNavButton} pt={2} mr={2} mb={4}>
         <button

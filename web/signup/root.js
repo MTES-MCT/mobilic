@@ -12,7 +12,7 @@ import { Complete } from "./Complete";
 import { loadEmployeeInvite } from "../common/loadEmployeeInvite";
 import { useApi } from "common/utils/api";
 import { EmailSelection } from "./EmailSelection";
-import { MobilicHeader } from "../common/Header";
+import { Header } from "../common/Header";
 import { CompanySignup } from "./company/CompanySignup";
 import { Main } from "../common/semantics/Main";
 
@@ -52,7 +52,7 @@ export default function Signup() {
 
   return (
     <>
-      <MobilicHeader />
+      <Header />
       <Main>
         <Switch>
           {!userId && (

@@ -2,7 +2,7 @@ import React from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import { MobilicHeader } from "../../common/Header";
+import { Header } from "../../common/Header";
 import { Footer } from "../footer";
 import { PaperContainerTitle } from "../../common/PaperContainer";
 import { VIDEOS, VideoCard } from "./VideoCard";
@@ -22,7 +22,7 @@ export function AdminResourcePage() {
 
   return (
     <>
-      <MobilicHeader />
+      <Header />
       <Main maxWidth={false}>
         <Container
           className={`${classes.container} ${classes.whiteSection}`}

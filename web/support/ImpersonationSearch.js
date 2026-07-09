@@ -10,7 +10,7 @@ import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { useApi } from "common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { useSnackbarAlerts } from "../common/Snackbar";
-import { MobilicHeader } from "../common/Header";
+import { Header } from "../common/Header";
 import { Main } from "../common/semantics/Main";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 import { usePageTitle } from "../common/UsePageTitle";
@@ -103,7 +103,7 @@ export default function ImpersonationSearch() {
 
   return (
     <>
-      <MobilicHeader />
+      <Header />
       <Main>
         <PaperContainer>
           <Container maxWidth="md">

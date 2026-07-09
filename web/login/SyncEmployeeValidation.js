@@ -2,7 +2,7 @@ import React from "react";
 import Container from "@mui/material/Container";
 import { makeStyles } from "@mui/styles";
 import { useApi } from "common/utils/api";
-import { MobilicHeader } from "../common/Header";
+import { Header } from "../common/Header";
 import { useSnackbarAlerts } from "../common/Snackbar";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 import { useLocation } from "react-router-dom";
@@ -154,7 +154,7 @@ export function SyncEmployeeValidation() {
 
   return (
     <>
-      <MobilicHeader />
+      <Header />
       <Typography color="error" mt={4}>
         {apiError}
       </Typography>

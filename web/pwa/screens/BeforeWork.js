@@ -32,7 +32,7 @@ import { WarningBreaks } from "../components/WarningBreaks";
 import { useEnoughBreak } from "../../common/useEnoughBreak";
 import Stack from "@mui/material/Stack";
 import { Notifications } from "../components/notifications/Notifications";
-import { MobilicHeader } from "../../common/Header";
+import { Header } from "../../common/Header";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { fr } from "@codegouvfr/react-dsfr";
 
@@ -119,7 +119,6 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   const companies = store.companies();
   const userId = store.userId();
   const userInfo = store.userInfo();
-  const lastCompanyId = store.lastSelectedCompanyId();
 
   const areAllCompaniesWithoutAdmins = React.useMemo(
     () => companies.every(c => !!c.hasNoAdmin),
@@ -166,7 +165,6 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
     } else {
       modals.open("newMission", {
         companies,
-        currentCompanyId: lastCompanyId,
         companyAddresses: store.getEntity("knownAddresses"),
         handleContinue: missionInfos => {
           const company = companies.find(c => c.id === missionInfos.company.id);
@@ -222,7 +220,7 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
 
   return (
     <Container maxWidth={false} className={classes.outer} disableGutters>
-      <MobilicHeader forceMobile />
+      <Header forceMobile />
       <Stack
         direction="column"
         alignItems="center"

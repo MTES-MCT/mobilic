@@ -3,7 +3,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { useApi } from "common/utils/api";
-import { MobilicHeader } from "../common/Header";
+import { Header } from "../common/Header";
 import Container from "@mui/material/Container";
 import { makeStyles } from "@mui/styles";
 import Paper from "@mui/material/Paper";
@@ -69,7 +69,7 @@ export function Invite() {
 
   return (
     <>
-      <MobilicHeader />
+      <Header />
       <Main maxWidth="lg" className={classes.container}>
         <Paper>
           <Container className={classes.innerContainer} maxWidth="sm">
