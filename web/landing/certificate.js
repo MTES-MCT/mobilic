@@ -23,6 +23,13 @@ import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
 import { PaperContainerTitle } from "../common/PaperContainer";
 
 const useStyles = makeStyles((theme) => ({
+  container: {
+    paddingTop: theme.spacing(3),
+    paddingBottom: theme.spacing(7),
+    paddingLeft: theme.spacing(5),
+    paddingRight: theme.spacing(5),
+    margin: 0
+  },
   searchBar: {
     marginRight: "auto",
     marginLeft: "auto",
@@ -83,12 +90,17 @@ export function Certificate() {
   return (
     <>
       <MobilicHeader />
-      <Main sx={{ marginBottom: 15 }}>
+      <Main 
+        className={`${classes.container}`}
+        sx={{ marginBottom: 15 }}
+      >
         <Container maxWidth="lg">
-          <Stack direction="column" textAlign="left" rowGap={4} mt={2}>
+          <Box>
             <PaperContainerTitle variant="h1" className={classes.title}>
               Les entreprises certifiées
             </PaperContainerTitle>
+          </Box>
+          <Stack direction="column" textAlign="left" rowGap={4}>
             <Typography>
               Le certificat, fourni par l'équipe Mobilic, atteste du fait qu'une
               entreprise se plie à la réglementation de suivi du temps de
