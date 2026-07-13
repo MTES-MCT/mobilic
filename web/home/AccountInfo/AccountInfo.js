@@ -289,6 +289,7 @@ export default function Home() {
               {isActive && (
                 <>
                   <Section
+                    id="employment-section"
                     component="h2"
                     title={
                       employments.length > 1

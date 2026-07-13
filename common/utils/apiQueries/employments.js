@@ -271,3 +271,14 @@ export const UPDATE_HIDE_EMAIL_MUTATION = gql`
     }
   }
 `;
+
+export const REQUEST_DETACHMENT_MUTATION = gql`
+  mutation requestDetachment($employmentId: Int!) {
+    employments {
+      requestDetachment(employmentId: $employmentId) {
+        id
+        detachmentRequest
+      }
+    }
+  }
+`;
