@@ -20,6 +20,7 @@ import { TextBadge } from "../common/hooks/useCompanyCertification";
 import { Stack } from "@mui/material";
 import { ExternalLink } from "../common/ExternalLink";
 import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
+import { PaperContainerTitle } from "../common/PaperContainer";
 
 const useStyles = makeStyles((theme) => ({
   searchBar: {
@@ -34,7 +35,12 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(3),
     height: "248px"
-  }
+  },
+  title: {
+    marginBottom: theme.spacing(6),
+    maxWidth: 800,
+    margin: "auto"
+  },
 }));
 
 export function Certificate() {
@@ -80,9 +86,9 @@ export function Certificate() {
       <Main sx={{ marginBottom: 15 }}>
         <Container maxWidth="lg">
           <Stack direction="column" textAlign="left" rowGap={4} mt={2}>
-            <Typography component="h1" variant="h3" margin="auto">
+            <PaperContainerTitle variant="h1" className={classes.title}>
               Les entreprises certifiées
-            </Typography>
+            </PaperContainerTitle>
             <Typography>
               Le certificat, fourni par l'équipe Mobilic, atteste du fait qu'une
               entreprise se plie à la réglementation de suivi du temps de

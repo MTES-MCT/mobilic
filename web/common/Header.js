@@ -374,6 +374,7 @@ const HeaderCompaniesDropdown = () => {
           margin: 0,
           padding: '0 2.5rem 0 0',
           textOverflow: 'ellipsis',
+          maxWidth: "150px"
         }
       }}
       className={classes.companyDrowndown}
@@ -429,7 +430,7 @@ const commonHeaderProps = {
   },
 };
 
-function AppHeader({ forceMobile = false, disableMenu = false }) {
+function AppHeader({ disableMenu = false }) {
   const store = useStoreSyncedWithLocalStorage();
 
   const location = useLocation();
@@ -437,7 +438,6 @@ function AppHeader({ forceMobile = false, disableMenu = false }) {
   const classes = useStyles();
   const userInfo = store.userInfo();
   const isLgDown = useIsWidthDown("lg");
-  const isMobile = isLgDown || forceMobile;
 
   const { path } = useRouteMatch();
   const homePath = path.includes("/admin") ? "/admin/home" : "/app";
@@ -507,7 +507,7 @@ function AppHeader({ forceMobile = false, disableMenu = false }) {
     return(
       <>
         {
-          isMobile ? (
+          isLgDown ? (
             <MobileHeaderConnected openNavigationMenu={openNavigationMenu} homePath={homePath} open={openNavDrawer} disableMenu={disableMenu} />
           ) : (
             <Header
@@ -532,7 +532,7 @@ function AppHeader({ forceMobile = false, disableMenu = false }) {
             key={1}
             open={openNavDrawer}
             setOpen={setOpenNavDrawer}
-            fullScreen={isMobile}
+            fullScreen={isLgDown}
           />
         }
       </>
@@ -561,7 +561,7 @@ export function MobilicHeader({ forceMobile = false, disableMenu = false }) {
     <ControllerHeader />
   ) : (
     <HeaderComponent fitContainer={forceMobile}>
-      <AppHeader forceMobile={forceMobile} disableMenu={disableMenu} />
+      <AppHeader disableMenu={disableMenu} />
     </HeaderComponent>
   );
 }
