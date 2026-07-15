@@ -20,8 +20,16 @@ import { TextBadge } from "../common/hooks/useCompanyCertification";
 import { Stack } from "@mui/material";
 import { ExternalLink } from "../common/ExternalLink";
 import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
+import { PaperContainerTitle } from "../common/PaperContainer";
 
 const useStyles = makeStyles((theme) => ({
+  container: {
+    paddingTop: theme.spacing(3),
+    paddingBottom: theme.spacing(7),
+    paddingLeft: theme.spacing(5),
+    paddingRight: theme.spacing(5),
+    margin: 0
+  },
   searchBar: {
     marginRight: "auto",
     marginLeft: "auto",
@@ -34,7 +42,12 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(3),
     height: "248px"
-  }
+  },
+  title: {
+    marginBottom: theme.spacing(6),
+    maxWidth: 800,
+    margin: "auto"
+  },
 }));
 
 export function Certificate() {
@@ -77,12 +90,17 @@ export function Certificate() {
   return (
     <>
       <MobilicHeader />
-      <Main sx={{ marginBottom: 15 }}>
+      <Main 
+        className={`${classes.container}`}
+        sx={{ marginBottom: 15 }}
+      >
         <Container maxWidth="lg">
-          <Stack direction="column" textAlign="left" rowGap={4} mt={2}>
-            <Typography component="h1" variant="h3" margin="auto">
+          <Box>
+            <PaperContainerTitle variant="h1" className={classes.title}>
               Les entreprises certifiées
-            </Typography>
+            </PaperContainerTitle>
+          </Box>
+          <Stack direction="column" textAlign="left" rowGap={4}>
             <Typography>
               Le certificat, fourni par l'équipe Mobilic, atteste du fait qu'une
               entreprise se plie à la réglementation de suivi du temps de

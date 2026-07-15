@@ -35,7 +35,6 @@ import { useIsWidthDown } from "common/utils/useWidth";
 const useStyles = makeStyles((theme) => ({
   navItemButton: {
     borderRadius: 2,
-    padding: "0",
     fontSize: "1rem",
     fontWeight: 400,
   },
@@ -57,10 +56,9 @@ const useStyles = makeStyles((theme) => ({
   navListItem: {
     width: "100%",
     display: "block",
-    padding: "0.75rem 0",
-    "&:hover": {
-      color: theme.palette.primary.main,
-      backgroundColor: theme.palette.background.default
+    padding: "0.75rem 1rem",
+    "&&:hover": {
+      backgroundColor: fr.colors.decisions.background.overlap.grey.hover,
     },
     fontSize: "1rem",
     fontWeight: 400,
@@ -82,6 +80,7 @@ const useStyles = makeStyles((theme) => ({
   },
   selectedNavListItem: {
     color: fr.colors.decisions.text.active.blueFrance.default,
+    fontWeight: 600,
   },
   nestedListSubheader: {
     padding: "0.75rem 0",
@@ -374,6 +373,7 @@ const HeaderCompaniesDropdown = () => {
           margin: 0,
           padding: '0 2.5rem 0 0',
           textOverflow: 'ellipsis',
+          maxWidth: "150px"
         }
       }}
       className={classes.companyDrowndown}
@@ -429,7 +429,7 @@ const commonHeaderProps = {
   },
 };
 
-function AppHeader({ forceMobile = false, disableMenu = false }) {
+function AppHeader({ disableMenu = false }) {
   const store = useStoreSyncedWithLocalStorage();
 
   const location = useLocation();
@@ -437,7 +437,6 @@ function AppHeader({ forceMobile = false, disableMenu = false }) {
   const classes = useStyles();
   const userInfo = store.userInfo();
   const isLgDown = useIsWidthDown("lg");
-  const isMobile = isLgDown || forceMobile;
 
   const { path } = useRouteMatch();
   const homePath = path.includes("/admin") ? "/admin/home" : "/app";
@@ -507,7 +506,7 @@ function AppHeader({ forceMobile = false, disableMenu = false }) {
     return(
       <>
         {
-          isMobile ? (
+          isLgDown ? (
             <MobileHeaderConnected openNavigationMenu={openNavigationMenu} homePath={homePath} open={openNavDrawer} disableMenu={disableMenu} />
           ) : (
             <Header
@@ -532,7 +531,7 @@ function AppHeader({ forceMobile = false, disableMenu = false }) {
             key={1}
             open={openNavDrawer}
             setOpen={setOpenNavDrawer}
-            fullScreen={isMobile}
+            fullScreen={isLgDown}
           />
         }
       </>
@@ -561,7 +560,7 @@ export function MobilicHeader({ forceMobile = false, disableMenu = false }) {
     <ControllerHeader />
   ) : (
     <HeaderComponent fitContainer={forceMobile}>
-      <AppHeader forceMobile={forceMobile} disableMenu={disableMenu} />
+      <AppHeader disableMenu={disableMenu} />
     </HeaderComponent>
   );
 }

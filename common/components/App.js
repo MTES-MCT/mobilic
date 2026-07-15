@@ -101,6 +101,7 @@ function AppComponent({ ScreenComponent }) {
             beginNewMission={actions.beginNewMission}
             endMissionForTeam={actions.endMissionForTeam}
             endMission={actions.endMission}
+            cancelMission={actions.cancelMission}
             openEndMissionModal={actions.openEndMissionModal}
             validateMission={actions.validateMission}
             editVehicle={actions.updateMissionVehicle}
