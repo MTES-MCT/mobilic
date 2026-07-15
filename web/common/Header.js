@@ -35,10 +35,8 @@ import { useIsWidthDown } from "common/utils/useWidth";
 const useStyles = makeStyles((theme) => ({
   navItemButton: {
     borderRadius: 2,
-    padding: "0",
     fontSize: "1rem",
     fontWeight: 400,
-    padding: "0.75rem 0.5rem",
   },
   companyDrowndown: {
     display: "inline-flex",
@@ -58,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   navListItem: {
     width: "100%",
     display: "block",
-    padding: "0.75rem 0.5rem",
+    padding: "0.75rem 1rem",
     "&&:hover": {
       backgroundColor: fr.colors.decisions.background.overlap.grey.hover,
     },
