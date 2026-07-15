@@ -87,7 +87,8 @@ export function CompanySignup() {
         siren: siren,
         usualName: usualName.trim(),
         phoneNumber,
-        businessType,
+        businessType: businessType?.businessType,
+        transportType: businessType?.transportType,
         nbWorkers
       };
       const apiResponse = await api.graphQlMutate(
@@ -127,7 +128,8 @@ export function CompanySignup() {
               siret: f.siret,
               usualName: f.usualName,
               phoneNumber: f.phoneNumber,
-              businessType: f.businessType,
+              businessType: f.businessType?.businessType || f.businessType,
+              transportType: f.businessType?.transportType || f.transportType,
               nbWorkers: f.nbWorkers
             };
           })

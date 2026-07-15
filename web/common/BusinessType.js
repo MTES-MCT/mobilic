@@ -6,14 +6,14 @@ import Notice from "./Notice";
 
 const TRANSPORT_OPTIONS = [
   { value: "TRM", label: "Marchandises (TRM)" },
-  { value: "TRV", label: "Voyageurs (TRV)" }
+  { value: "TRV", label: "Voyageurs (TRV)" },
+  { value: "DEM", label: "Déménagement (DEM)" }
 ];
 const BUSINESS_OPTIONS = {
   TRM: [
     { value: "LONG_DISTANCE", label: "Longue distance" },
     { value: "SHORT_DISTANCE", label: "Courte distance" },
     { value: "SHIPPING", label: "Messagerie, Fonds et valeur" },
-    { value: "MOVE", label: "Déménagement" },
   ],
   TRV: [
     { value: "FREQUENT", label: "Lignes régulières" },
@@ -22,6 +22,10 @@ const BUSINESS_OPTIONS = {
     { value: "TAXI_REGULATED", label: "Taxi conventionné" },
     { value: "VTC", label: "VTC" },
     { value: "LOTI", label: "LOTI" }
+  ],
+  DEM: [
+    { value: "LONG_DISTANCE", label: "Longue distance" },
+    { value: "SHORT_DISTANCE", label: "Courte distance" },
   ]
 };
 
@@ -74,7 +78,7 @@ export function BusinessType({
         : ""
     );
   }, [transportType]);
-  React.useEffect(() => onChangeBusinessType(businessType), [businessType]);
+  React.useEffect(() => onChangeBusinessType({ transportType, businessType }), [transportType, businessType]);
 
   const isSmDown = useIsWidthDown("sm");
 

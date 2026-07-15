@@ -12,10 +12,6 @@ export const BUSINESS_TYPES = [
     label: "TRM - Messagerie, Fonds et valeur"
   },
   {
-    value: "MOVE",
-    label: "TRM - Déménagement"
-  },
-  {
     value: "FREQUENT",
     label: "TRV - Lignes régulières"
   },
@@ -38,7 +34,15 @@ export const BUSINESS_TYPES = [
   {
     value: "LOTI",
     label: "TRV - LOTI"
-  }
+  },
+  {
+    value: "LONG_DISTANCE",
+    label: "DEM - Longue distance"
+  },
+  {
+    value: "SHORT_DISTANCE",
+    label: "DEM - Courte distance"
+  },
 ];
 
 export const formatActivity = business => {
@@ -49,5 +53,5 @@ export const formatActivity = business => {
   if (!transportType || !businessType) {
     return "";
   }
-  return BUSINESS_TYPES.filter(b => b.value === businessType)[0].label;
+  return BUSINESS_TYPES.filter(b => b.label.includes(transportType)).filter(b => b.value === businessType)[0].label;
 };
