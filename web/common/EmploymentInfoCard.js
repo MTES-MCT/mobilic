@@ -59,6 +59,9 @@ const useStyles = makeStyles((theme) => ({
   },
   employmentDetails: {
     display: "block"
+  },
+  employmentCard: {
+    scrollMarginTop: "100px"
   }
 }));
 
@@ -73,6 +76,9 @@ function EMPLOYMENT_STATUS_TO_TEXT_AND_COLOR(theme) {
 }
 
 const DETACHMENT_COOLDOWN_MS = 48 * 3600 * 1000;
+const FULL_WIDTH_BTN_SX = {
+  "& .fr-btn": { width: "100%", justifyContent: "center" }
+};
 
 export function EmploymentInfoCard({
   employment,
@@ -142,6 +148,12 @@ export function EmploymentInfoCard({
     ? Date.now() - lastSentAt < DETACHMENT_COOLDOWN_MS
     : false;
 
+  React.useEffect(() => {
+    if (!hasDetachmentRequest) return;
+    const el = document.getElementById(`employment-${employment.id}`);
+    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [hasDetachmentRequest]);
+
   async function handleDetachmentRequest() {
     await alerts.withApiErrorHandling(async () => {
       const apiResponse = await api.graphQlMutate(
@@ -154,14 +166,6 @@ export function EmploymentInfoCard({
         update: apiResponse.data.employments.requestDetachment
       });
       store.batchUpdate();
-      setTimeout(() => {
-        const el = document.getElementById("employment-section");
-        if (el) {
-          const header = document.querySelector("header");
-          el.style.scrollMarginTop = `${header?.offsetHeight || 0}px`;
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }, 300);
     });
   }
 
@@ -202,15 +206,17 @@ export function EmploymentInfoCard({
 
   return (
     <Accordion
+      id={`employment-${employment.id}`}
       variant="outlined"
       expanded={open}
       onChange={(event, open_) => setOpen(open_)}
-      className={
+      className={`${classes.employmentCard} ${
         (status === EMPLOYMENT_STATUS.ended ||
           status === EMPLOYMENT_STATUS.ceased) &&
         lightenIfEnded
           ? classes.ended
           : ""
+      }`
       }
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -262,7 +268,7 @@ export function EmploymentInfoCard({
       </AccordionSummary>
       <AccordionDetails className={classes.employmentDetails}>
         {!hideActions && hasDetachmentRequest && status === EMPLOYMENT_STATUS.active && !employment.endDate && (
-          <Stack spacing="12px" mb="16px" sx={{ "& .fr-btn": { width: "100%", justifyContent: "center" } }}>
+          <Stack spacing="12px" mb="16px" sx={FULL_WIDTH_BTN_SX}>
             <Notice
               type="info"
               size="small"
@@ -453,7 +459,7 @@ export function EmploymentInfoCard({
           !employment.hasAdminRights &&
           status === EMPLOYMENT_STATUS.active &&
           !employment.endDate && (
-            <Stack spacing="12px" sx={{ "& .fr-btn": { width: "100%", justifyContent: "center" } }}>
+            <Stack spacing="12px" sx={FULL_WIDTH_BTN_SX}>
               <Button
                 priority="secondary"
                 size="small"

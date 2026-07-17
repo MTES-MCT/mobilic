@@ -17,7 +17,7 @@ export const Section = React.forwardRef((props, ref) => {
   const classes = useStyles();
 
   return (
-    <Box ref={ref} id={props.id} className={classes.section}>
+    <Box ref={ref} className={classes.section}>
       <Typography
         className={classes.sectionTitle}
         variant="h4"
