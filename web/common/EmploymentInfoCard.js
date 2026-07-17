@@ -140,9 +140,9 @@ export function EmploymentInfoCard({
   const isMobile = useIsWidthDown("sm");
 
   const detachmentRequest = employment.detachmentRequest;
-  const hasDetachmentRequest = !!detachmentRequest?.requested_at;
-  const lastSentAt = detachmentRequest?.last_sent_at
-    ? detachmentRequest.last_sent_at * 1000
+  const hasDetachmentRequest = !!detachmentRequest?.requestedAt;
+  const lastSentAt = detachmentRequest?.lastSentAt
+    ? detachmentRequest.lastSentAt * 1000
     : null;
   const isCooldownActive = lastSentAt
     ? Date.now() - lastSentAt < DETACHMENT_COOLDOWN_MS
@@ -273,9 +273,9 @@ export function EmploymentInfoCard({
               type="info"
               size="small"
               description={
-                detachmentRequest.last_sent_at !== detachmentRequest.requested_at
-                  ? `Relance de demande de détachement envoyée le ${new Date(detachmentRequest.last_sent_at * 1000).toLocaleDateString("fr-FR")}.`
-                  : `Demande de détachement envoyée le ${new Date(detachmentRequest.requested_at * 1000).toLocaleDateString("fr-FR")}.`
+                detachmentRequest.lastSentAt !== detachmentRequest.requestedAt
+                  ? `Relance de demande de détachement envoyée le ${new Date(detachmentRequest.lastSentAt * 1000).toLocaleDateString("fr-FR")}.`
+                  : `Demande de détachement envoyée le ${new Date(detachmentRequest.requestedAt * 1000).toLocaleDateString("fr-FR")}.`
               }
             />
             <Button

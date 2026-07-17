@@ -277,7 +277,10 @@ export const REQUEST_DETACHMENT_MUTATION = gql`
     employments {
       requestDetachment(employmentId: $employmentId) {
         id
-        detachmentRequest
+        detachmentRequest {
+          requestedAt
+          lastSentAt
+        }
       }
     }
   }
