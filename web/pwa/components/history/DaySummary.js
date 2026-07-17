@@ -131,6 +131,13 @@ export function DaySummary({
     latestAdminValidationTime &&
     now - latestAdminValidationTime < DISPUTE_DELAY_SECONDS;
 
+  const isWithinCancelDelay = React.useCallback(
+    activity =>
+      activity.dispute?.time &&
+      now - activity.dispute.time < DISPUTE_DELAY_SECONDS,
+    [now]
+  );
+
   const hasActiveDispute = React.useMemo(
     () =>
       activitiesWithDisputeUpdates.some(
@@ -205,7 +212,8 @@ export function DaySummary({
             shouldDisplayInitialEmployeeVersion={shouldDisplayInitialEmployeeVersion}
             employeeValidationTime={employeeValidationTime}
             onDispute={isWithinDisputeDelay ? handleDispute : null}
-            onCancelDispute={isWithinDisputeDelay ? handleCancelDispute : null}
+            onCancelDispute={handleCancelDispute}
+            isWithinCancelDelay={isWithinCancelDelay}
           />
         </MissionReviewSection>
       </InfoCard>

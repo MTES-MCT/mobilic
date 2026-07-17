@@ -177,7 +177,8 @@ function ActivityItem({
   shouldDisplayInitialEmployeeVersion = false,
   employeeValidationTime = null,
   onDispute = null,
-  onCancelDispute = null
+  onCancelDispute = null,
+  isWithinCancelDelay = null
 }) {
   const modals = useModals();
   const classes = useStyles({ color: ACTIVITIES[activity.type].color });
@@ -289,6 +290,7 @@ function ActivityItem({
           activity={activity}
           onDispute={onDispute}
           onCancelDispute={onCancelDispute}
+          isWithinCancelDelay={isWithinCancelDelay}
         />
       )}
     </div>
@@ -314,7 +316,8 @@ export function ActivityList({
   shouldDisplayInitialEmployeeVersion = false,
   employeeValidationTime = null,
   onDispute = null,
-  onCancelDispute = null
+  onCancelDispute = null,
+  isWithinCancelDelay = null
 }) {
   const ref = React.useRef();
   const now1 = now();
@@ -446,6 +449,7 @@ export function ActivityList({
               employeeValidationTime={employeeValidationTime}
               onDispute={onDispute}
               onCancelDispute={onCancelDispute}
+              isWithinCancelDelay={isWithinCancelDelay}
             />
           ))}
         </div>

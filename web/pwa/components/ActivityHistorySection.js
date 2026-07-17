@@ -124,7 +124,8 @@ export function ActivityHistorySection({
   validationTime,
   activity,
   onDispute,
-  onCancelDispute
+  onCancelDispute,
+  isWithinCancelDelay
 }) {
   const classes = useStyles();
   const modals = useModals();
@@ -207,7 +208,7 @@ export function ActivityHistorySection({
                   "{dispute.text}"
                 </span>
               </div>
-              {onCancelDispute && (
+              {onCancelDispute && isWithinCancelDelay?.(activity) && (
                 <a
                   className={`fr-link fr-link--sm ${classes.disputeCancel}`}
                   href="#"
