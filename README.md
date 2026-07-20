@@ -2,6 +2,8 @@
 
 **Simplifier le suivi du temps de travail dans le transport routier léger pour lutter contre le travail illégal**
 
+> Review apps (déploiement d'une PR sur Scalingo) : voir [`docs/review-apps.md`](../mobilic-api/docs/review-apps.md) dans le repo back.
+
 <img height="100px" style="margin-right: 20px" src="./common/assets/images/mobilic-logo-with-text.svg" alt="mobilic-logo"></img>
 
 Dépôt de code (partie front) de la startup d'état **Mobilic** incubée à la Fabrique Numérique du Ministère de la Transition Écologique.
@@ -13,7 +15,7 @@ Ce `README` s'adresse aux développeurs informatiques du projet. Pour plus d'inf
 - [Documentation technique de l'API](https://mobilic.beta.gouv.fr/developers)
 - [Conditions d'interfaçage](https://developers.mobilic.beta.gouv.fr/conditions-dinterfacage)
 
-## Architecture logicielle #
+## Architecture logicielle
 
 Le projet est divisé en 2 grandes briques distinctes :
 
