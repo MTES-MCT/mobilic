@@ -32,6 +32,7 @@ const useStyles = makeStyles(theme => ({
 
 export function Event({
   text,
+  authorName,
   submitter,
   submitterId,
   time,
@@ -45,6 +46,10 @@ export function Event({
   const classes = useStyles();
   const store = useStoreSyncedWithLocalStorage();
   const modals = useModals();
+
+  const displayName = authorName
+    || (submitter ? formatPersonName(submitter) : null)
+    || (isAutomatic ? "Mobilic" : formatPersonName(store.userInfo()));
 
   return (
     <ListItem disableGutters>
@@ -62,11 +67,7 @@ export function Event({
         primary={
           <>
             <Typography variant="body2" className={classes.submitter}>
-              {submitter
-                ? formatPersonName(submitter)
-                : isAutomatic
-                ? "Mobilic"
-                : formatPersonName(store.userInfo())}
+              {displayName}
               {" - "}
             </Typography>
             <Typography variant="body2" className={classes.time}>
