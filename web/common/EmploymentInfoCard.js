@@ -14,6 +14,7 @@ import React, { useMemo } from "react";
 import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import InfoIcon from "@mui/icons-material/Info";
 import useTheme from "@mui/styles/useTheme";
 import {
   EMPLOYMENT_ROLE,
@@ -35,9 +36,11 @@ import { FieldTitle } from "./typography/FieldTitle";
 import { ExternalLink } from "./ExternalLink";
 import { useCompanyCertification } from "./hooks/useCompanyCertification";
 import { fr } from "@codegouvfr/react-dsfr";
+import { startOfMonth, subMonths } from "date-fns";
 import {
   REJECT_EMPLOYMENT_MUTATION,
-  VALIDATE_EMPLOYMENT_MUTATION
+  VALIDATE_EMPLOYMENT_MUTATION,
+  REQUEST_DETACHMENT_MUTATION
 } from "common/utils/apiQueries/employments";
 
 const useStyles = makeStyles((theme) => ({
@@ -56,6 +59,9 @@ const useStyles = makeStyles((theme) => ({
   },
   employmentDetails: {
     display: "block"
+  },
+  employmentCard: {
+    scrollMarginTop: "100px"
   }
 }));
 
@@ -68,6 +74,11 @@ function EMPLOYMENT_STATUS_TO_TEXT_AND_COLOR(theme) {
     [EMPLOYMENT_STATUS.ceased]: ["Cessée", theme.palette.error.main]
   };
 }
+
+const DETACHMENT_COOLDOWN_MS = 48 * 3600 * 1000;
+const FULL_WIDTH_BTN_SX = {
+  "& .fr-btn": { width: "100%", justifyContent: "center" }
+};
 
 export function EmploymentInfoCard({
   employment,
@@ -128,6 +139,36 @@ export function EmploymentInfoCard({
 
   const isMobile = useIsWidthDown("sm");
 
+  const detachmentRequest = employment.detachmentRequest;
+  const hasDetachmentRequest = !!detachmentRequest?.requestedAt;
+  const lastSentAt = detachmentRequest?.lastSentAt
+    ? detachmentRequest.lastSentAt * 1000
+    : null;
+  const isCooldownActive = lastSentAt
+    ? Date.now() - lastSentAt < DETACHMENT_COOLDOWN_MS
+    : false;
+
+  React.useEffect(() => {
+    if (!hasDetachmentRequest) return;
+    const el = document.getElementById(`employment-${employment.id}`);
+    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [hasDetachmentRequest]);
+
+  async function handleDetachmentRequest() {
+    await alerts.withApiErrorHandling(async () => {
+      const apiResponse = await api.graphQlMutate(
+        REQUEST_DETACHMENT_MUTATION,
+        { employmentId: employment.id }
+      );
+      await store.updateEntityObject({
+        objectId: employment.id,
+        entity: "employments",
+        update: apiResponse.data.employments.requestDetachment
+      });
+      store.batchUpdate();
+    });
+  }
+
   async function handleEmploymentValidation(accept) {
     await alerts.withApiErrorHandling(
       async () => {
@@ -165,15 +206,17 @@ export function EmploymentInfoCard({
 
   return (
     <Accordion
+      id={`employment-${employment.id}`}
       variant="outlined"
       expanded={open}
       onChange={(event, open_) => setOpen(open_)}
-      className={
+      className={`${classes.employmentCard} ${
         (status === EMPLOYMENT_STATUS.ended ||
           status === EMPLOYMENT_STATUS.ceased) &&
         lightenIfEnded
           ? classes.ended
           : ""
+      }`
       }
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -224,6 +267,42 @@ export function EmploymentInfoCard({
         </Grid>
       </AccordionSummary>
       <AccordionDetails className={classes.employmentDetails}>
+        {!hideActions && hasDetachmentRequest && status === EMPLOYMENT_STATUS.active && !employment.endDate && (
+          <Stack spacing="12px" mb="16px" sx={FULL_WIDTH_BTN_SX}>
+            <Notice
+              type="info"
+              size="small"
+              description={
+                detachmentRequest.lastSentAt !== detachmentRequest.requestedAt
+                  ? `Relance de demande de détachement envoyée le ${new Date(detachmentRequest.lastSentAt * 1000).toLocaleDateString("fr-FR")}.`
+                  : `Demande de détachement envoyée le ${new Date(detachmentRequest.requestedAt * 1000).toLocaleDateString("fr-FR")}.`
+              }
+            />
+            <Button
+              priority="secondary"
+              size="small"
+              disabled={isCooldownActive}
+              sx={{ width: "100%", justifyContent: "center" }}
+              onClick={() => handleDetachmentRequest()}
+            >
+              Relancer le gestionnaire
+            </Button>
+            {isCooldownActive && (
+              <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                <InfoIcon
+                  aria-hidden="true"
+                  sx={{ color: fr.colors.decisions.text.default.info.default, fontSize: 16 }}
+                />
+                <Typography sx={{
+                  fontSize: 14,
+                  color: fr.colors.decisions.text.default.info.default
+                }}>
+                  Relance possible au bout de 48h.
+                </Typography>
+              </Box>
+            )}
+          </Stack>
+        )}
         <Grid container wrap="wrap" spacing={spacing}>
           <Grid item xs={6}>
             <InfoItem
@@ -354,7 +433,7 @@ export function EmploymentInfoCard({
             </Grid>
           )}
           {!hideActions && (
-            <Grid item xs={12}>
+            <Grid item xs={12} sx={{ "& .fr-fieldset": { marginBottom: "12px" } }}>
               <HideEmail
                 employment={employment}
                 disabled={
@@ -375,6 +454,44 @@ export function EmploymentInfoCard({
               description="L'entreprise a mis un terme à votre rattachement. Vous ne pouvez
             plus saisir de temps de travail pour cette entreprise."
             />
+          )}
+        {!hideActions &&
+          !employment.hasAdminRights &&
+          status === EMPLOYMENT_STATUS.active &&
+          !employment.endDate && (
+            <Stack spacing="12px" sx={FULL_WIDTH_BTN_SX}>
+              <Button
+                priority="secondary"
+                size="small"
+                onClick={() =>
+                  modals.open("pdfExport", {
+                    initialMinDate: startOfMonth(subMonths(new Date(), 1)),
+                    initialMaxDate: new Date()
+                  })
+                }
+              >
+                Télécharger un récapitulatif d'heures
+              </Button>
+              {!hasDetachmentRequest && (
+                <Button
+                  priority="secondary"
+                  size="small"
+                  iconId="fr-icon-logout-box-r-line"
+                  iconPosition="right"
+                  onClick={() =>
+                    modals.open("confirmation", {
+                      textButtons: true,
+                      title: `Quitter l'entreprise ${employment.company.name}`,
+                      content:
+                        "Confirmez-vous l'envoi d'une demande de détachement de votre compte Mobilic à l'entreprise ?",
+                      handleConfirm: handleDetachmentRequest
+                    })
+                  }
+                >
+                  Quitter l'entreprise
+                </Button>
+              )}
+            </Stack>
           )}
         {!hideStatus &&
           !hideActions &&

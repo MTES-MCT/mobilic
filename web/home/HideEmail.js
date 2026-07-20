@@ -11,7 +11,7 @@ export function HideEmail({ employment, disabled }) {
   return (
     <Checkbox
       disabled={disabled}
-      legend="Autorisation d'accès à mon email personnel"
+      legend="Autorisation d'accès"
       options={[
         {
           label:

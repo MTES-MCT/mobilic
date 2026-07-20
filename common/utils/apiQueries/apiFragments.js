@@ -246,6 +246,10 @@ export const FULL_EMPLOYMENT_FRAGMENT = gql`
     isTerminated
     isInactive
     status
+    detachmentRequest {
+      requestedAt
+      lastSentAt
+    }
     business {
       transportType
       businessType
