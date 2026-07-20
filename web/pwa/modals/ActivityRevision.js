@@ -258,7 +258,10 @@ export default function ActivityRevisionOrCreationModal({
   }
 
   async function handleSubmit(actionType) {
-    const isBreakEdit = activityType === ACTIVITIES.break.name && event;
+    const isBreakEdit =
+      activityType === ACTIVITIES.break.name &&
+      event &&
+      actionType !== ACTIVITIES_OPERATIONS.cancel;
     let extraOps = [];
     let activitiesForComputation = otherActivities;
 
