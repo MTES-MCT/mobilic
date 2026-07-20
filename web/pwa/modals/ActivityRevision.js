@@ -209,16 +209,82 @@ export default function ActivityRevisionOrCreationModal({
     await handleSeveralActions(actionsToDo);
   }
 
-  async function handleSubmit(actionType) {
-    const ops = convertNewActivityIntoActivityOperations(
-      otherActivities,
-      actionType === ACTIVITIES_OPERATIONS.cancel ? event.endTime : newUserTime,
-      actionType === ACTIVITIES_OPERATIONS.cancel
-        ? event.endTime
-        : newUserEndTime,
-      userId,
-      activityType === ACTIVITIES.break.name
+  function getBreakEditOps() {
+    const userActivities = otherActivities.filter(
+      a => a.userId === userId && !a.dismissedAt
     );
+    const gapOps = [];
+    let effectiveActivities = otherActivities;
+
+    // close old gap left side
+    if (newUserTime > event.startTime) {
+      const actBefore = userActivities.find(
+        a => a.endTime === event.startTime
+      );
+      if (actBefore) {
+        const extendTo = Math.min(newUserTime, event.endTime);
+        gapOps.push({
+          activity: actBefore,
+          operation: ACTIVITIES_OPERATIONS.update,
+          startTime: actBefore.startTime,
+          endTime: extendTo
+        });
+        effectiveActivities = effectiveActivities.map(a =>
+          a === actBefore ? { ...a, endTime: extendTo } : a
+        );
+      }
+    }
+
+    // close old gap right side
+    if (newUserEndTime < event.endTime) {
+      const actAfter = userActivities.find(
+        a => a.startTime === event.endTime
+      );
+      if (actAfter) {
+        const extendTo = Math.max(newUserEndTime, event.startTime);
+        gapOps.push({
+          activity: actAfter,
+          operation: ACTIVITIES_OPERATIONS.update,
+          startTime: extendTo,
+          endTime: actAfter.endTime
+        });
+        effectiveActivities = effectiveActivities.map(a =>
+          a === actAfter ? { ...a, startTime: extendTo } : a
+        );
+      }
+    }
+
+    return { gapOps, effectiveActivities };
+  }
+
+  async function handleSubmit(actionType) {
+    const isBreakEdit =
+      activityType === ACTIVITIES.break.name &&
+      event &&
+      actionType !== ACTIVITIES_OPERATIONS.cancel;
+    let extraOps = [];
+    let activitiesForComputation = otherActivities;
+
+    if (isBreakEdit) {
+      const { gapOps, effectiveActivities } = getBreakEditOps();
+      extraOps = gapOps;
+      activitiesForComputation = effectiveActivities;
+    }
+
+    const ops = [
+      ...extraOps,
+      ...convertNewActivityIntoActivityOperations(
+        activitiesForComputation,
+        actionType === ACTIVITIES_OPERATIONS.cancel
+          ? event.endTime
+          : newUserTime,
+        actionType === ACTIVITIES_OPERATIONS.cancel
+          ? event.endTime
+          : newUserEndTime,
+        userId,
+        activityType === ACTIVITIES.break.name && !event
+      )
+    ];
 
     if (ops.length > 0) {
       modals.open("confirmation", {
