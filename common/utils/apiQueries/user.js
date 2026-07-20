@@ -249,6 +249,10 @@ export const USER_QUERY = gql`
         isAcknowledged
         hasAdminRights
         hideEmail
+        detachmentRequest {
+          requestedAt
+          lastSentAt
+        }
         business {
           transportType
           businessType

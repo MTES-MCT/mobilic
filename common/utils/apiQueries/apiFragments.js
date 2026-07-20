@@ -97,10 +97,22 @@ export const FULL_MISSION_FRAGMENT = gql`
       submitterId
       lastSubmitterId
       dispute
+      receptionTime
       user {
         id
         firstName
         lastName
+      }
+      versions {
+        id
+        startTime
+        endTime
+        receptionTime
+        submitter {
+          id
+          firstName
+          lastName
+        }
       }
     }
     comments {
@@ -236,6 +248,10 @@ export const FULL_EMPLOYMENT_FRAGMENT = gql`
     isTerminated
     isInactive
     status
+    detachmentRequest {
+      requestedAt
+      lastSentAt
+    }
     business {
       transportType
       businessType

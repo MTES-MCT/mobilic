@@ -48,6 +48,12 @@ export const LONG_BREAK_DURATION = 10 * HOUR;
 
 export const CURRENT_YEAR = new Date().getFullYear();
 
+// Control history depth in days (configurable via env var)
+export const CONTROL_HISTORY_DEPTH = parseInt(
+  process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH || "28",
+  10
+);
+
 export function formatTimer(timerDuration, displayZeroHours = true) {
   if (!timerDuration && timerDuration !== 0) return null;
   const timerDurationInMinutes = (timerDuration / 60) >> 0;

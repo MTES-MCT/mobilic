@@ -20,7 +20,7 @@ import {
   ADD_ACTIVITY_IN_MISSION_PANEL,
   EDIT_ACTIVITY_IN_MISSION_PANEL
 } from "common/utils/matomoTags";
-import { getChangeIconAndText } from "../../common/logEvent";
+import { getChangeIconAndText, getEventAuthorName } from "../../common/logEvent";
 import { formatPersonName } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import {
@@ -72,7 +72,7 @@ export function ActivitiesCard({
   });
 
   const showEditColumn = !!(onEditActivity || simplified);
-  const colCount = showEditColumn ? 5 : 4;
+  const colCount = showEditColumn ? 6 : 5;
 
   function getComment(event) {
     const ctx = event.__virtual
@@ -114,7 +114,7 @@ export function ActivitiesCard({
     const changes = getChangeIconAndText(event);
     const author = event.__virtual
       ? formatPersonName(currentUserInfo) || "Vous"
-      : event.submitter ? formatPersonName(event.submitter) : "Inconnu";
+      : getEventAuthorName(event) || "Inconnu";
     const dateLabel = event.__virtual
       ? "(non sauvegardé)"
       : `le ${formatDay(event.time, true)} à ${formatTimeOfDay(event.time)}`;
@@ -145,12 +145,12 @@ export function ActivitiesCard({
         className={`${rowClass}${toggleExpand ? ` ${classes.clickableRow}` : ""}`}
       >
         <TableCell className={classes.cellType}>
-          <span className={classes.activityWithBadge}>
-            {getActivityLabelDependingOnMissionType(entry.type, allowSupportActivity)}
-            {config && (
-              <span className={`${classes.tag} ${classes[config.classKey]}`}>{config.label}</span>
-            )}
-          </span>
+          {getActivityLabelDependingOnMissionType(entry.type, allowSupportActivity)}
+        </TableCell>
+        <TableCell className={classes.cellTag}>
+          {config && (
+            <span className={`${classes.tag} ${classes[config.classKey]}`}>{config.label}</span>
+          )}
         </TableCell>
         <TableCell className={classes.cellTime}>{datetimeFormatter(entry.displayedStartTime)}</TableCell>
         <TableCell className={classes.cellTime}>
@@ -174,7 +174,10 @@ export function ActivitiesCard({
                 size="small"
                 aria-expanded={isExpanded}
                 aria-label="Afficher l'historique"
-                onClick={e => e.stopPropagation()}
+                onClick={e => {
+                  e.stopPropagation();
+                  toggleExpand();
+                }}
               >
                 <KeyboardArrowDownIcon className={`${classes.chevron} ${isExpanded ? classes.chevronExpanded : ""}`} />
               </IconButton>
@@ -220,6 +223,7 @@ export function ActivitiesCard({
               <TableHead>
                 <TableRow className={classes.headerRow}>
                   <TableCell className={classes.cellType}>Activité</TableCell>
+                  <TableCell className={classes.cellTag} />
                   <TableCell className={classes.cellTime}>Début</TableCell>
                   <TableCell className={classes.cellTime}>Fin</TableCell>
                   <TableCell className={classes.cellDuration}>Durée</TableCell>

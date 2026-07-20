@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { Header } from "../common/Header";
+import { MobilicHeader } from "../common/Header";
 import { Footer } from "./footer";
 import { PaperContainerTitle } from "../common/PaperContainer";
 import { shuffle } from "lodash/collection";
@@ -73,6 +73,8 @@ const interfacedSrcs = require.context(
   /\.(png|jpe?g|svg)$/
 );
 
+const reducedInterfacedLogos = ['perff'];
+
 const useStyles = makeStyles(theme => ({
   whiteSection: {
     backgroundColor: theme.palette.background.paper
@@ -112,6 +114,10 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.up("md")]: {
       height: 80
     }
+  },
+  interfacedImageSmall: {
+    maxWidth: 180,
+    height: "auto"
   }
 }));
 
@@ -135,7 +141,7 @@ export function Partners() {
 
   return (
     <>
-      <Header />
+      <MobilicHeader />
       <Main
         className={`${classes.container} ${classes.whiteSection}`}
         maxWidth={false}
@@ -249,7 +255,7 @@ export function Partners() {
                           <img
                             alt={src}
                             src={imgSrc}
-                            className={classes.interfacedImage}
+                            className={reducedInterfacedLogos.some(logo => src.includes(logo)) ? classes.interfacedImageSmall : classes.interfacedImage}
                           />
                         </Grid>
                       );

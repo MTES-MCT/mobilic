@@ -25,7 +25,11 @@ export const useActivitiesCardStyles = makeStyles(theme => ({
     }
   },
   cellType: {
-    minWidth: 150
+    minWidth: 100
+  },
+  cellTag: {
+    textAlign: "left",
+    padding: "0 8px"
   },
   cellTime: {
     minWidth: 80,
@@ -98,12 +102,6 @@ export const useActivitiesCardStyles = makeStyles(theme => ({
     fontSize: 14,
     lineHeight: "24px"
   },
-  activityWithBadge: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%"
-  },
   tag: {
     display: "inline-flex",
     justifyContent: "center",
@@ -155,11 +153,10 @@ export const useActivitiesCardStyles = makeStyles(theme => ({
     color: blueFrance,
     display: "block",
     margin: "auto",
-    transform: "rotate(-90deg)",
     transition: "transform 0.2s"
   },
   chevronExpanded: {
-    transform: "rotate(0deg)"
+    transform: "rotate(180deg)"
   },
   warningText: {
     color: theme.palette.warning.main,

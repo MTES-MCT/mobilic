@@ -11,10 +11,11 @@ import {
 } from "common/utils/activities";
 import { now } from "common/utils/time";
 import WarningEndMissionModalContainer from "../components/WarningEndMissionModal/WarningEndMissionModalContainer";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useModals } from "common/utils/modals";
 import { missionLastLessThanAMinute } from "common/utils/mission";
 import Notice from "../../common/Notice";
-import { Header } from "../../common/Header";
+import { MobilicHeader } from "../../common/Header";
 
 export function CurrentActivity({
   latestActivity,
@@ -25,6 +26,7 @@ export function CurrentActivity({
   editActivityEvent,
   editVehicle,
   endMission,
+  cancelMission,
   previousMissionEnd,
   openEndMissionModal
 }) {
@@ -69,7 +71,7 @@ export function CurrentActivity({
 
   return (
     <>
-      <Header forceMobile />
+      <MobilicHeader forceMobile />
       <CurrentActivityOverview
         currentDayStart={currentMission.startTime}
         currentMission={currentMission}
@@ -159,6 +161,21 @@ export function CurrentActivity({
         editKilometerReading={registerKilometerReading}
         titleProps={{ component: "h2" }}
       />
+      <Box display="flex" justifyContent="center" pb="56px">
+        <Button
+          priority="secondary"
+          onClick={() =>
+            modals.open("abandonMission", {
+              handleSubmit: async () => {
+                modals.close("abandonMission");
+                await cancelMission(currentMission);
+              }
+            })
+          }
+        >
+          Abandonner la mission
+        </Button>
+      </Box>
       <WarningEndMissionModalContainer
         currentMission={currentMission}
         currentTeam={currentTeam}

@@ -9,7 +9,7 @@ import {
   useLocation,
   useHistory
 } from "react-router-dom";
-import { Header } from "../common/Header";
+import { MobilicHeader } from "../common/Header";
 import { API_HOST, useApi } from "common/utils/api";
 import { ConfirmUser } from "./ConfirmUser";
 import { useLoadingScreen } from "common/utils/loading";
@@ -97,7 +97,7 @@ export default function OAuth() {
 
   return (
     <>
-      <Header disableMenu={true} />
+      <MobilicHeader disableMenu />
       <Main maxWidth="md" className={classes.container}>
         <Switch>
           {userId && (

@@ -51,7 +51,8 @@ import {
   LOG_LOCATION_MUTATION,
   REGISTER_KILOMETER_AT_LOCATION,
   UPDATE_MISSION_VEHICLE_MUTATION,
-  VALIDATE_MISSION_MUTATION
+  VALIDATE_MISSION_MUTATION,
+  CANCEL_MISSION_MUTATION
 } from "./apiQueries/missions";
 
 const ActionsContext = React.createContext(() => {});
@@ -309,6 +310,22 @@ class Actions {
               userId === this.store.userId() &&
               this.shouldProposeRefresh(error),
             isActionDescriptionFemale: true
+          });
+        }
+      }
+    });
+
+    api.registerResponseHandler("cancelMission", {
+      onSuccess: (apiResponse, { missionId, userId }) => {
+        this._applyCancelMission(missionId, userId);
+      },
+      onError: (error) => {
+        if (isGraphQLError(error)) {
+          this.displayApiErrors({
+            graphQLErrors: error.graphQLErrors,
+            actionDescription: "L'abandon de la mission",
+            hasRequestFailed: true,
+            isActionDescriptionFemale: false
           });
         }
       }
@@ -1238,6 +1255,41 @@ class Actions {
           })
         : null
     ]);
+  };
+
+  // triggers immediate redirect via displayCurrentMission; on reload, dismissed activities are excluded by the fragment
+  // for team missions, isDeleted is only local — coworkers' stores are unaffected
+  _applyCancelMission(missionId, userId, requestId = null) {
+    const activities = values(this.store.getEntity("activities")).filter(
+      (a) => a.missionId === missionId && a.userId === userId
+    );
+    activities.forEach((a) =>
+      this.store.deleteEntityObject(a.id, "activities", requestId)
+    );
+    this.store.updateEntityObject({
+      objectId: missionId,
+      entity: "missions",
+      update: { isDeleted: true, deletedAt: now() },
+      ...(requestId && { pendingRequestId: requestId })
+    });
+  }
+
+  cancelMission = async (mission) => {
+    const missionId = mission.id;
+    const userId = this.store.userId();
+
+    const updateStore = (store, requestId) => {
+      this._applyCancelMission(missionId, userId, requestId);
+      return { missionId, userId };
+    };
+
+    await this.submitAction(
+      CANCEL_MISSION_MUTATION,
+      { missionId, userId },
+      updateStore,
+      ["activities", "missions"],
+      "cancelMission"
+    );
   };
 
   validateMission = async (mission) => {

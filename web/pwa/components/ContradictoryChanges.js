@@ -8,7 +8,7 @@ import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Event } from "../../common/Event";
 import { MISSION_RESOURCE_TYPES } from "common/utils/contradictory";
-import { getChangeIconAndText } from "../../common/logEvent";
+import { getChangeIconAndText, getEventAuthorName } from "../../common/logEvent";
 import { now } from "common/utils/time";
 import { getActivityLabelDependingOnMissionType } from "common/utils/activities";
 import { isConnectionError } from "common/utils/errors";
@@ -184,6 +184,7 @@ export function ContradictoryChanges({
                     icon={icon}
                     iconClassName={iconClassName(userChange)}
                     text={text}
+                    authorName={getEventAuthorName(userChange)}
                     submitter={userChange.submitter}
                     submitterId={userChange.submitterId}
                     time={userChange.time}

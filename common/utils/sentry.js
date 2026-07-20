@@ -14,7 +14,10 @@ const ERROR_MESSAGES_TO_FILTER_OUT = [
   "NetworkError when attempting to fetch resource.",
   "La connexion réseau a été perdue.",
   "Non-Error promise rejection captured with value",
-  "reading 'firstElementChild'"
+  "reading 'firstElementChild'",
+  "Failed to fetch",
+  "Load failed",
+  "Body is disturbed or locked"
 ];
 
 export function captureSentryException(err, context) {

@@ -224,11 +224,15 @@ export function useActivityHistory({
       if (!entry.__historyEntry) allActivities.push(entry);
     });
     dismissedEntries.forEach(entry => allActivities.push(entry));
-    allActivities.sort(
-      (a, b) =>
+    allActivities.sort((a, b) => {
+      const timeDiff =
         (a.displayedStartTime || a.startTime) -
-        (b.displayedStartTime || b.startTime)
-    );
+        (b.displayedStartTime || b.startTime);
+      if (timeDiff !== 0) return timeDiff;
+      const aDismissed = a.__tagType === "SUPPRESSION" ? 0 : 1;
+      const bDismissed = b.__tagType === "SUPPRESSION" ? 0 : 1;
+      return aDismissed - bDismissed;
+    });
 
     const sorted = [];
     allActivities.forEach(activity => {

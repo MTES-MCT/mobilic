@@ -171,13 +171,24 @@ async function retrieveResourcesAsController(api, missionId, controlId) {
   return apiResponse.data.controlData.missions[0];
 }
 
+const pendingRequests = new Map();
+
 export async function getResourcesAndHistoryForMission(
   mission,
   api,
   cacheInStore,
   controlId = null
 ) {
-  if (!mission.resourcesWithHistory) {
+  if (mission.resourcesWithHistory) {
+    return mission.resourcesWithHistory;
+  }
+
+  const key = `${mission.id}_${controlId || ""}`;
+  if (pendingRequests.has(key)) {
+    return pendingRequests.get(key);
+  }
+
+  const promise = (async () => {
     const apiResponse = !controlId
       ? await retrieveResourcesAsUser(api, mission.id)
       : await retrieveResourcesAsController(api, mission.id, controlId);
@@ -235,8 +246,15 @@ export async function getResourcesAndHistoryForMission(
 
     cacheInStore(mission, resourcesWithHistory);
     mission.resourcesWithHistory = resourcesWithHistory;
+    return resourcesWithHistory;
+  })();
+
+  pendingRequests.set(key, promise);
+  try {
+    return await promise;
+  } finally {
+    pendingRequests.delete(key);
   }
-  return mission.resourcesWithHistory;
 }
 
 function cacheInPwaStore(mission, resourcesWithHistory, store) {

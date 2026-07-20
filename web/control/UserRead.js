@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { useApi } from "common/utils/api";
-import { Header } from "../common/Header";
+import { MobilicHeader } from "../common/Header";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { useLoadingScreen } from "common/utils/loading";
@@ -22,12 +22,13 @@ import { UserReadInfo } from "./components/UserReadInfo";
 import { UserReadHistory } from "./components/UserReadHistory";
 import { TextWithBadge } from "../common/TextWithBadge";
 import { UserReadAlerts } from "./components/UserReadAlerts";
-import { getDaysBetweenTwoDates } from "common/utils/time";
 import { getRegulationComputationsAndAlertNumber } from "common/utils/regulation/useGetUserRegulationComputationsByDay";
 import { getAlertsGroupedByDayFromRegulationComputationsByDay } from "common/utils/regulation/groupAlertsByDay";
 import { usePageTitle } from "../common/UsePageTitle";
 import { USER_READ_TOKEN_QUERY } from "common/utils/apiQueries/auth";
 import { USER_READ_QUERY } from "common/utils/apiQueries/user";
+import { useWorkingDaysAnalysis } from "common/utils/hooks/useWorkingDaysAnalysis";
+import { useTokenInfo } from "common/utils/hooks/useTokenInfo";
 
 export function getTabs(alertNumber) {
   return [
@@ -74,7 +75,6 @@ export function UserRead() {
   const [coworkers, setCoworkers] = React.useState(null);
   const [vehicles, setVehicles] = React.useState(null);
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
-  const [workingDays, setWorkingDays] = React.useState(new Set([]));
   const [regulationComputationsByDay, setRegulationComputationsByDay] =
     React.useState([]);
   const [alertNumber, setAlertNumber] = React.useState(0);
@@ -84,6 +84,9 @@ export function UserRead() {
   const impersonatingUser = useImpersonation(
     tokenInfo ? tokenInfo.token : null
   );
+
+  // Transform token/control data into standardized tokenInfo format
+  const effectiveTokenInfo = useTokenInfo({ tokenInfo, controlTime });
 
   React.useEffect(() => {
     const queryString = new URLSearchParams(location.search);
@@ -164,14 +167,6 @@ export function UserRead() {
           ).filter((m) => m.activities.length > 0);
           setMissions(missions_);
 
-          const userWorkingDays = new Set([]);
-          missions_.forEach((mission) =>
-            getDaysBetweenTwoDates(
-              mission.startTime,
-              mission.endTime || tokenInfo.creationDay
-            ).forEach((day) => userWorkingDays.add(day))
-          );
-          setWorkingDays(userWorkingDays);
           const _vehicles = {};
           userPayload.employments.forEach((e) => {
             e.company.vehicles.forEach((v) => {
@@ -200,13 +195,13 @@ export function UserRead() {
       const res = await getRegulationComputationsAndAlertNumber(
         api,
         userInfo.id,
-        new Date(tokenInfo.historyStartDay)
+        new Date(effectiveTokenInfo.historyStartDay)
       );
       setRegulationComputationsByDay(res.regulationComputationsByDay);
       setAlertNumber(res.alertNumber);
     };
     loadData();
-  }, [userInfo]);
+  }, [userInfo, effectiveTokenInfo]);
 
   const groupedAlerts = React.useMemo(
     () =>
@@ -216,10 +211,17 @@ export function UserRead() {
     [regulationComputationsByDay]
   );
 
+  // Analyze working days: detect days added posteriori and modified days
+  const workingDaysAnalysis = useWorkingDaysAnalysis(
+    missions,
+    controlTime,
+    effectiveTokenInfo
+  );
+
   const TABS = getTabs(alertNumber);
 
   return [
-    <Header key={0} disableMenu />,
+    <MobilicHeader key={0} disableMenu />,
     error ? (
       <Container key={1}>
         <Typography align="center" color="error">
@@ -231,7 +233,7 @@ export function UserRead() {
         key={1}
         tabs={TABS}
         userInfo={userInfo}
-        tokenInfo={tokenInfo}
+        tokenInfo={effectiveTokenInfo}
         controlTime={controlTime}
         missions={missions}
         employments={employments}
@@ -239,7 +241,9 @@ export function UserRead() {
         vehicles={vehicles}
         periodOnFocus={periodOnFocus}
         setPeriodOnFocus={setPeriodOnFocus}
-        workingDaysNumber={workingDays.size}
+        workingDaysNumber={workingDaysAnalysis.workingDaysNumber}
+        daysAddedPosterioriNumber={workingDaysAnalysis.daysAddedPosterioriNumber}
+        daysModifiedNumber={workingDaysAnalysis.daysModifiedNumber}
         groupedAlerts={groupedAlerts}
         readOnlyAlerts={true}
       />
