@@ -74,7 +74,8 @@ export function Day({
     isComputingContradictory: loadingEmployeeVersion,
     hasComputedContradictory,
     contradictoryIsEmpty,
-    contradictoryComputationError
+    contradictoryComputationError,
+    eventsHistory
   } = useToggleContradictory(
     canDisplayContradictoryVersions,
     shouldDisplayInitialEmployeeVersion,
@@ -147,6 +148,17 @@ export function Day({
         title1="Journée du"
         title2={textualPrettyFormatDay(selectedPeriodStart)}
       >
+        {displayContradictory && (
+          <ContradictorySwitch
+            disabled={loadingEmployeeVersion}
+            shouldDisplayInitialEmployeeVersion={
+              shouldDisplayInitialEmployeeVersion
+            }
+            setShouldDisplayInitialEmployeeVersion={
+              setShouldDisplayInitialEmployeeVersion
+            }
+          />
+        )}
         <DayKpis
           adminActivitiesWithNextAndPreviousDay={
             adminVersionUserActivitiesToUse
@@ -159,24 +171,12 @@ export function Day({
           loading={loadingEmployeeVersion}
           missions={missionsInPeriod}
         />
-        {missionsDeleted.length > 0 ? (
+        {missionsDeleted.length > 0 && (
           <Notice
             type="warning"
             sx={{ marginBottom: 2 }}
             description={missionsDeletedWarning}
           />
-        ) : (
-          displayContradictory && (
-            <ContradictorySwitch
-              disabled={loadingEmployeeVersion}
-              shouldDisplayInitialEmployeeVersion={
-                shouldDisplayInitialEmployeeVersion
-              }
-              setShouldDisplayInitialEmployeeVersion={
-                setShouldDisplayInitialEmployeeVersion
-              }
-            />
-          )
         )}
       </PeriodHeader>
       {!displayContradictory && (
@@ -212,6 +212,8 @@ export function Day({
             }
             missions={missionsInPeriod}
             controlId={controlId}
+            hasManagerModifications={displayContradictory}
+            eventsHistory={eventsHistory}
           />
         )}
         {missionsToDetail.length > 0 && (
