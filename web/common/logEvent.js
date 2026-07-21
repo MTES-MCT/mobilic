@@ -60,28 +60,24 @@ function activityChangeText(change) {
   switch (change.type) {
     case "DELETE":
       return [
-        `a supprimé ${changeResourceAsText(
-          change
-        )} démarrée le ${formatDateTimeLiteral(change.before.startTime)}`
+        `a supprimé ${changeResourceAsText(change)}`
       ];
     case "CREATE":
-      return change.after.endTime
-        ? [
-            `a ajouté ${changeResourceAsText(
-              change
-            )} du ${formatDateTimeLiteral(
-              change.after.startTime
-            )} au ${formatDateTimeLiteral(change.after.endTime)}`
-          ]
-        : [
-            isSupportEvent(change)
-              ? `a lancé ${changeResourceAsText(
-                  change
-                )} le ${formatDateTimeLiteral(change.after.startTime)}`
-              : `s'est mis en ${
-                  ACTIVITIES[change.after.type].label
-                } le ${formatDateTimeLiteral(change.after.startTime)}`
-          ];
+      if (isSupportEvent(change)) {
+        return [
+          `a lancé ${changeResourceAsText(change)}`
+        ];
+      }
+      if (!change.after.endTime) {
+        return [
+          `s'est mis en ${
+            ACTIVITIES[change.after.type].label
+          } le ${formatDateTimeLiteral(change.after.startTime)}`
+        ];
+      }
+      return [
+        `a ajouté ${changeResourceAsText(change)}`
+      ];
     case "UPDATE":
       if (change.after.endTime !== change.before.endTime) {
         if (!change.after.endTime) {

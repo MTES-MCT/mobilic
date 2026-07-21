@@ -25,7 +25,7 @@ export default function DisputeModal({
           nativeTextAreaProps={{
             value: text,
             onChange: e => setText(e.target.value),
-            placeholder: "J'ai commencé plus tôt que l'heure indiquée",
+            placeholder: "",
             rows: 3
           }}
         />

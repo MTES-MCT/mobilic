@@ -11,7 +11,7 @@ import { useModals } from "common/utils/modals";
 
 const BADGE_CONFIG = {
   SUPPRESSION: {
-    label: "ACTIVITÉ SUPPRIMÉE",
+    label: "SUPPRESSION",
     disputedSuffix: " CONTESTÉE",
     backgroundColor: fr.colors.decisions.background.alt.grey.default,
     color: fr.colors.decisions.text.mention.grey.default

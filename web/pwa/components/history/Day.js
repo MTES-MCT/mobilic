@@ -179,7 +179,7 @@ export function Day({
           />
         )}
       </PeriodHeader>
-      {!displayContradictory && (
+      {(contradictoryNotYetAvailable || contradictoryComputationError) && (
         <NoContradictory
           contradictoryNotYetAvailable={contradictoryNotYetAvailable}
           contradictoryComputationError={contradictoryComputationError}

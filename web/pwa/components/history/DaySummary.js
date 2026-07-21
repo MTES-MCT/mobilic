@@ -73,6 +73,7 @@ export function DaySummary({
     const existingIds = new Set(
       activitiesWithNextAndPreviousDay.map(a => a.id).filter(Boolean)
     );
+    const userFromActivities = activitiesWithNextAndPreviousDay.find(a => a.user)?.user || null;
     const dismissed = [];
     eventsHistory.forEach(event => {
       if (
@@ -85,7 +86,8 @@ export function DaySummary({
           ...event.before,
           id: event.resourceId,
           dismissedAt: event.time,
-          dispute: event.before.dispute || null
+          dispute: event.before.dispute || null,
+          user: event.before.user || userFromActivities
         });
       }
     });
@@ -201,6 +203,11 @@ export function DaySummary({
               Cette journée comporte <strong>des temps de travail modifiés</strong> par
               le gestionnaire. Les modifications sont contestables pendant{" "}
               {DISPUTE_DELAY_DAYS} jours.
+            </p>
+          )}
+          {!shouldDisplayInitialEmployeeVersion && !hasManagerModifications && !hasActiveDispute && (
+            <p className={classes.disputeNotice}>
+              Il n'y a pas eu de modifications de la part du gestionnaire.
             </p>
           )}
           <ActivityList
