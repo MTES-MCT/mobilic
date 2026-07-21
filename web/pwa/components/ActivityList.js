@@ -321,7 +321,7 @@ export function ActivityList({
   hideChart = false,
   eventsHistory = [],
   shouldDisplayInitialEmployeeVersion = false,
-  employeeValidationTime = null,
+  validationTimeByMission = null,
   onDispute = null,
   onCancelDispute = null,
   isWithinCancelDelay = null
@@ -453,7 +453,7 @@ export function ActivityList({
               datetimeFormatter={datetimeFormatter}
               activityEvents={eventsByActivityId.get(activity.id) || []}
               shouldDisplayInitialEmployeeVersion={shouldDisplayInitialEmployeeVersion}
-              employeeValidationTime={employeeValidationTime}
+              employeeValidationTime={validationTimeByMission?.get(activity.missionId) || null}
               onDispute={onDispute}
               onCancelDispute={onCancelDispute}
               isWithinCancelDelay={isWithinCancelDelay}

@@ -121,12 +121,15 @@ export function DaySummary({
     return Math.max(...adminValidations.map(v => v.receptionTime));
   }, [missions]);
 
-  const employeeValidationTime = React.useMemo(() => {
-    const employeeValidations = missions
-      .flatMap(m => m.validations || [])
-      .filter(v => !v.isAdmin);
-    if (employeeValidations.length === 0) return null;
-    return Math.max(...employeeValidations.map(v => v.receptionTime));
+  const validationTimeByMission = React.useMemo(() => {
+    const map = new Map();
+    missions.forEach(m => {
+      const employeeValidations = (m.validations || []).filter(v => !v.isAdmin);
+      if (employeeValidations.length > 0) {
+        map.set(m.id, Math.max(...employeeValidations.map(v => v.receptionTime)));
+      }
+    });
+    return map;
   }, [missions]);
 
   const isWithinDisputeDelay =
@@ -217,7 +220,7 @@ export function DaySummary({
             isMissionEnded={isDayEnded}
             eventsHistory={eventsHistory}
             shouldDisplayInitialEmployeeVersion={shouldDisplayInitialEmployeeVersion}
-            employeeValidationTime={employeeValidationTime}
+            validationTimeByMission={validationTimeByMission}
             onDispute={isWithinDisputeDelay ? handleDispute : null}
             onCancelDispute={handleCancelDispute}
             isWithinCancelDelay={isWithinCancelDelay}
