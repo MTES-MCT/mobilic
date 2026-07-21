@@ -169,6 +169,22 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+function DurationDisplay({ endTime, startTime, duration, classes, datetimeFormatter }) {
+  const iconClass = endTime ? classes.durationIcon : classes.ongoingLabel;
+  const textClass = endTime ? classes.duration : "";
+  const durationValue = duration ?? (endTime ? endTime - startTime : 0);
+  return (
+    <span className={classes.durationGroup}>
+      <span className={`fr-icon--sm fr-icon-time-line ${iconClass}`} aria-hidden="true" />
+      <span className={textClass}>
+        {endTime
+          ? formatTimerWithMinSuffix(durationValue)
+          : <><span className={classes.ongoingLabel}>En cours</span><span className={classes.horaires}>{` depuis ${datetimeFormatter(startTime)}`}</span></>}
+      </span>
+    </span>
+  );
+}
+
 function ActivityItem({
   activity,
   editActivityEvent,
@@ -215,14 +231,13 @@ function ActivityItem({
                 }`}
           </span>
           <span className={`${classes.infoRow} ${activity.operation?.type === ACTIVITIES_OPERATIONS.update ? classes.strikethrough : ""}`}>
-            <span className={classes.durationGroup}>
-              <span className={`fr-icon--sm fr-icon-time-line ${activity.displayedEndTime ? classes.durationIcon : classes.ongoingLabel}`} aria-hidden="true" />
-              <span className={activity.displayedEndTime ? classes.duration : ""}>
-                {activity.displayedEndTime
-                  ? formatTimerWithMinSuffix(activity.duration)
-                  : <><span className={classes.ongoingLabel}>En cours</span><span className={classes.horaires}>{` depuis ${datetimeFormatter(activity.displayedStartTime)}`}</span></>}
-              </span>
-            </span>
+            <DurationDisplay
+              endTime={activity.displayedEndTime}
+              startTime={activity.displayedStartTime}
+              duration={activity.duration}
+              classes={classes}
+              datetimeFormatter={datetimeFormatter}
+            />
             {activity.displayedEndTime && (
               <span className={classes.horaires}>
                 {`${datetimeFormatter(activity.displayedStartTime)} - ${datetimeFormatter(activity.displayedEndTime)}`}
@@ -231,12 +246,12 @@ function ActivityItem({
           </span>
           {activity.operation?.type === ACTIVITIES_OPERATIONS.update && (
             <span className={classes.infoRow}>
-              <span className={`fr-icon--sm fr-icon-time-line ${activity.operation.endTime ? classes.durationIcon : classes.ongoingLabel}`} aria-hidden="true" />
-              <span className={activity.operation.endTime ? classes.duration : ""}>
-                {activity.operation.endTime
-                  ? formatTimerWithMinSuffix(activity.operation.endTime - activity.operation.startTime)
-                  : <><span className={classes.ongoingLabel}>En cours</span><span className={classes.horaires}>{` depuis ${datetimeFormatter(activity.operation.startTime)}`}</span></>}
-              </span>
+              <DurationDisplay
+                endTime={activity.operation.endTime}
+                startTime={activity.operation.startTime}
+                classes={classes}
+                datetimeFormatter={datetimeFormatter}
+              />
               {activity.operation.endTime && (
                 <span className={classes.horaires}>
                   {`${datetimeFormatter(activity.operation.startTime)} - ${datetimeFormatter(activity.operation.endTime)}`}
