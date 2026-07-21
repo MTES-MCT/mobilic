@@ -127,14 +127,12 @@ export const Notifications = ({ openHistory }) => {
         notifications: updatedNotifs
       });
 
-      // TODO: first call to /unexposed returns 403 — silent fail until fixed in a separate ticket
-      try {
-        await api.graphQlMutate(
-          READ_NOTIFICATIONS_MUTATION,
-          { notificationIds },
-          { context: { nonPublicApi: true } }
-        );
-      } catch {}
+      // first call to /unexposed may return 403 — tracked in a separate ticket
+      await api.graphQlMutate(
+        READ_NOTIFICATIONS_MUTATION,
+        { notificationIds },
+        { context: { nonPublicApi: true } }
+      ).catch(() => {});
     },
     [api, store, alerts]
   );
