@@ -54,6 +54,12 @@ const useStyles = makeStyles(() => ({
     gap: 12,
     textAlign: "left"
   },
+  eventEntry: {
+    marginBottom: 12,
+    "&:last-child": {
+      marginBottom: 0
+    }
+  },
   eventHeader: {
     display: "flex",
     flexDirection: "row",
@@ -181,7 +187,7 @@ export function ActivityHistorySection({
             const context = event.after?.context || event.before?.context;
             const motif = context?.comment || context?.userComment;
             return changes.map((change, changeIndex) => (
-              <div key={`${eventIndex}-${changeIndex}`}>
+              <div key={`${eventIndex}-${changeIndex}`} className={classes.eventEntry}>
                 <div className={classes.eventHeader}>
                   <span className={classes.submitterName}>
                     {formatPersonName(event.submitter)}

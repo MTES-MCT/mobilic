@@ -156,7 +156,7 @@ export function DaySummary({
       {hasWorkMissions && (
         <>
           {!controlId && (
-            <InfoCard elevation={0} py={0} px={1}>
+            <InfoCard elevation={0} py={0} px={0}>
               {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (
                 <DayRegulatoryAlerts
                   day={isoFormatLocalDate(dayStart)}
@@ -188,7 +188,7 @@ export function DaySummary({
             <HolidayRecap key={mission.id} mission={mission} />
           ))}
       </Grid>
-      <InfoCard elevation={0}>
+      <InfoCard elevation={0} px={0}>
         <MissionReviewSection
           title="Activités"
           className="no-margin-no-padding"
