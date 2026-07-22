@@ -60,7 +60,7 @@ function activityChangeText(change) {
   switch (change.type) {
     case "DELETE":
       return [
-        `a supprimé ${changeResourceAsText(change)}`
+        "a supprimé l'activité"
       ];
     case "CREATE":
       if (isSupportEvent(change)) {
@@ -76,7 +76,7 @@ function activityChangeText(change) {
         ];
       }
       return [
-        `a ajouté ${changeResourceAsText(change)}`
+        "a ajouté l'activité"
       ];
     case "UPDATE":
       if (change.after.endTime !== change.before.endTime) {
