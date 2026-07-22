@@ -25,11 +25,9 @@ export function NoContradictory({
       >
         {contradictoryNotYetAvailable
           ? "Les versions contradictoires ne sont pas visibles car la mission n'a pas encore été validée par toutes les parties (salarié, gestionnaire)."
-          : contradictoryComputationError
-          ? isConnectionError(contradictoryComputationError)
+          : isConnectionError(contradictoryComputationError)
             ? "Les versions contradictoires ne sont pas disponibles pour le moment car il n'y a pas de connexion Internet."
-            : "Les versions contradictoires ne sont pas disponibles pour le moment."
-          : "Il n'y a pas eu de modifications de la part du gestionnaire."}
+            : "Les versions contradictoires ne sont pas disponibles pour le moment."}
       </Typography>
     </Box>
   );

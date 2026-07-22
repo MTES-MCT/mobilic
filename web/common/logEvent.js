@@ -63,16 +63,13 @@ function activityChangeText(change) {
         "a supprimé l'activité"
       ];
     case "CREATE":
-      if (isSupportEvent(change)) {
-        return [
-          `a lancé ${changeResourceAsText(change)}`
-        ];
-      }
       if (!change.after.endTime) {
         return [
-          `s'est mis en ${
-            ACTIVITIES[change.after.type].label
-          } le ${formatDateTimeLiteral(change.after.startTime)}`
+          isSupportEvent(change)
+            ? `a lancé ${changeResourceAsText(change)}`
+            : `s'est mis en ${
+                ACTIVITIES[change.after.type].label
+              } le ${formatDateTimeLiteral(change.after.startTime)}`
         ];
       }
       return [

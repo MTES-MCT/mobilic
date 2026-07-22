@@ -128,11 +128,19 @@ export const Notifications = ({ openHistory }) => {
       });
 
       // first call to /unexposed may return 403 — tracked in a separate ticket
-      await api.graphQlMutate(
-        READ_NOTIFICATIONS_MUTATION,
-        { notificationIds },
-        { context: { nonPublicApi: true } }
-      ).catch(() => {});
+      try {
+        await api.graphQlMutate(
+          READ_NOTIFICATIONS_MUTATION,
+          { notificationIds },
+          { context: { nonPublicApi: true } }
+        );
+      } catch (err) {
+        const is403 = err?.networkError?.statusCode === 403
+          || err?.graphQLErrors?.some(e => e?.extensions?.code === 403);
+        if (!is403) {
+          alerts.error(err?.message || "Erreur", errorKey, 10000);
+        }
+      }
     },
     [api, store, alerts]
   );

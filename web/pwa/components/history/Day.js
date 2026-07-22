@@ -213,6 +213,7 @@ export function Day({
             missions={missionsInPeriod}
             controlId={controlId}
             hasManagerModifications={displayContradictory}
+            noManagerModifications={emptyContradictory}
             eventsHistory={eventsHistory}
           />
         )}

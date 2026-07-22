@@ -39,7 +39,8 @@ export function DaySummary({
   missions,
   controlId = null,
   eventsHistory = [],
-  hasManagerModifications = false
+  hasManagerModifications = false,
+  noManagerModifications = false
 }) {
   const classes = useStyles();
   const api = useApi();
@@ -208,7 +209,7 @@ export function DaySummary({
               {DISPUTE_DELAY_DAYS} jours.
             </p>
           )}
-          {!shouldDisplayInitialEmployeeVersion && !hasManagerModifications && !hasActiveDispute && (
+          {!shouldDisplayInitialEmployeeVersion && noManagerModifications && !hasActiveDispute && (
             <p className={classes.disputeNotice}>
               Il n'y a pas eu de modifications de la part du gestionnaire.
             </p>
