@@ -127,13 +127,20 @@ export const Notifications = ({ openHistory }) => {
         notifications: updatedNotifs
       });
 
-      await alerts.withApiErrorHandling(async () => {
+      // first call to /unexposed may return 403 — tracked in a separate ticket
+      try {
         await api.graphQlMutate(
           READ_NOTIFICATIONS_MUTATION,
           { notificationIds },
           { context: { nonPublicApi: true } }
         );
-      }, errorKey);
+      } catch (err) {
+        const is403 = err?.networkError?.statusCode === 403
+          || err?.graphQLErrors?.some(e => e?.extensions?.code === 403);
+        if (!is403) {
+          alerts.error(err?.message || "Erreur", errorKey, 10000);
+        }
+      }
     },
     [api, store, alerts]
   );

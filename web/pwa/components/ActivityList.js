@@ -142,6 +142,13 @@ const useStyles = makeStyles(theme => ({
     lineHeight: "24px",
     color: fr.colors.decisions.text.mention.grey.default
   },
+  ongoingLabel: {
+    fontWeight: 500,
+    fontSize: 14,
+    lineHeight: "24px",
+    color: fr.colors.decisions.text.active.blueFrance.default,
+    marginLeft: 2
+  },
   strikethrough: {
     textDecoration: "line-through"
   },
@@ -161,6 +168,22 @@ const useStyles = makeStyles(theme => ({
     }
   }
 }));
+
+function DurationDisplay({ endTime, startTime, duration, classes, datetimeFormatter }) {
+  const iconClass = endTime ? classes.durationIcon : classes.ongoingLabel;
+  const textClass = endTime ? classes.duration : "";
+  const durationValue = duration ?? (endTime ? endTime - startTime : 0);
+  return (
+    <span className={classes.durationGroup}>
+      <span className={`fr-icon--sm fr-icon-time-line ${iconClass}`} aria-hidden="true" />
+      <span className={textClass}>
+        {endTime
+          ? formatTimerWithMinSuffix(durationValue)
+          : <><span className={classes.ongoingLabel}>En cours</span><span className={classes.horaires}>{` depuis ${datetimeFormatter(startTime)}`}</span></>}
+      </span>
+    </span>
+  );
+}
 
 function ActivityItem({
   activity,
@@ -208,14 +231,13 @@ function ActivityItem({
                 }`}
           </span>
           <span className={`${classes.infoRow} ${activity.operation?.type === ACTIVITIES_OPERATIONS.update ? classes.strikethrough : ""}`}>
-            <span className={classes.durationGroup}>
-              <span className={`fr-icon--sm fr-icon-time-line ${classes.durationIcon}`} aria-hidden="true" />
-              <span className={classes.duration}>
-                {activity.displayedEndTime
-                  ? formatTimerWithMinSuffix(activity.duration)
-                  : "En cours"}
-              </span>
-            </span>
+            <DurationDisplay
+              endTime={activity.displayedEndTime}
+              startTime={activity.displayedStartTime}
+              duration={activity.duration}
+              classes={classes}
+              datetimeFormatter={datetimeFormatter}
+            />
             {activity.displayedEndTime && (
               <span className={classes.horaires}>
                 {`${datetimeFormatter(activity.displayedStartTime)} - ${datetimeFormatter(activity.displayedEndTime)}`}
@@ -224,12 +246,12 @@ function ActivityItem({
           </span>
           {activity.operation?.type === ACTIVITIES_OPERATIONS.update && (
             <span className={classes.infoRow}>
-              <span className={`fr-icon--sm fr-icon-time-line ${classes.durationIcon}`} aria-hidden="true" />
-              <span className={classes.duration}>
-                {activity.operation.endTime
-                  ? formatTimerWithMinSuffix(activity.operation.endTime - activity.operation.startTime)
-                  : "En cours"}
-              </span>
+              <DurationDisplay
+                endTime={activity.operation.endTime}
+                startTime={activity.operation.startTime}
+                classes={classes}
+                datetimeFormatter={datetimeFormatter}
+              />
               {activity.operation.endTime && (
                 <span className={classes.horaires}>
                   {`${datetimeFormatter(activity.operation.startTime)} - ${datetimeFormatter(activity.operation.endTime)}`}
@@ -314,7 +336,7 @@ export function ActivityList({
   hideChart = false,
   eventsHistory = [],
   shouldDisplayInitialEmployeeVersion = false,
-  employeeValidationTime = null,
+  validationTimeByMission = null,
   onDispute = null,
   onCancelDispute = null,
   isWithinCancelDelay = null
@@ -446,7 +468,7 @@ export function ActivityList({
               datetimeFormatter={datetimeFormatter}
               activityEvents={eventsByActivityId.get(activity.id) || []}
               shouldDisplayInitialEmployeeVersion={shouldDisplayInitialEmployeeVersion}
-              employeeValidationTime={employeeValidationTime}
+              employeeValidationTime={validationTimeByMission?.get(activity.missionId) || null}
               onDispute={onDispute}
               onCancelDispute={onCancelDispute}
               isWithinCancelDelay={isWithinCancelDelay}

@@ -11,7 +11,7 @@ import { useModals } from "common/utils/modals";
 
 const BADGE_CONFIG = {
   SUPPRESSION: {
-    label: "ACTIVITÉ SUPPRIMÉE",
+    label: "SUPPRESSION",
     disputedSuffix: " CONTESTÉE",
     backgroundColor: fr.colors.decisions.background.alt.grey.default,
     color: fr.colors.decisions.text.mention.grey.default
@@ -53,6 +53,12 @@ const useStyles = makeStyles(() => ({
     padding: "8px 16px",
     gap: 12,
     textAlign: "left"
+  },
+  eventEntry: {
+    marginBottom: 12,
+    "&:last-child": {
+      marginBottom: 0
+    }
   },
   eventHeader: {
     display: "flex",
@@ -181,7 +187,7 @@ export function ActivityHistorySection({
             const context = event.after?.context || event.before?.context;
             const motif = context?.comment || context?.userComment;
             return changes.map((change, changeIndex) => (
-              <div key={`${eventIndex}-${changeIndex}`}>
+              <div key={`${eventIndex}-${changeIndex}`} className={classes.eventEntry}>
                 <div className={classes.eventHeader}>
                   <span className={classes.submitterName}>
                     {formatPersonName(event.submitter)}

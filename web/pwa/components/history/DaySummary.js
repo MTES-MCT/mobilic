@@ -39,7 +39,8 @@ export function DaySummary({
   missions,
   controlId = null,
   eventsHistory = [],
-  hasManagerModifications = false
+  hasManagerModifications = false,
+  noManagerModifications = false
 }) {
   const classes = useStyles();
   const api = useApi();
@@ -73,6 +74,7 @@ export function DaySummary({
     const existingIds = new Set(
       activitiesWithNextAndPreviousDay.map(a => a.id).filter(Boolean)
     );
+    const userFromActivities = activitiesWithNextAndPreviousDay.find(a => a.user)?.user || null;
     const dismissed = [];
     eventsHistory.forEach(event => {
       if (
@@ -85,7 +87,8 @@ export function DaySummary({
           ...event.before,
           id: event.resourceId,
           dismissedAt: event.time,
-          dispute: event.before.dispute || null
+          dispute: event.before.dispute || null,
+          user: event.before.user || userFromActivities
         });
       }
     });
@@ -119,12 +122,15 @@ export function DaySummary({
     return Math.max(...adminValidations.map(v => v.receptionTime));
   }, [missions]);
 
-  const employeeValidationTime = React.useMemo(() => {
-    const employeeValidations = missions
-      .flatMap(m => m.validations || [])
-      .filter(v => !v.isAdmin);
-    if (employeeValidations.length === 0) return null;
-    return Math.max(...employeeValidations.map(v => v.receptionTime));
+  const validationTimeByMission = React.useMemo(() => {
+    const map = new Map();
+    missions.forEach(m => {
+      const employeeValidations = (m.validations || []).filter(v => !v.isAdmin);
+      if (employeeValidations.length > 0) {
+        map.set(m.id, Math.max(...employeeValidations.map(v => v.receptionTime)));
+      }
+    });
+    return map;
   }, [missions]);
 
   const isWithinDisputeDelay =
@@ -151,7 +157,7 @@ export function DaySummary({
       {hasWorkMissions && (
         <>
           {!controlId && (
-            <InfoCard elevation={0} py={0} px={1}>
+            <InfoCard elevation={0} py={0} px={0}>
               {isDayEnded && activitiesWithNextAndPreviousDay.length > 0 ? (
                 <DayRegulatoryAlerts
                   day={isoFormatLocalDate(dayStart)}
@@ -183,7 +189,7 @@ export function DaySummary({
             <HolidayRecap key={mission.id} mission={mission} />
           ))}
       </Grid>
-      <InfoCard elevation={0}>
+      <InfoCard elevation={0} px={0}>
         <MissionReviewSection
           title="Activités"
           className="no-margin-no-padding"
@@ -203,6 +209,11 @@ export function DaySummary({
               {DISPUTE_DELAY_DAYS} jours.
             </p>
           )}
+          {!shouldDisplayInitialEmployeeVersion && noManagerModifications && !hasActiveDispute && (
+            <p className={classes.disputeNotice}>
+              Il n'y a pas eu de modifications de la part du gestionnaire.
+            </p>
+          )}
           <ActivityList
             activities={activitiesWithDisputeUpdates}
             fromTime={dayStart}
@@ -210,7 +221,7 @@ export function DaySummary({
             isMissionEnded={isDayEnded}
             eventsHistory={eventsHistory}
             shouldDisplayInitialEmployeeVersion={shouldDisplayInitialEmployeeVersion}
-            employeeValidationTime={employeeValidationTime}
+            validationTimeByMission={validationTimeByMission}
             onDispute={isWithinDisputeDelay ? handleDispute : null}
             onCancelDispute={handleCancelDispute}
             isWithinCancelDelay={isWithinCancelDelay}
