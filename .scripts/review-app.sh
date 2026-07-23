@@ -31,8 +31,8 @@ scalingo self >/dev/null 2>&1 || {
   exit 1
 }
 
-trigger_pr="${1:-$(gh pr view --json number --jq .number)}"
-branch="${2:-$(gh pr view --json headRefName --jq .headRefName)}"
+trigger_pr="${1:-$(gh pr view --json number --jq .number 2>/dev/null || true)}"
+branch="${2:-$(gh pr view --json headRefName --jq .headRefName 2>/dev/null || true)}"
 [[ -n "$trigger_pr" ]] && [[ -n "$branch" ]] || {
   echo "ERR: PR/branch not detected." >&2
   exit 1
