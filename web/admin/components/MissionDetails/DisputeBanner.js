@@ -3,7 +3,11 @@ import Box from "@mui/material/Box";
 import { fr } from "@codegouvfr/react-dsfr";
 import { makeStyles } from "@mui/styles";
 import { formatPersonName } from "common/utils/coworkers";
-import { ACTIVITIES } from "common/utils/activities";
+import {
+  MISSION_RESOURCE_TYPES,
+  allEventsForResource
+} from "common/utils/contradictory";
+import { getChangeIconAndText } from "../../../common/logEvent";
 
 const useStyles = makeStyles(() => ({
   banner: {
@@ -30,7 +34,8 @@ const useStyles = makeStyles(() => ({
     fontWeight: 500,
     fontSize: 14,
     lineHeight: "24px",
-    color: fr.colors.decisions.background.flat.warning.default
+    color: fr.colors.decisions.background.flat.warning.default,
+    marginBottom: 8
   },
   list: {
     margin: 0,
@@ -43,9 +48,36 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
+function getLastManagerEvent(activity) {
+  const safeCopy = {
+    ...activity,
+    versions: activity.versions ? [...activity.versions] : undefined
+  };
+  const events = allEventsForResource(safeCopy, MISSION_RESOURCE_TYPES.activity);
+  if (events.length === 0) return null;
+  const userId = activity.user?.id || activity.userId;
+  const managerEvents = events.filter(e => e.submitterId !== userId);
+  return managerEvents.length > 0 ? managerEvents[managerEvents.length - 1] : events[events.length - 1];
+}
+
 export function DisputeBanner({ mission }) {
   const classes = useStyles();
-  const activities = mission.allActivities || mission.activities || [];
+  const { activities, userNameById } = React.useMemo(() => {
+    const base = mission.activities || [];
+    const history = mission.resourcesWithHistory?.resources
+      ?.filter(r => r.type === MISSION_RESOURCE_TYPES.activity)
+      ?.map(r => r.resource) || [];
+    const historyIds = new Set(history.map(a => a.id));
+    const merged = [
+      ...history,
+      ...base.filter(a => !historyIds.has(a.id))
+    ];
+    const names = {};
+    base.forEach(a => {
+      if (a.user) names[a.userId || a.user.id] = formatPersonName(a.user);
+    });
+    return { activities: merged, userNameById: names };
+  }, [mission.activities, mission.resourcesWithHistory]);
 
   const byEmployee = React.useMemo(() => {
     const groups = {};
@@ -55,17 +87,28 @@ export function DisputeBanner({ mission }) {
         const empId = a.dispute.submitter_id;
         if (!groups[empId]) {
           groups[empId] = {
-            employeeName: formatPersonName(a.user),
+            employeeName: formatPersonName(a.user) || userNameById[a.userId] || "",
             disputes: []
           };
         }
-        groups[empId].disputes.push(a);
+        const event = getLastManagerEvent(a);
+        let description = "";
+        if (event) {
+          const texts = getChangeIconAndText(event);
+          const authorName = event.submitter ? formatPersonName(event.submitter) : "";
+          description = texts.map(t => `${authorName} ${t.text}`).join(" et ");
+        }
+        groups[empId].disputes.push({
+          id: a.id,
+          text: a.dispute.text,
+          description
+        });
       });
     return Object.entries(groups).map(([empId, group]) => ({
       empId,
       ...group
     }));
-  }, [activities]);
+  }, [activities, userNameById]);
 
   if (byEmployee.length === 0) return null;
 
@@ -82,12 +125,10 @@ export function DisputeBanner({ mission }) {
               {employeeName} a contesté les modifications suivantes :
             </span>
             <ul className={classes.list}>
-              {disputes.map((a) => (
-                <li key={a.id}>
-                  Activité {ACTIVITIES[a.type]?.label} (motif :{" "}
-                  {"\u201C"}
-                  {a.dispute.text}
-                  {"\u201D"})
+              {disputes.map((d) => (
+                <li key={d.id}>
+                  {d.description}
+                  {d.text && ` (motif de la contestation : ${"\u201C"}${d.text}${"\u201D"})`}
                 </li>
               ))}
             </ul>
