@@ -70,6 +70,11 @@ export function DaySummary({
     });
   };
 
+  const deletedMissionIds = React.useMemo(
+    () => new Set(missions.filter(m => m.isDeleted).map(m => m.id)),
+    [missions]
+  );
+
   const dismissedActivities = React.useMemo(() => {
     const existingIds = new Set(
       activitiesWithNextAndPreviousDay.map(a => a.id).filter(Boolean)
@@ -81,11 +86,14 @@ export function DaySummary({
         event.type === "DELETE" &&
         event.resourceType === "activity" &&
         !existingIds.has(event.resourceId) &&
-        event.before
+        event.before &&
+        !deletedMissionIds.has(event.before.missionId)
       ) {
         dismissed.push({
           ...event.before,
           id: event.resourceId,
+          // dismiss() doesn't create a version, so event.before may have null endTime
+          endTime: event.before.endTime || event.time,
           dismissedAt: event.time,
           dispute: event.before.dispute || null,
           user: event.before.user || userFromActivities
@@ -93,11 +101,12 @@ export function DaySummary({
       }
     });
     return dismissed;
-  }, [eventsHistory, activitiesWithNextAndPreviousDay]);
+  }, [eventsHistory, activitiesWithNextAndPreviousDay, deletedMissionIds]);
 
   const activitiesWithDisputeUpdates = React.useMemo(
     () =>
       [...activitiesWithNextAndPreviousDay, ...dismissedActivities]
+        .filter(a => !a.isMissionDeleted)
         .map(a =>
           a.id in disputeUpdates
             ? { ...a, dispute: disputeUpdates[a.id] }

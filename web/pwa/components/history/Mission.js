@@ -148,7 +148,7 @@ export function Mission({
   );
 
   const adminVersionUserActivitiesToUse = React.useMemo(
-    () => adminVersion?.activities?.filter((a) => a.userId === userId),
+    () => adminVersion?.activities?.filter((a) => a.userId === userId && !a.isMissionDeleted),
     [adminVersion]
   );
 
@@ -373,7 +373,7 @@ export function Mission({
             />
           )}
         </PeriodHeader>
-        {!displayContradictory && (
+        {!displayContradictory && !mission.isDeleted && (
           <NoContradictory
             contradictoryNotYetAvailable={contradictoryNotYetAvailable}
             contradictoryComputationError={contradictoryComputationError}
