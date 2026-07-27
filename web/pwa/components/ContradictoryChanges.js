@@ -9,8 +9,8 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { Event } from "../../common/Event";
 import { MISSION_RESOURCE_TYPES } from "common/utils/contradictory";
 import { getChangeIconAndText, getEventAuthorName } from "../../common/logEvent";
-import { now } from "common/utils/time";
-import { getActivityLabelDependingOnMissionType } from "common/utils/activities";
+import { now, formatDateTimeLiteral } from "common/utils/time";
+import { ACTIVITIES, getActivityLabelDependingOnMissionType } from "common/utils/activities";
 import { isConnectionError } from "common/utils/errors";
 import { Accordion, AccordionDetails } from "@mui/material";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -100,23 +100,40 @@ export function ContradictoryChanges({
     contradictoryInfo.contradictoryComputationError;
 
   const disputeEvents = React.useMemo(() => {
-    const activities = mission.allActivities || mission.activities || [];
+    const historyActivities = mission.resourcesWithHistory?.resources
+      ?.filter(r => r.type === MISSION_RESOURCE_TYPES.activity)
+      ?.map(r => r.resource) || [];
+    const storeActivities = mission.allActivities || mission.activities || [];
+    const historyIds = new Set(historyActivities.map(a => a.id));
+    const activities = [
+      ...historyActivities,
+      ...storeActivities.filter(a => !historyIds.has(a.id))
+    ];
     return activities
       .filter(a => a.dispute?.status === "created" && a.userId === userId)
-      .map(a => ({
-        type: "DISPUTE",
-        resourceType: MISSION_RESOURCE_TYPES.activity,
-        resourceId: a.id,
-        time: a.dispute.time,
-        submitter: null,
-        submitterId: a.dispute.submitter_id,
-        userId: a.userId,
-        before: a,
-        after: null,
-        _disputeText: a.dispute.text,
-        _activityType: a.type
-      }));
-  }, [mission, userId]);
+      .map(a => {
+        const hasRevisions = a.versions?.length > 1;
+        const disputedAction = a.dismissedAt
+          ? "la suppression"
+          : hasRevisions
+          ? "la modification"
+          : "l'ajout";
+        return {
+          type: "DISPUTE",
+          resourceType: MISSION_RESOURCE_TYPES.activity,
+          resourceId: a.id,
+          time: a.dispute.time,
+          submitter: null,
+          submitterId: a.dispute.submitter_id,
+          userId: a.userId,
+          before: a,
+          after: null,
+          _disputeText: a.dispute.text,
+          _activityType: a.type,
+          _disputedAction: disputedAction
+        };
+      });
+  }, [mission.allActivities, mission.activities, mission.resourcesWithHistory, userId]);
 
   const userChangesHistory = [
     ...changesHistory.filter(
@@ -163,7 +180,8 @@ export function ContradictoryChanges({
                   const activityLabel = getActivityLabelDependingOnMissionType(
                     userChange._activityType
                   );
-                  const text = `a contesté la modification de l'activité ${activityLabel} (motif : "${userChange._disputeText}")`;
+                  const action = userChange._disputedAction || "la modification";
+                  const text = `a contesté ${action} de l'activité ${activityLabel} (motif : "${userChange._disputeText}")`;
                   return (
                     <Event
                       key={`dispute-${userChange.resourceId}`}
@@ -178,7 +196,25 @@ export function ContradictoryChanges({
                   );
                 }
                 const changes = getChangeIconAndText(userChange);
-                return changes.map(({ icon, text, color }) => (
+                const context = userChange.type === "DELETE"
+                  ? userChange.before?.dismissContext
+                  : userChange.after?.context || userChange.before?.context;
+                const motif = context?.comment || context?.userComment;
+                return changes.map(({ icon, text: rawText, color }) => {
+                  let text = rawText;
+                  if (userChange.resourceType === MISSION_RESOURCE_TYPES.activity) {
+                    const data = userChange.after || userChange.before;
+                    const label = ACTIVITIES[data?.type]?.label;
+                    if (label) {
+                      if (userChange.type === "DELETE") {
+                        text = `a supprimé l'activité ${label} démarrée le ${formatDateTimeLiteral(userChange.before.startTime)}`;
+                      } else if (userChange.type === "CREATE" && data.endTime) {
+                        text = `a ajouté l'activité ${label} du ${formatDateTimeLiteral(data.startTime)} au ${formatDateTimeLiteral(data.endTime)}`;
+                      }
+                    }
+                  }
+                  if (motif) text = `${text} (motif : "${motif}")`;
+                  return (
                   <Event
                     key={`${(userChange.after || userChange.before).id}${text}`}
                     icon={icon}
@@ -197,7 +233,8 @@ export function ContradictoryChanges({
                         MISSION_RESOURCE_TYPES.autoValidationEmployee
                     }
                   />
-                ));
+                  );
+                });
               })}
             </List>
           </>

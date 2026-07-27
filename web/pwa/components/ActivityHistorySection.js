@@ -209,7 +209,12 @@ export function ActivityHistorySection({
             <div className={classes.disputeBox}>
               <div>
                 <span className={classes.disputeTitle}>
-                  {formatPersonName(activity.user)} a contesté :
+                  {formatPersonName(activity.user)} a contesté{" "}
+                  {activity.dismissedAt
+                    ? "la suppression"
+                    : filteredEvents.some(e => e.type === "UPDATE")
+                    ? "la modification"
+                    : "l'ajout"} :
                 </span>
                 {" "}
                 <span className={classes.disputeMotif}>
