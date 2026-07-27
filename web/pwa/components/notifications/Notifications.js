@@ -257,7 +257,11 @@ export const Notifications = ({ openHistory }) => {
           type="button"
           id={`${id}__toggle-btn`}
           style={{
-            justifyContent: "flex-start"
+            justifyContent: "flex-start",
+            position: "fixed",
+            bottom: 0,
+            width: "100%",
+            backgroundColor: "white",
           }}
         >
           <Stack direction="row" gap={1} alignItems="center" pl={1}>
