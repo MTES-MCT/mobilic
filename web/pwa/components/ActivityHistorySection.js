@@ -184,7 +184,9 @@ export function ActivityHistorySection({
         <div className={classes.eventItem}>
           {filteredEvents.map((event, eventIndex) => {
             const changes = getChangeIconAndText(event);
-            const context = event.after?.context || event.before?.context;
+            const context = event.type === "DELETE"
+              ? event.before?.dismissContext
+              : event.after?.context || event.before?.context;
             const motif = context?.comment || context?.userComment;
             return changes.map((change, changeIndex) => (
               <div key={`${eventIndex}-${changeIndex}`} className={classes.eventEntry}>
