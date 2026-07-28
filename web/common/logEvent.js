@@ -72,6 +72,9 @@ function activityChangeText(change) {
               } le ${formatDateTimeLiteral(change.after.startTime)}`
         ];
       }
+      if (change.after?.context?.splitFrom || change.context?.splitFrom) {
+        return [`a scindé ${changeResourceAsText(change)}`];
+      }
       return [
         "a ajouté l'activité"
       ];

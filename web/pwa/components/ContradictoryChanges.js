@@ -91,6 +91,9 @@ export function ContradictoryChanges({
     ) {
       return classes.validationEvent;
     }
+    if (event.after?.context?.splitFrom) {
+      return classes.updateActivityEvent;
+    }
     return classes.missionEvent;
   };
 
@@ -113,9 +116,10 @@ export function ContradictoryChanges({
       .filter(a => a.dispute?.status === "created" && a.userId === userId)
       .map(a => {
         const hasRevisions = a.versions?.length > 1;
+        const isSplit = a.versions?.some(v => v.context?.splitFrom);
         const disputedAction = a.dismissedAt
           ? "la suppression"
-          : hasRevisions
+          : hasRevisions || isSplit
           ? "la modification"
           : "l'ajout";
         return {
@@ -196,10 +200,11 @@ export function ContradictoryChanges({
                   );
                 }
                 const changes = getChangeIconAndText(userChange);
+                const isSplit = userChange.after?.context?.splitFrom || userChange.context?.splitFrom;
                 const context = userChange.type === "DELETE"
                   ? userChange.before?.dismissContext
-                  : userChange.after?.context || userChange.before?.context;
-                const motif = context?.comment || context?.userComment;
+                  : userChange.after?.context;
+                const motif = isSplit ? null : (context?.comment || context?.userComment);
                 return changes.map(({ icon, text: rawText, color }) => {
                   let text = rawText;
                   if (userChange.resourceType === MISSION_RESOURCE_TYPES.activity) {

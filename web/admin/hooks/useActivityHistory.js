@@ -26,9 +26,18 @@ function isTimeShift(event) {
   return startChanged || endShifted;
 }
 
+function isSplitCreate(event) {
+  return event.type === "CREATE" && (
+    event.after?.context?.splitFrom ||
+    event.context?.splitFrom
+  );
+}
+
 export function getEventTagType(events) {
   if (events.some(e => e.type === "DELETE")) return "SUPPRESSION";
   if (events.some(e => (e.__virtual && e.type !== "CREATE") || isTimeShift(e)))
+    return "MODIFICATION";
+  if (events.some(e => isSplitCreate(e)))
     return "MODIFICATION";
   if (
     events.some(
