@@ -222,6 +222,28 @@ export const CANCEL_COMMENT_MUTATION = gql`
   }
 `;
 
+export const DISPUTE_ACTIVITY_MUTATION = gql`
+  mutation disputeActivity($activityId: Int!, $text: String!) {
+    activities {
+      disputeActivity(activityId: $activityId, text: $text) {
+        id
+        dispute
+      }
+    }
+  }
+`;
+
+export const CANCEL_DISPUTE_MUTATION = gql`
+  mutation cancelDispute($activityId: Int!) {
+    activities {
+      cancelDispute(activityId: $activityId) {
+        id
+        dispute
+      }
+    }
+  }
+`;
+
 export const LOG_ACTIVITY_MUTATION = gql`
   mutation logActivity(
     $type: ActivityTypeEnum!

@@ -20,7 +20,7 @@ import {
   ADD_ACTIVITY_IN_MISSION_PANEL,
   EDIT_ACTIVITY_IN_MISSION_PANEL
 } from "common/utils/matomoTags";
-import { getChangeIconAndText } from "../../common/logEvent";
+import { getChangeIconAndText, getEventAuthorName } from "../../common/logEvent";
 import { formatPersonName } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import {
@@ -114,7 +114,7 @@ export function ActivitiesCard({
     const changes = getChangeIconAndText(event);
     const author = event.__virtual
       ? formatPersonName(currentUserInfo) || "Vous"
-      : event.submitter ? formatPersonName(event.submitter) : "Inconnu";
+      : getEventAuthorName(event) || "Inconnu";
     const dateLabel = event.__virtual
       ? "(non sauvegardé)"
       : `le ${formatDay(event.time, true)} à ${formatTimeOfDay(event.time)}`;

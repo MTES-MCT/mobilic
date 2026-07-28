@@ -57,7 +57,7 @@ export function orderLogEvents(event1, event2) {
   );
 }
 
-function allEventsForResource(resource, resourceType) {
+export function allEventsForResource(resource, resourceType) {
   const events = [];
 
   if (resource.versions) {

@@ -15,7 +15,8 @@ export const notificationContent = {
     return {
       title: `Votre gestionnaire a modifié votre mission du ${formattedDate}`,
       content: "Retrouvez le détail des modifications dans votre historique.",
-      missionId: data.mission_id
+      missionId: data.mission_id,
+      buttonLabel: "Vérifier les modifications"
     };
   },
   NEW_MISSION_BY_ADMIN: data => {
