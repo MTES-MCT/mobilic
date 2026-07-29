@@ -117,11 +117,9 @@ export function ContradictoryChanges({
       .map(a => {
         const hasRevisions = a.versions?.length > 1;
         const isSplit = a.versions?.some(v => v.context?.splitFrom);
-        const disputedAction = a.dismissedAt
-          ? "la suppression"
-          : hasRevisions || isSplit
-          ? "la modification"
-          : "l'ajout";
+        let disputedAction = "l'ajout";
+        if (a.dismissedAt) disputedAction = "la suppression";
+        else if (hasRevisions || isSplit) disputedAction = "la modification";
         return {
           type: "DISPUTE",
           resourceType: MISSION_RESOURCE_TYPES.activity,
