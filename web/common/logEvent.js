@@ -73,7 +73,7 @@ function activityChangeText(change) {
         ];
       }
       if (change.after?.context?.splitFrom || change.context?.splitFrom) {
-        return [`a scindé ${changeResourceAsText(change)}`];
+        return [`a scindé ${changeResourceAsText(change)} du ${formatDateTimeLiteral(change.after.startTime)} au ${formatDateTimeLiteral(change.after.endTime)}`];
       }
       return [
         "a ajouté l'activité"

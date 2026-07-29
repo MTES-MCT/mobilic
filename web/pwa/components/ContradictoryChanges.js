@@ -213,7 +213,7 @@ export function ContradictoryChanges({
                     if (label) {
                       if (userChange.type === "DELETE") {
                         text = `a supprimé l'activité ${label} démarrée le ${formatDateTimeLiteral(userChange.before.startTime)}`;
-                      } else if (userChange.type === "CREATE" && data.endTime) {
+                      } else if (userChange.type === "CREATE" && data.endTime && !isSplit) {
                         text = `a ajouté l'activité ${label} du ${formatDateTimeLiteral(data.startTime)} au ${formatDateTimeLiteral(data.endTime)}`;
                       }
                     }
