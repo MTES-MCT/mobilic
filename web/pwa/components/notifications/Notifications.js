@@ -224,7 +224,7 @@ export const Notifications = ({ openHistory }) => {
         id={collapseElementId}
         style={{ paddingTop: 0, paddingBottom: 0 }}
       >
-        <Stack direction="column" width="100%" maxHeight="83vh">
+        <Stack direction="column" width="100%" maxHeight="65vh">
           {notifs.length > 0 ? (
             notifs.map((notif) => (
               <InnerNotification
@@ -257,7 +257,11 @@ export const Notifications = ({ openHistory }) => {
           type="button"
           id={`${id}__toggle-btn`}
           style={{
-            justifyContent: "flex-start"
+            justifyContent: "flex-start",
+            position: "fixed",
+            bottom: 0,
+            width: "100%",
+            backgroundColor: "white",
           }}
         >
           <Stack direction="row" gap={1} alignItems="center" pl={1}>
