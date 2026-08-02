@@ -10,7 +10,6 @@ import {
   getCurrentActivityDuration
 } from "common/utils/activities";
 import { now } from "common/utils/time";
-import WarningEndMissionModalContainer from "../components/WarningEndMissionModal/WarningEndMissionModalContainer";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useModals } from "common/utils/modals";
 import { missionLastLessThanAMinute } from "common/utils/mission";
@@ -176,13 +175,6 @@ export function CurrentActivity({
           Abandonner la mission
         </Button>
       </Box>
-      <WarningEndMissionModalContainer
-        currentMission={currentMission}
-        currentTeam={currentTeam}
-        latestActivity={latestActivity}
-        openEndMissionModal={openEndMissionModal}
-        activityDuration={getCurrentActivityDuration(latestActivity)}
-      />
     </>
   );
 }
