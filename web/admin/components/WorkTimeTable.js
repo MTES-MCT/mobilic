@@ -184,15 +184,10 @@ const getStatusForEntry = (
   const validationEntries = missions
     .flatMap((mission) => missionToValidationEntries(mission))
 
-    // Mission is ongoing ?
-  if (validationEntries.some((val) => !val.endTime)) {
+  // Mission is ongoing ?
+  const isMissionOngoing = validationEntries.some((val) => !val.hasEndedMission);
+  if (isMissionOngoing) {
     return MISSION_STATUS.ongoing;
-  }
-
-  // Mission is waiting validation from admin ?
-  const isWaitingAdminValidation = validationEntries.some((val) => entryToBeValidatedByAdmin(val, currentUserId))
-  if (isWaitingAdminValidation) {
-    return MISSION_STATUS.toValidateAdmin;
   }
 
   // Missions is waiting validation from worker ?
@@ -201,12 +196,19 @@ const getStatusForEntry = (
     return MISSION_STATUS.waitingWorker;
   }
 
+  // Mission is waiting validation from admin ?
+  const isWaitingAdminValidation = validationEntries.some((val) => entryToBeValidatedByAdmin(val, currentUserId))
+  if (isWaitingAdminValidation) {
+    return MISSION_STATUS.toValidateAdmin;
+  }
+
   // Mission is validated ?
   const areSomeMissionsValidated = validationEntries.some((val) => val.adminValidation)
   if (areSomeMissionsValidated) {
     return MISSION_STATUS.validated;
   }
 
+  // Mission is deleted ?
   if (validationEntries.some((val) => entryDeleted(val))) {
     return MISSION_STATUS.deleted;
   }

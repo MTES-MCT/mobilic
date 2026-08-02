@@ -49,6 +49,7 @@ import { MISSION_QUERY } from "common/utils/apiQueries/missions";
 import { MissionDrawerHeader } from "../../drawers/DrawerHeader";
 import { MissionDetailsObservations } from "./MissionDetailsObservations";
 import { ToValidateTag, WaitingTag, ValidatedTag, DeletedTag } from "../../drawers/Tags";
+import { MISSION_STATUS } from "../../utils/missionsStatus";
 
 export function MissionDetails({
   missionId,
@@ -220,6 +221,44 @@ export function MissionDetails({
     }
   }, [mission, usersToAdd]);
 
+  const missionStatusKey = React.useMemo(() => {
+    if (!mission || isMissionHoliday) {
+      return null;
+    }
+
+    if (mission.isDeleted) {
+      return MISSION_STATUS.deleted;
+    }
+
+    const hasOngoingEntry = Object.values(mission.userStats || {}).some(
+      (stats) => !stats.hasEndedMission
+    );
+
+    if (hasOngoingEntry) {
+      return MISSION_STATUS.ongoing;
+    }
+
+    if ((entriesToValidateByWorker || []).length > 0) {
+      return MISSION_STATUS.waitingWorker;
+    }
+
+    if ((entriesToValidateByAdmin || []).length > 0) {
+      return MISSION_STATUS.toValidateAdmin;
+    }
+
+    if ((entriesValidatedByAdmin || []).length > 0) {
+      return MISSION_STATUS.validated;
+    }
+
+    return null;
+  }, [
+    mission,
+    isMissionHoliday,
+    entriesToValidateByWorker,
+    entriesToValidateByAdmin,
+    entriesValidatedByAdmin,
+  ]);
+
   if (loading) {
     return <CircularProgress color="primary" />;
   }
@@ -257,8 +296,7 @@ export function MissionDetails({
             ? (newName) => missionActions.changeName(newName)
             : null
         }
-        noEmployeeValidation={entriesToValidateByWorker?.length > 0}
-        toBeValidatedByAdmin={entriesToValidateByAdmin?.length > 0}
+        missionStatusKey={missionStatusKey}
         doesMissionSpanOnMultipleDays={doesMissionSpanOnMultipleDays}
         day={day}
       />

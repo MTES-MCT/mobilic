@@ -40,7 +40,8 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     isHoliday:
       missionPayload.isHoliday !== undefined ? missionPayload.isHoliday : false,
     validations: missionPayload.validations,
-    pastRegistrationJustification: missionPayload.pastRegistrationJustification
+    pastRegistrationJustification: missionPayload.pastRegistrationJustification,
+    endedUserIds: missionPayload.endedUserIds || []
   };
 }
 
@@ -190,7 +191,8 @@ export function computeMissionStats(m, users) {
         v =>
           (!v.userId && v.submitterId.toString() === userId) ||
           v.userId.toString() === userId
-      )
+      ),
+      hasEndedMission: m.endedUserIds?.includes(Number(userId))
     };
   });
   const missionNotUpdatedForTooLong = values(userStats).some(
