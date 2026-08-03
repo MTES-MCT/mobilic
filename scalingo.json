@@ -1,0 +1,19 @@
+{
+  "name": "mobilic",
+  "description": "Review app for the Mobilic frontend (ephemeral, per PR).",
+  "repository": "https://github.com/MTES-MCT/mobilic",
+  "env": {
+    "REACT_APP_API_HOST": {
+      "description": "Overwritten by .scripts/review-app.sh once the sibling back-end review app is up (then the front-end is redeployed since REACT_APP_* is baked at build time). Fallback to the staging API until then.",
+      "value": "https://mobilic-api-staging.osc-fr1.scalingo.io"
+    },
+    "REACT_APP_SENTRY_ENVIRONMENT": {
+      "generator": "template",
+      "template": "review-pr%PR_NUMBER%"
+    }
+  },
+  "formation": {
+    "web": { "amount": 1, "size": "S" }
+  },
+  "stack": "scalingo-24"
+}
