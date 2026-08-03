@@ -19,6 +19,7 @@ import { MOBILIC_BLUE } from "common/utils/theme";
 import { PRETTY_LABELS } from "./RegulatoryRespect/RegulatoryRespectAlertsRecap";
 import { useDayDrawer } from "../drawers/DayDrawer";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
+import PushNotificationBanner from "common/components/PushNotificationBanner";
 
 function getStartOfWeek() {
   const now = new Date();
@@ -432,6 +433,7 @@ export default function Home({ setShouldRefreshData }) {
 
   return (
     <Box>
+      <PushNotificationBanner />
       <Box
         sx={{
           padding: "2rem 2.5rem",
