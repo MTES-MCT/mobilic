@@ -35,6 +35,8 @@ import { Notifications } from "../components/notifications/Notifications";
 import { MobilicHeader } from "../../common/Header";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { fr } from "@codegouvfr/react-dsfr";
+import { usePushNotifications } from "common/hooks/usePushNotifications";
+import Notice from "../../common/Notice";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
@@ -115,6 +117,8 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   const withLoadingScreen = useLoadingScreen();
   const { openHolidaysModal } = useHolidays();
   const { hasEnoughBreak } = useEnoughBreak();
+  const { shouldShowOptIn, requestPermission, dismiss } =
+    usePushNotifications();
 
   const companies = store.companies();
   const userId = store.userId();
@@ -223,6 +227,23 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   return (
     <Container maxWidth={false} className={classes.outer} disableGutters>
       <MobilicHeader forceMobile />
+      {shouldShowOptIn && (
+        <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
+          <Notice
+            title="Activez les notifications pour recevoir les alertes."
+            type="info"
+            onClose={dismiss}
+            isFullWidth={false}
+          />
+          <Button
+            size="small"
+            priority="secondary"
+            onClick={requestPermission}
+          >
+            Activer
+          </Button>
+        </Box>
+      )}
       <Stack
         direction="column"
         alignItems="center"
