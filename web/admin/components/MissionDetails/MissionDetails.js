@@ -221,7 +221,7 @@ export function MissionDetails({
     }
   }, [mission, usersToAdd]);
 
-  const missionStatusKey = React.useMemo(() => {
+  const missionStatusLabel = React.useMemo(() => {
     if (!mission || isMissionHoliday) {
       return null;
     }
@@ -275,7 +275,7 @@ export function MissionDetails({
             ? (newName) => missionActions.changeName(newName)
             : null
         }
-        missionStatusKey={missionStatusKey}
+        missionStatusLabel={missionStatusLabel}
         doesMissionSpanOnMultipleDays={doesMissionSpanOnMultipleDays}
         day={day}
       />
