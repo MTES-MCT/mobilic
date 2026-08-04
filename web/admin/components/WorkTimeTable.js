@@ -188,7 +188,7 @@ const getStatusForEntry = (
   );
 
   return computeMissionStatus(validationEntries, currentUserId);
-}
+};
 
 const getMostRecentMissionId = (entry, missionsById, missionIds) => {
   let mostRecentMissionId = 0;
