@@ -184,6 +184,11 @@ const getStatusForEntry = (
   const validationEntries = missions
     .flatMap((mission) => missionToValidationEntries(mission))
 
+  // Mission is deleted ?
+  if (validationEntries.some((val) => entryDeleted(val))) {
+    return MISSION_STATUS.deleted;
+  }
+
   // Mission is ongoing ?
   const isMissionOngoing = validationEntries.some((val) => !val.hasEndedMission);
   if (isMissionOngoing) {
@@ -206,11 +211,6 @@ const getStatusForEntry = (
   const areSomeMissionsValidated = validationEntries.some((val) => val.adminValidation)
   if (areSomeMissionsValidated) {
     return MISSION_STATUS.validated;
-  }
-
-  // Mission is deleted ?
-  if (validationEntries.some((val) => entryDeleted(val))) {
-    return MISSION_STATUS.deleted;
   }
 
   return null;
