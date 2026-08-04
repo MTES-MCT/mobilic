@@ -32,10 +32,6 @@ export const computeMissionStatus = (
     return MISSION_STATUS.ongoing;
   }
 
-  if (validationEntries.some((entry) => entryToBeValidatedByWorker(entry))) {
-    return MISSION_STATUS.waitingWorker;
-  }
-
   if (
     validationEntries.some((entry) =>
       entryToBeValidatedByAdmin(
@@ -47,6 +43,10 @@ export const computeMissionStatus = (
     )
   ) {
     return MISSION_STATUS.toValidateAdmin;
+  }
+
+  if (validationEntries.some((entry) => entryToBeValidatedByWorker(entry))) {
+    return MISSION_STATUS.waitingWorker;
   }
 
   if (validationEntries.some((entry) => entry.adminValidation)) {

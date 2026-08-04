@@ -24,9 +24,8 @@ import {
   missionToValidationEntries
 } from "../selectors/validationEntriesSelectors";
 import { RunningTag, ToValidateTag, ValidatedTag, WaitingTag, DeletedTag, AllValidatedTag } from "../drawers/Tags";
-import { MISSION_STATUS } from "../utils/missionsStatus";
+import { MISSION_STATUS, computeMissionStatus } from "../utils/missionsStatus";
 import { MissionStatusTagBtn } from "./MissionStatusTagBtn";
-import { computeMissionStatus } from "../utils/missionsStatus";
 
 const useStyles = makeStyles((theme) => ({
   expenditures: {

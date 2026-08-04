@@ -129,7 +129,7 @@ export const DayDrawerHeader = ({
 
 export const MissionDrawerHeader = ({
   mission,
-  missionStatusKey,
+  missionStatusLabel,
   onEditMissionName,
   doesMissionSpanOnMultipleDays = false,
   day,
@@ -173,17 +173,17 @@ export const MissionDrawerHeader = ({
         />
         {!isHoliday && (
           <Box className={classes.missionTags}>
-            {missionStatusKey === MISSION_STATUS.ongoing && <RunningTag />}
-            {missionStatusKey === MISSION_STATUS.waitingWorker && (
+            {missionStatusLabel === MISSION_STATUS.ongoing && <RunningTag />}
+            {missionStatusLabel === MISSION_STATUS.waitingWorker && (
               <WaitingTag />
             )}
-            {missionStatusKey === MISSION_STATUS.toValidateAdmin && (
+            {missionStatusLabel === MISSION_STATUS.toValidateAdmin && (
               <ToValidateTag />
             )}
-            {missionStatusKey === MISSION_STATUS.validated && (
+            {missionStatusLabel === MISSION_STATUS.validated && (
               <ValidatedTag />
             )}
-            {missionStatusKey === MISSION_STATUS.deleted && <DeletedTag />}
+            {missionStatusLabel === MISSION_STATUS.deleted && <DeletedTag />}
           </Box>
         )}
       </>
