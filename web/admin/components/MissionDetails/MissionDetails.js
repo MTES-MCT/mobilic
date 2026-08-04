@@ -49,7 +49,7 @@ import { MISSION_QUERY } from "common/utils/apiQueries/missions";
 import { MissionDrawerHeader } from "../../drawers/DrawerHeader";
 import { MissionDetailsObservations } from "./MissionDetailsObservations";
 import { ToValidateTag, WaitingTag, ValidatedTag, DeletedTag } from "../../drawers/Tags";
-import { MISSION_STATUS } from "../../utils/missionsStatus";
+import { computeMissionStatus } from "../../utils/missionsStatus";
 
 export function MissionDetails({
   missionId,
@@ -225,38 +225,17 @@ export function MissionDetails({
     if (!mission || isMissionHoliday) {
       return null;
     }
-
-    if (mission.isDeleted) {
-      return MISSION_STATUS.deleted;
-    }
-
-    const hasOngoingEntry = Object.values(mission.userStats || {}).some(
-      (stats) => !stats.hasEndedMission
-    );
-
-    if (hasOngoingEntry) {
-      return MISSION_STATUS.ongoing;
-    }
-
-    if ((entriesToValidateByWorker || []).length > 0) {
-      return MISSION_STATUS.waitingWorker;
-    }
-
-    if ((entriesToValidateByAdmin || []).length > 0) {
-      return MISSION_STATUS.toValidateAdmin;
-    }
-
-    if ((entriesValidatedByAdmin || []).length > 0) {
-      return MISSION_STATUS.validated;
-    }
-
-    return null;
+    const validationEntries = missionToValidationEntries(mission);
+    return computeMissionStatus(validationEntries, adminStore.userId, {
+      adminCanBypass: adminMayOverrideValidation,
+      overrideValidationJustification
+    });
   }, [
     mission,
     isMissionHoliday,
-    entriesToValidateByWorker,
-    entriesToValidateByAdmin,
-    entriesValidatedByAdmin,
+    adminStore.userId,
+    adminMayOverrideValidation,
+    overrideValidationJustification
   ]);
 
   if (loading) {

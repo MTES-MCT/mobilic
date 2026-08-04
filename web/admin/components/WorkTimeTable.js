@@ -21,14 +21,12 @@ import { OPEN_WORKDAY_DRAWER } from "common/utils/matomoTags";
 import { AugmentedTable } from "./AugmentedTable";
 import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
 import {
-  entryDeleted,
-  entryToBeValidatedByAdmin,
-  entryToBeValidatedByWorker,
   missionToValidationEntries
 } from "../selectors/validationEntriesSelectors";
 import { RunningTag, ToValidateTag, ValidatedTag, WaitingTag, DeletedTag, AllValidatedTag } from "../drawers/Tags";
 import { MISSION_STATUS } from "../utils/missionsStatus";
 import { MissionStatusTagBtn } from "./MissionStatusTagBtn";
+import { computeMissionStatus } from "../utils/missionsStatus";
 
 const useStyles = makeStyles((theme) => ({
   expenditures: {
@@ -166,12 +164,17 @@ const getStatusForEntry = (
   currentUserId,
   openMission
 ) => {
-  if (!entry || !missionsById || !currentUserId || !openMission) {
+  if (
+    !entry ||
+    !missionsById ||
+    currentUserId === null ||
+    currentUserId === undefined ||
+    !openMission
+  ) {
     return null;
   }
 
   // 1. Get all missions associated to the entry
-
   // Get missions ids from entry
   const missionsIds = Object.keys(entry.missionNames);
   // Get missions from ids
@@ -181,39 +184,11 @@ const getStatusForEntry = (
   if (missions.length === 0)
     return null;
 
-  const validationEntries = missions
-    .flatMap((mission) => missionToValidationEntries(mission))
+  const validationEntries = missions.flatMap((mission) =>
+    missionToValidationEntries(mission)
+  );
 
-  // Mission is deleted ?
-  if (validationEntries.some((val) => entryDeleted(val))) {
-    return MISSION_STATUS.deleted;
-  }
-
-  // Mission is ongoing ?
-  const isMissionOngoing = validationEntries.some((val) => !val.hasEndedMission);
-  if (isMissionOngoing) {
-    return MISSION_STATUS.ongoing;
-  }
-
-  // Missions is waiting validation from worker ?
-  const isWaitingWorkerValidation = validationEntries.some((val) => entryToBeValidatedByWorker(val))
-  if (isWaitingWorkerValidation) {
-    return MISSION_STATUS.waitingWorker;
-  }
-
-  // Mission is waiting validation from admin ?
-  const isWaitingAdminValidation = validationEntries.some((val) => entryToBeValidatedByAdmin(val, currentUserId))
-  if (isWaitingAdminValidation) {
-    return MISSION_STATUS.toValidateAdmin;
-  }
-
-  // Mission is validated ?
-  const areSomeMissionsValidated = validationEntries.some((val) => val.adminValidation)
-  if (areSomeMissionsValidated) {
-    return MISSION_STATUS.validated;
-  }
-
-  return null;
+  return computeMissionStatus(validationEntries, currentUserId);
 }
 
 const getMostRecentMissionId = (entry, missionsById, missionIds) => {
