@@ -14,12 +14,14 @@ import {
   updateCompaniesListReducer,
   updateCompanyDetailsReducer,
   updateCompanyActivitiesReducer,
+  updateCompanyEmploymentsReducer,
   updateCompanyIdReducer,
   updateCompanyNameAndPhoneNumberReducer,
   updateCompanyNbWorkerSnoozeReducer,
   updateEmploymentIdReducer,
   updateShouldSeeCertificateInfoReducer,
-  updateShouldForceNbWorkerInfoReducer
+  updateShouldForceNbWorkerInfoReducer,
+  updatePendingValidationsCountReducer
 } from "./sync";
 import {
   createItemsReducer,
@@ -55,6 +57,8 @@ export const ADMIN_ACTIONS = {
   delete: deleteItemReducer,
   updateCompanyDetails: updateCompanyDetailsReducer,
   updateCompanyActivities: updateCompanyActivitiesReducer,
+  updatePendingValidationsCount: updatePendingValidationsCountReducer,
+  updateCompanyEmployments: updateCompanyEmploymentsReducer,
   updateCompaniesList: updateCompaniesListReducer,
   updateCompanyId: updateCompanyIdReducer,
   updateShouldSeeCertificateInfo: updateShouldSeeCertificateInfoReducer,

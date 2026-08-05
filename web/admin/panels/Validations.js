@@ -41,7 +41,11 @@ import {
 import { usePageTitle } from "../../common/UsePageTitle";
 import { Explanation } from "../../common/typography/Explanation";
 import { useRefreshDeletedMissions } from "../hooks/useRefreshDeletedMissions";
+import { useSnackbarAlerts } from "../../common/Snackbar";
+import { useLoadingScreen } from "common/utils/loading";
+import { useApi } from "common/utils/api";
 import ValidationMission from "./ValidationMission";
+import { loadActivitiesData } from "../utils/activities";
 
 const VALIDATION_TABS = [
   {
@@ -74,6 +78,9 @@ function ValidationPanel({ refreshData }) {
   const adminStore = useAdminStore();
   const location = useLocation();
   const { trackEvent } = useMatomo();
+  const alerts = useSnackbarAlerts();
+  const api = useApi();
+  const withLoadingScreen = useLoadingScreen();
 
   const { refresh: refreshDeletedMissions, loading: loadingDeletedMissions } =
     useRefreshDeletedMissions();
@@ -221,6 +228,20 @@ function ValidationPanel({ refreshData }) {
     align: "left",
     minWidth: 200
   };
+
+  React.useEffect(() => {
+    async function loadActivities() {
+      await loadActivitiesData({
+        adminStore,
+        alerts,
+        api,
+        withLoadingScreen
+      });
+    }
+    if (adminStore.companyId && !adminStore.areMissionsActivitiesLoaded) {
+      loadActivities();
+    }
+  }, [adminStore.companyId]);
 
   React.useEffect(() => {
     setEntriesDeletedByAdmin(

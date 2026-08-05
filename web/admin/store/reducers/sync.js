@@ -3,9 +3,16 @@ import { addWorkDaysReducer } from "./workDays";
 import { computeUsersAndTeamFilters } from "./team";
 
 export function updateCompanyIdReducer(state, { companyId }) {
+  const isNewCompany = companyId !== state.companyId;
   return {
     ...state,
-    companyId
+    companyId,
+    areMissionsActivitiesLoaded: isNewCompany
+      ? false
+      : state.areMissionsActivitiesLoaded,
+    areCompanyEssentialsLoaded: isNewCompany
+      ? false
+      : state.areCompanyEssentialsLoaded
   };
 }
 
@@ -144,6 +151,9 @@ export function updateCompanyDetailsReducer(
       )
     ),
     settings: companiesPayload[0].settings,
+    pendingValidationsCount:
+      companiesPayload[0].dashboardSummary?.pendingValidationsCount || 0,
+    areCompanyEssentialsLoaded: true,
     business: companiesPayload[0].business || {
       businessType: "",
       transportType: ""
@@ -190,3 +200,27 @@ export function updateCompanyActivitiesReducer(state, { companiesData, minDate }
     reset: true
   });
 }
+
+export const updateCompanyEmploymentsReducer = (state, { companiesPayload }) => {
+  const allEmployments = flatMap(
+    companiesPayload.map(c =>
+      c.employments.map(e => ({
+        ...e,
+        companyId: c.id,
+        company: { id: c.id, name: c.name, siren: c.siren }
+      }))
+    )
+  );
+
+  return {
+    ...state,
+    employments: allEmployments
+  };
+};
+
+export const updatePendingValidationsCountReducer = (state, { count }) => {
+  return {
+    ...state,
+    pendingValidationsCount: count
+  };
+};

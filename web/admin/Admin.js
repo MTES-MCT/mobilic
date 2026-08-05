@@ -10,8 +10,9 @@ import Container from "@mui/material/Container";
 import "./assets/admin.scss";
 import {
   loadCompaniesList,
-  loadCompanyDetails
+  loadCompanyEssentials
 } from "./utils/loadCompaniesData";
+import { loadActivitiesData } from "./utils/activities";
 import { useApi } from "common/utils/api";
 import {
   AdminStoreProvider,
@@ -115,7 +116,7 @@ function InternalAdmin() {
     }
   }
 
-  async function loadDataCompanyDetails() {
+  async function loadDataCompanyEssentials() {
     const userId = adminStore.userId;
     const companyId = adminStore.companyId;
     if (userId && companyId) {
@@ -126,7 +127,7 @@ function InternalAdmin() {
             async () => {
               const minDate = adminStore.activitiesFilters.minDate;
               const maxDate = adminStore.activitiesFilters.maxDate;
-              const companies = await loadCompanyDetails(
+              const companies = await loadCompanyEssentials(
                 api,
                 userId,
                 minDate,
@@ -147,7 +148,7 @@ function InternalAdmin() {
 
   async function refreshData() {
     if (adminStore.companyId) {
-      loadDataCompanyDetails();
+      loadActivitiesData({ adminStore, alerts, api, withLoadingScreen });
     } else {
       loadDataCompaniesList();
     }
@@ -167,22 +168,21 @@ function InternalAdmin() {
   }, [location]);
 
   React.useEffect(() => {
-    if (adminStore.companyId) loadDataCompanyDetails();
+    if (adminStore.companyId) loadDataCompanyEssentials();
   }, [adminStore.companyId]);
 
   const prevMinDate = React.useRef(adminStore.activitiesFilters.minDate);
-  
-  // Update company details when changing the min date filter in the activities panel 
-  // to update the displayed missions and work days according to the selected period.
+
+  // Update activities and missions when changing the min date filter in the activities panel.
   React.useEffect(() => {
-    // Do not load company details on the first render of the activities panel to avoid loading data twice 
+    // Do not load company details on the first render of the activities panel to avoid loading data twice
     // on initial load since company details are already loaded when the company is selected.
     if (adminStore.activitiesFilters.minDate === prevMinDate.current) {
       return;
     }
     prevMinDate.current = adminStore.activitiesFilters.minDate;
     if (adminStore.companyId) {
-      loadDataCompanyDetails();
+      loadActivitiesData({ adminStore, alerts, api, withLoadingScreen });
     }
   }, [adminStore.activitiesFilters.minDate]);
 

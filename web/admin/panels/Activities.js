@@ -33,7 +33,7 @@ import { useApi } from "common/utils/api";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
-import { loadCompanyData } from "../utils/loadCompaniesData";
+import { loadActivitiesData } from "../utils/activities";
 import {
   ACTIVITY_FILTER_EMPLOYEE,
   ACTIVITY_FILTER_MAX_DATE,
@@ -256,35 +256,6 @@ function ActivitiesPanel() {
     }
   };
 
-  const loadDataCompanyData = async () => {
-    const userId = adminStore.userId;
-    const companyId = adminStore.companyId;
-    if (userId && companyId) {
-      withLoadingScreen(
-        async () =>
-          await alerts.withApiErrorHandling(
-            async () => {
-              const minDate = adminStore.activitiesFilters.minDate;
-              const maxDate = adminStore.activitiesFilters.maxDate;
-              const companyData = await loadCompanyData(
-                api,
-                userId,
-                minDate,
-                maxDate,
-                companyId
-              );
-              adminStore.dispatch({
-                type: ADMIN_ACTIONS.updateCompanyActivities,
-                payload: { companiesData: companyData, minDate }
-              });
-            },
-            "load-company-data",
-            null
-          )
-      );
-    }
-  };
-
   const refreshCurrentWorkDays = () =>
     refreshWorkDays(
       setLoading,
@@ -321,8 +292,16 @@ function ActivitiesPanel() {
   }, []);
 
   React.useEffect(() => {
-    if (adminStore.companyId) {
-      loadDataCompanyData();
+    async function loadActivities() {
+      await loadActivitiesData({
+        adminStore,
+        alerts,
+        api,
+        withLoadingScreen
+      });
+    }
+    if (adminStore.companyId && !adminStore.areMissionsActivitiesLoaded) {
+      loadActivities();
     }
   }, [adminStore.companyId]);
 

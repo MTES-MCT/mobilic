@@ -109,6 +109,19 @@ export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
   }
 `;
 
+export const ADMIN_PENDING_VALIDATIONS_COUNT_QUERY = gql`
+  query adminPendingValidationsCount($id: Int!, $companyIds: [Int]) {
+    user(id: $id) {
+      adminedCompanies(companyIds: $companyIds) {
+        id
+        dashboardSummary {
+          pendingValidationsCount
+        }
+      }
+    }
+  }
+`;
+
 export const ADMIN_COMPANIES_LIST_QUERY = gql`
   query adminCompaniesList($id: Int!) {
     user(id: $id) {
@@ -138,6 +151,7 @@ export const THIRD_PARTY_CLIENTS_COMPANY_QUERY = gql`
 
 export const ADMIN_COMPANIES_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
+  ${FULL_EMPLOYMENT_FRAGMENT}
   query adminCompanies(
     $id: Int!
     $activityAfter: Date
@@ -149,6 +163,9 @@ export const ADMIN_COMPANIES_QUERY = gql`
         name
         nbWorkers
         ...CompanySettings
+        dashboardSummary {
+          pendingValidationsCount
+        }
         business {
           transportType
           businessType
@@ -191,12 +208,6 @@ export const ADMIN_COMPANIES_QUERY = gql`
           ...FullEmploymentData
           shouldSeeCertificateInfo
           shouldForceNbWorkerInfo
-        }
-        adminRegulationComputationsByUserAndByDay(fromDate: $activityAfter) {
-          day
-          userId
-          nbAlertsDailyAdmin
-          nbAlertsWeeklyAdmin
         }
       }
     }
@@ -632,7 +643,6 @@ export const DASHBOARD_HOME_QUERY = gql`
         id
         dashboardSummary {
           activeMissionsCount
-          pendingValidationsCount
           pendingInvitationsCount
           inactiveEmployeesCount
           autoValidatedMissionsCount

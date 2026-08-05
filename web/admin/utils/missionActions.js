@@ -31,6 +31,7 @@ import {
   VALIDATE_MISSION_MUTATION
 } from "common/utils/apiQueries/missions";
 import { isoFormatLocalDate } from "common/utils/time";
+import { loadPendingValidationsCount } from "./loadCompaniesData";
 
 const testBulkActivities = async (api, virtualActivities) => {
   if (virtualActivities.length > 0) {
@@ -249,6 +250,20 @@ async function validateMission(
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateRegulationComputations,
       payload: { computationRegulationsPayload }
+    });
+  } catch (err) {
+    console.error(err);
+  }
+
+  try {
+    const pendingValidationsCount = await loadPendingValidationsCount(
+      api,
+      adminStore.userId,
+      adminStore.companyId
+    );
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.updatePendingValidationsCount,
+      payload: { count: pendingValidationsCount }
     });
   } catch (err) {
     console.error(err);
