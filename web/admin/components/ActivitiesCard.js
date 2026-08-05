@@ -20,7 +20,7 @@ import {
   ADD_ACTIVITY_IN_MISSION_PANEL,
   EDIT_ACTIVITY_IN_MISSION_PANEL
 } from "common/utils/matomoTags";
-import { getChangeIconAndText, getEventAuthorName } from "../../common/logEvent";
+import { getChangeIconAndText, getEventAuthorName, isSplitEvent } from "../../common/logEvent";
 import { formatPersonName } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import {
@@ -75,7 +75,7 @@ export function ActivitiesCard({
   const colCount = showEditColumn ? 6 : 5;
 
   function getComment(event) {
-    if (event.after?.context?.splitFrom || event.context?.splitFrom) return null;
+    if (isSplitEvent(event)) return null;
     const ctx = event.__virtual
       ? event.context || event.after?.context
       : event.type === "DELETE"

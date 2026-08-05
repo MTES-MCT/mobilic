@@ -86,9 +86,9 @@ async function severalActionsActivity(api, mission, adminStore, modalArgs) {
             ? {
                 ...a,
                 __virtualAction: a.__virtualAction === "create" ? "create" : "edit",
-                __virtualContext: a.__virtualAction === "create"
-                  ? { ...a.__virtualContext, ...payload.context }
-                  : payload.context || null,
+                ...(a.__virtualAction === "create" && {
+                  __virtualContext: { ...a.__virtualContext, ...payload.context }
+                }),
                 __virtualEdits: [
                   ...(a.__virtualEdits || []),
                   {

@@ -5,6 +5,7 @@ import {
   getResourcesAndHistoryForMission,
   MISSION_RESOURCE_TYPES
 } from "common/utils/contradictory";
+import { isSplitEvent } from "../../common/logEvent";
 
 // activity created with an endTime = retroactive (past entry by employee or admin)
 function isRetroactiveCreate(event) {
@@ -27,10 +28,7 @@ function isTimeShift(event) {
 }
 
 function isSplitCreate(event) {
-  return event.type === "CREATE" && (
-    event.after?.context?.splitFrom ||
-    event.context?.splitFrom
-  );
+  return event.type === "CREATE" && isSplitEvent(event);
 }
 
 export function getEventTagType(events) {

@@ -8,7 +8,7 @@ import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Event } from "../../common/Event";
 import { MISSION_RESOURCE_TYPES } from "common/utils/contradictory";
-import { getChangeIconAndText, getEventAuthorName } from "../../common/logEvent";
+import { getChangeIconAndText, getEventAuthorName, isSplitEvent } from "../../common/logEvent";
 import { now, formatDateTimeLiteral } from "common/utils/time";
 import { ACTIVITIES, getActivityLabelDependingOnMissionType } from "common/utils/activities";
 import { isConnectionError } from "common/utils/errors";
@@ -198,7 +198,7 @@ export function ContradictoryChanges({
                   );
                 }
                 const changes = getChangeIconAndText(userChange);
-                const isSplit = userChange.after?.context?.splitFrom || userChange.context?.splitFrom;
+                const isSplit = isSplitEvent(userChange);
                 const context = userChange.type === "DELETE"
                   ? userChange.before?.dismissContext
                   : userChange.after?.context;

@@ -14,6 +14,10 @@ import EuroIcon from "@mui/icons-material/Euro";
 import EditIcon from "@mui/icons-material/Edit";
 import { formatDateTimeLiteral } from "common/utils/time";
 
+export function isSplitEvent(event) {
+  return !!(event.after?.context?.splitFrom || event.context?.splitFrom);
+}
+
 export function isSupportEvent(event) {
   if (event.type === "DELETE") {
     return !!event.before?.dismissContext?.is_support;
@@ -72,7 +76,7 @@ function activityChangeText(change) {
               } le ${formatDateTimeLiteral(change.after.startTime)}`
         ];
       }
-      if (change.after?.context?.splitFrom || change.context?.splitFrom) {
+      if (isSplitEvent(change)) {
         return [`a scindé ${changeResourceAsText(change)} du ${formatDateTimeLiteral(change.after.startTime)} au ${formatDateTimeLiteral(change.after.endTime)}`];
       }
       return [
