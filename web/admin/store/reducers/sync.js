@@ -12,7 +12,8 @@ export function updateCompanyIdReducer(state, { companyId }) {
       : state.areMissionsActivitiesLoaded,
     areCompanyEssentialsLoaded: isNewCompany
       ? false
-      : state.areCompanyEssentialsLoaded
+      : state.areCompanyEssentialsLoaded,
+    areEmploymentsLoaded: isNewCompany ? false : state.areEmploymentsLoaded
   };
 }
 
@@ -214,7 +215,8 @@ export const updateCompanyEmploymentsReducer = (state, { companiesPayload }) => 
 
   return {
     ...state,
-    employments: allEmployments
+    employments: allEmployments,
+    areEmploymentsLoaded: true
   };
 };
 

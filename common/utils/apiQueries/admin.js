@@ -151,7 +151,6 @@ export const THIRD_PARTY_CLIENTS_COMPANY_QUERY = gql`
 
 export const ADMIN_COMPANIES_QUERY = gql`
   ${COMPANY_SETTINGS_FRAGMENT}
-  ${FULL_EMPLOYMENT_FRAGMENT}
   query adminCompanies(
     $id: Int!
     $activityAfter: Date
@@ -204,6 +203,36 @@ export const ADMIN_COMPANIES_QUERY = gql`
           registrationNumber
           alias
         }
+        employments(latestPerUser: true) {
+          id
+          hasAdminRights
+          isAcknowledged
+          teamId
+          endDate
+          validationStatus
+          lastActiveAt
+          dismissedAt
+          shouldSeeCertificateInfo
+          shouldForceNbWorkerInfo
+          user {
+            id
+            firstName
+            lastName
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const ADMIN_EMPLOYMENTS_QUERY = gql`
+  ${FULL_EMPLOYMENT_FRAGMENT}
+  query adminEmployments($id: Int!, $companyIds: [Int]) {
+    user(id: $id) {
+      adminedCompanies(companyIds: $companyIds) {
+        id
+        name
+        siren
         employments(latestPerUser: true) {
           ...FullEmploymentData
           shouldSeeCertificateInfo

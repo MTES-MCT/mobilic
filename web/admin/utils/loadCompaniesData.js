@@ -1,6 +1,7 @@
 import {
   ADMIN_COMPANIES_LIST_QUERY,
   ADMIN_COMPANIES_QUERY,
+  ADMIN_EMPLOYMENTS_QUERY,
   ADMIN_PENDING_VALIDATIONS_COUNT_QUERY,
   ADMIN_WORK_DAYS_QUERY
 } from "common/utils/apiQueries/admin";
@@ -61,6 +62,21 @@ export async function loadPendingValidationsCount(api, userId, companyId) {
     response.data.user.adminedCompanies[0]?.dashboardSummary
       ?.pendingValidationsCount ?? 0
   );
+}
+
+export async function loadCompanyEmployments(api, userId, companyId) {
+  const response = await api.graphQlQuery(
+    ADMIN_EMPLOYMENTS_QUERY,
+    {
+      id: userId,
+      companyIds: [companyId]
+    }
+  ).catch((error) => {
+    console.error("Error loading company employments:", error);
+    throw error;
+  });
+
+  return response.data.user.adminedCompanies;
 }
 
 // loadCompanyWorkDaysAndMissions is used to load data for a specific company, including work days and missions, based on the provided date range.

@@ -35,6 +35,7 @@ export function AdminStoreProvider({ children }) {
     pendingValidationsCount: 0,
     areMissionsActivitiesLoaded: false,
     areCompanyEssentialsLoaded: false,
+    areEmploymentsLoaded: false,
     minWorkDaysCursor: [],
     activitiesFilters: {
       period: "day",
