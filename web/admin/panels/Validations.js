@@ -46,6 +46,8 @@ import { useLoadingScreen } from "common/utils/loading";
 import { useApi } from "common/utils/api";
 import ValidationMission from "./ValidationMission";
 import { loadActivitiesData } from "../utils/activities";
+import { loadEmploymentsData } from "../utils/employments";
+import { loadTeamsData } from "../utils/teams";
 
 const VALIDATION_TABS = [
   {
@@ -240,6 +242,18 @@ function ValidationPanel({ refreshData }) {
     }
     if (adminStore.companyId && !adminStore.areMissionsActivitiesLoaded) {
       loadActivities();
+    }
+  }, [adminStore.companyId]);
+
+  React.useEffect(() => {
+    if (adminStore.companyId && !adminStore.areEmploymentsLoaded) {
+      loadEmploymentsData({ adminStore, alerts, api, withLoadingScreen });
+    }
+  }, [adminStore.companyId]);
+
+  React.useEffect(() => {
+    if (adminStore.companyId && !adminStore.areTeamsLoaded) {
+      loadTeamsData({ adminStore, alerts, api, withLoadingScreen });
     }
   }, [adminStore.companyId]);
 

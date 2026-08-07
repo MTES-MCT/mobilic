@@ -35,6 +35,7 @@ import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { loadActivitiesData } from "../utils/activities";
 import { loadEmploymentsData } from "../utils/employments";
+import { loadTeamsData } from "../utils/teams";
 import {
   ACTIVITY_FILTER_EMPLOYEE,
   ACTIVITY_FILTER_MAX_DATE,
@@ -309,6 +310,12 @@ function ActivitiesPanel() {
   React.useEffect(() => {
     if (adminStore.companyId && !adminStore.areEmploymentsLoaded) {
       loadEmploymentsData({ adminStore, alerts, api, withLoadingScreen });
+    }
+  }, [adminStore.companyId]);
+
+  React.useEffect(() => {
+    if (adminStore.companyId && !adminStore.areTeamsLoaded) {
+      loadTeamsData({ adminStore, alerts, api, withLoadingScreen });
     }
   }, [adminStore.companyId]);
 

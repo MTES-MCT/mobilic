@@ -5,6 +5,7 @@ import {
   ADMIN_PENDING_VALIDATIONS_COUNT_QUERY,
   ADMIN_WORK_DAYS_QUERY
 } from "common/utils/apiQueries/admin";
+import { ALL_TEAMS_COMPANY_QUERY } from "common/utils/apiQueries/teams";
 import { getEndOfDay, startOfDay } from "common/utils/time";
 import { sortBy } from "lodash/collection";
 
@@ -77,6 +78,18 @@ export async function loadCompanyEmployments(api, userId, companyId) {
   });
 
   return response.data.user.adminedCompanies;
+}
+
+export async function loadCompanyTeams(api, companyId) {
+  const response = await api.graphQlQuery(
+    ALL_TEAMS_COMPANY_QUERY,
+    { companyId }
+  ).catch((error) => {
+    console.error("Error loading company teams:", error);
+    throw error;
+  });
+
+  return response.data.company.teams;
 }
 
 // loadCompanyWorkDaysAndMissions is used to load data for a specific company, including work days and missions, based on the provided date range.

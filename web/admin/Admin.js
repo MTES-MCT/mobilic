@@ -214,6 +214,15 @@ function InternalAdmin() {
     });
   }, [adminStore.userId, adminStore.companyId, adminStore.employments]);
 
+  React.useEffect(() => {
+    if (adminStore.areEmploymentsLoaded && adminStore.areTeamsLoaded) {
+      adminStore.dispatch({
+        type: ADMIN_ACTIONS.updateTeams,
+        payload: { teams: adminStore.teams, employments: adminStore.employments }
+      });
+    }
+  }, [adminStore.areEmploymentsLoaded, adminStore.areTeamsLoaded]);
+
   const ref = React.useRef(null);
 
   const shouldRefreshDataSetter = (val) => setShouldRefreshData({ value: val });

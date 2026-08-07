@@ -23,7 +23,7 @@ import { loadEmploymentsData } from "../utils/employments";
 import { useLoadingScreen } from "common/utils/loading";
 import { EMPLOYMENT_ROLE } from "common/utils/employments";
 import { TeamFilter } from "../components/TeamFilter";
-import { NO_TEAMS_LABEL, NO_TEAM_ID } from "../utils/teams";
+import { NO_TEAMS_LABEL, NO_TEAM_ID, loadTeamsData } from "../utils/teams";
 import { BusinessDropdown } from "../components/BusinessDropdown";
 import { AdminRightsDropdown } from "../components/AdminRightsDropdown";
 import { TeamDropdown } from "../components/TeamDropdown";
@@ -135,6 +135,12 @@ export function Employees({ company, containerRef }) {
   React.useEffect(() => {
     if (adminStore.companyId && !adminStore.areEmploymentsLoaded) {
       loadEmploymentsData({ adminStore, alerts, api, withLoadingScreen });
+    }
+  }, [adminStore.companyId]);
+
+  React.useEffect(() => {
+    if (adminStore.companyId && !adminStore.areTeamsLoaded) {
+      loadTeamsData({ adminStore, alerts, api, withLoadingScreen });
     }
   }, [adminStore.companyId]);
 

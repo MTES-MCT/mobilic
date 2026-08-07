@@ -1,6 +1,5 @@
 import flatMap from "lodash/flatMap";
 import { addWorkDaysReducer } from "./workDays";
-import { computeUsersAndTeamFilters } from "./team";
 
 export function updateCompanyIdReducer(state, { companyId }) {
   const isNewCompany = companyId !== state.companyId;
@@ -13,7 +12,8 @@ export function updateCompanyIdReducer(state, { companyId }) {
     areCompanyEssentialsLoaded: isNewCompany
       ? false
       : state.areCompanyEssentialsLoaded,
-    areEmploymentsLoaded: isNewCompany ? false : state.areEmploymentsLoaded
+    areEmploymentsLoaded: isNewCompany ? false : state.areEmploymentsLoaded,
+    areTeamsLoaded: isNewCompany ? false : state.areTeamsLoaded
   };
 }
 
@@ -129,22 +129,10 @@ export function updateCompanyDetailsReducer(
     )
   );
 
-  const teams = flatMap(
-    companiesPayload.map(c => c.teams.map(t => ({ ...t, companyId: t.id })))
-  );
-
-  const usersAndTeamsFilters = computeUsersAndTeamFilters(
-    users,
-    allEmployments,
-    teams
-  );
-
-
   return {
     ...state,
     users,
     currentUsers,
-    teams: teams,
     employments: allEmployments,
     vehicles: flatMap(
       companiesPayload.map(c =>
@@ -177,19 +165,7 @@ export function updateCompanyDetailsReducer(
     ),
     activitiesFilters: {
       ...state.activitiesFilters,
-      teams: usersAndTeamsFilters.activitiesFilters.teams,
-      users: usersAndTeamsFilters.activitiesFilters.users,
       minDate
-    },
-    validationsFilters: {
-      ...state.validationsFilters,
-      teams: usersAndTeamsFilters.validationsFilters.teams,
-      users: usersAndTeamsFilters.validationsFilters.users
-    },
-    exportFilters: {
-      ...state.exportFilters,
-      teams: usersAndTeamsFilters.exportFilters.teams,
-      users: usersAndTeamsFilters.exportFilters.users
     }
   };
 }
@@ -224,5 +200,13 @@ export const updatePendingValidationsCountReducer = (state, { count }) => {
   return {
     ...state,
     pendingValidationsCount: count
+  };
+};
+
+export const updateCompanyTeamsReducer = (state, { teams }) => {
+  return {
+    ...state,
+    teams,
+    areTeamsLoaded: true
   };
 };

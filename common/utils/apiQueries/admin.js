@@ -177,20 +177,6 @@ export const ADMIN_COMPANIES_QUERY = gql`
         currentUsers {
           id
         }
-        teams {
-          id
-          name
-          adminUsers {
-            id
-            firstName
-            lastName
-          }
-          users {
-            id
-            firstName
-            lastName
-          }
-        }
         knownAddresses {
           id
           alias
