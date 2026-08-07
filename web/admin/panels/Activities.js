@@ -34,6 +34,7 @@ import { MobileDatePicker } from "@mui/x-date-pickers";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { loadActivitiesData } from "../utils/activities";
+import { loadEmploymentsData } from "../utils/employments";
 import {
   ACTIVITY_FILTER_EMPLOYEE,
   ACTIVITY_FILTER_MAX_DATE,
@@ -302,6 +303,12 @@ function ActivitiesPanel() {
     }
     if (adminStore.companyId && !adminStore.areMissionsActivitiesLoaded) {
       loadActivities();
+    }
+  }, [adminStore.companyId]);
+
+  React.useEffect(() => {
+    if (adminStore.companyId && !adminStore.areEmploymentsLoaded) {
+      loadEmploymentsData({ adminStore, alerts, api, withLoadingScreen });
     }
   }, [adminStore.companyId]);
 

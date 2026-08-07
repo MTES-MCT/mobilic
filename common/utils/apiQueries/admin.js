@@ -203,7 +203,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
           registrationNumber
           alias
         }
-        employments(latestPerUser: true) {
+        employments(latestPerUser: true, userIds: [$id]) {
           id
           hasAdminRights
           isAcknowledged
