@@ -41,13 +41,8 @@ import {
 import { usePageTitle } from "../../common/UsePageTitle";
 import { Explanation } from "../../common/typography/Explanation";
 import { useRefreshDeletedMissions } from "../hooks/useRefreshDeletedMissions";
-import { useSnackbarAlerts } from "../../common/Snackbar";
-import { useLoadingScreen } from "common/utils/loading";
-import { useApi } from "common/utils/api";
 import ValidationMission from "./ValidationMission";
-import { loadActivitiesData } from "../utils/activities";
-import { loadEmploymentsData } from "../utils/employments";
-import { loadTeamsData } from "../utils/teams";
+import { useLoadAdminPanelData } from "../hooks/useLoadAdminPanelData";
 
 const VALIDATION_TABS = [
   {
@@ -80,9 +75,6 @@ function ValidationPanel({ refreshData }) {
   const adminStore = useAdminStore();
   const location = useLocation();
   const { trackEvent } = useMatomo();
-  const alerts = useSnackbarAlerts();
-  const api = useApi();
-  const withLoadingScreen = useLoadingScreen();
 
   const { refresh: refreshDeletedMissions, loading: loadingDeletedMissions } =
     useRefreshDeletedMissions();
@@ -231,31 +223,7 @@ function ValidationPanel({ refreshData }) {
     minWidth: 200
   };
 
-  React.useEffect(() => {
-    async function loadActivities() {
-      await loadActivitiesData({
-        adminStore,
-        alerts,
-        api,
-        withLoadingScreen
-      });
-    }
-    if (adminStore.companyId && !adminStore.areMissionsActivitiesLoaded) {
-      loadActivities();
-    }
-  }, [adminStore.companyId]);
-
-  React.useEffect(() => {
-    if (adminStore.companyId && !adminStore.areEmploymentsLoaded) {
-      loadEmploymentsData({ adminStore, alerts, api, withLoadingScreen });
-    }
-  }, [adminStore.companyId]);
-
-  React.useEffect(() => {
-    if (adminStore.companyId && !adminStore.areTeamsLoaded) {
-      loadTeamsData({ adminStore, alerts, api, withLoadingScreen });
-    }
-  }, [adminStore.companyId]);
+  useLoadAdminPanelData();
 
   React.useEffect(() => {
     setEntriesDeletedByAdmin(

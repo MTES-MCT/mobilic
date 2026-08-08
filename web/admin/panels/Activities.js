@@ -33,9 +33,7 @@ import { useApi } from "common/utils/api";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
-import { loadActivitiesData } from "../utils/activities";
-import { loadEmploymentsData } from "../utils/employments";
-import { loadTeamsData } from "../utils/teams";
+import { useLoadAdminPanelData } from "../hooks/useLoadAdminPanelData";
 import {
   ACTIVITY_FILTER_EMPLOYEE,
   ACTIVITY_FILTER_MAX_DATE,
@@ -68,7 +66,6 @@ import {
 } from "common/utils/apiQueries/missions";
 import { InactiveEmployeesDropdown } from "../components/InactiveEmployeesDropdown";
 import { missionWithStats } from "../selectors/missionSelectors";
-import { useLoadingScreen } from "common/utils/loading";
 
 const useStyles = makeStyles((theme) => ({
   pageHeader: {
@@ -212,7 +209,6 @@ function ActivitiesPanel() {
   const location = useLocation();
   const { trackEvent } = useMatomo();
   const { getUsersSinceDate } = useGetUsersSinceDate();
-  const withLoadingScreen = useLoadingScreen();
 
   const [users, setUsers] = React.useState(adminStore.activitiesFilters.users);
   const [teams, setTeams] = React.useState(adminStore.activitiesFilters.teams);
@@ -293,31 +289,7 @@ function ActivitiesPanel() {
     return daysDiff <= 365;
   }, []);
 
-  React.useEffect(() => {
-    async function loadActivities() {
-      await loadActivitiesData({
-        adminStore,
-        alerts,
-        api,
-        withLoadingScreen
-      });
-    }
-    if (adminStore.companyId && !adminStore.areMissionsActivitiesLoaded) {
-      loadActivities();
-    }
-  }, [adminStore.companyId]);
-
-  React.useEffect(() => {
-    if (adminStore.companyId && !adminStore.areEmploymentsLoaded) {
-      loadEmploymentsData({ adminStore, alerts, api, withLoadingScreen });
-    }
-  }, [adminStore.companyId]);
-
-  React.useEffect(() => {
-    if (adminStore.companyId && !adminStore.areTeamsLoaded) {
-      loadTeamsData({ adminStore, alerts, api, withLoadingScreen });
-    }
-  }, [adminStore.companyId]);
+  useLoadAdminPanelData();
 
   // Validate date range
   React.useEffect(() => {
