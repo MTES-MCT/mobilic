@@ -410,6 +410,18 @@ main {
   overflow: visible !important;
 }
 
+.mobilic-dsfr-header {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+
+  .fr-container,
+  .fr-container-sm,
+  .fr-container-md,
+  .fr-container-lg {
+    max-width: none;
+  }
+}
+
 @media (min-width: 90em) {
   .fr-follow, .fr-footer {
     .fr-container {

@@ -10,7 +10,7 @@ import {
   jsToUnixTimestamp,
   now,
   sameMinute,
-  truncateMinute
+  truncateMinute,
 } from "common/utils/time";
 import { NativeDateTimePicker } from "./NativeDateTimePicker";
 import _ from "lodash";
@@ -23,67 +23,67 @@ const OTHER_MOTIF_ID = "other";
 const MOTIFS = [
   {
     id: "sick-leave",
-    label: "Arrêt maladie"
+    label: "Arrêt maladie",
   },
   {
     id: "workplace-accident",
-    label: "Accident du travail"
+    label: "Accident du travail",
   },
   {
     id: "rest",
-    label: "Repos"
+    label: "Repos",
   },
   {
     id: "external-rest",
-    label: "Repos extérieur"
+    label: "Repos extérieur",
   },
   {
     id: "paid-leave",
-    label: "Congé payé"
+    label: "Congé payé",
   },
   {
     id: "unpaid-leave",
-    label: "Congé sans solde"
+    label: "Congé sans solde",
   },
   {
     id: "parental-leave",
-    label: "Congé maternité / paternité"
+    label: "Congé maternité / paternité",
   },
   {
     id: "compassionate-leave",
-    label: "Congé pour évènements familiaux"
+    label: "Congé pour évènements familiaux",
   },
   {
     id: "bank-holiday",
-    label: "Jour férié"
+    label: "Jour férié",
   },
   {
     id: "heavy-truck-driving",
-    label: "Conduite poids lourd"
+    label: "Conduite RSE",
   },
   {
     id: "training",
-    label: "Formation"
+    label: "Formation",
   },
   {
     id: "on-call-duty",
-    label: "Astreinte"
+    label: "Astreinte",
   },
   {
     id: OTHER_MOTIF_ID,
-    label: "Autre congé"
-  }
+    label: "Autre congé",
+  },
 ];
 
 export function LogHolidayForm({
   handleSubmit,
   companies,
   companyId = null,
-  users
+  users,
 }) {
   const getInitialCompany = () => {
     if (companyId) {
-      return companies.find(c => c.id === companyId);
+      return companies.find((c) => c.id === companyId);
     }
     if (companies && companies.length === 1) {
       return companies[0];
@@ -123,9 +123,9 @@ export function LogHolidayForm({
           today.getDate() - (isTodayTooEarly ? 1 : 0),
           DEFAULT_START_HOUR,
           0,
-          0
-        ).getTime()
-      )
+          0,
+        ).getTime(),
+      ),
     );
     setEndTimestamp(
       jsToUnixTimestamp(
@@ -135,9 +135,9 @@ export function LogHolidayForm({
           today.getDate() - (isTodayTooEarly ? 1 : 0),
           DEFAULT_END_HOUR,
           0,
-          0
-        ).getTime()
-      )
+          0,
+        ).getTime(),
+      ),
     );
   }, []);
 
@@ -165,8 +165,8 @@ export function LogHolidayForm({
   }, [startTimestamp, endTimestamp]);
 
   const motifLabel = React.useMemo(
-    () => MOTIFS.find(item => item.id === motifId)?.label || "",
-    [motifId]
+    () => MOTIFS.find((item) => item.id === motifId)?.label || "",
+    [motifId],
   );
 
   const isFormValid = React.useMemo(() => {
@@ -194,7 +194,7 @@ export function LogHolidayForm({
     motifId,
     otherMotif,
     endTimeError,
-    startTimeError
+    startTimeError,
   ]);
 
   return (
@@ -208,7 +208,7 @@ export function LogHolidayForm({
         <form
           style={{ width: "100%" }}
           autoComplete="off"
-          onSubmit={async e => {
+          onSubmit={async (e) => {
             setLoading(true);
             e.preventDefault();
             await handleSubmit({
@@ -217,7 +217,7 @@ export function LogHolidayForm({
               startTime: startTimestamp,
               endTime: endTimestamp,
               userId: user?.id,
-              ...(motifId === OTHER_MOTIF_ID ? { comment: otherMotif } : {})
+              ...(motifId === OTHER_MOTIF_ID ? { comment: otherMotif } : {}),
             });
             setLoading(false);
           }}
@@ -238,12 +238,12 @@ export function LogHolidayForm({
                 variant="filled"
                 select
                 value={company || ""}
-                onChange={e => {
+                onChange={(e) => {
                   setCompany(e.target.value);
                 }}
                 disabled={!!companyId}
               >
-                {companies.map(company => (
+                {companies.map((company) => (
                   <MenuItem key={company.id} value={company}>
                     {company.name}
                   </MenuItem>
@@ -267,13 +267,13 @@ export function LogHolidayForm({
                 variant="filled"
                 select
                 value={user || ""}
-                onChange={e => {
+                onChange={(e) => {
                   setUser(e.target.value);
                 }}
               >
                 {users
                   .sort((u1, u2) => u1.lastName.localeCompare(u2.lastName))
-                  .map(user => (
+                  .map((user) => (
                     <MenuItem key={user.id} value={user}>
                       {`${user.lastName} ${user.firstName}`}
                     </MenuItem>
@@ -291,7 +291,7 @@ export function LogHolidayForm({
             variant="filled"
             select
             value={motifId}
-            onChange={e => setMotifId(e.target.value)}
+            onChange={(e) => setMotifId(e.target.value)}
           >
             {MOTIFS.map(({ id, label }) => (
               <MenuItem key={id} value={id}>
@@ -307,9 +307,9 @@ export function LogHolidayForm({
               fullWidth
               sx={{ marginTop: 2 }}
               inputProps={{
-                maxLength: 32
+                maxLength: 32,
               }}
-              onChange={e => setOtherMotif(e.target.value.trimLeft())}
+              onChange={(e) => setOtherMotif(e.target.value.trimLeft())}
               value={otherMotif}
             />
           )}

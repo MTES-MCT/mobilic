@@ -3,7 +3,8 @@ import { Calendar } from "react-multi-date-picker";
 import {
   addDaysToDate,
   textualPrettyFormatDay,
-  unixToJSTimestamp
+  unixToJSTimestamp,
+  CONTROL_HISTORY_DEPTH
 } from "common/utils/time";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
 import Stack from "@mui/material/Stack";
@@ -13,9 +14,6 @@ import { capitalizeFirstLetter } from "common/utils/string";
 import classNames from "classnames";
 import { gregorian_fr } from "common/utils/calendarLocale";
 import { useCalendarStyles } from "../../../common/styles/calendarStyles";
-
-const controlHistoryDepth =
-  parseInt(process.env.REACT_APP_USER_CONTROL_HISTORY_DEPTH) || 28;
 
 export const InfractionDay = ({ alerts, sanction }) => {
   const classes = useCalendarStyles();
@@ -36,7 +34,7 @@ export const InfractionDay = ({ alerts, sanction }) => {
   ]);
 
   const maxDate = new Date(unixToJSTimestamp(controlData.controlTime));
-  const minDate = addDaysToDate(new Date(maxDate), -controlHistoryDepth);
+  const minDate = addDaysToDate(new Date(maxDate), -CONTROL_HISTORY_DEPTH);
 
   const onSelectedDatesChange = values => {
     const selectedTimestamps = values

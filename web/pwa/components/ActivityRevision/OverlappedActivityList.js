@@ -55,7 +55,7 @@ export default function OverlappedActivityList({ activitiesOperations }) {
         </Box>
       )}
       {activitiesToCreate.length > 0 && (
-        <Box data-qa="listActivitiesToCreate">
+        <Box data-qa="listActivitiesToCreate" mt={2}>
           <Typography>L'activité suivante sera créée</Typography>
           <ActivityList
             activities={activitiesToCreate}

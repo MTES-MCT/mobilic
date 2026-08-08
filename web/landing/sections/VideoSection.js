@@ -6,7 +6,6 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { ExternalLink } from "../../common/ExternalLink";
 import { LinkButton } from "../../common/LinkButton";
-import { useWebinars } from "../useWebinars";
 import { makeStyles } from "@mui/styles";
 import { Box } from "@mui/material";
 
@@ -36,8 +35,6 @@ const ListItemIcon = () => (
 
 export function VideoSection() {
   const classes = useStyles();
-
-  const [webinars, webinarsLoaded] = useWebinars((() => {}));
 
   const { id, title } = VIDEOS.Home_Mobilic;
   return (
@@ -74,7 +71,7 @@ export function VideoSection() {
                 cabotage de marchandises effectuées par des véhicules de plus de
                 2,5 tonnes.
               </Typography>
-              <Typography>
+              <Typography component="div">
                 <span style={{ fontWeight: 500 }}>
                   Mettre en place Mobilic c’est :
                 </span>
@@ -91,7 +88,7 @@ export function VideoSection() {
               </Typography>
             </Stack>
             {
-              (webinars.length > 0 && webinarsLoaded) && (
+              process.env.REACT_APP_FETCH_WEBINARS && (
                 <LinkButton
                   to="/#webinaires"
                   priority="tertiary-no-outline"

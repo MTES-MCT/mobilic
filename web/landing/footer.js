@@ -2,30 +2,35 @@ import React from "react";
 import { Footer as DSFooter } from "@codegouvfr/react-dsfr/Footer";
 import { Follow } from "./follow";
 import { CGU_EXTERNAL_URL, CGU_API_EXTERNAL_URL } from "./cgu";
+import { DSFR_BRAND_TOP } from "../common/Header";
 
 export function Footer({ withFollow = true }) {
   return (
     <>
       {withFollow && <Follow />}
       <DSFooter
-        brandTop={
-          <>
-            Ministère
-            <br />
-            De l'Aménagement
-            <br />
-            Du territoire et
-            <br />
-            De la décentralisation
-          </>
-        }
+        brandTop={DSFR_BRAND_TOP}
         homeLinkProps={{
           to: "/",
           title: "Accueil - Mobilic"
         }}
         accessibility="non compliant"
         accessibilityLinkProps={{ to: "/accessibility" }}
-        contentDescription="Mobilic est un service numérique de l’Etat, soutenu par la Direction générale des infrastructures, des transports et des mobilités (DGITM), incubé à la Fabrique Numérique du ministère de l’Aménagement du territoire et de la Décentralisation, membre du réseau d’incubateurs beta.gouv.fr."
+        contentDescription={
+          <>
+            Mobilic est un service porté par{" "}
+            <a
+              href="https://beta.gouv.fr/incubateurs/mtes.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: "underline" }}
+            >
+              La Fabrique Numérique de l'Écologie (MTE-MCT)
+            </a>{" "}
+            et sponsorisé par la <span style={{ fontWeight: "bold" }}>Direction générale des infrastructures, des
+            transports et des mobilités.</span>
+          </>
+        }
         operatorLogo={{
           alt: "Fabrique du numérique",
           imgUrl: "https://beta.gouv.fr/img/incubators/logo_fabnum_mtes.png",
@@ -84,7 +89,7 @@ export function Footer({ withFollow = true }) {
             <a
               href="https://github.com/MTES-MCT/mobilic/blob/master/LICENSE.txt"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
             >
               licence MIT
             </a>

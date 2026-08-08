@@ -1,6 +1,12 @@
 import flatMap from "lodash/flatMap";
 import { addWorkDaysReducer } from "./workDays";
 
+export const preserveSelected = (newItems, existingItems) =>
+  newItems.map(item => {
+    const existing = existingItems?.find(e => e.id === item.id);
+    return existing ? { ...item, selected: existing.selected } : item;
+  });
+
 export function updateCompanyIdReducer(state, { companyId }) {
   const isNewCompany = companyId !== state.companyId;
   return {

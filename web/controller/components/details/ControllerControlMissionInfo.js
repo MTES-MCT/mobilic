@@ -34,6 +34,8 @@ export function ControllerControlMissionInfo({
           name="Entreprise"
           value={companyName}
           uppercaseTitle={false}
+          maxWidth="100%"
+          valueProps={{ noWrap: false, sx: { wordBreak: "break-word" } }}
         />
         {businessTypeDuringControl && (
           <InfoItem

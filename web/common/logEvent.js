@@ -14,6 +14,18 @@ import EuroIcon from "@mui/icons-material/Euro";
 import EditIcon from "@mui/icons-material/Edit";
 import { formatDateTimeLiteral } from "common/utils/time";
 
+export function isSupportEvent(event) {
+  if (event.type === "DELETE") {
+    return !!event.before?.dismissContext?.is_support;
+  }
+  return !!(event.after?.context?.is_support);
+}
+
+export function getEventAuthorName(event) {
+  if (isSupportEvent(event)) return "Mobilic (assistance utilisateur)";
+  return event.submitter ? formatPersonName(event.submitter) : null;
+}
+
 function changeResourceAsText(change) {
   switch (change.resourceType) {
     case MISSION_RESOURCE_TYPES.activity:
@@ -48,24 +60,21 @@ function activityChangeText(change) {
   switch (change.type) {
     case "DELETE":
       return [
-        `a supprimé ${changeResourceAsText(
-          change
-        )} démarrée le ${formatDateTimeLiteral(change.before.startTime)}`
+        "a supprimé l'activité"
       ];
     case "CREATE":
-      return change.after.endTime
-        ? [
-            `a ajouté ${changeResourceAsText(
-              change
-            )} du ${formatDateTimeLiteral(
-              change.after.startTime
-            )} au ${formatDateTimeLiteral(change.after.endTime)}`
-          ]
-        : [
-            `s'est mis en ${
-              ACTIVITIES[change.after.type].label
-            } le ${formatDateTimeLiteral(change.after.startTime)}`
-          ];
+      if (!change.after.endTime) {
+        return [
+          isSupportEvent(change)
+            ? `a lancé ${changeResourceAsText(change)}`
+            : `s'est mis en ${
+                ACTIVITIES[change.after.type].label
+              } le ${formatDateTimeLiteral(change.after.startTime)}`
+        ];
+      }
+      return [
+        "a ajouté l'activité"
+      ];
     case "UPDATE":
       if (change.after.endTime !== change.before.endTime) {
         if (!change.after.endTime) {

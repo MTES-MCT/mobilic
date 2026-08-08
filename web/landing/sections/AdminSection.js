@@ -15,13 +15,25 @@ const useStyles = makeStyles((theme) => ({
   highlightedText: {
     color: MOBILIC_BLUE,
   },
+  imageContainer: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    height: "150px",
+    width: "150px",
+  }
 }));
 
-const ImageContainer = (url) => (
-  <Box height="156px">
-    <img src={url} alt="" style={{ margin: "auto" }} />
-  </Box>
-);
+const ImageContainer = (url) => {
+  const classes = useStyles();
+
+  return (
+    <Box position="relative" margin="auto" height="100%" width="100%">
+      <img src={url} alt="" className={classes.imageContainer} />
+    </Box>
+  );
+};
 
 export function AdminSection() {
   const classes = useStyles();

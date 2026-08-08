@@ -516,6 +516,8 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
 
   userId = () => this.state.userId;
 
+  lastSelectedCompanyId = () => this.state.lastSelectedCompanyId;
+
   controllerId = () => this.state.controllerId;
 
   userInfo = () => ({ id: this.state.userId, ...this.state.userInfo });

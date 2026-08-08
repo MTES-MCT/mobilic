@@ -1,0 +1,47 @@
+name: Scalingo review app (front-end)
+
+on:
+  pull_request:
+    types: [labeled, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Front-end PR number"
+        required: true
+
+concurrency:
+  group: review-app-front-${{ github.event.pull_request.number || inputs.pr_number }}
+  cancel-in-progress: true
+
+jobs:
+  review-app:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        contains(github.event.pull_request.labels.*.name, 'needs-review-app') &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        (github.event.action != 'labeled' || github.event.label.name == 'needs-review-app')
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Scalingo CLI
+        run: |
+          curl -sO https://cli-dl.scalingo.com/install
+          bash install
+          rm install
+
+      - name: Login to Scalingo
+        env:
+          SCALINGO_API_TOKEN: ${{ secrets.SCALINGO_API_TOKEN }}
+        run: scalingo login --api-token "$SCALINGO_API_TOKEN"
+
+      - name: Run review app crosslink
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TRIGGER_SIDE: front
+        run: |
+          bash .scripts/review-app.sh \
+            "${{ github.event.pull_request.number || inputs.pr_number }}" \
+            "${{ github.event.pull_request.head.ref || github.ref_name }}"

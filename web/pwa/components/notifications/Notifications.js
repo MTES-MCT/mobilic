@@ -47,7 +47,7 @@ const InnerNotification = React.memo(
       return null;
     }
 
-    const { title, content, missionId } = details;
+    const { title, content, missionId, buttonLabel } = details;
     return (
       <Notification
         title={title}
@@ -55,6 +55,7 @@ const InnerNotification = React.memo(
         missionId={missionId}
         historyOnClick={() => onNotificationClick(missionId)}
         read={read}
+        buttonLabel={buttonLabel}
       />
     );
   }
@@ -126,13 +127,20 @@ export const Notifications = ({ openHistory }) => {
         notifications: updatedNotifs
       });
 
-      await alerts.withApiErrorHandling(async () => {
+      // first call to /unexposed may return 403 — tracked in a separate ticket
+      try {
         await api.graphQlMutate(
           READ_NOTIFICATIONS_MUTATION,
           { notificationIds },
           { context: { nonPublicApi: true } }
         );
-      }, errorKey);
+      } catch (err) {
+        const is403 = err?.networkError?.statusCode === 403
+          || err?.graphQLErrors?.some(e => e?.extensions?.code === 403);
+        if (!is403) {
+          alerts.error(err?.message || "Erreur", errorKey, 10000);
+        }
+      }
     },
     [api, store, alerts]
   );
@@ -216,7 +224,7 @@ export const Notifications = ({ openHistory }) => {
         id={collapseElementId}
         style={{ paddingTop: 0, paddingBottom: 0 }}
       >
-        <Stack direction="column" width="100%" maxHeight="83vh">
+        <Stack direction="column" width="100%" maxHeight="65vh">
           {notifs.length > 0 ? (
             notifs.map((notif) => (
               <InnerNotification
@@ -249,7 +257,11 @@ export const Notifications = ({ openHistory }) => {
           type="button"
           id={`${id}__toggle-btn`}
           style={{
-            justifyContent: "flex-start"
+            justifyContent: "flex-start",
+            position: "fixed",
+            bottom: 0,
+            width: "100%",
+            backgroundColor: "white",
           }}
         >
           <Stack direction="row" gap={1} alignItems="center" pl={1}>

@@ -123,7 +123,7 @@ function LocationRow({
           disabledEdit={loc => !loc}
         />
       </Box>
-      {showKm && location && kmReading != null && (
+      {showKm && location && (
         <Box className={classes.kmGroup}>
           <OdometerIcon className={classes.icon} aria-hidden="true" />
           <EditableMissionInfo

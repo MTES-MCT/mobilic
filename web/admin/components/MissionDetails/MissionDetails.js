@@ -45,6 +45,7 @@ import {
   VALIDATE_MISSION_IN_MISSION_PANEL
 } from "common/utils/matomoTags";
 import { MissionDetailsVehicleAndLocations } from "./MissionDetailsVehicleAndLocations";
+import { DisputeBanner } from "./DisputeBanner";
 import Notice from "../../../common/Notice";
 import { PastMissionNotice } from "./PastMissionNotice";
 import { MISSION_QUERY } from "common/utils/apiQueries/missions";
@@ -311,6 +312,7 @@ export function MissionDetails({
             className={classes.missionTooLongWarning}
           />
         )}
+        <DisputeBanner mission={mission} />
         <MissionDetailsVehicleAndLocations
           mission={mission}
           missionActions={missionActions}

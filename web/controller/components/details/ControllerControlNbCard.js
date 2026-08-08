@@ -1,10 +1,13 @@
 import React from "react";
+import { useIsWidthUp } from "common/utils/useWidth";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
 import { FieldTitle } from "../../../common/typography/FieldTitle";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Card } from "@codegouvfr/react-dsfr/Card";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import Box from "@mui/material/Box";
 
 const useStyles = makeStyles(theme => ({
@@ -12,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: "4px",
     border: "1px solid",
     borderColor: fr.colors.decisions.border.default.grey.default,
-    padding: "8px 12px 12px 12px",
+    //padding: "8px 12px 12px 12px",
     [theme.breakpoints.up("sm")]: {
       maxWidth: "50%"
     }
@@ -27,6 +30,27 @@ const useStyles = makeStyles(theme => ({
       width: "100%",
       justifyContent: "center"
     }
+  },
+  compactCard: {
+    "& .fr-card__content": {
+      padding: "0.75rem 1rem 0",
+      fontSize: props => props.isOnDesktop ? "1rem" : "0.875rem"
+    },
+    "& .fr-card__end": {
+      display: "none"
+    },
+    "& .fr-card__footer": {
+      padding: "1rem",
+      fontSize: "0.875rem"
+    }
+  },
+  smallIcon: {
+    "&::before": {
+      "--icon-size": props => props.isOnDesktop ? "1rem !important" : "0.75rem !important"
+    }
+  },
+  details: {
+    fontSize: "0.875rem"
   }
 }));
 export function ControllerControlNbCard({
@@ -35,7 +59,8 @@ export function ControllerControlNbCard({
   nbElem,
   onClick
 }) {
-  const classes = useStyles();
+  const isOnDesktop = useIsWidthUp("md");
+  const classes = useStyles({ isOnDesktop });
   return (
     <Stack direction="column" rowGap={1} className={classes.card} flexGrow={1}>
       <FieldTitle component="h2" flexGrow={1}>
@@ -64,17 +89,63 @@ export function ControllerControlNbCard({
 export function ControllerControlNbCards({
   nbAlerts = null,
   nbWorkingDays = null,
+  daysAddedPosterioriNumber = null,
+  daysModifiedNumber = null,
   onChangeTab
 }) {
+  const isOnDesktop = useIsWidthUp("md");
+  const classes = useStyles({ isOnDesktop });
   return (
     <Stack direction="row" columnGap={1}>
+      
       {(nbWorkingDays || nbWorkingDays === 0) && (
-        <ControllerControlNbCard
-          label="Journées enregistrées"
-          buttonLabel="Historique"
-          nbElem={nbWorkingDays}
-          onClick={() => onChangeTab("history")}
-        />
+        <Card 
+        className={`fr-card ${classes.compactCard}`} style={{ flexGrow: 1, boxShadow: "0 5px var(--text-action-high-blue-france)" }}
+        background
+        border
+        desc={
+          <Stack direction="column" rowGap={1}>
+            <Box display="flex" alignItems="center" gap={1}>
+              <Box display="flex" alignItems="center" gap={1} flexGrow={1}>
+                <i className={`fr-icon-corner-down-right-line ${classes.smallIcon}`} style={{ color: "var(--text-action-high-blue-france)" }} aria-hidden="true" />
+                <Typography component="span" variant="body2" color="text.secondary">
+                  dont ajoutées a posteriori
+                </Typography>
+              </Box>
+              <Box display="flex">
+                <Typography component="span" fontWeight={600} fontSize={15} style={{ color: "var(--text-action-high-blue-france)" }}>
+                  {daysAddedPosterioriNumber || 0}
+                </Typography>
+              </Box>
+            </Box>
+            <Box display="flex" alignItems="center" gap={1}>
+              <Box display="flex" alignItems="center" gap={1} flexGrow={1}>
+                <i className={`fr-icon-corner-down-right-line ${classes.smallIcon}`} style={{ color: "var(--text-action-high-blue-france)" }} aria-hidden="true" />
+                <Typography component="span" variant="body2" color="text.secondary">
+                  dont modifiées
+                </Typography>
+              </Box>
+              <Box display="flex">
+                <Typography component="span" fontWeight={600} fontSize={15} style={{ color: "var(--text-action-high-blue-france)" }}>
+                  {daysModifiedNumber || 0}
+                </Typography>
+              </Box>
+            </Box>
+          </Stack>
+        }
+        footer={<a href="#" className={`fr-link fr-icon-arrow-right-line fr-link--icon-right ${classes.details}`} onClick={(e) => { e.preventDefault(); onChangeTab("history"); }}>Voir le détail</a>}
+        size="medium"
+        title={
+          <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
+            <Typography component="span" variant="body1" fontWeight={600}>
+              Journées enregistrées
+            </Typography>
+            <Box display="flex" justifyContent="center">
+              <Badge noIcon severity="info">{nbWorkingDays}</Badge>
+            </Box>
+          </Box>
+        }
+        titleAs="h3"/>
       )}
       {(nbAlerts || nbAlerts === 0) && (
         <ControllerControlNbCard

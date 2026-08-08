@@ -5,6 +5,7 @@ import { useControl } from "../../controller/utils/contextControl";
 import { currentControllerId } from "common/utils/cookie";
 import { formatApiError } from "common/utils/errors";
 import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
 import { ControllerControlEmployeeInfo } from "../../controller/components/details/ControllerControlEmployeeInfo";
 import { ControllerControlMissionInfo } from "../../controller/components/details/ControllerControlMissionInfo";
 import { ControllerControlEmployments } from "../../controller/components/details/ControllerControlEmployments";
@@ -14,13 +15,27 @@ import { ControllerControlNbCards } from "../../controller/components/details/Co
 import { LoadingButton } from "common/components/LoadingButton";
 import { formatPersonName } from "common/utils/coworkers";
 import { makeStyles } from "@mui/styles";
-import { useInfractions } from "../../controller/utils/contextInfractions";
 import { HTTP_QUERIES } from "common/utils/apiQueries/httpQueries";
+import { fr } from "@codegouvfr/react-dsfr";
+import { InfoItem } from "../../home/InfoField";
+import { formatDateTime } from "common/utils/time";
+import { useIsWidthUp } from "common/utils/useWidth";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 
 const useStyles = makeStyles((theme) => ({
   exportButton: {
     textAlign: "center",
     marginTop: theme.spacing(2)
+  },
+  header: {
+    backgroundColor: fr.colors.decisions.background.alt.grey.default,
+    padding: theme.spacing(3),
+    width: "100%",
+    marginLeft: theme.spacing(-3),
+    marginRight: theme.spacing(-3),
+    marginTop: theme.spacing(-3),
+    paddingLeft: theme.spacing(3),
+    paddingRight: theme.spacing(3)
   }
 }));
 
@@ -29,8 +44,9 @@ export function UserReadInfo({
   employments,
   tokenInfo,
   controlTime,
-  alertNumber,
   workingDaysNumber,
+  daysAddedPosterioriNumber,
+  daysModifiedNumber,
   onChangeTab,
   allowC1BExport = true,
   companyName,
@@ -38,8 +54,9 @@ export function UserReadInfo({
   businesses
 }) {
   const { controlData, updateControlTime } = useControl() ?? {};
-  const { checkedAlertsNumber } = useInfractions() ?? {};
   const [userName, setUserName] = React.useState("");
+  const isOnDesktop = useIsWidthUp("md");
+
   React.useEffect(() => {
     if (userInfo) {
       setUserName(formatPersonName(userInfo));
@@ -66,41 +83,77 @@ export function UserReadInfo({
   };
 
   return (
-    <Stack direction="column" p={3} rowGap={3} maxWidth="100%">
-      <ControllerControlEmployeeInfo name={userName} />
-      {!!currentControllerId() && (
-        <ControllerControlMissionInfo
-          vehicleRegistrationNumber={vehicleRegistrationNumber}
-          companyName={companyName}
-          businessTypeDuringControl={controlData.businessTypeDuringControl}
+    <Stack direction="column" maxWidth="100%" width="100%">
+      <Box className={classes.header}>
+        <ControllerControlEmployeeInfo name={userName} />
+        {!isOnDesktop && (
+          <Stack direction="row" marginBottom={3}rowGap={5} columnGap={2} alignItems="center" justifyContent="space-between" flexWrap="wrap">
+            <InfoItem
+              name="Horaire de contrôle"
+              value={formatDateTime(controlData?.controlTime || controlTime || tokenInfo.controlTime, true)}
+              uppercaseTitle={false}
+              titleProps={{
+                component: "h2"
+              }}
+              direction={isOnDesktop ? "row" : "column"}
+              maxWidth="100%"
+            />
+            <Button size="small" priority="tertiary" onClick={updateControlTime}>
+              Modifier
+            </Button>
+          </Stack>
+            
+          
+        )}
+        {vehicleRegistrationNumber && (
+          <InfoItem
+            name="Véhicule"
+            value={vehicleRegistrationNumber}
+            uppercaseTitle={false}
+            titleProps={{
+              component: "h2"
+            }}
+            direction={isOnDesktop ? "row" : "column"}
+            maxWidth="100%"
+          />
+        )}
+      </Box>
+      <Stack direction="column" p={3} rowGap={3}>
+        {!!currentControllerId() && (
+          <ControllerControlMissionInfo
+            vehicleRegistrationNumber={vehicleRegistrationNumber}
+            companyName={companyName}
+            businessTypeDuringControl={controlData.businessTypeDuringControl}
+          />
+        )}
+        <ControllerControlEmployments
+          employments={employments}
+          businesses={businesses}
         />
-      )}
-      <ControllerControlEmployments
-        employments={employments}
-        businesses={businesses}
-      />
-      <ControllerControlHistory
-        controlTime={controlData?.controlTime || controlTime}
-        tokenInfo={tokenInfo}
-        updateControlTime={updateControlTime}
-      />
-      <ControllerControlNbCards
-        nbWorkingDays={workingDaysNumber}
-        nbAlerts={alertNumber || checkedAlertsNumber || 0}
-        onChangeTab={onChangeTab}
-      />
-      {controlData && <ControllerControlNote />}
-      {allowC1BExport && (
-        <div className={classes.exportButton}>
-          <LoadingButton
-            priority="secondary"
-            className={classes.exportButton}
-            onClick={onC1BExportClick}
-          >
-            Télécharger C1B
-          </LoadingButton>
-        </div>
-      )}
+        <ControllerControlHistory
+          controlTime={controlData?.controlTime || controlTime}
+          tokenInfo={tokenInfo}
+          updateControlTime={updateControlTime}
+        />
+        <ControllerControlNbCards
+          nbWorkingDays={workingDaysNumber}
+          daysAddedPosterioriNumber={daysAddedPosterioriNumber}
+          daysModifiedNumber={daysModifiedNumber}
+          onChangeTab={onChangeTab}
+        />
+        {controlData && <ControllerControlNote />}
+        {allowC1BExport && (
+          <div className={classes.exportButton}>
+            <LoadingButton
+              priority="secondary"
+              className={classes.exportButton}
+              onClick={onC1BExportClick}
+            >
+              Télécharger C1B
+            </LoadingButton>
+          </div>
+        )}
+      </Stack>
     </Stack>
   );
 }

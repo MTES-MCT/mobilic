@@ -21,7 +21,8 @@ export default function ControllerUpdateTimeModal({
   open,
   handleClose,
   controlData,
-  setControlData
+  setControlData,
+  loadControlData
 }) {
   const api = useApi();
   const alerts = useSnackbarAlerts();
@@ -55,7 +56,7 @@ export default function ControllerUpdateTimeModal({
 
   const updateControlTime = async (newTime) => {
     try {
-      const apiResponse = await api.graphQlMutate(
+      await api.graphQlMutate(
         CONTROLLER_UPDATE_CONTROL_TIME,
         {
           controlId: controlData?.id,
@@ -63,10 +64,10 @@ export default function ControllerUpdateTimeModal({
         },
         { context: { nonPublicApi: true } }
       );
-      setControlData({
-        ...controlData,
-        controlTime: apiResponse.data.controllerUpdateControlTime.controlTime
-      });
+      // Recharger toutes les données de contrôle avec les missions mises à jour
+      if (loadControlData) {
+        await loadControlData();
+      }
       alerts.success(
         "L'heure du contrôle a été mise à jour",
         "update-control-time",

@@ -63,7 +63,7 @@ import { LogHolidayButton } from "../../common/LogHolidayButton";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { fr } from "@codegouvfr/react-dsfr";
 import { getDayChip } from "../components/history/Chips";
-import { Header } from "../../common/Header";
+import { MobilicHeader } from "../../common/Header";
 import { Stack } from "@mui/material";
 import { USER_MISSIONS_HISTORY_QUERY } from "common/utils/apiQueries/user";
 
@@ -414,7 +414,7 @@ export function History({
     >
       {!isInControl && (
         <>
-          <Header forceMobile />
+          <MobilicHeader forceMobile />
           <Stack
             direction="row"
             alignItems="center"
