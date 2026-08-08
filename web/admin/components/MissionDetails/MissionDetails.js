@@ -10,6 +10,9 @@ import { useApi } from "common/utils/api";
 import { useAdminStore } from "../../store/store";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useModals } from "common/utils/modals";
+import { useSnackbarAlerts } from "../../../common/Snackbar";
+import { useLoadingScreen } from "common/utils/loading";
+import { loadEmploymentsData } from "../../utils/employments";
 import List from "@mui/material/List";
 import { formatApiError } from "common/utils/errors";
 import { editUserExpenditures } from "common/utils/expenditures";
@@ -62,6 +65,8 @@ export function MissionDetails({
   const adminStore = useAdminStore();
   const api = useApi();
   const modals = useModals();
+  const alerts = useSnackbarAlerts();
+  const withLoadingScreen = useLoadingScreen();
   const { trackEvent } = useMatomo();
 
   const [mission_, setMission] = React.useState(null);
@@ -136,7 +141,7 @@ export function MissionDetails({
       (mission.missionTooOld ||
         mission.missionNotUpdatedForTooLong ||
         missionCreatedByAdmin(mission, adminStore.employments)),
-    [mission]
+    [mission, adminStore.employments]
   );
 
   const globalFieldsEditable = React.useMemo(
@@ -171,6 +176,12 @@ export function MissionDetails({
   React.useEffect(() => {
     if (missionId) loadMission();
   }, [missionId]);
+
+  React.useEffect(() => {
+    if (missionId && adminStore.companyId && !adminStore.areEmploymentsLoaded) {
+      loadEmploymentsData({ adminStore, alerts, api, withLoadingScreen });
+    }
+  }, [missionId, adminStore.companyId]);
 
   React.useEffect(() => {
     const [deleted, notDeleted] = partition(workerEntries, (workerEntry) =>

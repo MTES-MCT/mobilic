@@ -42,6 +42,7 @@ import { usePageTitle } from "../../common/UsePageTitle";
 import { Explanation } from "../../common/typography/Explanation";
 import { useRefreshDeletedMissions } from "../hooks/useRefreshDeletedMissions";
 import ValidationMission from "./ValidationMission";
+import { useLoadAdminPanelData } from "../hooks/useLoadAdminPanelData";
 
 const VALIDATION_TABS = [
   {
@@ -221,6 +222,8 @@ function ValidationPanel({ refreshData }) {
     align: "left",
     minWidth: 200
   };
+
+  useLoadAdminPanelData();
 
   React.useEffect(() => {
     setEntriesDeletedByAdmin(

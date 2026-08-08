@@ -6,15 +6,35 @@ import { useAdminStore } from "../../store/store";
 import { TeamFilter } from "../../components/TeamFilter";
 import { EmployeeFilter } from "../../components/EmployeeFilter";
 import { useRegulatoryAlertsSummaryContext } from "../../utils/contextRegulatoryAlertsSummary";
+import { useApi } from "common/utils/api";
+import { useSnackbarAlerts } from "../../../common/Snackbar";
+import { useLoadingScreen } from "common/utils/loading";
+import { loadEmploymentsData } from "../../utils/employments";
+import { loadTeamsData } from "../../utils/teams";
 
 export default function RegulatoryRespectFilters() {
   const adminStore = useAdminStore();
+  const api = useApi();
+  const alerts = useSnackbarAlerts();
+  const withLoadingScreen = useLoadingScreen();
   const { date, setDate, onSelectUniqueUserId, onSelectTeamId } =
     useRegulatoryAlertsSummaryContext();
   const minDate = addDaysToDate(new Date(), -365);
   const maxDate = lastMonth();
   const [teams, setTeams] = useState([]);
   const [users, setUsers] = useState([]);
+
+  React.useEffect(() => {
+    if (adminStore.companyId && !adminStore.areEmploymentsLoaded) {
+      loadEmploymentsData({ adminStore, alerts, api, withLoadingScreen });
+    }
+  }, [adminStore.companyId]);
+
+  React.useEffect(() => {
+    if (adminStore.companyId && !adminStore.areTeamsLoaded) {
+      loadTeamsData({ adminStore, alerts, api, withLoadingScreen });
+    }
+  }, [adminStore.companyId]);
 
   React.useEffect(() => {
     const _teams = adminStore.exportFilters.teams;
