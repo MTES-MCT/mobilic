@@ -45,7 +45,7 @@ const useStyles = makeStyles(() => ({
 
 export default function PushNotificationBanner() {
   const classes = useStyles();
-  const { shouldShowOptIn, requestPermission, dismiss } =
+  const { shouldShowOptIn, bannerText, requestPermission, dismiss } =
     usePushNotifications();
 
   if (!shouldShowOptIn) return null;
@@ -54,8 +54,8 @@ export default function PushNotificationBanner() {
     <Box className={classes.banner}>
       <Box className={classes.content}>
         <Typography className={classes.text}>
-          Pour recevoir des informations de la part de Mobilic,
-          cliquez sur le bouton suivant :
+          {bannerText ||
+            "Pour recevoir des informations de la part de Mobilic, cliquez sur le bouton suivant :"}
         </Typography>
         <Button
           iconId="fr-icon-notification-3-line"

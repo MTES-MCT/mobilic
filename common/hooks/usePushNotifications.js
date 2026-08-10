@@ -33,6 +33,7 @@ export function usePushNotifications() {
     getPushPermissionStatus()
   );
   const [vapidKey, setVapidKey] = React.useState(null);
+  const [bannerText, setBannerText] = React.useState(null);
 
   const dismissed = userInfo?.disabledWarnings?.includes(
     PUSH_DISMISSED_WARNING
@@ -44,6 +45,7 @@ export function usePushNotifications() {
       .then(res => res.json())
       .then(data => {
         if (data?.publicKey) setVapidKey(data.publicKey);
+        if (data?.bannerText) setBannerText(data.bannerText);
       })
       .catch(captureSentryException);
   }, [supported]);
@@ -96,6 +98,7 @@ export function usePushNotifications() {
     isSupported: supported,
     permission,
     shouldShowOptIn,
+    bannerText,
     requestPermission,
     dismiss
   };

@@ -26,6 +26,14 @@ self.addEventListener("push", function (event) {
 self.addEventListener("notificationclick", function (event) {
   event.notification.close();
 
+  var data = event.notification.data || {};
+  if (data.campaignId && data.clickToken) {
+    fetch(
+      "/api/campaign-click?c=" + data.campaignId + "&t=" + data.clickToken,
+      { keepalive: true }
+    ).catch(function () {});
+  }
+
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true }).then(function (clientList) {
       for (var i = 0; i < clientList.length; i++) {
