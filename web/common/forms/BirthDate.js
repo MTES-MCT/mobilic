@@ -31,7 +31,6 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
 
     if (nestedInput && typeof nestedInput.focus === "function") {
       nestedInput.focus();
-      return;
     }
   };
 
