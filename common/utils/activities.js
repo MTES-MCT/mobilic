@@ -318,7 +318,8 @@ export function convertNewActivityIntoActivityOperations(
           operation: ACTIVITIES_OPERATIONS.create,
           type: a.type,
           startTime: endTime,
-          endTime: a.endTime
+          endTime: a.endTime,
+          splitFrom: true
         }
       );
   });

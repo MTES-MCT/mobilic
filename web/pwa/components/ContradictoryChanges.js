@@ -8,7 +8,7 @@ import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Event } from "../../common/Event";
 import { MISSION_RESOURCE_TYPES } from "common/utils/contradictory";
-import { getChangeIconAndText, getEventAuthorName } from "../../common/logEvent";
+import { getChangeIconAndText, getEventAuthorName, isSplitEvent } from "../../common/logEvent";
 import { now, formatDateTimeLiteral } from "common/utils/time";
 import { ACTIVITIES, getActivityLabelDependingOnMissionType } from "common/utils/activities";
 import { isConnectionError } from "common/utils/errors";
@@ -91,6 +91,9 @@ export function ContradictoryChanges({
     ) {
       return classes.validationEvent;
     }
+    if (event.after?.context?.splitFrom) {
+      return classes.updateActivityEvent;
+    }
     return classes.missionEvent;
   };
 
@@ -113,11 +116,10 @@ export function ContradictoryChanges({
       .filter(a => a.dispute?.status === "created" && a.userId === userId)
       .map(a => {
         const hasRevisions = a.versions?.length > 1;
-        const disputedAction = a.dismissedAt
-          ? "la suppression"
-          : hasRevisions
-          ? "la modification"
-          : "l'ajout";
+        const isSplit = a.versions?.some(v => v.context?.splitFrom);
+        let disputedAction = "l'ajout";
+        if (a.dismissedAt) disputedAction = "la suppression";
+        else if (hasRevisions || isSplit) disputedAction = "la modification";
         return {
           type: "DISPUTE",
           resourceType: MISSION_RESOURCE_TYPES.activity,
@@ -196,10 +198,11 @@ export function ContradictoryChanges({
                   );
                 }
                 const changes = getChangeIconAndText(userChange);
+                const isSplit = isSplitEvent(userChange);
                 const context = userChange.type === "DELETE"
                   ? userChange.before?.dismissContext
-                  : userChange.after?.context || userChange.before?.context;
-                const motif = context?.comment || context?.userComment;
+                  : userChange.after?.context;
+                const motif = isSplit ? null : (context?.comment || context?.userComment);
                 return changes.map(({ icon, text: rawText, color }) => {
                   let text = rawText;
                   if (userChange.resourceType === MISSION_RESOURCE_TYPES.activity) {
@@ -208,7 +211,7 @@ export function ContradictoryChanges({
                     if (label) {
                       if (userChange.type === "DELETE") {
                         text = `a supprimé l'activité ${label} démarrée le ${formatDateTimeLiteral(userChange.before.startTime)}`;
-                      } else if (userChange.type === "CREATE" && data.endTime) {
+                      } else if (userChange.type === "CREATE" && data.endTime && !isSplit) {
                         text = `a ajouté l'activité ${label} du ${formatDateTimeLiteral(data.startTime)} au ${formatDateTimeLiteral(data.endTime)}`;
                       }
                     }
