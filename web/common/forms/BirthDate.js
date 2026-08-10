@@ -74,7 +74,7 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
       case "month":
         {
           const month = normalizedNumeric(value, 2);
-          console.log(" typeof month", typeof month, "month", month)
+
           setMonth(month);
           if (month.length === 2) {
             inputFocus(yearInputRef);
@@ -88,16 +88,16 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
         }
         break;
       default:
-        break; 
+        break;
     }
   }
 
   const onValidateBirthDate = () => {
     let hasError = false;
 
-
     if (
       year !== "" &&
+      year.length === 4 &&
       (year < MIN_BIRTH_DATE_YEAR || year > MAX_BIRTH_DATE_YEAR)
     ) {
       setYearState("error");
@@ -105,7 +105,7 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
     } else {
       setYearState("default");
     }
-    console.log("month", month, "day", day, "year", year)
+
     if (month !== "" && (month < 1 || month > 12)) {
       setMonthState("error");
       hasError = true;
@@ -136,6 +136,14 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
     }
   };
 
+  // Debounce validation to avoid validating on every keystroke
+  React.useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      onValidateBirthDate();
+    }, 200);
+    return () => clearTimeout(timeoutId);
+  }, [day, month, year]);
+
   return (
     <fieldset
       role="group"
@@ -160,7 +168,6 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
             inputMode: "numeric",
             maxLength: 2
           }}
-          type="number"
           label="Jour"
           hintText="Entre 1 et 31"
           required
