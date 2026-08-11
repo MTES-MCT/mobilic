@@ -36,9 +36,8 @@ self.addEventListener("notificationclick", function (event) {
 
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true }).then(function (clientList) {
-      for (var i = 0; i < clientList.length; i++) {
-        var client = clientList[i];
-        if (client.url.indexOf(self.location.origin) !== -1 && "focus" in client) {
+      for (var client of clientList) {
+        if (client.url.includes(self.location.origin) && "focus" in client) {
           return client.focus();
         }
       }

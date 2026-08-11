@@ -35,6 +35,12 @@ const TARGET_LABELS = Object.fromEntries(
 
 const MAX_TITLE = 100;
 const MAX_BODY = 500;
+
+const RESULT_MESSAGES = {
+  scheduled: "Campagne programmée.",
+  success: "Campagne lancée.",
+  error: "Une erreur est survenue."
+};
 const borderGrey = fr.colors.decisions.border.default.grey.default;
 const mentionGrey = fr.colors.decisions.text.mention.grey.default;
 
@@ -69,6 +75,8 @@ export default function CampaignForm({ onCreated }) {
   const isSpecific =
     targetType === "specific_employees" ||
     targetType === "specific_managers";
+
+  const submitLabel = scheduled ? "Programmer" : "Envoyer";
 
   const searchTargetType =
     targetType === "specific_employees"
@@ -447,20 +455,14 @@ export default function CampaignForm({ onCreated }) {
           onClick={() => setConfirmOpen(true)}
           disabled={!canSubmit || submitting}
         >
-          {scheduled ? "Programmer" : "Envoyer"}
+          {submitLabel}
         </Button>
       </Box>
       {result && (
         <Box sx={{ marginTop: 3 }}>
           <Alert
             severity={result === "error" ? "error" : "success"}
-            title={
-              result === "scheduled"
-                ? "Campagne programmée."
-                : result === "success"
-                  ? "Campagne lancée."
-                  : "Une erreur est survenue."
-            }
+            title={RESULT_MESSAGES[result]}
             small
           />
         </Box>
@@ -601,11 +603,7 @@ export default function CampaignForm({ onCreated }) {
             onClick={handleSubmit}
             disabled={submitting}
           >
-            {submitting
-              ? "Envoi…"
-              : scheduled
-                ? "Programmer"
-                : "Envoyer"}
+            {submitting ? "Envoi…" : submitLabel}
           </Button>
         </DialogActions>
       </Dialog>

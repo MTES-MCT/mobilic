@@ -66,6 +66,7 @@ export default function PushNotificationBanner() {
         </Button>
       </Box>
       <button
+        type="button"
         className={classes.close}
         onClick={dismiss}
         aria-label="Fermer"
