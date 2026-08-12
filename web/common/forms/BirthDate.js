@@ -17,6 +17,26 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
   const [yearState, setYearState] = React.useState("default");
   const [dateState, setDateState] = React.useState("default");
 
+  const monthInputRef = React.useRef(null);
+  const yearInputRef = React.useRef(null);
+
+  const inputFocus = (inputRef) => {
+    const target = inputRef?.current;
+
+    if (!target) {
+      return;
+    }
+    const nestedInput = 
+      target.tagName === "INPUT" ? target : target.querySelector?.("input");
+
+    if (nestedInput && typeof nestedInput.focus === "function") {
+      nestedInput.focus();
+    }
+  };
+
+  const normalizedNumeric = (value, maxLength) =>
+    value.replace(/\D/g, "")/*.replace(/^0+/, "")*/.slice(0, maxLength);
+  
   React.useEffect(() => {
     if (!userBirthDate) {
       setDay("");
@@ -25,9 +45,9 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
       return;
     }
     const date = new Date(userBirthDate);
-    setYear(date.getFullYear());
-    setMonth(date.getMonth() + 1);
-    setDay(date.getDate());
+    setYear(String(date.getFullYear()));
+    setMonth(String(date.getMonth() + 1));
+    setDay(String(date.getDate()));
   }, [userBirthDate]);
 
   const MAX_BIRTH_DATE_YEAR = React.useMemo(
@@ -39,10 +59,43 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
     [CURRENT_YEAR]
   );
 
+  const handleInputChange = (type, value) => {
+    switch (type) {
+      case "day":
+        {
+          const day = normalizedNumeric(value, 2);
+          setDay(day);
+          if (day.length === 2) {
+            inputFocus(monthInputRef);
+          }
+        }
+        break;
+      case "month":
+        {
+          const month = normalizedNumeric(value, 2);
+          setMonth(month);
+          if (month.length === 2) {
+            inputFocus(yearInputRef);
+          }
+        }
+        break;
+      case "year":
+        {
+          const year = normalizedNumeric(value, 4);
+          setYear(year);
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
   const onValidateBirthDate = () => {
     let hasError = false;
+
     if (
       year !== "" &&
+      year.length === 4 &&
       (year < MIN_BIRTH_DATE_YEAR || year > MAX_BIRTH_DATE_YEAR)
     ) {
       setYearState("error");
@@ -50,6 +103,7 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
     } else {
       setYearState("default");
     }
+
     if (month !== "" && (month < 1 || month > 12)) {
       setMonthState("error");
       hasError = true;
@@ -80,6 +134,14 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
     }
   };
 
+  // Debounce validation to avoid validating on every keystroke
+  React.useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      onValidateBirthDate();
+    }, 200);
+    return () => clearTimeout(timeoutId);
+  }, [day, month, year]);
+
   return (
     <fieldset
       role="group"
@@ -98,12 +160,12 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
         <Input
           nativeInputProps={{
             value: day,
-            onChange: e => setDay(e.target.value),
+            onChange: e => handleInputChange("day", e.target.value),
             onBlur: onValidateBirthDate,
-            type: "number",
-            inputMode: "numeric"
+            type: "text",
+            inputMode: "numeric",
+            maxLength: 2
           }}
-          type="number"
           label="Jour"
           hintText="Entre 1 et 31"
           required
@@ -115,32 +177,36 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
         <Input
           nativeInputProps={{
             value: month,
-            onChange: e => setMonth(e.target.value),
+            onChange: e => handleInputChange("month", e.target.value),
             onBlur: onValidateBirthDate,
-            type: "number",
-            inputMode: "numeric"
+            type: "text",
+            inputMode: "numeric",
+            maxLength: 2
           }}
           label="Mois"
-          hintText="Entre 1 et 12"
+          hintText="Entre 01 et 12"
           required
           state={monthState}
           stateRelatedMessage="Mois invalide. Exemple&nbsp;: 12."
+          ref={monthInputRef}
         />
       </div>
       <div className="fr-fieldset__element fr-fieldset__element--inline fr-fieldset__element--inline-grow fr-fieldset__element--year">
         <Input
           nativeInputProps={{
             value: year,
-            onChange: e => setYear(e.target.value),
+            onChange: e => handleInputChange("year", e.target.value),
             onBlur: onValidateBirthDate,
-            type: "number",
-            inputMode: "numeric"
+            type: "text",
+            inputMode: "numeric",
+            maxLength: 4
           }}
           label="Année"
           hintText="Exemple&nbsp;: 1984"
           required
           state={yearState}
           stateRelatedMessage="Année invalide&nbsp;: elle doit être comprise entre 1924 et 2006. Exemple : 1990."
+          ref={yearInputRef}
         />
       </div>
       {dateState === "error" && (
