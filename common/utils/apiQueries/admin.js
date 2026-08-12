@@ -245,6 +245,7 @@ export const ADMIN_COMPANIES_QUERY = gql`
                 }
               }
               pastRegistrationJustification
+              endedUserIds
             }
           }
         }
@@ -431,6 +432,7 @@ export const ADMIN_WORK_DAYS_QUERY = gql`
                 }
               }
               pastRegistrationJustification
+              endedUserIds
             }
           }
         }

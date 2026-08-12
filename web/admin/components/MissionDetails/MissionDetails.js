@@ -49,6 +49,7 @@ import { MISSION_QUERY } from "common/utils/apiQueries/missions";
 import { MissionDrawerHeader } from "../../drawers/DrawerHeader";
 import { MissionDetailsObservations } from "./MissionDetailsObservations";
 import { ToValidateTag, WaitingTag, ValidatedTag, DeletedTag } from "../../drawers/Tags";
+import { computeMissionStatus } from "../../utils/missionsStatus";
 
 export function MissionDetails({
   missionId,
@@ -220,6 +221,23 @@ export function MissionDetails({
     }
   }, [mission, usersToAdd]);
 
+  const missionStatusLabel = React.useMemo(() => {
+    if (!mission || isMissionHoliday) {
+      return null;
+    }
+    const validationEntries = missionToValidationEntries(mission);
+    return computeMissionStatus(validationEntries, adminStore.userId, {
+      adminCanBypass: adminMayOverrideValidation,
+      overrideValidationJustification
+    });
+  }, [
+    mission,
+    isMissionHoliday,
+    adminStore.userId,
+    adminMayOverrideValidation,
+    overrideValidationJustification
+  ]);
+
   if (loading) {
     return <CircularProgress color="primary" />;
   }
@@ -257,8 +275,7 @@ export function MissionDetails({
             ? (newName) => missionActions.changeName(newName)
             : null
         }
-        noEmployeeValidation={entriesToValidateByWorker?.length > 0}
-        toBeValidatedByAdmin={entriesToValidateByAdmin?.length > 0}
+        missionStatusLabel={missionStatusLabel}
         doesMissionSpanOnMultipleDays={doesMissionSpanOnMultipleDays}
         day={day}
       />
