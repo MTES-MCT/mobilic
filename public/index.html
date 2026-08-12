@@ -90,7 +90,7 @@
 
     <link
       rel="stylesheet"
-      href="%PUBLIC_URL%/dsfr/utility/icons/icons.min.css?v=1.14.2"
+      href="%PUBLIC_URL%/dsfr/utility/icons/icons.min.css?hash=cd84f979"
     />
     <link rel="stylesheet" href="%PUBLIC_URL%/dsfr/dsfr.min.css?v=1.14.2" />
     <title>Mobilic</title>
@@ -99,6 +99,80 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <script>
+      // Safety net for a stale service worker / browser cache still pointing
+      // to a JS bundle that a newer deployment has removed from the server.
+      // Runs independently of the app bundle, since a failure to load that
+      // very bundle is exactly the case this needs to catch: React never
+      // mounts in that case, so no in-app error boundary can react to it.
+      (function () {
+        var STORAGE_KEY = "chunkFailed";
+        var DEBOUNCE_MS = 10000;
+
+        function clearCachesAndReload() {
+          var cleanup = Promise.resolve();
+          if (window.caches && window.caches.keys) {
+            cleanup = window.caches
+              .keys()
+              .then(function (keys) {
+                return Promise.all(
+                  keys.map(function (key) {
+                    return window.caches.delete(key);
+                  })
+                );
+              })
+              .catch(function () {});
+          }
+          if (
+            navigator.serviceWorker &&
+            navigator.serviceWorker.getRegistrations
+          ) {
+            cleanup = cleanup
+              .then(function () {
+                return navigator.serviceWorker.getRegistrations();
+              })
+              .then(function (registrations) {
+                return Promise.all(
+                  registrations.map(function (registration) {
+                    return registration.unregister();
+                  })
+                );
+              })
+              .catch(function () {});
+          }
+          cleanup.then(function () {
+            window.location.reload();
+          });
+        }
+
+        window.addEventListener(
+          "error",
+          function (event) {
+            var target = event.target;
+            if (
+              !target ||
+              target.tagName !== "SCRIPT" ||
+              !target.src ||
+              target.src.indexOf("/static/js/") === -1
+            ) {
+              return;
+            }
+            var lastReload = window.localStorage
+              ? parseInt(window.localStorage.getItem(STORAGE_KEY), 10)
+              : null;
+            var now = Date.now();
+            if (lastReload && now - lastReload < DEBOUNCE_MS) {
+              return;
+            }
+            if (window.localStorage) {
+              window.localStorage.setItem(STORAGE_KEY, String(now));
+            }
+            clearCachesAndReload();
+          },
+          true
+        );
+      })();
+    </script>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
