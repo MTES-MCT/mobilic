@@ -67,6 +67,11 @@ function activityChangeText(change) {
         "a supprimé l'activité"
       ];
     case "CREATE":
+      if (isSplitEvent(change)) {
+        return change.after.endTime
+          ? [`a scindé ${changeResourceAsText(change)} du ${formatDateTimeLiteral(change.after.startTime)} au ${formatDateTimeLiteral(change.after.endTime)}`]
+          : [`a scindé ${changeResourceAsText(change)} le ${formatDateTimeLiteral(change.after.startTime)}`];
+      }
       if (!change.after.endTime) {
         return [
           isSupportEvent(change)
@@ -75,9 +80,6 @@ function activityChangeText(change) {
                 ACTIVITIES[change.after.type].label
               } le ${formatDateTimeLiteral(change.after.startTime)}`
         ];
-      }
-      if (isSplitEvent(change)) {
-        return [`a scindé ${changeResourceAsText(change)} du ${formatDateTimeLiteral(change.after.startTime)} au ${formatDateTimeLiteral(change.after.endTime)}`];
       }
       return [
         "a ajouté l'activité"
