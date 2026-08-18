@@ -176,9 +176,9 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
           nativeInputProps={{
             value: day,
             onChange: e => handleInputChange("day", e.target.value),
-            onBlur: e => {
+            onBlur: () => {
               clearTimeout(dayFocusTimeoutRef.current);
-              onValidateBirthDate(e);
+              onValidateBirthDate();
             },
             type: "text",
             inputMode: "numeric",
