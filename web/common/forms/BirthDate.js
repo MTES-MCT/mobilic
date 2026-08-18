@@ -20,6 +20,16 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
   const monthInputRef = React.useRef(null);
   const yearInputRef = React.useRef(null);
 
+  const dayFocusTimeoutRef = React.useRef(null);
+  const DELAY_FOCUS_MONTH = 800; 
+
+
+  React.useEffect(() => () => {
+    if (dayFocusTimeoutRef.current) {
+      clearTimeout(dayFocusTimeoutRef.current);
+    }
+  }, []);
+
   const inputFocus = (inputRef) => {
     const target = inputRef?.current;
 
@@ -65,8 +75,13 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
         {
           const day = normalizedNumeric(value, 2);
           setDay(day);
+          clearTimeout(dayFocusTimeoutRef.current);
           if (day.length === 2) {
             inputFocus(monthInputRef);
+          } else if (day.length === 1) {
+            dayFocusTimeoutRef.current = setTimeout(() => {
+              inputFocus(monthInputRef);
+            }, DELAY_FOCUS_MONTH);
           }
         }
         break;
@@ -161,7 +176,10 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
           nativeInputProps={{
             value: day,
             onChange: e => handleInputChange("day", e.target.value),
-            onBlur: onValidateBirthDate,
+            onBlur: () => {
+              clearTimeout(dayFocusTimeoutRef.current);
+              onValidateBirthDate();
+            },
             type: "text",
             inputMode: "numeric",
             maxLength: 2
