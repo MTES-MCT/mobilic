@@ -153,12 +153,12 @@
               !target ||
               target.tagName !== "SCRIPT" ||
               !target.src ||
-              target.src.indexOf("/static/js/") === -1
+              !target.src.includes("/static/js/")
             ) {
               return;
             }
             var lastReload = window.localStorage
-              ? parseInt(window.localStorage.getItem(STORAGE_KEY), 10)
+              ? Number.parseInt(window.localStorage.getItem(STORAGE_KEY), 10)
               : null;
             var now = Date.now();
             if (lastReload && now - lastReload < DEBOUNCE_MS) {
