@@ -3,6 +3,7 @@ import Modal from "../../../common/Modal";
 import { Typography, Box } from "@mui/material";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { EmailField } from "../../../common/EmailField";
+import { Notice } from "@codegouvfr/react-dsfr/Notice";
 
 export default function ControlSendEmailNoLicModal({
   open,
@@ -10,17 +11,28 @@ export default function ControlSendEmailNoLicModal({
   handleSend,
   isLoading
 }) {
-  const [emailAddress, setEmailAddress] = React.useState("");
-  const [emailError, setEmailError] = React.useState("");
+  const [driverEmailAddress, setDriverEmailAddress] = React.useState("");
+  const [driverEmailError, setDriverEmailError] = React.useState("");
+  const [companyEmailAddress, setCompanyEmailAddress] = React.useState("");
+  const [companyEmailError, setCompanyEmailError] = React.useState("");
+
+  React.useEffect(() => {
+    if (!open) {
+      setDriverEmailAddress("");
+      setDriverEmailError("");
+      setCompanyEmailAddress("");
+      setCompanyEmailError("");
+    }
+  }, [open]);
 
   const handleSubmit = () => {
-    if (emailAddress.trim()) {
-      handleSend(emailAddress.trim());
+    if (driverEmailAddress.trim()) {
+      handleSend(driverEmailAddress.trim());
     }
   };
 
   const handleCancel = () => {
-    setEmailAddress("");
+    setDriverEmailAddress("");
     handleClose();
   };
 
@@ -28,22 +40,40 @@ export default function ControlSendEmailNoLicModal({
     <Modal
       open={open}
       handleClose={handleCancel}
-      title="Destinataire du bulletin de contrôle"
+      title="Envoi du bulletin de contrôle par email"
       size="sm"
       content={
         <Box>
-          <Typography gutterBottom sx={{ mb: 3 }}>
-            Ce bulletin sera envoyé par email à l'adresse d'entreprise
-            renseignée dans le champ ci-dessous.
+          <Typography gutterBottom sx={{ mb: 1 }}>
+            Le bulletin sera transmis au conducteur.<br/>Vous pouvez également l'envoyer à l'entreprise responsable.
           </Typography>
+          <Typography gutterBottom sx={{ mb: 3 }} style={{color: "gray", fontSize: "0.8rem"}}>
+            * Informations obligatoires
+          </Typography>
+
+          <Notice
+            title="Une fois envoyé, le bulletin ne pourra plus être modifié."
+            severity="warning"
+            iconDisplayed
+            style={{ marginBottom: "2rem" }}
+          />
 
           <EmailField
             required
-            value={emailAddress}
-            setValue={setEmailAddress}
+            value={driverEmailAddress}
+            setValue={setDriverEmailAddress}
             validate
-            error={emailError}
-            setError={setEmailError}
+            error={driverEmailError}
+            setError={setDriverEmailError}
+            label="Adresse email du conducteur"
+          />
+          <EmailField
+            value={companyEmailAddress}
+            setValue={setCompanyEmailAddress}
+            validate
+            error={companyEmailError}
+            setError={setCompanyEmailError}
+            label="Adresse email de l'entreprise"
           />
         </Box>
       }
@@ -58,9 +88,9 @@ export default function ControlSendEmailNoLicModal({
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={isLoading || !emailAddress.trim() || !!emailError}
+            disabled={isLoading || (!driverEmailAddress.trim() || !!driverEmailError)}
           >
-            {isLoading ? "Envoi..." : "Envoyer"}
+            {isLoading ? "Envoi..." : "Envoyer le bulletin"}
           </Button>
         </>
       }
