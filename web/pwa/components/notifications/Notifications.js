@@ -19,6 +19,10 @@ import {
   READ_NOTIFICATIONS_MUTATION
 } from "common/utils/apiQueries/notifications";
 
+// Matches .fr-accordion__btn's min-height, keeping the collapse's
+// paddingBottom and the notifications maxHeight calc in sync.
+const TOGGLE_BUTTON_HEIGHT = "3rem";
+
 const mergeNotifications = (apiNotifs, localNotifs) => {
   const localById = Object.fromEntries(localNotifs.map((n) => [n.id, n]));
 
@@ -225,7 +229,7 @@ export const Notifications = ({ openHistory }) => {
   );
 
   const notificationsMaxHeight = headerHeight
-    ? `min(65vh, calc(100vh - ${headerHeight}px - 3rem))`
+    ? `calc(100vh - ${headerHeight}px - ${TOGGLE_BUTTON_HEIGHT})`
     : "65vh";
 
   return (
@@ -243,8 +247,7 @@ export const Notifications = ({ openHistory }) => {
       <div
         className={fr.cx("fr-collapse")}
         id={collapseElementId}
-        // 3rem reserves the fixed toggle button's min-height (.fr-accordion__btn)
-        style={{ paddingTop: 0, paddingBottom: "3rem" }}
+        style={{ paddingTop: 0, paddingBottom: TOGGLE_BUTTON_HEIGHT }}
       >
         <Stack
           direction="column"
