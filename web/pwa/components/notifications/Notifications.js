@@ -71,6 +71,7 @@ export const Notifications = ({ openHistory }) => {
   const [notifs, setNotifs] = useState(() => userInfo.notifications || []);
 
   const [isExpended, setIsExpended] = useState(false);
+  const [headerHeight, setHeaderHeight] = useState(0);
   const api = useApi();
   const alerts = useSnackbarAlerts();
 
@@ -80,6 +81,21 @@ export const Notifications = ({ openHistory }) => {
   useEffect(() => {
     isExpendedRef.current = isExpended;
   }, [isExpended]);
+
+  useEffect(() => {
+    const headerEl = document.querySelector(".header-container");
+    if (!headerEl) return;
+
+    const updateHeaderHeight = () =>
+      setHeaderHeight(headerEl.getBoundingClientRect().height);
+
+    updateHeaderHeight();
+
+    const observer = new ResizeObserver(updateHeaderHeight);
+    observer.observe(headerEl);
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     notifsRef.current = notifs;
@@ -208,13 +224,18 @@ export const Notifications = ({ openHistory }) => {
     [unreadNotifs.length]
   );
 
+  const notificationsMaxHeight = headerHeight
+    ? `min(65vh, calc(100vh - ${headerHeight}px - 3rem))`
+    : "65vh";
+
   return (
     <section
       className={cx(fr.cx("fr-accordion"), "notifications")}
       style={{
         backgroundColor: "white",
-        position: "absolute",
+        position: "fixed",
         bottom: 0,
+        left: 0,
         width: "100%",
         zIndex: 600
       }}
@@ -222,9 +243,15 @@ export const Notifications = ({ openHistory }) => {
       <div
         className={fr.cx("fr-collapse")}
         id={collapseElementId}
-        style={{ paddingTop: 0, paddingBottom: 0 }}
+        // 3rem reserves the fixed toggle button's min-height (.fr-accordion__btn)
+        style={{ paddingTop: 0, paddingBottom: "3rem" }}
       >
-        <Stack direction="column" width="100%" maxHeight="65vh">
+        <Stack
+          direction="column"
+          width="100%"
+          maxHeight={notificationsMaxHeight}
+          sx={{ overflowY: "auto" }}
+        >
           {notifs.length > 0 ? (
             notifs.map((notif) => (
               <InnerNotification
