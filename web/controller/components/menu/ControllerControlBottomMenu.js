@@ -238,26 +238,24 @@ export function ControllerControlBottomMenu({
             >
               Télécharger
             </Button>
-            {(!sentToAdmin || !sentToDriver) && (
-              <Button
-                priority="primary"
-                size="medium"
-                onClick={e => {
-                  e.preventDefault();
-                  if (isNoLicContext) {
-                    setOpenSendNoLicModal(true);
-                  } else {
-                    setOpenSendModal(true);
-                  }
-                }}
-                iconId="fr-icon-send-plane-line"
-                iconPosition="left"
-                className={classes.button}
-                disabled={!canDownloadBDC}
-              >
-                Envoyer
-              </Button>
-            )}
+            <Button
+              priority="primary"
+              size="medium"
+              onClick={e => {
+                e.preventDefault();
+                if (isNoLicContext) {
+                  setOpenSendNoLicModal(true);
+                } else {
+                  setOpenSendModal(true);
+                }
+              }}
+              iconId="fr-icon-send-plane-line"
+              iconPosition="left"
+              className={classes.button}
+              disabled={!canDownloadBDC}
+            >
+              Envoyer
+            </Button>
           </Box>
         </Stack>
       ) : (
@@ -275,6 +273,7 @@ export function ControllerControlBottomMenu({
             handleSend={handleSendNoLic}
             isLoading={isLoading}
             sentToDriver={sentToDriver}
+            sentToAdmin={sentToAdmin}
           />
         ) : (
           <ControlSendEmailModal

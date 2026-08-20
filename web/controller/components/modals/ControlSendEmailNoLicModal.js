@@ -10,7 +10,8 @@ export default function ControlSendEmailNoLicModal({
   handleClose,
   handleSend,
   isLoading,
-  sentToDriver = false
+  sentToDriver = false,
+  sentToAdmin = false
 }) {
   const [driverEmailAddress, setDriverEmailAddress] = React.useState("");
   const [driverEmailError, setDriverEmailError] = React.useState("");
@@ -27,6 +28,12 @@ export default function ControlSendEmailNoLicModal({
   }, [open]);
 
   const handleSubmit = async () => {
+    if (!driverEmailAddress.trim() && !companyEmailAddress.trim()) {
+      const message = "Veuillez renseigner au moins une adresse email.";
+      setDriverEmailError(message);
+      setCompanyEmailError(message);
+      return;
+    }
     let success = true;
     if (driverEmailAddress.trim()) {
       success = (await handleSend(driverEmailAddress.trim(), false)) && success;
@@ -53,16 +60,17 @@ export default function ControlSendEmailNoLicModal({
       content={
         <Box>
           <Typography gutterBottom sx={{ mb: 1 }}>
-            {sentToDriver
+            {sentToDriver && sentToAdmin
+              ? "Le bulletin a déjà été transmis au conducteur et à l'entreprise responsable. Vous pouvez le renvoyer si nécessaire."
+              : sentToDriver
               ? "Le bulletin a déjà été transmis au conducteur. Vous pouvez l'envoyer à l'entreprise responsable."
+              : sentToAdmin
+              ? "Le bulletin a déjà été transmis à l'entreprise responsable. Vous pouvez l'envoyer au conducteur."
               : "Le bulletin sera transmis au conducteur. Vous pouvez également l'envoyer à l'entreprise responsable."}
-          </Typography>
-          <Typography gutterBottom sx={{ mb: 3 }} style={{color: "gray", fontSize: "0.8rem"}}>
-            * Informations obligatoires
           </Typography>
 
           {
-            !sentToDriver && (
+            (!sentToDriver && !sentToAdmin) && (
               <Notice
                 title="Une fois envoyé, le bulletin ne pourra plus être modifié."
                 severity="warning"
@@ -73,7 +81,6 @@ export default function ControlSendEmailNoLicModal({
           }
 
           <EmailField
-            required={!sentToDriver}
             value={driverEmailAddress}
             setValue={setDriverEmailAddress}
             validate
@@ -102,13 +109,7 @@ export default function ControlSendEmailNoLicModal({
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={
-              isLoading ||
-              !!driverEmailError ||
-              !!companyEmailError ||
-              (!sentToDriver && !driverEmailAddress.trim()) ||
-              (!driverEmailAddress.trim() && !companyEmailAddress.trim())
-            }
+            disabled={isLoading}
           >
             {isLoading ? "Envoi..." : "Envoyer le bulletin"}
           </Button>
