@@ -181,8 +181,9 @@ export function ControllerControlBottomMenu({
                   label: "Remis au format papier",
                   nativeInputProps: {
                     checked: handDelivered,
-                    onChange: handleHandDeliveredChange
-                  }
+                    onChange: handleHandDeliveredChange,
+                    disabled: sentToDriver
+                  },
                 }
               ]}
             />
@@ -211,7 +212,7 @@ export function ControllerControlBottomMenu({
               </Badge>
             )}
 
-            {sentToDriver && (
+            {(sentToDriver || handDelivered) && (
               <Badge severity="info" noIcon className={classes.badge}>
                 <i
                   className={classNames(
@@ -219,7 +220,7 @@ export function ControllerControlBottomMenu({
                     classes.badgeIcon
                   )}
                 ></i>
-                Remis au conducteur (email)
+                Remis au conducteur {handDelivered ? "(papier)" : "(via email)"}
               </Badge>
             )}
           </Box>
@@ -274,6 +275,7 @@ export function ControllerControlBottomMenu({
             isLoading={isLoading}
             sentToDriver={sentToDriver}
             sentToAdmin={sentToAdmin}
+            disableDriverInput={handDelivered ? true : false}
           />
         ) : (
           <ControlSendEmailModal

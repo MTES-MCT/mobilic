@@ -11,7 +11,8 @@ export default function ControlSendEmailNoLicModal({
   handleSend,
   isLoading,
   sentToDriver = false,
-  sentToAdmin = false
+  sentToAdmin = false,
+  disableDriverInput = false
 }) {
   const [driverEmailAddress, setDriverEmailAddress] = React.useState("");
   const [driverEmailError, setDriverEmailError] = React.useState("");
@@ -29,8 +30,8 @@ export default function ControlSendEmailNoLicModal({
 
   const handleSubmit = async () => {
     if (!driverEmailAddress.trim() && !companyEmailAddress.trim()) {
-      const message = "Veuillez renseigner au moins une adresse email.";
-      setDriverEmailError(message);
+      const message = "Veuillez renseigner ce champ.";
+      disableDriverInput ? null : setDriverEmailError(message);
       setCompanyEmailError(message);
       return;
     }
@@ -87,6 +88,7 @@ export default function ControlSendEmailNoLicModal({
             error={driverEmailError}
             setError={setDriverEmailError}
             label="Adresse email du conducteur"
+            disabled={disableDriverInput}
           />
           <EmailField
             value={companyEmailAddress}
