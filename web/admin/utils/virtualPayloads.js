@@ -47,6 +47,7 @@ export const getPayloadCreateActivity = (args, mission) => {
   const context = {};
   if (args.userComment) context.userComment = args.userComment;
   if (args.splitFrom) context.splitFrom = true;
+  if (args.originalStartTime) context.originalStartTime = args.originalStartTime;
   if (Object.keys(context).length > 0) payload.context = context;
   return payload;
 };
