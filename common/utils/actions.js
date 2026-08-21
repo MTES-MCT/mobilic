@@ -576,7 +576,8 @@ class Actions {
     driverId = null,
     switchMode = true,
     forceNonBatchable = false,
-    splitFrom = false
+    splitFrom = false,
+    originalStartTime = null
   }) => {
     if (team.length === 0)
       return await this.pushNewActivityEvent({
@@ -587,7 +588,8 @@ class Actions {
         comment,
         switchMode,
         forceNonBatchable,
-        splitFrom
+        splitFrom,
+        originalStartTime
       });
 
     const teamToType = {};
@@ -614,7 +616,8 @@ class Actions {
         forceKillSisterActivitiesOnFail: team.length > 1,
         forceNonBatchable,
         groupId,
-        splitFrom
+        splitFrom,
+        originalStartTime
       });
     }
 
@@ -632,7 +635,8 @@ class Actions {
             switchMode,
             groupId,
             immediateSubmit: false,
-            splitFrom
+            splitFrom,
+            originalStartTime
           });
         });
     }
@@ -699,7 +703,8 @@ class Actions {
     groupId = null,
     forceKillSisterActivitiesOnFail = false,
     forceNonBatchable = false,
-    splitFrom = false
+    splitFrom = false,
+    originalStartTime = null
   }) => {
     const actualUserId = userId || this.store.userId();
     const newActivity = {
@@ -714,6 +719,7 @@ class Actions {
     const context = {};
     if (comment) context.comment = comment;
     if (splitFrom) context.splitFrom = true;
+    if (originalStartTime) context.originalStartTime = originalStartTime;
     if (Object.keys(context).length > 0) newActivity.context = context;
 
     const updateStore = (store, requestId) => {

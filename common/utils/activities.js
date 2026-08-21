@@ -319,7 +319,8 @@ export function convertNewActivityIntoActivityOperations(
           type: a.type,
           startTime: endTime,
           endTime: a.endTime,
-          splitFrom: true
+          splitFrom: true,
+          originalStartTime: a.startTime
         }
       );
   });

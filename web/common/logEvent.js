@@ -68,8 +68,9 @@ function activityChangeText(change) {
       ];
     case "CREATE":
       if (isSplitEvent(change)) {
-        return change.after.endTime
-          ? [`a scindé ${changeResourceAsText(change)} du ${formatDateTimeLiteral(change.after.startTime)} au ${formatDateTimeLiteral(change.after.endTime)}`]
+        const originalStart = change.after?.context?.originalStartTime || change.context?.originalStartTime;
+        return originalStart
+          ? [`a décalé le début de ${changeResourceAsText(change)} du ${formatDateTimeLiteral(originalStart)} au ${formatDateTimeLiteral(change.after.startTime)}`]
           : [`a scindé ${changeResourceAsText(change)} le ${formatDateTimeLiteral(change.after.startTime)}`];
       }
       if (!change.after.endTime) {
