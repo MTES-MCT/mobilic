@@ -107,7 +107,7 @@ export const loadCompanyWorkDaysAndMissions = async (api, userId, minDate, maxDa
     minMissionTimestamp + (MAX_DAYS_RANGE * 24 * 60 * 60) - 1
   );
 
-  const companieData = await api.graphQlQuery(
+  const response = await api.graphQlQuery(
     ADMIN_WORK_DAYS_QUERY,
     {
       id: userId,
@@ -122,5 +122,5 @@ export const loadCompanyWorkDaysAndMissions = async (api, userId, minDate, maxDa
     console.error("Error loading company work days and missions:", error);
     throw error;
   });
-  return companieData.data.user.adminedCompanies;
+  return response.data.user.adminedCompanies;
 }
