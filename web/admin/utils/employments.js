@@ -26,7 +26,8 @@ export async function loadEmploymentsData({
           },
           "load-company-employments",
           null
-        )
+        ),
+      { cacheKey: "loadEmployments" + companyId }
     );
   }
 }
