@@ -489,7 +489,7 @@ export default function ActivityRevisionOrCreationModal({
               {filteredActivities().map(activityName => {
                 const activityLabel = getActivityLabelDependingOnMissionType(
                   activityName,
-                  allowSupportActivity
+                  allowOtherTask
                 );
                 const label = `${activityLabel}${
                   activityName === ACTIVITIES.work.name && otherTaskLabel

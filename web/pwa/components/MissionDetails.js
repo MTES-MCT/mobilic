@@ -176,6 +176,7 @@ export function MissionDetails({
     mission?.company?.settings?.requireSupportActivity ?? true;
 
   const allowOtherTask = mission?.company?.settings?.allowOtherTask ?? true;
+  const hasOtherTask = !!mission?.company?.settings?.allowOtherTask;
   const otherTaskLabel = mission.company?.settings?.otherTaskLabel || "";
 
   const teamAtMissionEnd = [
@@ -335,6 +336,7 @@ export function MissionDetails({
             teamChanges={teamChanges}
             allowTeamMode={allowTeamActions}
             allowSupportActivity={allowSupportActivity}
+            allowOtherTask={hasOtherTask}
             nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
             isMissionEnded={isMissionEnded}
             fromTime={fromTime}
@@ -598,6 +600,7 @@ export function MissionDetails({
                 cacheInStore={cacheContradictoryInfoInPwaStore}
                 controlId={controlId}
                 titleProps={titleProps}
+                allowOtherTask={hasOtherTask}
               />
             </MissionReviewSection>
           )}

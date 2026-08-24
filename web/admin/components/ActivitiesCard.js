@@ -49,7 +49,7 @@ export function ActivitiesCard({
   titleProps = {},
   actionButtonLabel = "",
   onActionButtonClick = null,
-  allowSupportActivity = false,
+  allowOtherTask = false,
   mission = null,
   cacheContradictoryInfoInStore = null,
   cardClassName = "",
@@ -112,7 +112,7 @@ export function ActivitiesCard({
   function renderHistoryRow(entry) {
     const event = entry.__event;
     const motif = formatMotif(getComment(event));
-    const changes = getChangeIconAndText(event);
+    const changes = getChangeIconAndText(event, allowOtherTask);
     const author = event.__virtual
       ? formatPersonName(currentUserInfo) || "Vous"
       : getEventAuthorName(event) || "Inconnu";
@@ -146,7 +146,7 @@ export function ActivitiesCard({
         className={`${rowClass}${toggleExpand ? ` ${classes.clickableRow}` : ""}`}
       >
         <TableCell className={classes.cellType}>
-          {getActivityLabelDependingOnMissionType(entry.type, allowSupportActivity)}
+          {getActivityLabelDependingOnMissionType(entry.type, allowOtherTask)}
         </TableCell>
         <TableCell className={classes.cellTag}>
           {config && (
@@ -251,7 +251,7 @@ export function ActivitiesCard({
                 width={300}
                 activities={activities}
                 datetimeFormatter={datetimeFormatter}
-                allowSupportActivity={allowSupportActivity}
+                allowOtherTask={allowOtherTask}
               />
             </Grid>,
             <Grid key={2} item xs={12} sm={8} className={classes.chartContainer}>
