@@ -188,7 +188,7 @@ export function ControllerControlBottomMenu({
               ]}
             />
 
-            {isBulletinAvailableForDriver && (
+            {isBulletinAvailableForDriver && !isNoLicContext && (
               <Badge severity="info" noIcon className={classes.badge}>
                 <i
                   className={classNames(
@@ -196,7 +196,7 @@ export function ControllerControlBottomMenu({
                     classes.badgeIcon
                   )}
                 ></i>
-                Remis au format numérique
+                Remis au conducteur (via Mobilic)
               </Badge>
             )}
 
@@ -275,7 +275,8 @@ export function ControllerControlBottomMenu({
             isLoading={isLoading}
             sentToDriver={sentToDriver}
             sentToAdmin={sentToAdmin}
-            disableDriverInput={handDelivered}
+            handDelivered={handDelivered}
+            handleHandDeliveredChange={handleHandDeliveredChange}
           />
         ) : (
           <ControlSendEmailModal

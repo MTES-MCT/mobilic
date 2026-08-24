@@ -1,5 +1,6 @@
 import React from "react";
 import Modal from "../../../common/Modal";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Typography, Box } from "@mui/material";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { EmailField } from "../../../common/EmailField";
@@ -12,7 +13,8 @@ export default function ControlSendEmailNoLicModal({
   isLoading,
   sentToDriver = false,
   sentToAdmin = false,
-  disableDriverInput = false
+  handDelivered = false,
+  handleHandDeliveredChange
 }) {
   const [driverEmailAddress, setDriverEmailAddress] = React.useState("");
   const [driverEmailError, setDriverEmailError] = React.useState("");
@@ -31,7 +33,7 @@ export default function ControlSendEmailNoLicModal({
   const handleSubmit = async () => {
     if (!driverEmailAddress.trim() && !companyEmailAddress.trim()) {
       const message = "Veuillez renseigner ce champ.";
-      if (!disableDriverInput) {
+      if (!handDelivered) {
         setDriverEmailError(message);
       }
       setCompanyEmailError(message);
@@ -90,6 +92,23 @@ export default function ControlSendEmailNoLicModal({
             )
           }
 
+          <Box mb="1.5rem">
+            <Checkbox
+              size="small"
+              options={[
+                {
+                  label: "Le bulletin a été remis au conducteur au format papier",
+                  nativeInputProps: {
+                    checked: handDelivered,
+                    onChange: e => {
+                      handleHandDeliveredChange(e);
+                    },
+                    disabled: sentToDriver
+                  },
+                }
+              ]}
+            />
+          </Box>
           <EmailField
             value={driverEmailAddress}
             setValue={setDriverEmailAddress}
@@ -97,7 +116,7 @@ export default function ControlSendEmailNoLicModal({
             error={driverEmailError}
             setError={setDriverEmailError}
             label="Adresse email du conducteur"
-            disabled={disableDriverInput}
+            disabled={handDelivered}
           />
           <EmailField
             value={companyEmailAddress}
