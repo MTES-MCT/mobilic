@@ -31,7 +31,9 @@ export default function ControlSendEmailNoLicModal({
   const handleSubmit = async () => {
     if (!driverEmailAddress.trim() && !companyEmailAddress.trim()) {
       const message = "Veuillez renseigner ce champ.";
-      disableDriverInput ? null : setDriverEmailError(message);
+      if (!disableDriverInput) {
+        setDriverEmailError(message);
+      }
       setCompanyEmailError(message);
       return;
     }
@@ -52,6 +54,19 @@ export default function ControlSendEmailNoLicModal({
     handleClose();
   };
 
+  const getSentStatusMessage = () => {
+    if (sentToDriver && sentToAdmin) {
+      return "Le bulletin a déjà été transmis au conducteur et à l'entreprise responsable. Vous pouvez le renvoyer si nécessaire.";
+    }
+    if (sentToDriver) {
+      return "Le bulletin a déjà été transmis au conducteur. Vous pouvez l'envoyer à l'entreprise responsable.";
+    }
+    if (sentToAdmin) {
+      return "Le bulletin a déjà été transmis à l'entreprise responsable. Vous pouvez l'envoyer au conducteur.";
+    }
+    return null;
+  };
+
   return (
     <Modal
       open={open}
@@ -61,13 +76,7 @@ export default function ControlSendEmailNoLicModal({
       content={
         <Box>
           <Typography gutterBottom sx={{ mb: 1 }}>
-            {sentToDriver && sentToAdmin
-              ? "Le bulletin a déjà été transmis au conducteur et à l'entreprise responsable. Vous pouvez le renvoyer si nécessaire."
-              : sentToDriver
-              ? "Le bulletin a déjà été transmis au conducteur. Vous pouvez l'envoyer à l'entreprise responsable."
-              : sentToAdmin
-              ? "Le bulletin a déjà été transmis à l'entreprise responsable. Vous pouvez l'envoyer au conducteur."
-              : "Le bulletin sera transmis au conducteur. Vous pouvez également l'envoyer à l'entreprise responsable."}
+            {getSentStatusMessage()}
           </Typography>
 
           {

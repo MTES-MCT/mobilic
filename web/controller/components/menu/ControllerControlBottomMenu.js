@@ -275,7 +275,7 @@ export function ControllerControlBottomMenu({
             isLoading={isLoading}
             sentToDriver={sentToDriver}
             sentToAdmin={sentToAdmin}
-            disableDriverInput={handDelivered ? true : false}
+            disableDriverInput={handDelivered}
           />
         ) : (
           <ControlSendEmailModal
