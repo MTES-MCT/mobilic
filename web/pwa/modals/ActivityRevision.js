@@ -102,6 +102,7 @@ export default function ActivityRevisionOrCreationModal({
             driverId: op.driverId,
             userComment,
             splitFrom: op.splitFrom || false,
+            originalStartTime: op.originalStartTime || null,
             team:
               teamMode && team.length > 1
                 ? uniq([userId, ...resolveTeamAt(teamChanges, op.startTime)])
@@ -156,6 +157,7 @@ export default function ActivityRevisionOrCreationModal({
             driverId: op.driverId,
             userComment,
             splitFrom: op.splitFrom || false,
+            originalStartTime: op.originalStartTime || null,
             team:
               teamMode && team.length > 1
                 ? uniq([userId, ...resolveTeamAt(teamChanges, op.startTime)])

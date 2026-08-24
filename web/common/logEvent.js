@@ -71,8 +71,9 @@ function activityChangeText(change, allowOtherTask = false) {
       ];
     case "CREATE":
       if (isSplitEvent(change)) {
-        return change.after.endTime
-          ? [`a scindé ${changeResourceAsText(change, allowOtherTask)} du ${formatDateTimeLiteral(change.after.startTime)} au ${formatDateTimeLiteral(change.after.endTime)}`]
+        const originalStart = change.after?.context?.originalStartTime || change.context?.originalStartTime;
+        return originalStart
+          ? [`a décalé le début de ${changeResourceAsText(change, allowOtherTask)} du ${formatDateTimeLiteral(originalStart)} au ${formatDateTimeLiteral(change.after.startTime)}`]
           : [`a scindé ${changeResourceAsText(change, allowOtherTask)} le ${formatDateTimeLiteral(change.after.startTime)}`];
       }
       if (!change.after.endTime) {
