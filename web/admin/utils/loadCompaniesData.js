@@ -94,7 +94,14 @@ export async function loadCompanyTeams(api, companyId) {
 
 // loadCompanyWorkDaysAndMissions is used to load data for a specific company, including work days and missions, based on the provided date range.
 // It returns the admined companies data for the specified user and company.
-export const loadCompanyWorkDaysAndMissions = async (api, userId, minDate, maxDate, companyId) => {
+export const loadCompanyWorkDaysAndMissions = async (
+  api,
+  userId,
+  minDate,
+  maxDate,
+  companyId,
+  { after = null, first = null } = {}
+) => {
   const companyIds = [companyId];
 
   // Use inclusive day boundaries and cap to 1 year.
@@ -107,16 +114,20 @@ export const loadCompanyWorkDaysAndMissions = async (api, userId, minDate, maxDa
     minMissionTimestamp + (MAX_DAYS_RANGE * 24 * 60 * 60) - 1
   );
 
+  const variables = {
+    id: userId,
+    activityAfter: minDate,
+    activityBefore: maxDate,
+    endedMissionsAfter: minMissionTimestamp,
+    endedMissionsBefore: maxMissionTimestamp,
+    companyIds
+  };
+  if (first) variables.maxWorkDaysRange = first;
+  if (after) variables.workDaysAfter = after;
+
   const response = await api.graphQlQuery(
     ADMIN_WORK_DAYS_QUERY,
-    {
-      id: userId,
-      activityAfter: minDate,
-      activityBefore: maxDate,
-      endedMissionsAfter: minMissionTimestamp,
-      endedMissionsBefore: maxMissionTimestamp,
-      companyIds
-    },
+    variables,
     { context: { timeout: process.env.REACT_APP_TIMEOUT_MS || 60000 } }
   ).catch((error) => {
     console.error("Error loading company work days and missions:", error);

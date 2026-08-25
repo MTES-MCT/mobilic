@@ -330,6 +330,8 @@ export const ADMIN_WORK_DAYS_QUERY = gql`
     $endedMissionsAfter: TimeStamp
     $endedMissionsBefore: TimeStamp
     $companyIds: [Int]
+    $maxWorkDaysRange: Int
+    $workDaysAfter: String
   ) {
     user(id: $id) {
       adminedCompanies(companyIds: $companyIds) {
@@ -339,7 +341,7 @@ export const ADMIN_WORK_DAYS_QUERY = gql`
           firstName
           lastName
         }
-        workDays(fromDate: $activityAfter, untilDate: $activityBefore) {
+        workDays(fromDate: $activityAfter, untilDate: $activityBefore, first: $maxWorkDaysRange, after: $workDaysAfter) {
           ...WorkDayData
         }
         missions(fromTime: $endedMissionsAfter, untilTime: $endedMissionsBefore, onlyEndedMissions: false) {

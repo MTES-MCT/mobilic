@@ -1,6 +1,8 @@
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { loadCompanyWorkDaysAndMissions } from "./loadCompaniesData";
 
+const WORK_DAYS_PAGE_SIZE = 10;
+
 export async function loadActivitiesData({
   adminStore,
   alerts,
@@ -22,7 +24,8 @@ export async function loadActivitiesData({
               userId,
               minDate,
               maxDate,
-              companyId
+              companyId,
+              { first: WORK_DAYS_PAGE_SIZE }
             );
             adminStore.dispatch({
               type: ADMIN_ACTIONS.addWorkDays,
