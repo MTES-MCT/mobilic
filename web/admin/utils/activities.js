@@ -5,7 +5,10 @@ export async function loadActivitiesData({
   adminStore,
   alerts,
   api,
-  withLoadingScreen
+  withLoadingScreen,
+  minDate = adminStore.activitiesFilters.minDate,
+  maxDate = adminStore.activitiesFilters.maxDate,
+  reset = true
 }) {
   const userId = adminStore.userId;
   const companyId = adminStore.companyId;
@@ -14,8 +17,6 @@ export async function loadActivitiesData({
       async () =>
         await alerts.withApiErrorHandling(
           async () => {
-            const minDate = adminStore.activitiesFilters.minDate;
-            const maxDate = adminStore.activitiesFilters.maxDate;
             const companyData = await loadCompanyWorkDaysAndMissions(
               api,
               userId,
@@ -24,8 +25,12 @@ export async function loadActivitiesData({
               companyId
             );
             adminStore.dispatch({
-              type: ADMIN_ACTIONS.updateCompanyActivities,
-              payload: { companiesData: companyData, minDate }
+              type: ADMIN_ACTIONS.addWorkDays,
+              payload: { companiesPayload: companyData, minDate, reset }
+            });
+            adminStore.dispatch({
+              type: ADMIN_ACTIONS.addUsers,
+              payload: { companiesPayload: companyData }
             });
           },
           "load-company-data",

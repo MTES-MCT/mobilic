@@ -32,6 +32,7 @@ export function AdminStoreProvider({ children }) {
     employments: [],
     companies: [],
     missions: [],
+    teams: [],
     pendingValidationsCount: 0,
     areMissionsActivitiesLoaded: false,
     areCompanyEssentialsLoaded: false,

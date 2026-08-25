@@ -1,5 +1,4 @@
 import flatMap from "lodash/flatMap";
-import { addWorkDaysReducer } from "./workDays";
 
 export const preserveSelected = (newItems, existingItems) =>
   newItems.map(item => {
@@ -174,14 +173,6 @@ export function updateCompanyDetailsReducer(
       minDate
     }
   };
-}
-
-export function updateCompanyActivitiesReducer(state, { companiesData, minDate }) {
-  return addWorkDaysReducer(state, {
-    companiesPayload: companiesData,
-    minDate,
-    reset: true
-  });
 }
 
 export const updateCompanyEmploymentsReducer = (state, { companiesPayload }) => {
