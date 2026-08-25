@@ -76,6 +76,10 @@ export const Notifications = ({ openHistory }) => {
 
   const [isExpended, setIsExpended] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(0);
+  const [containerRect, setContainerRect] = useState({
+    left: 0,
+    width: "100%"
+  });
   const api = useApi();
   const alerts = useSnackbarAlerts();
 
@@ -99,6 +103,29 @@ export const Notifications = ({ openHistory }) => {
     observer.observe(headerEl);
 
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const containerEl = document.getElementById("content");
+
+    if (!containerEl) return;
+
+    const updateContainerRect = () => {
+      const rect = containerEl.getBoundingClientRect();
+      setContainerRect({ left: rect.left, width: rect.width });
+    };
+
+    updateContainerRect();
+
+    const observer = new ResizeObserver(updateContainerRect);
+    observer.observe(containerEl);
+
+    window.addEventListener("resize", updateContainerRect);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateContainerRect);
+    }
   }, []);
 
   useEffect(() => {
@@ -239,8 +266,8 @@ export const Notifications = ({ openHistory }) => {
         backgroundColor: "white",
         position: "fixed",
         bottom: 0,
-        left: 0,
-        width: "100%",
+        left: containerRect.left,
+        width: containerRect.width,
         zIndex: 600
       }}
     >
@@ -290,8 +317,9 @@ export const Notifications = ({ openHistory }) => {
             justifyContent: "flex-start",
             position: "fixed",
             bottom: 0,
-            width: "100%",
-            backgroundColor: "white",
+            left: containerRect.left,
+            width: containerRect.width,
+            backgroundColor: "white"
           }}
         >
           <Stack direction="row" gap={1} alignItems="center" pl={1}>
