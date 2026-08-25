@@ -40,7 +40,8 @@ export function parseMissionPayloadFromBackend(missionPayload, userId) {
     isHoliday:
       missionPayload.isHoliday !== undefined ? missionPayload.isHoliday : false,
     validations: missionPayload.validations,
-    pastRegistrationJustification: missionPayload.pastRegistrationJustification
+    pastRegistrationJustification: missionPayload.pastRegistrationJustification,
+    endedUserIds: missionPayload.endedUserIds || []
   };
 }
 
@@ -105,6 +106,11 @@ export function augmentAndSortMissions(missions, userId, companies = []) {
 
 export function computeMissionStats(m, users) {
   const now1 = now();
+  const endedUserIds = new Set(
+    (m.endedUserIds || [])
+      .filter(id => id !== null && id !== undefined)
+      .map(id => id.toString())
+  );
   const activitiesWithUserId = m.activities
     .map(a => ({
       ...a,
@@ -190,7 +196,8 @@ export function computeMissionStats(m, users) {
         v =>
           (!v.userId && v.submitterId.toString() === userId) ||
           v.userId.toString() === userId
-      )
+      ),
+      hasEndedMission: endedUserIds.has(userId.toString())
     };
   });
   const missionNotUpdatedForTooLong = values(userStats).some(
