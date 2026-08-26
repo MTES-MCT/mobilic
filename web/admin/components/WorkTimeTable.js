@@ -576,8 +576,10 @@ export function WorkTimeTable({
       flexGrow: 0,
       format: (v) => v != null ? formatTimer(v, false) : null
     };
+    const formatWithAlert = (key, formatter) => (v) =>
+      v != null ? ThresholdValue({ value: v, formatted: formatter(v), thresholdKey: key, thresholds }) : null;
     const withAlert = (col, key, formatter) => withThreshold
-      ? { ...col, format: (v) => v != null ? <ThresholdValue value={v} formatted={formatter(v)} thresholdKey={key} thresholds={thresholds} /> : null }
+      ? { ...col, format: formatWithAlert(key, formatter) }
       : col;
 
     columns = [
