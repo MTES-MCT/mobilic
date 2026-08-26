@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { fr } from "@codegouvfr/react-dsfr";
 import orderBy from "lodash/orderBy";
 import forEach from "lodash/forEach";
@@ -927,7 +927,7 @@ const VirtualizedTable = React.forwardRef(
     }, [entries.length]);
 
     return (
-      <Fragment>
+      <>
         {attachScrollTo ? (
           <WindowScroller ref={scrollerRef} scrollElement={attachScrollTo}>
             {({ height, registerChild, onChildScroll, scrollTop }) => (
@@ -1001,7 +1001,7 @@ const VirtualizedTable = React.forwardRef(
             }}
           </AutoSizer>
         )}
-      </Fragment>
+      </>
     );
   }
 );
