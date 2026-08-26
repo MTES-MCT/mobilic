@@ -39,6 +39,8 @@ export function AdminStoreProvider({ children }) {
     areEmploymentsLoaded: false,
     areTeamsLoaded: false,
     minWorkDaysCursor: [],
+    workDaysPageInfo: { hasNextPage: true, endCursor: null },
+    workDaysFetchRange: null,
     activitiesFilters: {
       period: "day",
       users: [],

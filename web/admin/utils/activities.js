@@ -15,6 +15,12 @@ export async function loadActivitiesData({
   const userId = adminStore.userId;
   const companyId = adminStore.companyId;
   if (userId && companyId) {
+
+    const isSameRange =
+      !reset &&
+      adminStore.workDaysFetchRange?.minDate === minDate &&
+      adminStore.workDaysFetchRange?.maxDate === maxDate;
+
     await withLoadingScreen(
       async () =>
         await alerts.withApiErrorHandling(
@@ -25,11 +31,11 @@ export async function loadActivitiesData({
               minDate,
               maxDate,
               companyId,
-              { first: WORK_DAYS_PAGE_SIZE }
+              { first: WORK_DAYS_PAGE_SIZE, after: isSameRange ? adminStore.workDaysPageInfo?.endCursor : null }
             );
             adminStore.dispatch({
               type: ADMIN_ACTIONS.addWorkDays,
-              payload: { companiesPayload: companyData, minDate, reset }
+              payload: { companiesPayload: companyData, minDate, maxDate, reset }
             });
             adminStore.dispatch({
               type: ADMIN_ACTIONS.addUsers,

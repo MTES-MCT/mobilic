@@ -2,7 +2,7 @@ import flatMap from "lodash/flatMap";
 
 export function addWorkDaysReducer(
   state,
-  { companiesPayload, minDate, reset = false }
+  { companiesPayload, minDate, maxDate, reset = false }
 ) {
   let actualMinCursor = minDate;
   companiesPayload.forEach((c) => {
@@ -91,6 +91,8 @@ export function addWorkDaysReducer(
     workDays: [...(reset ? [] : state.workDays), ...workDaysToAdd],
     missions,
     minWorkDaysCursor: actualMinCursor,
+    workDaysPageInfo: companiesPayload[0]?.workDays?.pageInfo ?? state.workDaysPageInfo,
+    workDaysFetchRange: { minDate, maxDate },
     areMissionsActivitiesLoaded: true
   };
 }

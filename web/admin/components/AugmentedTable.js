@@ -156,6 +156,7 @@ export const AugmentedTable = React.forwardRef(
       forceParentUpdateOnRowAdd = null,
       groupKeysToShow = null,
       onScroll,
+      onRowsRendered,
       interGroupRowHeight = DEFAULT_INTER_GROUP_ROW_HEIGHT
     },
     ref
@@ -567,7 +568,11 @@ export const AugmentedTable = React.forwardRef(
       rowClassName: rowClassNameFunc,
       classes,
       onRowClick: onRowClickFunc,
-      onScroll: onScroll
+      onScroll: onScroll,
+      onRowsRendered: onRowsRendered
+        ? args =>
+            onRowsRendered({ ...args, totalCount: displayedEntries.length })
+        : undefined
     };
 
     return (
@@ -749,6 +754,7 @@ const VirtualizedTableComponent = React.forwardRef(
       rowHeightFunc,
       onScroll = () => { },
       onScrollAction = () => { },
+      onRowsRendered,
       scrollTop = null,
       autoHeight = false,
       rowId
@@ -822,6 +828,7 @@ const VirtualizedTableComponent = React.forwardRef(
           onScroll(args);
           onScrollAction(args);
         }}
+        onRowsRendered={onRowsRendered}
         scrollTop={scrollTop}
         onRowClick={({ rowData }) => onRowClick(rowData)()}
       >
@@ -887,6 +894,7 @@ const VirtualizedTable = React.forwardRef(
       loading,
       classes,
       onScroll = () => { },
+      onRowsRendered,
       rowId
     },
     ref
@@ -900,10 +908,26 @@ const VirtualizedTable = React.forwardRef(
         scrollerRef.current.updatePosition()
     }));
 
-    const key = React.useMemo(() => `table__${entries.length}`, [entries]);
+    const innerTableRef = React.useRef();
+    const setInnerTableRef = React.useCallback(
+      node => {
+        innerTableRef.current = node;
+        if (typeof ref === "function") ref(node);
+        else if (ref) ref.current = node;
+      },
+      [ref]
+    );
+
+    const prevEntriesLengthRef = React.useRef(entries.length);
+    React.useLayoutEffect(() => {
+      if (prevEntriesLengthRef.current !== entries.length) {
+        innerTableRef.current?.recomputeGridSize();
+        prevEntriesLengthRef.current = entries.length;
+      }
+    }, [entries.length]);
 
     return (
-      <Fragment key={key}>
+      <Fragment>
         {attachScrollTo ? (
           <WindowScroller ref={scrollerRef} scrollElement={attachScrollTo}>
             {({ height, registerChild, onChildScroll, scrollTop }) => (
@@ -914,7 +938,7 @@ const VirtualizedTable = React.forwardRef(
                 {({ width }) => (
                   <div ref={registerChild}>
                     <VirtualizedTableComponent
-                      ref={ref}
+                      ref={setInnerTableRef}
                       columns={columns}
                       entries={entries}
                       classes={classes}
@@ -931,6 +955,7 @@ const VirtualizedTable = React.forwardRef(
                       onScrollAction={() => {
                         onScroll();
                       }}
+                      onRowsRendered={onRowsRendered}
                       scrollTop={scrollTop}
                       autoHeight={true}
                       onRowClick={onRowClick}
@@ -950,7 +975,7 @@ const VirtualizedTable = React.forwardRef(
             {({ width, height }) => {
               return (
                 <VirtualizedTableComponent
-                  ref={ref}
+                  ref={setInnerTableRef}
                   columns={columns}
                   entries={entries}
                   classes={classes}
@@ -963,6 +988,8 @@ const VirtualizedTable = React.forwardRef(
                   isEditingRow={isEditingRow}
                   renderHeaderCell={renderHeaderCell}
                   editedValues={editedValues}
+                  onScroll={onScroll}
+                  onRowsRendered={onRowsRendered}
                   onRowClick={onRowClick}
                   rowClassName={rowClassName}
                   renderRow={renderRow}

@@ -221,6 +221,29 @@ function ActivitiesPanel() {
       reset: true
     });
 
+  const isFetchingMoreWorkDaysRef = React.useRef(false);
+  const loadMoreWorkDays = () => {
+    if (
+      isFetchingMoreWorkDaysRef.current ||
+      !adminStore.areMissionsActivitiesLoaded ||
+      !adminStore.workDaysPageInfo?.hasNextPage
+    ) {
+      return;
+    }
+    isFetchingMoreWorkDaysRef.current = true;
+    loadActivitiesData({
+      adminStore,
+      alerts,
+      api,
+      withLoadingScreen: async (sync) => await sync(),
+      minDate,
+      maxDate,
+      reset: false
+    }).finally(() => {
+      isFetchingMoreWorkDaysRef.current = false;
+    });
+  };
+
   const today = new Date();
   // 1-year limit to avoid performance issues
   const maxAllowedEndDate = minDate ? addDays(new Date(minDate), 365) : today;
@@ -584,6 +607,7 @@ function ActivitiesPanel() {
           showExpenditures={adminStore.settings.requireExpenditures}
           showMissionName={adminStore.settings.requireMissionName}
           loading={loading}
+          onLoadMore={loadMoreWorkDays}
         />
         <Drawer
           anchor="right"
