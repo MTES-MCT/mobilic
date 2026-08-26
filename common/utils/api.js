@@ -317,13 +317,15 @@ class Api {
         }
         await this.store.clearPendingRequest(request);
       }
-      Sentry.withScope(function (scope) {
-        scope.setContext("request", {
-          query: JSON.stringify(request.query),
-          variables: request.variables
+      if (!err._refreshTokenFailed) {
+        Sentry.withScope(function (scope) {
+          scope.setContext("request", {
+            query: JSON.stringify(request.query),
+            variables: request.variables
+          });
+          captureSentryException(err);
         });
-        captureSentryException(err);
-      });
+      }
       throw err;
     }
   }
@@ -337,8 +339,7 @@ class Api {
           await this.executeRequest(this.store.pendingRequests()[0]);
           processedRequests = processedRequests + 1;
         } catch (err) {
-          // We stop early if the error can lead to a retry, otherwise the execution will be stuck in an infinite loop
-          if (isRetryable(err)) break;
+          if (isRetryable(err) || isAuthenticationError(err)) break;
         }
       }
       this.store.batchUpdate();

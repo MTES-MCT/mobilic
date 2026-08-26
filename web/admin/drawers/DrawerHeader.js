@@ -8,7 +8,14 @@ import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { Typography } from "@mui/material";
 import { GenericRegulatoryAlerts } from "../../regulatory/GenericRegulatoryAlerts";
 import { MissionTitle } from "../components/MissionTitle";
-import { RunningTag, ToValidateTag, WaitingTag } from "./Tags";
+import {
+  RunningTag,
+  ToValidateTag,
+  WaitingTag,
+  ValidatedTag,
+  DeletedTag,
+} from "./Tags";
+import { MISSION_STATUS } from "../utils/missionsStatus";
 import {
   formatCompleteDayOfWeekAndDay,
   isoFormatLocalDate,
@@ -122,15 +129,13 @@ export const DayDrawerHeader = ({
 
 export const MissionDrawerHeader = ({
   mission,
-  noEmployeeValidation,
-  toBeValidatedByAdmin,
+  missionStatusLabel,
   onEditMissionName,
   doesMissionSpanOnMultipleDays = false,
   day,
   onClose,
 }) => {
   const classes = useStyles();
-  const stillRunning = !mission.isComplete;
   const { name: missionName, isHoliday, startTime } = mission;
   const formattedDay =
     mission.name &&
@@ -168,16 +173,17 @@ export const MissionDrawerHeader = ({
         />
         {!isHoliday && (
           <Box className={classes.missionTags}>
-            {stillRunning ? (
-              <RunningTag />
-            ) : (
-              <>
-                {noEmployeeValidation && <WaitingTag />}
-                {!noEmployeeValidation && toBeValidatedByAdmin && (
-                  <ToValidateTag />
-                )}
-              </>
+            {missionStatusLabel === MISSION_STATUS.ongoing && <RunningTag />}
+            {missionStatusLabel === MISSION_STATUS.waitingWorker && (
+              <WaitingTag />
             )}
+            {missionStatusLabel === MISSION_STATUS.toValidateAdmin && (
+              <ToValidateTag />
+            )}
+            {missionStatusLabel === MISSION_STATUS.validated && (
+              <ValidatedTag />
+            )}
+            {missionStatusLabel === MISSION_STATUS.deleted && <DeletedTag />}
           </Box>
         )}
       </>
