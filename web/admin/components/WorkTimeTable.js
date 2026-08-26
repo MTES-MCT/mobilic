@@ -15,6 +15,7 @@ import { useMissionDrawer } from "../drawers/MissionDrawer";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { useDayDrawer } from "../drawers/DayDrawer";
 import { useAdminStore } from "../store/store";
+import { fr } from "@codegouvfr/react-dsfr";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { cx } from "@codegouvfr/react-dsfr/tools/cx";
 import { OPEN_WORKDAY_DRAWER } from "common/utils/matomoTags";
@@ -27,6 +28,18 @@ import { RunningTag, ToValidateTag, ValidatedTag, WaitingTag, DeletedTag, AllVal
 import { MISSION_STATUS, computeMissionStatus } from "../utils/missionsStatus";
 import { MissionStatusTagBtn } from "./MissionStatusTagBtn";
 
+// regulatory thresholds : mirrors app/services/get_regulation_checks.py
+const WEEKLY_WORK_MAX_BY_BUSINESS = { LONG_DISTANCE: 56, SHORT_DISTANCE: 52 };
+const WEEKLY_WORK_MAX_DEFAULT = 48;
+const WEEKLY_REST_MIN = 34 * 3600;
+const MAX_WORKED_DAYS = 6;
+const THRESHOLD_MARGIN = 4 * 3600;
+
+function getWeeklyWorkMax(business) {
+  const maxH = WEEKLY_WORK_MAX_BY_BUSINESS[business?.businessType] || WEEKLY_WORK_MAX_DEFAULT;
+  return maxH * 3600;
+}
+
 const useStyles = makeStyles((theme) => ({
   expenditures: {
     padding: theme.spacing(4)
@@ -38,6 +51,62 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(4)
   }
 }));
+
+function getThresholdLevel(value, { min, warnAt, errorAt }) {
+  if (min) {
+    if (value < errorAt) return "error";
+    if (value <= warnAt) return "warning";
+  } else {
+    if (value >= errorAt) return "error";
+    if (value >= warnAt) return "warning";
+  }
+  return null;
+}
+
+function getThresholds(weeklyWorkMax) {
+  const maxH = weeklyWorkMax / 3600;
+  return {
+    work: {
+      warnAt: weeklyWorkMax - THRESHOLD_MARGIN,
+      errorAt: weeklyWorkMax,
+      warnTooltip: `Approche de la durée maximale hebdomadaire (${maxH}h)`,
+      errorTooltip: `Durée maximale hebdomadaire dépassée (${maxH}h)`
+    },
+    rest: {
+      min: true,
+      warnAt: WEEKLY_REST_MIN + THRESHOLD_MARGIN,
+      errorAt: WEEKLY_REST_MIN,
+      warnTooltip: "Approche du repos hebdomadaire minimum (34 h)",
+      errorTooltip: "Repos hebdomadaire minimum non respecté (34 h)"
+    },
+    workedDays: {
+      warnAt: MAX_WORKED_DAYS,
+      errorAt: MAX_WORKED_DAYS + 1,
+      warnTooltip: "Le dimanche doit rester entièrement non travaillé",
+      errorTooltip: "Aucun jour de repos complet sur la semaine civile"
+    }
+  };
+}
+
+const ThresholdValue = ({ value, formatted, thresholdKey, thresholds }) => {
+  const config = thresholds[thresholdKey];
+  const level = getThresholdLevel(value, config);
+  if (!level) return formatted;
+  const isError = level === "error";
+  const color = isError
+    ? fr.colors.decisions.background.flat.error.default
+    : fr.colors.decisions.text.default.warning.default;
+  const icon = isError ? "fr-icon-error-line" : "fr-icon-error-warning-line";
+  const tooltip = isError ? config.errorTooltip : config.warnTooltip;
+  return (
+    <Tooltip title={tooltip}>
+      <span style={{ color }}>
+        <span className={cx("fr-icon--sm", icon)} aria-hidden="true" />{" "}
+        {formatted}
+      </span>
+    </Tooltip>
+  );
+};
 
 const InfractionsWaiting = ({ tooltipTitle }) => (
   <Tooltip title={tooltipTitle}>
@@ -388,6 +457,8 @@ export function WorkTimeTable({
   const { trackEvent } = useMatomo();
 
   const classes = useStyles();
+  const weeklyWorkMax = getWeeklyWorkMax(adminStore.business);
+  const thresholds = getThresholds(weeklyWorkMax);
 
   let periodLabel, periodFormatter;
   if (period === "day") {
@@ -473,7 +544,7 @@ export function WorkTimeTable({
   const workedDaysCol = {
     label: "Jours travaillés",
     name: "workedDays",
-    minWidth: 150
+    minWidth: 120
   };
   const missionNamesCol = {
     label: "Mission(s)",
@@ -496,12 +567,26 @@ export function WorkTimeTable({
       statusCol,
     ];
   } else {
+    const withThreshold = period === "week";
+    const restCol = {
+      label: "Repos",
+      name: "maxConsecutiveRest",
+      align: "center",
+      minWidth: 120,
+      flexGrow: 0,
+      format: (v) => v != null ? formatTimer(v, false) : null
+    };
+    const withAlert = (col, key, formatter) => withThreshold
+      ? { ...col, format: (v) => v != null ? <ThresholdValue value={v} formatted={formatter(v)} thresholdKey={key} thresholds={thresholds} /> : null }
+      : col;
+
     columns = [
       employeeCol,
       dailyInfractionsCol,
       weeklyInfractionsCol,
-      workTimeCol,
-      workedDaysCol,
+      withAlert(workTimeCol, "work", formatTimer),
+      withAlert(restCol, "rest", (v) => formatTimer(v, false)),
+      withAlert(workedDaysCol, "workedDays", (v) => v),
       showExpenditures && expenditureCol
     ];
   }
