@@ -556,7 +556,7 @@ export function getBadgeRoutes(
   companyWithCertificationInfo,
   shouldDisplayBadge
 ) {
-  const pendingValidationCount = adminStore?.pendingValidationsCount ?? 0;
+  const pendingValidationCount = adminStore?.pendingValidationsCount ?? null;
 
   const badgeRoutes = [
     {
