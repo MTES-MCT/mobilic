@@ -63,21 +63,19 @@ export function usePushNotifications() {
     try {
       const result = await Notification.requestPermission();
       setPermission(result);
-      if (result === "granted") {
-        const sub = await subscribeToPush(vapidKey);
-        await sendSubscriptionToBackend(api, sub);
-      }
     } catch (err) {
       captureSentryException(err);
     }
-  }, [vapidKey, api]);
+  }, [vapidKey]);
 
   const dismiss = React.useCallback(() => {
-    api.graphQlMutate(
-      DISABLE_WARNING_MUTATION,
-      { warningName: PUSH_DISMISSED_WARNING },
-      { context: { nonPublicApi: true } }
-    );
+    api
+      .graphQlMutate(
+        DISABLE_WARNING_MUTATION,
+        { warningName: PUSH_DISMISSED_WARNING },
+        { context: { nonPublicApi: true } }
+      )
+      .catch(captureSentryException);
     const current = store.userInfo();
     const currentWarnings = current?.disabledWarnings || [];
     if (!currentWarnings.includes(PUSH_DISMISSED_WARNING)) {

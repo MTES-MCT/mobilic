@@ -10,7 +10,11 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 export function isPushSupported() {
-  return "serviceWorker" in navigator && "PushManager" in window;
+  return (
+    "serviceWorker" in navigator &&
+    "PushManager" in window &&
+    "Notification" in window
+  );
 }
 
 export function getPushPermissionStatus() {
