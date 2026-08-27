@@ -1,4 +1,5 @@
 import React from "react";
+import { useEnsureEmployments } from "../hooks/useEnsureEmployments";
 import { useApi } from "common/utils/api";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -20,7 +21,6 @@ import {
   ALL_TEAMS_COMPANY_QUERY,
   DELETE_TEAM_MUTATION
 } from "common/utils/apiQueries/teams";
-import { loadEmploymentsData } from "../utils/employments";
 
 export default function CompanyTeamsPanel({ company }) {
   const api = useApi();
@@ -33,6 +33,8 @@ export default function CompanyTeamsPanel({ company }) {
   const [loadingTeams, setLoadingTeams] = React.useState(false);
   const [displayNoAdminWarning, setDisplayNoAdminWarning] =
     React.useState(false);
+  
+  useEnsureEmployments();
 
   React.useEffect(() => {
     const loadData = async () => {
@@ -46,11 +48,6 @@ export default function CompanyTeamsPanel({ company }) {
     loadData();
   }, [company]);
 
-  React.useEffect(() => {
-    if (adminStore.companyId && !adminStore.areEmploymentsLoaded) {
-      loadEmploymentsData({ adminStore, alerts, api, withLoadingScreen });
-    }
-  }, [adminStore.companyId]);
 
   React.useEffect(() => {
     setDisplayNoAdminWarning(

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useEnsureEmployments } from "../../hooks/useEnsureEmployments";
 import { Stack } from "@mui/material";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { addDaysToDate, lastMonth } from "common/utils/time";
@@ -9,7 +10,6 @@ import { useRegulatoryAlertsSummaryContext } from "../../utils/contextRegulatory
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { useLoadingScreen } from "common/utils/loading";
-import { loadEmploymentsData } from "../../utils/employments";
 import { loadTeamsData } from "../../utils/teams";
 
 export default function RegulatoryRespectFilters() {
@@ -24,11 +24,7 @@ export default function RegulatoryRespectFilters() {
   const [teams, setTeams] = useState([]);
   const [users, setUsers] = useState([]);
 
-  React.useEffect(() => {
-    if (adminStore.companyId && !adminStore.areEmploymentsLoaded) {
-      loadEmploymentsData({ adminStore, alerts, api, withLoadingScreen });
-    }
-  }, [adminStore.companyId]);
+  useEnsureEmployments();
 
   React.useEffect(() => {
     if (adminStore.companyId && !adminStore.areTeamsLoaded) {

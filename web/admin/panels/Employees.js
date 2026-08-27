@@ -19,7 +19,6 @@ import {
 } from "common/utils/time";
 import { formatLastActiveDate } from "common/utils/employeeStatus";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
-import { loadEmploymentsData } from "../utils/employments";
 import { useLoadingScreen } from "common/utils/loading";
 import { EMPLOYMENT_ROLE } from "common/utils/employments";
 import { TeamFilter } from "../components/TeamFilter";
@@ -36,6 +35,7 @@ import BatchInviteModal from "../modals/BatchInviteModal";
 import { EmployeeProgressBar } from "../components/EmployeeProgressBar";
 import { useEmployeeProgress } from "../hooks/useEmployeeProgress";
 import { useAutoUpdateNbWorkers } from "../hooks/useAutoUpdateNbWorkers";
+import { useEnsureEmployments } from "../hooks/useEnsureEmployments";
 import { InviteButtons } from "../components/InviteButtons";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
@@ -132,11 +132,7 @@ export function Employees({ company, containerRef }) {
 
   const companyId = React.useMemo(() => company?.id || null, [company]);
 
-  React.useEffect(() => {
-    if (adminStore.companyId && !adminStore.areEmploymentsLoaded) {
-      loadEmploymentsData({ adminStore, alerts, api, withLoadingScreen });
-    }
-  }, [adminStore.companyId]);
+  useEnsureEmployments();
 
   React.useEffect(() => {
     if (adminStore.companyId && !adminStore.areTeamsLoaded) {
