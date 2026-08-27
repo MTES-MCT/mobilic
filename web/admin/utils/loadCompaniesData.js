@@ -40,7 +40,6 @@ export async function loadCompanyEssentials(api, userId, minDate, companyId) {
     },
     { context: { timeout: process.env.REACT_APP_TIMEOUT_MS || 60000 } }
   ).catch((error) => {
-    console.error("Error loading company essentials data:", error);
     throw error;
   });
 
