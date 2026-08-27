@@ -19,6 +19,10 @@ import {
   READ_NOTIFICATIONS_MUTATION
 } from "common/utils/apiQueries/notifications";
 
+// Matches .fr-accordion__btn's min-height, keeping the collapse's
+// paddingBottom and the notifications maxHeight calc in sync.
+const TOGGLE_BUTTON_HEIGHT = "3rem";
+
 const mergeNotifications = (apiNotifs, localNotifs) => {
   const localById = Object.fromEntries(localNotifs.map((n) => [n.id, n]));
 
@@ -71,6 +75,11 @@ export const Notifications = ({ openHistory }) => {
   const [notifs, setNotifs] = useState(() => userInfo.notifications || []);
 
   const [isExpended, setIsExpended] = useState(false);
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const [containerRect, setContainerRect] = useState({
+    left: 0,
+    width: "100%"
+  });
   const api = useApi();
   const alerts = useSnackbarAlerts();
 
@@ -80,6 +89,44 @@ export const Notifications = ({ openHistory }) => {
   useEffect(() => {
     isExpendedRef.current = isExpended;
   }, [isExpended]);
+
+  useEffect(() => {
+    const headerEl = document.querySelector(".header-container");
+    if (!headerEl) return;
+
+    const updateHeaderHeight = () =>
+      setHeaderHeight(headerEl.getBoundingClientRect().height);
+
+    updateHeaderHeight();
+
+    const observer = new ResizeObserver(updateHeaderHeight);
+    observer.observe(headerEl);
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const containerEl = document.getElementById("content");
+
+    if (!containerEl) return;
+
+    const updateContainerRect = () => {
+      const rect = containerEl.getBoundingClientRect();
+      setContainerRect({ left: rect.left, width: rect.width });
+    };
+
+    updateContainerRect();
+
+    const observer = new ResizeObserver(updateContainerRect);
+    observer.observe(containerEl);
+
+    window.addEventListener("resize", updateContainerRect);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateContainerRect);
+    }
+  }, []);
 
   useEffect(() => {
     notifsRef.current = notifs;
@@ -208,23 +255,33 @@ export const Notifications = ({ openHistory }) => {
     [unreadNotifs.length]
   );
 
+  const notificationsMaxHeight = headerHeight
+    ? `calc(100vh - ${headerHeight}px - ${TOGGLE_BUTTON_HEIGHT})`
+    : "65vh";
+
   return (
     <section
       className={cx(fr.cx("fr-accordion"), "notifications")}
       style={{
         backgroundColor: "white",
-        position: "absolute",
+        position: "fixed",
         bottom: 0,
-        width: "100%",
+        left: containerRect.left,
+        width: containerRect.width,
         zIndex: 600
       }}
     >
       <div
         className={fr.cx("fr-collapse")}
         id={collapseElementId}
-        style={{ paddingTop: 0, paddingBottom: 0 }}
+        style={{ paddingTop: 0, paddingBottom: TOGGLE_BUTTON_HEIGHT }}
       >
-        <Stack direction="column" width="100%" maxHeight="65vh">
+        <Stack
+          direction="column"
+          width="100%"
+          maxHeight={notificationsMaxHeight}
+          sx={{ overflowY: "auto" }}
+        >
           {notifs.length > 0 ? (
             notifs.map((notif) => (
               <InnerNotification
@@ -260,8 +317,9 @@ export const Notifications = ({ openHistory }) => {
             justifyContent: "flex-start",
             position: "fixed",
             bottom: 0,
-            width: "100%",
-            backgroundColor: "white",
+            left: containerRect.left,
+            width: containerRect.width,
+            backgroundColor: "white"
           }}
         >
           <Stack direction="row" gap={1} alignItems="center" pl={1}>
