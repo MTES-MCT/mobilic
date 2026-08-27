@@ -98,7 +98,6 @@ function AppComponent({ ScreenComponent }) {
             currentMission={currentMission}
             pushNewTeamActivityEvent={actions.pushNewTeamActivityEvent}
             editActivityEvent={actions.editActivityEvent}
-            beginNewMission={actions.beginNewMission}
             endMissionForTeam={actions.endMissionForTeam}
             endMission={actions.endMission}
             cancelMission={actions.cancelMission}
