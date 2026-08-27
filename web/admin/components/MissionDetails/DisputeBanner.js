@@ -62,7 +62,7 @@ function getLastManagerEvent(activity) {
 
 export function DisputeBanner({ mission }) {
   const classes = useStyles();
-  const allowOtherTask = mission?.company?.settings?.allowOtherTask ?? false;
+  const allowOtherTask = mission?.company?.settings?.allowOtherTask ?? true;
   const { activities, userNameById } = React.useMemo(() => {
     const base = mission.activities || [];
     const history = mission.resourcesWithHistory?.resources

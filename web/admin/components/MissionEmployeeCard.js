@@ -276,7 +276,7 @@ export function MissionEmployeeCard({
               actionButtonLabel: "J'ai été absent : modifier les saisies"
             })}
           allowOtherTask={
-            mission?.company?.settings?.allowOtherTask ?? false
+            mission?.company?.settings?.allowOtherTask ?? true
           }
           mission={mission}
           cacheContradictoryInfoInStore={cacheContradictoryInfoInAdminStore}
