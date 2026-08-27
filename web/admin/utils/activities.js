@@ -30,7 +30,8 @@ export async function loadActivitiesData({
           },
           "load-company-data",
           null
-        )
+        ),
+      { cacheKey: "loadActivities" + companyId }
     );
   }
 }

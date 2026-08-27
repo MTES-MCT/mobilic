@@ -19,7 +19,8 @@ export async function loadTeamsData({ adminStore, alerts, api, withLoadingScreen
           },
           "load-company-teams",
           null
-        )
+        ),
+      { cacheKey: "loadTeams" + companyId }
     );
   }
 }
