@@ -575,9 +575,7 @@ class Actions {
     comment = null,
     driverId = null,
     switchMode = true,
-    forceNonBatchable = false,
-    splitFrom = false,
-    originalStartTime = null
+    forceNonBatchable = false
   }) => {
     if (team.length === 0)
       return await this.pushNewActivityEvent({
@@ -587,9 +585,7 @@ class Actions {
         endTime,
         comment,
         switchMode,
-        forceNonBatchable,
-        splitFrom,
-        originalStartTime
+        forceNonBatchable
       });
 
     const teamToType = {};
@@ -615,9 +611,7 @@ class Actions {
         switchMode,
         forceKillSisterActivitiesOnFail: team.length > 1,
         forceNonBatchable,
-        groupId,
-        splitFrom,
-        originalStartTime
+        groupId
       });
     }
 
@@ -634,9 +628,7 @@ class Actions {
             comment,
             switchMode,
             groupId,
-            immediateSubmit: false,
-            splitFrom,
-            originalStartTime
+            immediateSubmit: false
           });
         });
     }
@@ -702,9 +694,7 @@ class Actions {
     switchMode = true,
     groupId = null,
     forceKillSisterActivitiesOnFail = false,
-    forceNonBatchable = false,
-    splitFrom = false,
-    originalStartTime = null
+    forceNonBatchable = false
   }) => {
     const actualUserId = userId || this.store.userId();
     const newActivity = {
@@ -716,11 +706,7 @@ class Actions {
       creationTime: nowMilliseconds()
     };
 
-    const context = {};
-    if (comment) context.comment = comment;
-    if (splitFrom) context.splitFrom = true;
-    if (originalStartTime) context.originalStartTime = originalStartTime;
-    if (Object.keys(context).length > 0) newActivity.context = context;
+    if (comment) newActivity.context = { comment };
 
     const updateStore = (store, requestId) => {
       if (switchMode) {

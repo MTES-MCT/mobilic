@@ -120,11 +120,7 @@ const useStyles = makeStyles(() => ({
 function computeBadgeType(events) {
   if (events.some(e => e.type === "DELETE")) return "SUPPRESSION";
   if (events.some(e => e.type === "UPDATE")) return "MODIFICATION";
-  if (events.some(e => e.type === "CREATE")) {
-    const createEvent = events.find(e => e.type === "CREATE");
-    if (createEvent?.after?.context?.splitFrom) return "MODIFICATION";
-    return "AJOUT";
-  }
+  if (events.some(e => e.type === "CREATE")) return "AJOUT";
   return null;
 }
 
@@ -188,11 +184,10 @@ export function ActivityHistorySection({
         <div className={classes.eventItem}>
           {filteredEvents.map((event, eventIndex) => {
             const changes = getChangeIconAndText(event);
-            const isSplit = event.after?.context?.splitFrom;
             const context = event.type === "DELETE"
               ? event.before?.dismissContext
-              : event.after?.context;
-            const motif = isSplit ? null : (context?.comment || context?.userComment);
+              : event.after?.context || event.before?.context;
+            const motif = context?.comment || context?.userComment;
             return changes.map((change, changeIndex) => (
               <div key={`${eventIndex}-${changeIndex}`} className={classes.eventEntry}>
                 <div className={classes.eventHeader}>
@@ -218,7 +213,6 @@ export function ActivityHistorySection({
                   {activity.dismissedAt
                     ? "la suppression"
                     : filteredEvents.some(e => e.type === "UPDATE")
-                      || filteredEvents.some(e => e.type === "CREATE" && e.after?.context?.splitFrom)
                     ? "la modification"
                     : "l'ajout"} :
                 </span>

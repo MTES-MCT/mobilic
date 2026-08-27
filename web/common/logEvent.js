@@ -14,10 +14,6 @@ import EuroIcon from "@mui/icons-material/Euro";
 import EditIcon from "@mui/icons-material/Edit";
 import { formatDateTimeLiteral } from "common/utils/time";
 
-export function isSplitEvent(event) {
-  return !!(event.after?.context?.splitFrom || event.context?.splitFrom);
-}
-
 export function isSupportEvent(event) {
   if (event.type === "DELETE") {
     return !!event.before?.dismissContext?.is_support;
@@ -67,12 +63,6 @@ function activityChangeText(change) {
         "a supprimé l'activité"
       ];
     case "CREATE":
-      if (isSplitEvent(change)) {
-        const originalStart = change.after?.context?.originalStartTime || change.context?.originalStartTime;
-        return originalStart
-          ? [`a décalé le début de ${changeResourceAsText(change)} du ${formatDateTimeLiteral(originalStart)} au ${formatDateTimeLiteral(change.after.startTime)}`]
-          : [`a scindé ${changeResourceAsText(change)} le ${formatDateTimeLiteral(change.after.startTime)}`];
-      }
       if (!change.after.endTime) {
         return [
           isSupportEvent(change)

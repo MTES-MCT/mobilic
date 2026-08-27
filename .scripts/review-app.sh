@@ -86,18 +86,12 @@ if [[ -n "$back_app" ]] && ! scalingo --region "$region" --app "$back_app" apps-
 fi
 
 if [[ -n "$front_app" ]]; then
-  # REACT_APP_API_HOST is baked into the front-end bundle at build time;
-  # API_HOST is read at runtime by the nginx proxy (servers.conf.erb).
-  # Both must point to the sibling back-end review app or the front-end
-  # talks to the staging API instead of the paired review app.
-  current_react=$(scalingo --region "$region" --app "$front_app" \
+  current=$(scalingo --region "$region" --app "$front_app" \
     env-get REACT_APP_API_HOST 2>/dev/null || true)
-  current_nginx=$(scalingo --region "$region" --app "$front_app" \
-    env-get API_HOST 2>/dev/null || true)
-  if [[ "$current_react" != "$back_url" ]] || [[ "$current_nginx" != "$back_url" ]]; then
-    echo "set REACT_APP_API_HOST=$back_url + API_HOST=$back_url + redeploy front"
+  if [[ "$current" != "$back_url" ]]; then
+    echo "set REACT_APP_API_HOST=$back_url + redeploy front (build-time)"
     scalingo --region "$region" --app "$front_app" \
-      env-set "REACT_APP_API_HOST=$back_url" "API_HOST=$back_url"
+      env-set "REACT_APP_API_HOST=$back_url"
     scalingo --region "$region" --app "$front_app" \
       integration-link-manual-deploy "$branch"
   fi
