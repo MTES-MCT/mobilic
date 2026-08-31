@@ -289,7 +289,9 @@ export function NavigationMenu({ open, setOpen, fullScreen = false }) {
                         setOpen(false);
                         onEnterNewMissionFunnel();
                       } else {
+                        setOpen(false);
                         history.push("/app");
+                        onEnterNewMissionFunnel();
                       }
                     }
                 }
