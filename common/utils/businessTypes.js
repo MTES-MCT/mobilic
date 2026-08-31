@@ -53,5 +53,7 @@ export const formatActivity = business => {
   if (!transportType || !businessType) {
     return "";
   }
-  return BUSINESS_TYPES.filter(b => b.label.includes(transportType)).filter(b => b.value === businessType)[0].label;
+  return BUSINESS_TYPES.filter(b => b.label.includes(transportType)).find(
+    b => b.value === businessType
+  ).label;
 };
