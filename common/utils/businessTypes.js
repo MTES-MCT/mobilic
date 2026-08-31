@@ -1,49 +1,31 @@
-export const BUSINESS_TYPES = [
-  {
-    value: "LONG_DISTANCE",
-    label: "TRM - Longue distance"
+const BUSINESS_TYPES_BY_TRANSPORT = {
+  TRM: {
+    LONG_DISTANCE: "Longue distance",
+    SHORT_DISTANCE: "Courte distance",
+    SHIPPING: "Messagerie, Fonds et valeur"
   },
-  {
-    value: "SHORT_DISTANCE",
-    label: "TRM - Courte distance"
+  TRV: {
+    FREQUENT: "Lignes régulières",
+    INFREQUENT: "Occasionnel",
+    TAXI_GENERAL: "Taxi général",
+    TAXI_REGULATED: "Taxi conventionné",
+    VTC: "VTC",
+    LOTI: "LOTI"
   },
-  {
-    value: "SHIPPING",
-    label: "TRM - Messagerie, Fonds et valeur"
-  },
-  {
-    value: "FREQUENT",
-    label: "TRV - Lignes régulières"
-  },
-  {
-    value: "INFREQUENT",
-    label: "TRV - Occasionnel"
-  },
-  {
-    value: "TAXI_GENERAL",
-    label: "TRV - Taxi général"
-  },
-  {
-    value: "TAXI_REGULATED",
-    label: "TRV - Taxi conventionné"
-  },
-  {
-    value: "VTC",
-    label: "TRV - VTC"
-  },
-  {
-    value: "LOTI",
-    label: "TRV - LOTI"
-  },
-  {
-    value: "LONG_DISTANCE",
-    label: "DEM - Longue distance"
-  },
-  {
-    value: "SHORT_DISTANCE",
-    label: "DEM - Courte distance"
-  },
-];
+  DEM: {
+    LONG_DISTANCE: "Longue distance",
+    SHORT_DISTANCE: "Courte distance"
+  }
+};
+
+export const BUSINESS_TYPES = Object.entries(
+  BUSINESS_TYPES_BY_TRANSPORT
+).flatMap(([transportType, businessTypes]) =>
+  Object.entries(businessTypes).map(([value, label]) => ({
+    value,
+    label: `${transportType} - ${label}`
+  }))
+);
 
 export const formatActivity = business => {
   if (!business) {
@@ -53,7 +35,6 @@ export const formatActivity = business => {
   if (!transportType || !businessType) {
     return "";
   }
-  return BUSINESS_TYPES.filter(b => b.label.includes(transportType)).find(
-    b => b.value === businessType
-  ).label;
+  const label = BUSINESS_TYPES_BY_TRANSPORT[transportType]?.[businessType];
+  return label ? `${transportType} - ${label}` : "";
 };
