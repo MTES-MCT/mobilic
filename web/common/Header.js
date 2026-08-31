@@ -30,6 +30,7 @@ import { Header } from "@codegouvfr/react-dsfr/Header";
 import { Select } from "@codegouvfr/react-dsfr/Select";
 import MobilicLogoWithText from "common/assets/images/mobilic-logo-with-text.svg";
 import { useIsWidthDown } from "common/utils/useWidth";
+import { useNewMissionFunnel } from "./hooks/useNewMissionFunnel";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -250,6 +251,7 @@ export function NavigationMenu({ open, setOpen, fullScreen = false }) {
   }
 
   const { displayCurrentMission } = useStoreMissions();
+  const { onEnterNewMissionFunnel } = useNewMissionFunnel();
 
   const userName = formatPersonName(userInfo);
   const userEmail = userInfo?.email || "email non renseigné";
@@ -280,9 +282,18 @@ export function NavigationMenu({ open, setOpen, fullScreen = false }) {
                 iconPosition="left"
                 iconId={displayCurrentMission ? "fr-icon-play-circle-line" : "fr-icon-add-line"}
                 onClick={
-                  location.pathname === "/app"
-                    ? () => setOpen(false)
-                    : () => history.push("/app")
+                  displayCurrentMission
+                  ? () => (location.pathname === "/app" ? setOpen(false) : history.push("/app"))
+                  : () => {
+                      if (location.pathname.startsWith("/app")) {
+                        setOpen(false);
+                        onEnterNewMissionFunnel();
+                      } else {
+                        setOpen(false);
+                        history.push("/app");
+                        onEnterNewMissionFunnel();
+                      }
+                    }
                 }
                 className={classes.navItemButton}
               >
