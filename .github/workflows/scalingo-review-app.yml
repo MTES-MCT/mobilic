@@ -13,10 +13,6 @@ concurrency:
   group: review-app-front-${{ github.event.pull_request.number || inputs.pr_number }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
-  pull-requests: write
-
 jobs:
   review-app:
     if: >-
@@ -34,7 +30,7 @@ jobs:
         run: |
           curl -sO https://cli-dl.scalingo.com/install
           bash install
-          rm -f install
+          rm install
 
       - name: Login to Scalingo
         env:

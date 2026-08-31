@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useEnsureEmployments } from "../../hooks/useEnsureEmployments";
 import { Stack } from "@mui/material";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { addDaysToDate, lastMonth } from "common/utils/time";
@@ -6,15 +7,30 @@ import { useAdminStore } from "../../store/store";
 import { TeamFilter } from "../../components/TeamFilter";
 import { EmployeeFilter } from "../../components/EmployeeFilter";
 import { useRegulatoryAlertsSummaryContext } from "../../utils/contextRegulatoryAlertsSummary";
+import { useApi } from "common/utils/api";
+import { useSnackbarAlerts } from "../../../common/Snackbar";
+import { useLoadingScreen } from "common/utils/loading";
+import { loadTeamsData } from "../../utils/teams";
 
 export default function RegulatoryRespectFilters() {
   const adminStore = useAdminStore();
+  const api = useApi();
+  const alerts = useSnackbarAlerts();
+  const withLoadingScreen = useLoadingScreen();
   const { date, setDate, onSelectUniqueUserId, onSelectTeamId } =
     useRegulatoryAlertsSummaryContext();
   const minDate = addDaysToDate(new Date(), -365);
   const maxDate = lastMonth();
   const [teams, setTeams] = useState([]);
   const [users, setUsers] = useState([]);
+
+  useEnsureEmployments();
+
+  React.useEffect(() => {
+    if (adminStore.companyId && !adminStore.areTeamsLoaded) {
+      loadTeamsData({ adminStore, alerts, api, withLoadingScreen });
+    }
+  }, [adminStore.companyId]);
 
   React.useEffect(() => {
     const _teams = adminStore.exportFilters.teams;

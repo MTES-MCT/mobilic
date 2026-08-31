@@ -68,7 +68,7 @@ export default function CompanyDetails({ company }) {
         priority="tertiary"
         title={`Modifier les informations de l'entreprise ${company?.name}`}
         onClick={() =>
-          modals.open("updateCompanyDetails", {
+          modals.open("updateCompanyDetailsModal", {
             company,
             adminStore
           })

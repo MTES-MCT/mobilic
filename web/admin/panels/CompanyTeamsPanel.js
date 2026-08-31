@@ -1,4 +1,5 @@
 import React from "react";
+import { useEnsureEmployments } from "../hooks/useEnsureEmployments";
 import { useApi } from "common/utils/api";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -30,6 +31,8 @@ export default function CompanyTeamsPanel({ company }) {
   const [loadingTeams, setLoadingTeams] = React.useState(false);
   const [displayNoAdminWarning, setDisplayNoAdminWarning] =
     React.useState(false);
+  
+  useEnsureEmployments();
 
   React.useEffect(() => {
     const loadData = async () => {
@@ -42,6 +45,7 @@ export default function CompanyTeamsPanel({ company }) {
     };
     loadData();
   }, [company]);
+
 
   React.useEffect(() => {
     setDisplayNoAdminWarning(

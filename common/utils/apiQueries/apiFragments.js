@@ -133,7 +133,6 @@ export const FULL_MISSION_FRAGMENT = gql`
       ...FullLocation
     }
     pastRegistrationJustification
-    endedUserIds
   }
 `;
 

@@ -10,8 +10,9 @@ import Container from "@mui/material/Container";
 import "./assets/admin.scss";
 import {
   loadCompaniesList,
-  loadCompanyDetails
+  loadCompanyEssentials
 } from "./utils/loadCompaniesData";
+import { loadActivitiesData } from "./utils/activities";
 import { useApi } from "common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import {
@@ -122,7 +123,7 @@ function InternalAdmin() {
     }
   }
 
-  async function loadDataCompanyDetails() {
+  async function loadDataCompanyEssentials() {
     const userId = adminStore.userId;
     const companyId = adminStore.companyId;
     if (userId && companyId) {
@@ -132,12 +133,10 @@ function InternalAdmin() {
           await alerts.withApiErrorHandling(
             async () => {
               const minDate = adminStore.activitiesFilters.minDate;
-              const maxDate = adminStore.activitiesFilters.maxDate;
-              const companies = await loadCompanyDetails(
+              const companies = await loadCompanyEssentials(
                 api,
                 userId,
                 minDate,
-                maxDate,
                 companyId
               );
               adminStore.dispatch({
@@ -154,7 +153,7 @@ function InternalAdmin() {
 
   async function refreshData() {
     if (adminStore.companyId) {
-      loadDataCompanyDetails();
+      loadActivitiesData({ adminStore, alerts, api, withLoadingScreen });
     } else {
       loadDataCompaniesList();
     }
@@ -174,28 +173,21 @@ function InternalAdmin() {
   }, [location]);
 
   React.useEffect(() => {
-    if (adminStore.companyId) loadDataCompanyDetails();
+    if (adminStore.companyId) loadDataCompanyEssentials();
   }, [adminStore.companyId]);
 
-  React.useEffect(() => {
-    if (adminStore.companyId) {
-      store.setItems({ lastSelectedCompanyId: adminStore.companyId });
-    }
-  }, [adminStore.companyId]);
+  const prevMinDate = React.useRef(adminStore.activitiesFilters.minDate);
 
-  const isFirstMinDateRendered = React.useRef(true);
-  
-  // Update company details when changing the min date filter in the activities panel 
-  // to update the displayed missions and work days according to the selected period.
+  // Update activities and missions when changing the min date filter in the activities panel.
   React.useEffect(() => {
-    // Do not load company details on the first render of the activities panel to avoid loading data twice 
+    // Do not load company details on the first render of the activities panel to avoid loading data twice
     // on initial load since company details are already loaded when the company is selected.
-    if (isFirstMinDateRendered.current) {
-      isFirstMinDateRendered.current = false;
+    if (adminStore.activitiesFilters.minDate === prevMinDate.current) {
       return;
     }
+    prevMinDate.current = adminStore.activitiesFilters.minDate;
     if (adminStore.companyId) {
-      loadDataCompanyDetails();
+      loadActivitiesData({ adminStore, alerts, api, withLoadingScreen });
     }
   }, [adminStore.activitiesFilters.minDate]);
 
@@ -226,6 +218,15 @@ function InternalAdmin() {
       payload: { employmentId: id }
     });
   }, [adminStore.userId, adminStore.companyId, adminStore.employments]);
+
+  React.useEffect(() => {
+    if (adminStore.areEmploymentsLoaded && adminStore.areTeamsLoaded) {
+      adminStore.dispatch({
+        type: ADMIN_ACTIONS.updateTeams,
+        payload: { teams: adminStore.teams, employments: adminStore.employments }
+      });
+    }
+  }, [adminStore.areEmploymentsLoaded, adminStore.areTeamsLoaded]);
 
   const ref = React.useRef(null);
 

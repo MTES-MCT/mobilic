@@ -21,10 +21,13 @@ import { OPEN_WORKDAY_DRAWER } from "common/utils/matomoTags";
 import { AugmentedTable } from "./AugmentedTable";
 import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
 import {
+  entryDeleted,
+  entryToBeValidatedByAdmin,
+  entryToBeValidatedByWorker,
   missionToValidationEntries
 } from "../selectors/validationEntriesSelectors";
 import { RunningTag, ToValidateTag, ValidatedTag, WaitingTag, DeletedTag, AllValidatedTag } from "../drawers/Tags";
-import { MISSION_STATUS, computeMissionStatus } from "../utils/missionsStatus";
+import { MISSION_STATUS } from "../utils/missionsStatus";
 import { MissionStatusTagBtn } from "./MissionStatusTagBtn";
 
 const useStyles = makeStyles((theme) => ({
@@ -163,17 +166,12 @@ const getStatusForEntry = (
   currentUserId,
   openMission
 ) => {
-  if (
-    !entry ||
-    !missionsById ||
-    currentUserId === null ||
-    currentUserId === undefined ||
-    !openMission
-  ) {
+  if (!entry || !missionsById || !currentUserId || !openMission) {
     return null;
   }
 
   // 1. Get all missions associated to the entry
+
   // Get missions ids from entry
   const missionsIds = Object.keys(entry.missionNames);
   // Get missions from ids
@@ -183,12 +181,38 @@ const getStatusForEntry = (
   if (missions.length === 0)
     return null;
 
-  const validationEntries = missions.flatMap((mission) =>
-    missionToValidationEntries(mission)
-  );
+  const validationEntries = missions
+    .flatMap((mission) => missionToValidationEntries(mission))
 
-  return computeMissionStatus(validationEntries, currentUserId);
-};
+    // Mission is ongoing ?
+  if (validationEntries.some((val) => !val.endTime)) {
+    return MISSION_STATUS.ongoing;
+  }
+
+  // Mission is waiting validation from admin ?
+  const isWaitingAdminValidation = validationEntries.some((val) => entryToBeValidatedByAdmin(val, currentUserId))
+  if (isWaitingAdminValidation) {
+    return MISSION_STATUS.toValidateAdmin;
+  }
+
+  // Missions is waiting validation from worker ?
+  const isWaitingWorkerValidation = validationEntries.some((val) => entryToBeValidatedByWorker(val))
+  if (isWaitingWorkerValidation) {
+    return MISSION_STATUS.waitingWorker;
+  }
+
+  // Mission is validated ?
+  const areSomeMissionsValidated = validationEntries.some((val) => val.adminValidation)
+  if (areSomeMissionsValidated) {
+    return MISSION_STATUS.validated;
+  }
+
+  if (validationEntries.some((val) => entryDeleted(val))) {
+    return MISSION_STATUS.deleted;
+  }
+
+  return null;
+}
 
 const getMostRecentMissionId = (entry, missionsById, missionIds) => {
   let mostRecentMissionId = 0;
