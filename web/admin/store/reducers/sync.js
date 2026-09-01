@@ -164,6 +164,7 @@ export function updateCompanyDetailsReducer(
       )
     ),
     settings: companiesPayload[0].settings,
+    weeklyThresholds: companiesPayload[0].weeklyThresholds || null,
     business: companiesPayload[0].business || {
       businessType: "",
       transportType: ""

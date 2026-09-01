@@ -60,12 +60,15 @@ function computeWorkDayGroupAggregates(workDayGroup, periodDurationDays) {
     weeklyAlerts =
       weeklyAlerts + (wd.regulationComputations?.nbAlertsWeeklyAdmin || 0);
   });
+  const user = workDayGroup[0].user;
+  const periodStart = workDayGroup[0].periodStart;
+  const lastActivityStartTime = workDayGroup[0].lastActivityStartTime;
   const maxConsecutiveRest = maxEndTime
-    ? computeMaxConsecutiveRest(workDayGroup, workDayGroup[0].periodStart, periodDurationDays)
+    ? computeMaxConsecutiveRest(workDayGroup, periodStart, periodDurationDays)
     : null;
   return {
-    user: workDayGroup[0].user,
-    periodStart: workDayGroup[0].periodStart,
+    user,
+    periodStart,
     periodActualStart: minStartTime,
     periodActualEnd: maxEndTime,
     workedDays: workDayGroup.length,
@@ -83,7 +86,7 @@ function computeWorkDayGroupAggregates(workDayGroup, periodDurationDays) {
       {}
     ),
     expenditureAggs: aggregateExpenditures,
-    lastActivityStartTime: workDayGroup[0].lastActivityStartTime,
+    lastActivityStartTime,
     dailyAlerts,
     weeklyAlerts
   };
