@@ -55,7 +55,7 @@ export function VerticalTimeline({
   maxBarWidth = 40,
   idealNumberOfSteps = 5,
   datetimeFormatter,
-  allowSupportActivity = false
+  allowOtherTask = false
 }) {
   const classes = useStyles();
 
@@ -211,7 +211,7 @@ export function VerticalTimeline({
             >
               {getActivityLabelDependingOnMissionType(
                 type,
-                allowSupportActivity
+                allowOtherTask
               )}
             </Typography>
           </Box>
