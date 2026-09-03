@@ -35,6 +35,7 @@ import { Notifications } from "../components/notifications/Notifications";
 import { MobilicHeader } from "../../common/Header";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { fr } from "@codegouvfr/react-dsfr";
+import { WarningRealTimeEntry } from "../components/WarningRealTimeEntry";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
@@ -223,6 +224,9 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   return (
     <Container maxWidth={false} className={classes.outer} disableGutters>
       <MobilicHeader forceMobile />
+      <WarningRealTimeEntry/>
+      {process.env.REACT_APP_ENOUGH_BREAK_BANNER === "1" &&
+          !hasEnoughBreak && <WarningBreaks />}
       <Stack
         direction="column"
         alignItems="center"
@@ -234,8 +238,6 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
           <img alt="mobilic-logo-text" src={LogoWithText} width={117} />
         </Box>
         <Stack direction="column" rowGap={2} alignItems="center">
-          {process.env.REACT_APP_ENOUGH_BREAK_BANNER === "1" &&
-            !hasEnoughBreak && <WarningBreaks />}
           <Button
             size="large"
             onClick={onEnterNewMissionFunnel}
