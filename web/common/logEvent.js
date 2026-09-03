@@ -1,5 +1,5 @@
 import React from "react";
-import { MISSION_RESOURCE_TYPES } from "common/utils/contradictory";
+import { MISSION_RESOURCE_TYPES, isSplitEvent } from "common/utils/contradictory";
 import { ACTIVITIES } from "common/utils/activities";
 import { EXPENDITURES } from "common/utils/expenditures";
 import { formatPersonName } from "common/utils/coworkers";
@@ -13,10 +13,6 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import EuroIcon from "@mui/icons-material/Euro";
 import EditIcon from "@mui/icons-material/Edit";
 import { formatDateTimeLiteral } from "common/utils/time";
-
-export function isSplitEvent(event) {
-  return !!(event.after?.context?.splitFrom || event.context?.splitFrom);
-}
 
 export function isSupportEvent(event) {
   if (event.type === "DELETE") {

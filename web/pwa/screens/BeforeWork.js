@@ -20,6 +20,7 @@ import {
 } from "common/utils/time";
 import ListSubheader from "@mui/material/ListSubheader";
 import orderBy from "lodash/orderBy";
+import maxBy from "lodash/maxBy";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useLoadingScreen } from "common/utils/loading";
 import BackgroundImage from "common/assets/images/landing-hero-vertical-without-text-logo.svg";
@@ -36,6 +37,7 @@ import { MobilicHeader } from "../../common/Header";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { fr } from "@codegouvfr/react-dsfr";
 import { WarningRealTimeEntry } from "../components/WarningRealTimeEntry";
+import { useLastMissionEditType } from "../../common/useLastMissionEditType";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
@@ -198,6 +200,8 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   const currentTime = startOfDay(new Date(Date.now()));
 
   const missionsInHistory = missions.filter(m => m.isComplete && m.ended);
+  const lastMission = maxBy(missionsInHistory, "endTime");
+  const { hasBeenEdited } = useLastMissionEditType(lastMission);
   const nonValidatedMissions = orderBy(
     missionsInHistory.filter(
       m =>
@@ -224,9 +228,9 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   return (
     <Container maxWidth={false} className={classes.outer} disableGutters>
       <MobilicHeader forceMobile />
-      <WarningRealTimeEntry/>
+      {hasBeenEdited && <WarningRealTimeEntry />}
       {process.env.REACT_APP_ENOUGH_BREAK_BANNER === "1" &&
-          !hasEnoughBreak && <WarningBreaks />}
+        !hasEnoughBreak && <WarningBreaks />}
       <Stack
         direction="column"
         alignItems="center"
