@@ -36,7 +36,6 @@ import { LiveChat } from "./common/LiveChat";
 import {
   currentControllerId,
   currentUserId,
-  hasGoogleAdsConsent
 } from "common/utils/cookie";
 import {
   MatomoProvider,
@@ -45,7 +44,6 @@ import {
 } from "@datapunt/matomo-tracker-react";
 import { ErrorBoundary } from "./common/ErrorFallback";
 import { RegulationDrawerContextProvider } from "./landing/ResourcePage/RegulationDrawer";
-import { isGoogleAdsInitiated, initGoogleAds } from "common/utils/trackAds";
 import { createMuiDsfrThemeProvider } from "@codegouvfr/react-dsfr/mui";
 import "./index.css";
 import "common/assets/styles/root.scss";
@@ -237,13 +235,6 @@ function RootComponent() {
   };
 
   React.useEffect(() => {
-    if (
-      process.env.REACT_APP_GOOGLE_ADS &&
-      !isGoogleAdsInitiated() &&
-      hasGoogleAdsConsent()
-    ) {
-      initGoogleAds();
-    }
     if (
       !currentUserId() &&
       (location.pathname.startsWith("/app") ||
