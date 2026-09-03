@@ -159,6 +159,7 @@ export const WORK_DAYS_DATA_FRAGMENT = gql`
     }
     pageInfo {
       hasNextPage
+      endCursor
     }
   }
 `;

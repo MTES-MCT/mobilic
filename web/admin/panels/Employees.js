@@ -19,9 +19,11 @@ import {
 } from "common/utils/time";
 import { formatLastActiveDate } from "common/utils/employeeStatus";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
+import { loadEmploymentsData } from "../utils/employments";
+import { useLoadingScreen } from "common/utils/loading";
 import { EMPLOYMENT_ROLE } from "common/utils/employments";
 import { TeamFilter } from "../components/TeamFilter";
-import { NO_TEAMS_LABEL, NO_TEAM_ID } from "../utils/teams";
+import { NO_TEAMS_LABEL, NO_TEAM_ID, loadTeamsData } from "../utils/teams";
 import { BusinessDropdown } from "../components/BusinessDropdown";
 import { AdminRightsDropdown } from "../components/AdminRightsDropdown";
 import { TeamDropdown } from "../components/TeamDropdown";
@@ -124,10 +126,23 @@ export function Employees({ company, containerRef }) {
   const adminStore = useAdminStore();
   const modals = useModals();
   const alerts = useSnackbarAlerts();
+  const withLoadingScreen = useLoadingScreen();
   const [teams, setTeams] = React.useState([]);
   const [hasClosedInviteModal, setHasClosedInviteModal] = React.useState(false);
 
   const companyId = React.useMemo(() => company?.id || null, [company]);
+
+  React.useEffect(() => {
+    if (adminStore.companyId && !adminStore.areEmploymentsLoaded) {
+      loadEmploymentsData({ adminStore, alerts, api, withLoadingScreen });
+    }
+  }, [adminStore.companyId]);
+
+  React.useEffect(() => {
+    if (adminStore.companyId && !adminStore.areTeamsLoaded) {
+      loadTeamsData({ adminStore, alerts, api, withLoadingScreen });
+    }
+  }, [adminStore.companyId]);
 
   React.useEffect(() => {
     if (teams.length > 0) {
