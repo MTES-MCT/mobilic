@@ -9,9 +9,13 @@ export const useNewMissionFunnel = () => {
   const store = useStoreSyncedWithLocalStorage();
   const withLoadingScreen = useLoadingScreen();
   const actions = useActions();
+  
+  
+
   const lastCompanyId = store.lastSelectedCompanyId();
   const companies = store.companies();
   const userId = store.userId();
+
 
   const areAllCompaniesWithoutAdmins = useMemo(
     () => companies.every(c => !!c.hasNoAdmin),

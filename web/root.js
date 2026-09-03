@@ -12,7 +12,6 @@ import {
   useStoreSyncedWithLocalStorage
 } from "common/store/store";
 import { ApiContextProvider, useApi } from "common/utils/api";
-import { ActionsContextProvider } from "common/utils/actions";
 import { customOptions } from "common/utils/theme";
 import { MODAL_DICT } from "./modals";
 import { StyledEngineProvider, CssBaseline } from "@mui/material";
@@ -107,11 +106,9 @@ export default function Root() {
                         <LoadingScreenContextProvider>
                           <ExportsProvider>
                             <ModalProvider modalDict={MODAL_DICT}>
-                              <ActionsContextProvider>
-                                <RegulationDrawerContextProvider>
-                                  <RootComponent />
-                                </RegulationDrawerContextProvider>
-                              </ActionsContextProvider>
+                              <RegulationDrawerContextProvider>
+                                <RootComponent />
+                              </RegulationDrawerContextProvider>
                             </ModalProvider>
                           </ExportsProvider>
                         </LoadingScreenContextProvider>
