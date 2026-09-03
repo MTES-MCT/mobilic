@@ -290,3 +290,63 @@ export function useCacheContradictoryInfoInAdminStore() {
   return (mission, resourcesWithHistory) =>
     cacheInAdminStore(mission, resourcesWithHistory, adminStore);
 }
+
+// activity created with an endTime = retroactive (past entry by employee or admin)
+export function isRetroactiveCreate(event) {
+  return event.type === "CREATE" && event.after && event.after.endTime;
+}
+
+// Exclude normal end/resume of activity, only keep actual time shifts
+export function isTimeShift(event) {
+  if (event.type !== "UPDATE") return false;
+  const startChanged = event.after.startTime !== event.before.startTime;
+  const endShifted =
+    event.after.endTime !== event.before.endTime &&
+    event.before.endTime &&
+    event.after.endTime;
+  return startChanged || endShifted;
+}
+
+export async function getMissionActivityEvents(
+  mission,
+  api,
+  cacheInStore,
+  controlId = null
+) {
+  const { history, resources } = await getResourcesAndHistoryForMission(
+    mission,
+    api,
+    cacheInStore,
+    controlId
+  );
+  return {
+    activityEvents: history.filter(
+      (e) => e.resourceType === MISSION_RESOURCE_TYPES.activity
+    ),
+    resources
+  };
+}
+
+export function isSplitEvent(event) {
+  return !!(event.after?.context?.splitFrom || event.context?.splitFrom);
+}
+
+export function isSplitCreate(event) {
+  return event.type === "CREATE" && isSplitEvent(event);
+}
+
+export function getEventTagType(events) {
+  if (events.some((e) => e.type === "DELETE")) return "SUPPRESSION";
+  if (
+    events.some((e) => (e.__virtual && e.type !== "CREATE") || isTimeShift(e))
+  )
+    return "MODIFICATION";
+  if (events.some((e) => isSplitCreate(e))) return "MODIFICATION";
+  if (
+    events.some(
+      (e) => isRetroactiveCreate(e) || (e.__virtual && e.type === "CREATE")
+    )
+  )
+    return "AJOUT";
+  return null;
+}

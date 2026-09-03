@@ -1,10 +1,11 @@
 import React from "react";
 import { Notice } from "@codegouvfr/react-dsfr/Notice";
 
-export const WarningBreaks = () => (
+export const WarningRealTimeEntry = () => (
   <Notice
     severity="warning"
-    title="Pensez à respecter le temps de pause obligatoire lors de votre prochaine mission afin de respecter la réglementation !"
+    isClosable
+    title="Saisissez vos activités en temps réel pour vous assurer que vos heures sont bien rémunérées."
     link={{
       linkProps: {
         href: "https://mobilic.beta.gouv.fr/resources/regulations",
@@ -16,7 +17,7 @@ export const WarningBreaks = () => (
       },
       text: (
         <>
-          En savoir plus sur les temps de pause
+          Mieux connaître mes droits
           <span
             className="fr-icon-arrow-right-line fr-icon--sm"
             aria-hidden="true"
