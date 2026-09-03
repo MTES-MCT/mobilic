@@ -1,6 +1,6 @@
 import React from "react";
 import { MISSION_RESOURCE_TYPES, isSplitEvent } from "common/utils/contradictory";
-import { ACTIVITIES } from "common/utils/activities";
+import { ACTIVITIES, getActivityLabelDependingOnMissionType } from "common/utils/activities";
 import { EXPENDITURES } from "common/utils/expenditures";
 import { formatPersonName } from "common/utils/coworkers";
 import {
@@ -26,11 +26,14 @@ export function getEventAuthorName(event) {
   return event.submitter ? formatPersonName(event.submitter) : null;
 }
 
-function changeResourceAsText(change) {
+function changeResourceAsText(change, allowOtherTask = false) {
   switch (change.resourceType) {
     case MISSION_RESOURCE_TYPES.activity:
       return `l'activité ${
-        ACTIVITIES[(change.after || change.before).type].label
+        getActivityLabelDependingOnMissionType(
+          (change.after || change.before).type,
+          allowOtherTask
+        )
       }`;
     case MISSION_RESOURCE_TYPES.expenditure:
       return `le frais ${
@@ -55,7 +58,7 @@ function changeResourceAsText(change) {
   }
 }
 
-function activityChangeText(change) {
+function activityChangeText(change, allowOtherTask = false) {
   const changeSentences = [];
   switch (change.type) {
     case "DELETE":
@@ -66,15 +69,15 @@ function activityChangeText(change) {
       if (isSplitEvent(change)) {
         const originalStart = change.after?.context?.originalStartTime || change.context?.originalStartTime;
         return originalStart
-          ? [`a décalé le début de ${changeResourceAsText(change)} du ${formatDateTimeLiteral(originalStart)} au ${formatDateTimeLiteral(change.after.startTime)}`]
-          : [`a scindé ${changeResourceAsText(change)} le ${formatDateTimeLiteral(change.after.startTime)}`];
+          ? [`a décalé le début de ${changeResourceAsText(change, allowOtherTask)} du ${formatDateTimeLiteral(originalStart)} au ${formatDateTimeLiteral(change.after.startTime)}`]
+          : [`a scindé ${changeResourceAsText(change, allowOtherTask)} le ${formatDateTimeLiteral(change.after.startTime)}`];
       }
       if (!change.after.endTime) {
         return [
           isSupportEvent(change)
-            ? `a lancé ${changeResourceAsText(change)}`
+            ? `a lancé ${changeResourceAsText(change, allowOtherTask)}`
             : `s'est mis en ${
-                ACTIVITIES[change.after.type].label
+                getActivityLabelDependingOnMissionType(change.after.type, allowOtherTask)
               } le ${formatDateTimeLiteral(change.after.startTime)}`
         ];
       }
@@ -86,19 +89,19 @@ function activityChangeText(change) {
         if (!change.after.endTime) {
           changeSentences.push(
             `a repris ${changeResourceAsText(
-              change
+              change, allowOtherTask
             )} le ${formatDateTimeLiteral(change.time)}`
           );
         } else if (!change.before.endTime) {
           changeSentences.push(
             `a mis fin à ${changeResourceAsText(
-              change
+              change, allowOtherTask
             )} le ${formatDateTimeLiteral(change.after.endTime)}`
           );
         } else {
           changeSentences.push(
             `a décalé la fin de ${changeResourceAsText(
-              change
+              change, allowOtherTask
             )} du ${formatDateTimeLiteral(
               change.before.endTime
             )} au ${formatDateTimeLiteral(change.after.endTime)}`
@@ -108,7 +111,7 @@ function activityChangeText(change) {
       if (change.after.startTime !== change.before.startTime) {
         changeSentences.push(
           `a décalé le début de ${changeResourceAsText(
-            change
+            change, allowOtherTask
           )} du ${formatDateTimeLiteral(
             change.before.startTime
           )} au ${formatDateTimeLiteral(change.after.startTime)}`
@@ -120,12 +123,12 @@ function activityChangeText(change) {
   }
 }
 
-export function getChangeIconAndText(change) {
+export function getChangeIconAndText(change, allowOtherTask = false) {
   switch (change.type) {
     case "DELETE":
       switch (change.resourceType) {
         case MISSION_RESOURCE_TYPES.activity:
-          return activityChangeText(change).map(text => ({
+          return activityChangeText(change, allowOtherTask).map(text => ({
             icon: <HighlightOffIcon />,
             text: text
           }));
@@ -133,7 +136,7 @@ export function getChangeIconAndText(change) {
           return [
             {
               icon: <HighlightOffIcon />,
-              text: `a supprimé ${changeResourceAsText(change)}`
+              text: `a supprimé ${changeResourceAsText(change, allowOtherTask)}`
             }
           ];
       }
@@ -174,7 +177,7 @@ export function getChangeIconAndText(change) {
             }
           ];
         case MISSION_RESOURCE_TYPES.activity:
-          return activityChangeText(change).map(text => ({
+          return activityChangeText(change, allowOtherTask).map(text => ({
             icon: ACTIVITIES[change.after.type].renderIcon(),
             color: ACTIVITIES[change.after.type].color,
             text: text
@@ -183,7 +186,7 @@ export function getChangeIconAndText(change) {
           return [
             {
               icon: <EuroIcon />,
-              text: `a ajouté ${changeResourceAsText(change)}`
+              text: `a ajouté ${changeResourceAsText(change, allowOtherTask)}`
             }
           ];
         default:
@@ -192,7 +195,7 @@ export function getChangeIconAndText(change) {
     case "UPDATE":
       switch (change.resourceType) {
         case MISSION_RESOURCE_TYPES.activity:
-          return activityChangeText(change).map(text => ({
+          return activityChangeText(change, allowOtherTask).map(text => ({
             icon: <EditIcon />,
             text: text
           }));
