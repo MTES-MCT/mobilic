@@ -32,6 +32,7 @@ export default function NotificationsAdmin() {
   const [result, setResult] = React.useState(null);
   const [refreshKey, setRefreshKey] = React.useState(0);
   const [bannerText, setBannerText] = React.useState("");
+  const [savedBannerText, setSavedBannerText] = React.useState("");
   const [bannerLoading, setBannerLoading] = React.useState(false);
   const [bannerResult, setBannerResult] = React.useState(null);
 
@@ -42,7 +43,10 @@ export default function NotificationsAdmin() {
     fetch(`${API_HOST}/vapid-public-key`)
       .then(res => res.json())
       .then(data => {
-        if (data?.bannerText) setBannerText(data.bannerText);
+        if (data?.bannerText) {
+          setBannerText(data.bannerText);
+          setSavedBannerText(data.bannerText);
+        }
       })
       .catch(() => {});
   }, []);
@@ -124,6 +128,7 @@ export default function NotificationsAdmin() {
                       { bannerText: bannerText.trim() },
                       { context: { nonPublicApi: true } }
                     );
+                    setSavedBannerText(bannerText.trim());
                     setBannerResult("success");
                   } catch {
                     setBannerResult("error");
@@ -131,7 +136,11 @@ export default function NotificationsAdmin() {
                     setBannerLoading(false);
                   }
                 }}
-                disabled={!bannerText.trim() || bannerLoading}
+                disabled={
+                  !bannerText.trim() ||
+                  bannerLoading ||
+                  bannerText.trim() === savedBannerText
+                }
               >
                 Enregistrer
               </Button>
