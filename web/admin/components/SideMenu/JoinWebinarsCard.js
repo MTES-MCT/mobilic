@@ -8,12 +8,18 @@ export function JoinWebinarsCard() {
 
   return (
 
-    <div 
+    <button
+      type="button"
       onClick={() => modals.open("webinars", {})}
       style={{
+        display: "block",
         border: "1px solid #dddddd",
+        padding: 0,
         cursor: "pointer",
         width: "222px",
+        backgroundColor: "transparent",
+        textAlign: "left",
+        font: "inherit"
       }}
     >
       <img
@@ -48,6 +54,6 @@ export function JoinWebinarsCard() {
       >
         S’inscrire à un webinaire
       </p>
-    </div>
+    </button>
   );
 }
