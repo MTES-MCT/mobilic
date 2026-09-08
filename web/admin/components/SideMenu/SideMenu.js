@@ -4,7 +4,7 @@ import { SideMenu } from "@codegouvfr/react-dsfr/SideMenu";
 import { JoinWebinarsCard } from "./JoinWebinarsCard";
 import { getBadgeRoutes } from "../../../common/routes";
 import { useAdminStore } from "../../store/store";
-import Badge from "@codegouvfr/react-dsfr/Badge";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
 
 export function AdminSideMenu({ views }) {
   const { pathname } = useLocation();
