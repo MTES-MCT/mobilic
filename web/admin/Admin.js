@@ -85,7 +85,7 @@ function InternalAdmin() {
 
   const views = ADMIN_VIEWS.map((view) => {
     let viewLabel = view.label
-    if (viewLabel.includes("Entreprise") && companies.length > 1) {
+    if (viewLabel.toLowerCase().includes("entreprise") && companies.length > 1) {
       viewLabel = viewLabel + 's'
     }
 
