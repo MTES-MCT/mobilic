@@ -5,12 +5,11 @@ import WebinardsSvg from "common/assets/images/picto-community.svg";
 export function JoinWebinarsCard() {
   const modals = useModals();
 
-  const onClick = () => modals.open("webinars", {});
 
   return (
 
     <div 
-      onClick={onClick}
+      onClick={() => modals.open("webinars", {})}
       style={{
         border: "1px solid #dddddd",
         cursor: "pointer",
