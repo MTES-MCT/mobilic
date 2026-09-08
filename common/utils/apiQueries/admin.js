@@ -761,11 +761,21 @@ export const ADMIN_COMPANY_REGULATORY_ALERTS_SUMMARY_QUERY = gql`
             alertsType
             nbAlerts
             days
+            dayDetails {
+              day
+              userName
+              userId
+            }
           }
           weeklyAlerts {
             alertsType
             nbAlerts
             days
+            dayDetails {
+              day
+              userName
+              userId
+            }
           }
         }
       }
