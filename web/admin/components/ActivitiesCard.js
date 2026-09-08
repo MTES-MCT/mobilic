@@ -10,7 +10,7 @@ import { VerticalTimeline } from "common/components/VerticalTimeline";
 import { formatDay, formatTimeOfDay, formatTimer, now } from "common/utils/time";
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 import { MissionInfoCard } from "./MissionInfoCard";
-import { getActivityLabelDependingOnMissionType } from "common/utils/activities";
+import { ACTIVITIES, getActivityLabelDependingOnMissionType } from "common/utils/activities";
 import { useActivitiesCardStyles } from "./styles/ActivitiesCardStyle";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
@@ -134,7 +134,8 @@ export function ActivitiesCard({
   function renderActivityRow(entry) {
     const config = entry.__hasModification && entry.__tagType ? TAG_CONFIG[entry.__tagType] : null;
     const isExpanded = expandedActivities[entry.id];
-    const toggleExpand = simplified && config
+    const isBreak = entry.type === ACTIVITIES.break.name;
+    const toggleExpand = simplified && config && !isBreak
       ? () => setExpandedActivities(prev => ({ ...prev, [entry.id]: !prev[entry.id] }))
       : undefined;
     const rowClass = `${classes.activityRow}${entry.__tagType === "SUPPRESSION" ? ` ${classes.dismissedRow}` : ""}`;
@@ -170,7 +171,7 @@ export function ActivitiesCard({
         </TableCell>
         {showEditColumn && (
           <TableCell className={classes.cellAction}>
-            {simplified && config ? (
+            {simplified && config && !isBreak ? (
               <IconButton
                 size="small"
                 aria-expanded={isExpanded}

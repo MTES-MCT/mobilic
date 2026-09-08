@@ -6,6 +6,7 @@ import {
   MISSION_RESOURCE_TYPES
 } from "common/utils/contradictory";
 import { isSplitEvent } from "../../common/logEvent";
+import { ACTIVITIES } from "common/utils/activities";
 
 // activity created with an endTime = retroactive (past entry by employee or admin)
 function isRetroactiveCreate(event) {
@@ -266,6 +267,51 @@ export function useActivityHistory({
         });
       }
     });
+    // tag breaks whose adjacent activities have been modified on the boundary facing the break
+    const nonHistoryEntries = sorted.filter(e => !e.__historyEntry);
+    nonHistoryEntries.forEach((entry, idx) => {
+      if (entry.type !== ACTIVITIES.break.name) return;
+      const prev = nonHistoryEntries[idx - 1];
+      const next = nonHistoryEntries[idx + 1];
+      if (!prev || !next) return;
+
+      // check if the boundary facing the break was modified
+      const prevPersistedEvents = historyByActivityId[prev.id] || [];
+      const nextPersistedEvents = historyByActivityId[next.id] || [];
+
+      const prevEndChanged = prev.__tagType === "AJOUT"
+        || prev.__virtualAction === "create"
+        || (prev.__virtualEdits || []).some(e => e.before?.endTime !== e.after?.endTime)
+        || prevPersistedEvents.some(e => e.type === "UPDATE" && e.before?.endTime !== e.after?.endTime);
+      const nextStartChanged = next.__tagType === "AJOUT"
+        || next.__virtualAction === "create"
+        || (next.__virtualEdits || []).some(e => e.before?.startTime !== e.after?.startTime)
+        || nextPersistedEvents.some(e => e.type === "UPDATE" && e.before?.startTime !== e.after?.startTime);
+
+      // fallback: if the activity is modified but has no events (split case), treat as changed
+      const prevSplitFallback = !prevEndChanged && prev.__hasModification && prev.__virtualAction === "edit" && prevPersistedEvents.length === 0;
+      const nextSplitFallback = !nextStartChanged && next.__hasModification && next.__virtualAction === "edit" && nextPersistedEvents.length === 0;
+
+      if (!prevEndChanged && !nextStartChanged && !prevSplitFallback && !nextSplitFallback) return;
+
+      // determine AJOUT vs MODIFICATION: did the gap exist before?
+      const prevOriginalEnd = (prev.__virtualEdits || []).find(e => e.before?.endTime !== e.after?.endTime)?.before?.endTime
+        ?? prevPersistedEvents.find(e => e.type === "UPDATE" && e.before?.endTime !== e.after?.endTime)?.before?.endTime
+        ?? prev.endTime;
+      const nextOriginalStart = (next.__virtualEdits || []).find(e => e.before?.startTime !== e.after?.startTime)?.before?.startTime
+        ?? nextPersistedEvents.find(e => e.type === "UPDATE" && e.before?.startTime !== e.after?.startTime)?.before?.startTime
+        ?? next.startTime;
+
+      // if adjacent activity was created by manager or we hit the split fallback → gap is new (AJOUT)
+      const isNewGap = prevSplitFallback || nextSplitFallback
+        || prev.__virtualAction === "create"
+        || next.__virtualAction === "create";
+      const hadGap = isNewGap ? false : prevOriginalEnd < nextOriginalStart;
+
+      entry.__hasModification = true;
+      entry.__tagType = hadGap ? "MODIFICATION" : "AJOUT";
+    });
+
     return sorted;
   }, [
     activitiesWithIds,

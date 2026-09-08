@@ -9,7 +9,7 @@ import { formatPersonName } from "common/utils/coworkers";
 import { formatDay, formatTimeOfDay } from "common/utils/time";
 import { useModals } from "common/utils/modals";
 
-const BADGE_CONFIG = {
+export const BADGE_CONFIG = {
   SUPPRESSION: {
     label: "SUPPRESSION",
     disputedSuffix: " CONTESTÉE",

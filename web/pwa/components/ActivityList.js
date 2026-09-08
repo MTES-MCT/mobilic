@@ -1,6 +1,6 @@
 import React from "react";
 import { fr } from "@codegouvfr/react-dsfr";
-import { ActivityHistorySection } from "./ActivityHistorySection";
+import { ActivityHistorySection, BADGE_CONFIG } from "./ActivityHistorySection";
 import {
   ACTIVITIES,
   ACTIVITIES_OPERATIONS,
@@ -27,6 +27,15 @@ import { SegmentedControl } from "@codegouvfr/react-dsfr/SegmentedControl";
 import { Box } from "@mui/material";
 
 const useStyles = makeStyles(theme => ({
+  breakBadge: {
+    display: "inline-block",
+    padding: "0 6px",
+    borderRadius: 4,
+    fontSize: 12,
+    fontWeight: 700,
+    lineHeight: "20px",
+    textTransform: "uppercase"
+  },
   longBreak: {
     "& *": {
       color: `${theme.palette.success.main} !important`
@@ -169,6 +178,32 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+function computeBreakBadgeType(prevActivity, nextActivity, eventsByActivityId) {
+  if (!prevActivity?.id || !nextActivity?.id) return null;
+
+  const prevEvents = eventsByActivityId.get(prevActivity.id) || [];
+  const nextEvents = eventsByActivityId.get(nextActivity.id) || [];
+
+  if (prevEvents.length === 0 && nextEvents.length === 0) return null;
+
+  // if either adjacent activity was added, the break is new
+  if (prevEvents.some(e => e.type === "CREATE") || nextEvents.some(e => e.type === "CREATE")) {
+    return "AJOUT";
+  }
+
+  // check if an UPDATE on either side affected the gap
+  const prevUpdate = prevEvents.find(e => e.type === "UPDATE" && e.before?.endTime !== e.after?.endTime);
+  const nextUpdate = nextEvents.find(e => e.type === "UPDATE" && e.before?.startTime !== e.after?.startTime);
+  if (!prevUpdate && !nextUpdate) return null;
+
+  // check if the gap existed before the modifications
+  const prevEndBefore = prevUpdate ? prevUpdate.before.endTime : prevActivity.endTime;
+  const nextStartBefore = nextUpdate ? nextUpdate.before.startTime : nextActivity.startTime;
+  const hadGap = prevEndBefore < nextStartBefore;
+
+  return hadGap ? "MODIFICATION" : "AJOUT";
+}
+
 function DurationDisplay({ endTime, startTime, duration, classes, datetimeFormatter }) {
   const iconClass = endTime ? classes.durationIcon : classes.ongoingLabel;
   const textClass = endTime ? classes.duration : "";
@@ -201,7 +236,8 @@ function ActivityItem({
   employeeValidationTime = null,
   onDispute = null,
   onCancelDispute = null,
-  isWithinCancelDelay = null
+  isWithinCancelDelay = null,
+  breakBadgeType = null
 }) {
   const modals = useModals();
   const classes = useStyles({ color: ACTIVITIES[activity.type].color });
@@ -314,6 +350,20 @@ function ActivityItem({
           onCancelDispute={onCancelDispute}
           isWithinCancelDelay={isWithinCancelDelay}
         />
+      )}
+      {breakBadgeType && BADGE_CONFIG[breakBadgeType] && (
+        <Box
+          component="span"
+          className={classes.breakBadge}
+          sx={{
+            backgroundColor: BADGE_CONFIG[breakBadgeType].backgroundColor,
+            color: BADGE_CONFIG[breakBadgeType].color,
+            ml: "16px",
+            mb: "4px"
+          }}
+        >
+          {BADGE_CONFIG[breakBadgeType].label}
+        </Box>
       )}
     </div>
   );
@@ -453,27 +503,38 @@ export function ActivityList({
             !disableEmptyMessage && (
               <Description>Pas d'activités sur cette journée</Description>
             )}
-          {augmentedAndSortedActivities.map((activity, index) => (
-            <ActivityItem
-              activity={activity}
-              editActivityEvent={editActivityEvent}
-              createActivity={createActivity}
-              allMissionActivities={allMissionActivities}
-              previousMissionEnd={previousMissionEnd}
-              teamChanges={teamChanges}
-              allowTeamMode={allowTeamMode}
-              allowSupportActivity={allowSupportActivity}
-              nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
-              key={activity.id ? "a" + activity.id : index}
-              datetimeFormatter={datetimeFormatter}
-              activityEvents={eventsByActivityId.get(activity.id) || []}
-              shouldDisplayInitialEmployeeVersion={shouldDisplayInitialEmployeeVersion}
-              employeeValidationTime={validationTimeByMission?.get(activity.missionId) || null}
-              onDispute={onDispute}
-              onCancelDispute={onCancelDispute}
-              isWithinCancelDelay={isWithinCancelDelay}
-            />
-          ))}
+          {augmentedAndSortedActivities.map((activity, index) => {
+            const isBreak = activity.type === ACTIVITIES.break.name;
+            const breakBadgeType = isBreak
+              ? computeBreakBadgeType(
+                  augmentedAndSortedActivities[index - 1],
+                  augmentedAndSortedActivities[index + 1],
+                  eventsByActivityId
+                )
+              : null;
+            return (
+              <ActivityItem
+                activity={activity}
+                editActivityEvent={editActivityEvent}
+                createActivity={createActivity}
+                allMissionActivities={allMissionActivities}
+                previousMissionEnd={previousMissionEnd}
+                teamChanges={teamChanges}
+                allowTeamMode={allowTeamMode}
+                allowSupportActivity={allowSupportActivity}
+                nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
+                key={activity.id ? "a" + activity.id : index}
+                datetimeFormatter={datetimeFormatter}
+                activityEvents={eventsByActivityId.get(activity.id) || []}
+                shouldDisplayInitialEmployeeVersion={shouldDisplayInitialEmployeeVersion}
+                employeeValidationTime={validationTimeByMission?.get(activity.missionId) || null}
+                onDispute={onDispute}
+                onCancelDispute={onCancelDispute}
+                isWithinCancelDelay={isWithinCancelDelay}
+                breakBadgeType={breakBadgeType}
+              />
+            );
+          })}
         </div>
       )}
       {view === "chart" && canDisplayChart && (
