@@ -12,6 +12,11 @@ export const COMPANY_SETTINGS_FRAGMENT = gql`
       allowOtherTask
       otherTaskLabel
     }
+    weeklyThresholds {
+      maxWorkInHours
+      minRestInHours
+      maxWorkedDays
+    }
   }
 `;
 
