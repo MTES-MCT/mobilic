@@ -1,5 +1,25 @@
-.side-menu-container {
+.admin-side-menu {
   flex: 0 0 auto;
+  width: 270px;
+  align-items: center;
+  padding: 0;
+  .fr-sidemenu {
+    margin-left: 0;
+    margin-right: 0;
+  };
+  nav {
+    padding: 0;
+    width: 100%;
+  };
+  .fr-sidemenu__inner {
+    box-shadow: none;
+    padding: 0;
+    width: 100%;
+  }
+}
+
+.webinar-card-cta::after {
+  --icon-size: 1rem !important;
 }
 
 .ReactVirtualized__Grid__innerScrollContainer {

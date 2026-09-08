@@ -14,10 +14,6 @@ import { makeStyles } from "@mui/styles";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Link } from "./LinkButton";
 import { useAdminStore, useAdminCompanies } from "../admin/store/store";
-import {
-  useCertificationInfo,
-  useShouldDisplayBadge
-} from "../admin/utils/certificationInfo";
 import { TextWithBadge } from "./TextWithBadge";
 import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
 import { ControllerHeader } from "../controller/components/header/ControllerHeader";
@@ -164,13 +160,9 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies, isLastR
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
-  const shouldDisplayBadge = useShouldDisplayBadge();
-  const { companyWithInfo } = useCertificationInfo();
-  const badge = getBadgeRoutes(
-    useAdminStore(),
-    companyWithInfo,
-    shouldDisplayBadge
-  ).find((br) => br.path === route.path)?.badge;
+  const badge = getBadgeRoutes(useAdminStore()).find(
+    br => br.path === route.path
+  )?.badge;
 
   const selected = route.exact
     ? location.pathname === route.path
