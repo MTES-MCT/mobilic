@@ -8,6 +8,7 @@ import {
   unixToJSTimestamp
 } from "common/utils/time";
 import { DropdownMenu } from "common/components/DropdownMenu";
+import { NEVER_USED_MOBILIC_LABEL } from "common/utils/employeeStatus";
 
 const THRESHOLD_30_DAYS = DAY * 30;
 
@@ -48,7 +49,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 function formatLastActiveAt(lastActiveAt) {
-  if (!lastActiveAt) return "N'a jamais utilisé Mobilic";
+  if (!lastActiveAt) return NEVER_USED_MOBILIC_LABEL;
   const date = new Date(unixToJSTimestamp(lastActiveAt));
   const dateStr = date.toLocaleDateString("fr-FR", {
     day: "2-digit",
