@@ -90,21 +90,16 @@ function getInactiveEmployeesToday(employments, workDays) {
     if (!emp?.user?.id) continue;
     if (activeUserIdsToday.has(emp.user.id)) continue;
     if (emp.validationStatus !== "approved") continue;
+    if (!emp.lastActiveAt) continue;
     if (emp.dismissedAt) continue;
     if (emp.hasAdminRights) continue;
 
     // More expensive checks
     if (emp.endDate && emp.endDate < today) continue;
 
-    // An employee who never used Mobilic (lastActiveAt is null) is always
-    // considered inactive, matching the backend counter
-    // (_count_inactive_employees). Only employees with a known
-    // lastActiveAt are further restricted to the 30-day window.
-    if (emp.lastActiveAt) {
-      const lastActiveTimestampMs = unixToJSTimestamp(emp.lastActiveAt);
-      if (todayStartMs - lastActiveTimestampMs > THRESHOLD_30_DAYS * 1000)
-        continue;
-    }
+    const lastActiveTimestampMs = unixToJSTimestamp(emp.lastActiveAt);
+    if (todayStartMs - lastActiveTimestampMs > THRESHOLD_30_DAYS * 1000)
+      continue;
 
     results.push({
       id: emp.user.id,
