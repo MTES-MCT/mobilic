@@ -98,6 +98,7 @@ export const CONTROLLER_ROUTE_PREFIX = "/controller";
 const Admin = React.lazy(() => import("../admin/Admin"));
 const OAuth = React.lazy(() => import("../oauth/root"));
 const ImpersonationSearch = React.lazy(() => import("../support/ImpersonationSearch"));
+const NotificationsAdmin = React.lazy(() => import("../support/NotificationsAdmin"));
 
 // Wrapper pour encapsuler chaque composant lazy avec son propre Suspense
 function withSuspense(Component) {
@@ -454,6 +455,13 @@ export const ROUTES = [
     menuItemFilter: () => false
   },
   {
+    path: "/support/notifications",
+    label: "Notifications",
+    accessible: ({ userInfo }) => !!userInfo?.bizdev && !!userInfo?.totpEnabled,
+    component: withSuspense(NotificationsAdmin),
+    menuItemFilter: () => false
+  },
+  {
     path: "/home",
     label: "Mes informations",
     accessible: () => true,
@@ -463,12 +471,20 @@ export const ROUTES = [
   {
     label: "Support",
     path: "",
-    accessible: ({ userInfo }) => !!userInfo?.admin && !!userInfo?.totpEnabled,
-    menuItemFilter: ({ userInfo }) => !!userInfo?.admin && !!userInfo?.totpEnabled,
+    accessible: ({ userInfo }) =>
+      (!!userInfo?.admin || !!userInfo?.bizdev) && !!userInfo?.totpEnabled,
+    menuItemFilter: ({ userInfo }) =>
+      (!!userInfo?.admin || !!userInfo?.bizdev) && !!userInfo?.totpEnabled,
     subRoutes: [
       {
         path: "/support/impersonation",
-        label: "Accès au compte"
+        label: "Accès au compte",
+        accessible: ({ userInfo }) => !!userInfo?.admin && !!userInfo?.totpEnabled
+      },
+      {
+        path: "/support/notifications",
+        label: "Notifications",
+        accessible: ({ userInfo }) => !!userInfo?.bizdev && !!userInfo?.totpEnabled
       }
     ]
   },

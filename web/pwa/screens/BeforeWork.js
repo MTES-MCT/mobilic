@@ -34,6 +34,7 @@ import { Notifications } from "../components/notifications/Notifications";
 import { MobilicHeader } from "../../common/Header";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { fr } from "@codegouvfr/react-dsfr";
+import PushNotificationBanner from "common/components/PushNotificationBanner";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
@@ -152,6 +153,7 @@ export function BeforeWork({ openHistory, missions }) {
   return (
     <Container maxWidth={false} className={classes.outer} disableGutters>
       <MobilicHeader forceMobile />
+      <PushNotificationBanner />
       <Stack
         direction="column"
         alignItems="center"
