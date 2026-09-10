@@ -20,6 +20,7 @@ import { DriverResourcePage } from "../landing/ResourcePage/DriverResourcePage";
 import { RegulationPage } from "../landing/ResourcePage/RegulationPage";
 import { ResourcePage } from "../landing/ResourcePage/ResourcePage";
 import Accessibility from "../landing/accessibility";
+import SchemaPluriannuel from "../landing/schemaPluriannuel";
 import Compatibility from "../landing/compatibility";
 import { Certificate } from "../landing/certificate";
 // Import normal pour Navigation (pas de lazy loading pour éviter les problèmes Redux)
@@ -230,6 +231,13 @@ export const ROUTES = [
     label: "Déclaration d'accessibilité",
     accessible: () => true,
     component: <Accessibility />,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/schema-pluriannuel",
+    label: "Schéma pluriannuel d'accessibilité",
+    accessible: () => true,
+    component: <SchemaPluriannuel />,
     menuItemFilter: () => false
   },
   {
