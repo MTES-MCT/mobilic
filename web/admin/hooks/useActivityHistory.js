@@ -2,51 +2,12 @@ import React from "react";
 import { now } from "common/utils/time";
 import { useApi } from "common/utils/api";
 import {
-  getResourcesAndHistoryForMission,
+  getMissionActivityEvents,
+  getEventTagType,
+  isRetroactiveCreate,
+  isTimeShift,
   MISSION_RESOURCE_TYPES
 } from "common/utils/contradictory";
-import { isSplitEvent } from "../../common/logEvent";
-
-// activity created with an endTime = retroactive (past entry by employee or admin)
-function isRetroactiveCreate(event) {
-  return (
-    event.type === "CREATE" &&
-    event.after &&
-    event.after.endTime
-  );
-}
-
-// Exclude normal end/resume of activity, only keep actual time shifts
-function isTimeShift(event) {
-  if (event.type !== "UPDATE") return false;
-  const startChanged = event.after.startTime !== event.before.startTime;
-  const endShifted =
-    event.after.endTime !== event.before.endTime &&
-    event.before.endTime &&
-    event.after.endTime;
-  return startChanged || endShifted;
-}
-
-function isSplitCreate(event) {
-  return event.type === "CREATE" && isSplitEvent(event);
-}
-
-export function getEventTagType(events) {
-  if (events.some(e => e.type === "DELETE")) return "SUPPRESSION";
-  if (events.some(e => (e.__virtual && e.type !== "CREATE") || isTimeShift(e)))
-    return "MODIFICATION";
-  if (events.some(e => isSplitCreate(e)))
-    return "MODIFICATION";
-  if (
-    events.some(
-      e => isRetroactiveCreate(e) || (e.__virtual && e.type === "CREATE")
-    )
-  )
-    return "AJOUT";
-  return null;
-}
-
-export { isRetroactiveCreate };
 
 export function useActivityHistory({
   activities,
@@ -85,13 +46,10 @@ export function useActivityHistory({
 
     async function loadHistory() {
       try {
-        const { history, resources } = await getResourcesAndHistoryForMission(
+        const { activityEvents, resources } = await getMissionActivityEvents(
           mission,
           api,
           cacheContradictoryInfoInStore
-        );
-        const activityEvents = history.filter(
-          e => e.resourceType === MISSION_RESOURCE_TYPES.activity
         );
         const dismissed = resources
           .filter(

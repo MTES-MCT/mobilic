@@ -20,6 +20,7 @@ import {
 } from "common/utils/time";
 import ListSubheader from "@mui/material/ListSubheader";
 import orderBy from "lodash/orderBy";
+import maxBy from "lodash/maxBy";
 import { LoadingButton } from "common/components/LoadingButton";
 import BackgroundImage from "common/assets/images/landing-hero-vertical-without-text-logo.svg";
 import LogoWithText from "common/assets/images/mobilic-logo-white-with-text.svg";
@@ -34,6 +35,8 @@ import { Notifications } from "../components/notifications/Notifications";
 import { MobilicHeader } from "../../common/Header";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { fr } from "@codegouvfr/react-dsfr";
+import { WarningRealTimeEntry } from "../components/WarningRealTimeEntry";
+import { useLastMissionEditType } from "../../common/useLastMissionEditType";
 import PushNotificationBanner from "common/components/PushNotificationBanner";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
@@ -127,6 +130,8 @@ export function BeforeWork({ openHistory, missions }) {
   const currentTime = startOfDay(new Date(Date.now()));
 
   const missionsInHistory = missions.filter(m => m.isComplete && m.ended);
+  const lastMission = maxBy(missionsInHistory, "endTime");
+  const { hasBeenEdited } = useLastMissionEditType(lastMission);
   const nonValidatedMissions = orderBy(
     missionsInHistory.filter(
       m =>
@@ -154,6 +159,9 @@ export function BeforeWork({ openHistory, missions }) {
     <Container maxWidth={false} className={classes.outer} disableGutters>
       <MobilicHeader forceMobile />
       <PushNotificationBanner />
+      {hasBeenEdited && <WarningRealTimeEntry />}
+      {process.env.REACT_APP_ENOUGH_BREAK_BANNER === "1" &&
+        !hasEnoughBreak && <WarningBreaks />}
       <Stack
         direction="column"
         alignItems="center"
@@ -165,8 +173,6 @@ export function BeforeWork({ openHistory, missions }) {
           <img alt="mobilic-logo-text" src={LogoWithText} width={117} />
         </Box>
         <Stack direction="column" rowGap={2} alignItems="center">
-          {process.env.REACT_APP_ENOUGH_BREAK_BANNER === "1" &&
-            !hasEnoughBreak && <WarningBreaks />}
           <Button
             size="large"
             onClick={onEnterNewMissionFunnel}

@@ -20,13 +20,11 @@ import {
   ADD_ACTIVITY_IN_MISSION_PANEL,
   EDIT_ACTIVITY_IN_MISSION_PANEL
 } from "common/utils/matomoTags";
-import { getChangeIconAndText, getEventAuthorName, isSplitEvent } from "../../common/logEvent";
+import { getChangeIconAndText, getEventAuthorName } from "../../common/logEvent";
 import { formatPersonName } from "common/utils/coworkers";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import {
-  useActivityHistory,
-  isRetroactiveCreate
-} from "../hooks/useActivityHistory";
+import { isRetroactiveCreate, isSplitEvent } from "common/utils/contradictory";
+import { useActivityHistory } from "../hooks/useActivityHistory";
 
 const TAG_CONFIG = {
   MODIFICATION: { label: "MODIFICATION", classKey: "tagModification" },
