@@ -93,12 +93,12 @@ function SchemaPluriannuelContent() {
       </ul>
 
       <h3>Aides externes</h3>
-      <p>Mobilic a fait appel et peut s'aider ressources suivantes :</p>
+      <p>Mobilic a fait appel et peut s'aider des ressources suivantes :</p>
       <ul>
         <li>
           Des <b>prestataires externes</b>, via l'activation des marchés
           publics de la DINUM et de la DNUM du MTEATTL, pour la réalisation
-          d'un l'audit de conformité officiel au RGAA.
+          d'un audit de conformité officiel au RGAA.
         </li>
         <li>
           L'appui de la DINUM pour la réalisation d'un{" "}
@@ -294,7 +294,7 @@ function SchemaPluriannuelContent() {
         </li>
       </ul>
       <p>
-        Suite à cette phrase de remédiation, un audit de conformité sera
+        Suite à cette phase de remédiation, un audit de conformité sera
         planifié auprès d'un prestataire externe spécialisé afin d'évaluer
         le taux de conformité de Mobilic.
       </p>
