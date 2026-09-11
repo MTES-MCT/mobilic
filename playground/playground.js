@@ -10,7 +10,7 @@ import "./playground.css";
 // Configure Monaco Editor environment for workers
 // This is required for GraphiQL v5 which uses Monaco internally
 window.MonacoEnvironment = {
-  getWorkerUrl: function(moduleId, label) {
+  getWorkerUrl: function(_moduleId, _label) {
     // Disable workers as a workaround for webpack loading issues
     // Monaco will fall back to running in the main thread
     return "data:text/javascript;charset=utf-8," + encodeURIComponent(`

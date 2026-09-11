@@ -581,11 +581,7 @@ export function isAccessible(path, storeData) {
   return ROUTES.find(r => path.startsWith(r.path)).accessible(storeData);
 }
 
-export function getBadgeRoutes(
-  adminStore,
-  companyWithCertificationInfo,
-  shouldDisplayBadge
-) {
+export function getBadgeRoutes(adminStore) {
   const entries = missionsToTableEntries(adminStore).filter(entry =>
     entryToBeValidatedByAdmin(entry, adminStore?.userId)
   );
@@ -599,16 +595,6 @@ export function getBadgeRoutes(
       }
     }
   ];
-
-  if (shouldDisplayBadge) {
-    const certificateBadge = getCertificateBadge(companyWithCertificationInfo);
-    if (certificateBadge) {
-      badgeRoutes.push({
-        path: "/admin/company",
-        badge: certificateBadge
-      });
-    }
-  }
 
   return badgeRoutes;
 }
