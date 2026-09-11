@@ -7,10 +7,12 @@ import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
 import { WarningBadge } from "../../common/WarningBadge";
 import { useApi } from "common/utils/api";
 import { useAdminStore } from "../store/store";
+import { ADMIN_ACTIONS } from "../store/reducers/root";
 import {
   DASHBOARD_HOME_QUERY,
   ADMIN_QUERY_USER_WORK_DAY
 } from "common/utils/apiQueries/admin";
+import { loadPendingValidationsCount } from "../utils/loadCompaniesData";
 import { SEND_INVITATIONS_REMINDERS } from "common/utils/apiQueries/employments";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { formatCompleteDateFromString } from "common/utils/time";
@@ -331,6 +333,17 @@ export default function Home({ setShouldRefreshData }) {
         const company = res.data.user.adminedCompanies[0];
         setSummary(company.dashboardSummary);
         setAlertsData(company.regulatoryAlertsRecap);
+        if (forceRefresh) {
+          const pendingValidationsCount = await loadPendingValidationsCount(
+            api,
+            adminStore.userId,
+            adminStore.companyId
+          );
+          adminStore.dispatch({
+            type: ADMIN_ACTIONS.updatePendingValidationsCount,
+            payload: { count: pendingValidationsCount }
+          });
+        }
         setLastUpdate(now);
         hasDataRef.current = true;
       } catch (err) {
@@ -545,7 +558,13 @@ export default function Home({ setShouldRefreshData }) {
               />
               <KpiCard
                 title="Mission(s) à valider"
-                count={summary.pendingValidationsCount}
+                count={
+                  adminStore.areCompanyEssentialsLoaded ? (
+                    adminStore.pendingValidationsCount
+                  ) : (
+                    <CircularProgress size={20} />
+                  )
+                }
                 buttonLabel="Valider les saisies"
                 onButtonClick={() => history.push("/admin/validations")}
               />

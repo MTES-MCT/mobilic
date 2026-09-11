@@ -111,6 +111,19 @@ export const ALL_MISSION_RESOURCES_WITH_HISTORY_QUERY = gql`
   }
 `;
 
+export const ADMIN_PENDING_VALIDATIONS_COUNT_QUERY = gql`
+  query adminPendingValidationsCount($id: Int!, $companyIds: [Int]) {
+    user(id: $id) {
+      adminedCompanies(companyIds: $companyIds) {
+        id
+        dashboardSummary {
+          pendingValidationsCount
+        }
+      }
+    }
+  }
+`;
+
 export const ADMIN_COMPANIES_LIST_QUERY = gql`
   query adminCompaniesList($id: Int!) {
     user(id: $id) {
@@ -139,17 +152,10 @@ export const THIRD_PARTY_CLIENTS_COMPANY_QUERY = gql`
 `;
 
 export const ADMIN_COMPANIES_QUERY = gql`
-  ${WORK_DAYS_DATA_FRAGMENT}
   ${COMPANY_SETTINGS_FRAGMENT}
-  ${FRAGMENT_LOCATION_FULL}
-  ${FRAGMENT_ACTIVITY}
-  ${FULL_EMPLOYMENT_FRAGMENT}
   query adminCompanies(
     $id: Int!
     $activityAfter: Date
-    $workDaysLimit: Int
-    $endedMissionsAfter: TimeStamp
-    $endedMissionsBefore: TimeStamp
     $companyIds: [Int]
   ) {
     user(id: $id) {
@@ -158,6 +164,9 @@ export const ADMIN_COMPANIES_QUERY = gql`
         name
         nbWorkers
         ...CompanySettings
+        dashboardSummary {
+          pendingValidationsCount
+        }
         business {
           transportType
           businessType
@@ -170,20 +179,6 @@ export const ADMIN_COMPANIES_QUERY = gql`
         currentUsers {
           id
         }
-        teams {
-          id
-          name
-          adminUsers {
-            id
-            firstName
-            lastName
-          }
-          users {
-            id
-            firstName
-            lastName
-          }
-        }
         knownAddresses {
           id
           alias
@@ -191,79 +186,45 @@ export const ADMIN_COMPANIES_QUERY = gql`
           postalCode
           city
         }
-        workDays(fromDate: $activityAfter, first: $workDaysLimit) {
-          ...WorkDayData
-        }
-        missions(fromTime: $endedMissionsAfter, untilTime: $endedMissionsBefore, onlyEndedMissions: false) {
-          edges {
-            node {
-              id
-              name
-              submitterId
-              submitter {
-                firstName
-                lastName
-              }
-              isHoliday
-              validations {
-                submitterId
-                receptionTime
-                isAdmin
-                isAuto
-                justification
-                userId
-              }
-              vehicle {
-                id
-                name
-                registrationNumber
-              }
-              expenditures {
-                id
-                type
-                userId
-                receptionTime
-                spendingDate
-              }
-              startLocation {
-                ...FullLocation
-              }
-              endLocation {
-                ...FullLocation
-              }
-              activities {
-                ...Activity
-              }
-              comments {
-                id
-                text
-                receptionTime
-                submitter {
-                  id
-                  firstName
-                  lastName
-                }
-              }
-              pastRegistrationJustification
-              endedUserIds
-            }
-          }
-        }
         vehicles {
           id
           registrationNumber
           alias
         }
+        employments(latestPerUser: true, userIds: [$id]) {
+          id
+          hasAdminRights
+          isAcknowledged
+          teamId
+          endDate
+          validationStatus
+          lastActiveAt
+          dismissedAt
+          shouldSeeCertificateInfo
+          shouldForceNbWorkerInfo
+          user {
+            id
+            firstName
+            lastName
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const ADMIN_EMPLOYMENTS_QUERY = gql`
+  ${FULL_EMPLOYMENT_FRAGMENT}
+  query adminEmployments($id: Int!, $companyIds: [Int]) {
+    user(id: $id) {
+      adminedCompanies(companyIds: $companyIds) {
+        id
+        name
+        siren
         employments(latestPerUser: true) {
           ...FullEmploymentData
           shouldSeeCertificateInfo
           shouldForceNbWorkerInfo
-        }
-        adminRegulationComputationsByUserAndByDay(fromDate: $activityAfter) {
-          day
-          userId
-          nbAlertsDailyAdmin
-          nbAlertsWeeklyAdmin
         }
       }
     }
@@ -369,6 +330,8 @@ export const ADMIN_WORK_DAYS_QUERY = gql`
     $endedMissionsAfter: TimeStamp
     $endedMissionsBefore: TimeStamp
     $companyIds: [Int]
+    $maxWorkDaysRange: Int
+    $workDaysAfter: String
   ) {
     user(id: $id) {
       adminedCompanies(companyIds: $companyIds) {
@@ -378,7 +341,7 @@ export const ADMIN_WORK_DAYS_QUERY = gql`
           firstName
           lastName
         }
-        workDays(fromDate: $activityAfter, untilDate: $activityBefore) {
+        workDays(fromDate: $activityAfter, untilDate: $activityBefore, first: $maxWorkDaysRange, after: $workDaysAfter) {
           ...WorkDayData
         }
         missions(fromTime: $endedMissionsAfter, untilTime: $endedMissionsBefore, onlyEndedMissions: false) {
@@ -700,7 +663,6 @@ export const DASHBOARD_HOME_QUERY = gql`
         id
         dashboardSummary {
           activeMissionsCount
-          pendingValidationsCount
           pendingInvitationsCount
           inactiveEmployeesCount
           autoValidatedMissionsCount

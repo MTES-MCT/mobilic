@@ -379,7 +379,8 @@ export function WorkTimeTable({
   className,
   showMissionName,
   showExpenditures,
-  loading
+  loading,
+  onLoadMore
 }) {
   const { openWorkday } = useDayDrawer();
   const openMission = useMissionDrawer()[1];
@@ -530,6 +531,14 @@ export function WorkTimeTable({
         virtualized
         onRowClick={(entry) =>
           onRowClick(entry, trackEvent, openWorkday, openMission)
+        }
+        onRowsRendered={
+          onLoadMore &&
+          (({ stopIndex, totalCount }) => {
+            if (stopIndex >= totalCount - 1) {
+              onLoadMore();
+            }
+          })
         }
         groupByColumn={{
           label: periodLabel,

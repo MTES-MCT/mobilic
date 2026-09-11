@@ -42,6 +42,7 @@ import { usePageTitle } from "../../common/UsePageTitle";
 import { Explanation } from "../../common/typography/Explanation";
 import { useRefreshDeletedMissions } from "../hooks/useRefreshDeletedMissions";
 import ValidationMission from "./ValidationMission";
+import { useLoadAdminPanelData } from "../hooks/useLoadAdminPanelData";
 
 const VALIDATION_TABS = [
   {
@@ -222,6 +223,8 @@ function ValidationPanel({ refreshData }) {
     minWidth: 200
   };
 
+  useLoadAdminPanelData();
+
   React.useEffect(() => {
     setEntriesDeletedByAdmin(
       missionsToTableEntries(adminStore).filter((entry) => entry.isDeleted)
@@ -328,7 +331,9 @@ function ValidationPanel({ refreshData }) {
       case 1:
         return users
           .filter((user) =>
-            adminStore.currentUsers.map((u) => u.id).includes(user.id)
+            (adminStore.currentUsers || [])
+              .map((u) => u.id)
+              .includes(user.id)
           )
           .map((user) => user.id);
       case 2:
@@ -337,7 +342,7 @@ function ValidationPanel({ refreshData }) {
       default:
         return [];
     }
-  }, [tab, users]);
+  }, [tab, users, adminStore.currentUsers]);
 
   return (
     <Paper className={classes.container} variant="outlined">
