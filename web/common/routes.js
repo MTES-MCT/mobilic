@@ -590,39 +590,3 @@ export function getBadgeRoutes(adminStore) {
 
   return badgeRoutes;
 }
-
-export function getCertificateBadge(companyWithCertificationInfo) {
-  let color = null;
-  if (companyWithCertificationInfo.hasNoActivity) {
-    color = "error";
-  } else if (
-    !companyWithCertificationInfo.currentCompanyCertification
-      ?.certificateCriterias?.creationTime
-  ) {
-    return null;
-  } else if (
-    !companyWithCertificationInfo.currentCompanyCertification?.isCertified
-  ) {
-    color = "error";
-  } else {
-    const currentCriterias =
-      companyWithCertificationInfo.currentCompanyCertification
-        .certificateCriterias;
-    if (
-      !currentCriterias.beActive ||
-      !currentCriterias.beCompliant ||
-      !currentCriterias.logInRealTime ||
-      !currentCriterias.notTooManyChanges ||
-      !currentCriterias.validateRegularly
-    ) {
-      color = "warning";
-    } else {
-      color = "success";
-    }
-  }
-
-  return {
-    variant: "dot",
-    color
-  };
-}
