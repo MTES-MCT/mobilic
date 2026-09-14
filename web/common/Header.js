@@ -77,8 +77,18 @@ const useStyles = makeStyles((theme) => ({
     padding: "0.75rem 1rem"
   },
   selectedNavListItem: {
+    position: "relative",
     color: fr.colors.decisions.text.active.blueFrance.default,
     fontWeight: 600,
+    "&:before": {
+      content: '""',
+      position: "absolute",
+      top: "0.75rem",
+      bottom: "0.75rem",
+      left: 0,
+      width: "2px",
+      backgroundColor: fr.colors.decisions.border.active.blueFrance.default
+    }
   },
   nestedListSubheader: {
     padding: "0.75rem 0",
