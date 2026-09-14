@@ -40,7 +40,6 @@ export function JoinWebinarsCard() {
           fr-icon--xs
           webinar-card-cta
         "
-        fontWeight="500"
         style={{
           margin: 0,
           padding: "16px",
@@ -49,7 +48,8 @@ export function JoinWebinarsCard() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          whiteSpace: "nowrap"
+          whiteSpace: "nowrap",
+          fontWeight: 500
         }}
       >
         S’inscrire à un webinaire
