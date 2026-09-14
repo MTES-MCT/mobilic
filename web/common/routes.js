@@ -160,7 +160,7 @@ export const ROUTES = [
       },
       {
         path: "/company",
-        label: "Entreprise(s)"
+        label: "Entreprise"
       },
       {
         path: "/activities",

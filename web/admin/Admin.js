@@ -40,6 +40,7 @@ import { AdminSideMenu } from "./components/SideMenu/SideMenu";
 import { DayDrawerContextProvider } from "./drawers/DayDrawer";
 import { ExportsBanner } from "./components/ExportsBanner";
 import { useExportsContext } from "./utils/contextExports";
+import { pluralizeEntrepriseLabel } from "common/utils/pluralize";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -84,10 +85,7 @@ function InternalAdmin() {
   const isMdUp = useIsWidthUp("md");
 
   const views = ADMIN_VIEWS.map((view) => {
-    let viewLabel = view.label
-    if (viewLabel.toLowerCase().includes("entreprise") && companies.length > 1) {
-      viewLabel = viewLabel + 's'
-    }
+    const viewLabel = pluralizeEntrepriseLabel(view.label, companies.length);
 
     const absPath = `${path}${view.path}`;
     return {

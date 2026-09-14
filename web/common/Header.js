@@ -27,6 +27,7 @@ import { Select } from "@codegouvfr/react-dsfr/Select";
 import MobilicLogoWithText from "common/assets/images/mobilic-logo-with-text.svg";
 import { useIsWidthDown } from "common/utils/useWidth";
 import { useNewMissionFunnel } from "./hooks/useNewMissionFunnel";
+import { pluralizeEntrepriseLabel } from "common/utils/pluralize";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -168,10 +169,14 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies, isLastR
     ? location.pathname === route.path
     : location.pathname.startsWith(route.path);
 
+  const adminCompaniesCount =
+    companies?.filter((c) => c.admin).length ?? 0;
+  const label = pluralizeEntrepriseLabel(route.label, adminCompaniesCount);
+
   return route.subRoutes ? (
     <>
       <section key={route.path + "subRoutes"} className={classes.navSections}>
-        <p className={classes.nestedListSubheader + " fr-text--md fr-mb-0"}>{route.label}</p>
+        <p className={classes.nestedListSubheader + " fr-text--md fr-mb-0"}>{label}</p>
         {route.subRoutes
           .filter(
             (subRoute) =>
@@ -184,6 +189,7 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies, isLastR
               route={{ ...subRoute, path: `${route.path}${subRoute.path}` }}
               closeDrawer={closeDrawer}
               isSubRoute={true}
+              companies={companies}
             />
           ))}
       </section>
@@ -220,7 +226,7 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies, isLastR
         }}
       >
         <TextWithBadge invisible={!badge} {...badge}>
-          {route.label}
+          {label}
         </TextWithBadge>
       </Link>
     </div>
