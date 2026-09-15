@@ -132,6 +132,10 @@ export function BeforeWork({ openHistory, missions }) {
   const missionsInHistory = missions.filter(m => m.isComplete && m.ended);
   const lastMission = maxBy(missionsInHistory, "endTime");
   const { hasBeenEditedByEmployee } = useLastMissionEditType(lastMission);
+  const shouldShowRealTimeEntryWarning =
+    hasBeenEditedByEmployee &&
+    lastMission &&
+    Date.now() / 1000 - lastMission.endTime < DAY;
   const nonValidatedMissions = orderBy(
     missionsInHistory.filter(
       m =>
@@ -159,7 +163,9 @@ export function BeforeWork({ openHistory, missions }) {
     <Container maxWidth={false} className={classes.outer} disableGutters>
       <MobilicHeader forceMobile />
       <PushNotificationBanner />
-      {hasBeenEditedByEmployee && <WarningRealTimeEntry />}
+      {shouldShowRealTimeEntryWarning && (
+        <WarningRealTimeEntry dismissKey={`${userId}-${lastMission?.id}`} />
+      )}
       {process.env.REACT_APP_ENOUGH_BREAK_BANNER === "1" &&
         !hasEnoughBreak && <WarningBreaks />}
       <Stack
