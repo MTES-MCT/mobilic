@@ -27,12 +27,15 @@ export const useLastMissionEditType = (mission) => {
         api,
         cacheContradictoryInfoInStore
       );
-      if (!cancelled) setEditType(getEventTagType(activityEvents));
+      const employeeSubmittedEvents = activityEvents.filter(
+        e => e.submitterId === e.userId
+      );
+      if (!cancelled) setEditType(getEventTagType(employeeSubmittedEvents));
     }, "last-mission-edit-type");
     return () => {
       cancelled = true;
     };
   }, [mission, api, cacheContradictoryInfoInStore]);
 
-  return { editType, hasBeenEdited: Boolean(editType) };
+  return { editType, hasBeenEditedByEmployee: Boolean(editType) };
 };
