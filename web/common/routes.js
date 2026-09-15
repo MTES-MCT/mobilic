@@ -161,7 +161,7 @@ export const ROUTES = [
       },
       {
         path: "/company",
-        label: "Entreprise(s)"
+        label: "Entreprise"
       },
       {
         path: "/activities",
@@ -581,11 +581,7 @@ export function isAccessible(path, storeData) {
   return ROUTES.find(r => path.startsWith(r.path)).accessible(storeData);
 }
 
-export function getBadgeRoutes(
-  adminStore,
-  companyWithCertificationInfo,
-  shouldDisplayBadge
-) {
+export function getBadgeRoutes(adminStore) {
   const entries = missionsToTableEntries(adminStore).filter(entry =>
     entryToBeValidatedByAdmin(entry, adminStore?.userId)
   );
@@ -600,51 +596,5 @@ export function getBadgeRoutes(
     }
   ];
 
-  if (shouldDisplayBadge) {
-    const certificateBadge = getCertificateBadge(companyWithCertificationInfo);
-    if (certificateBadge) {
-      badgeRoutes.push({
-        path: "/admin/company",
-        badge: certificateBadge
-      });
-    }
-  }
-
   return badgeRoutes;
-}
-
-export function getCertificateBadge(companyWithCertificationInfo) {
-  let color = null;
-  if (companyWithCertificationInfo.hasNoActivity) {
-    color = "error";
-  } else if (
-    !companyWithCertificationInfo.currentCompanyCertification
-      ?.certificateCriterias?.creationTime
-  ) {
-    return null;
-  } else if (
-    !companyWithCertificationInfo.currentCompanyCertification?.isCertified
-  ) {
-    color = "error";
-  } else {
-    const currentCriterias =
-      companyWithCertificationInfo.currentCompanyCertification
-        .certificateCriterias;
-    if (
-      !currentCriterias.beActive ||
-      !currentCriterias.beCompliant ||
-      !currentCriterias.logInRealTime ||
-      !currentCriterias.notTooManyChanges ||
-      !currentCriterias.validateRegularly
-    ) {
-      color = "warning";
-    } else {
-      color = "success";
-    }
-  }
-
-  return {
-    variant: "dot",
-    color
-  };
 }

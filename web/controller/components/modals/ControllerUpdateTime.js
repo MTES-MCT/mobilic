@@ -21,7 +21,6 @@ export default function ControllerUpdateTimeModal({
   open,
   handleClose,
   controlData,
-  setControlData,
   loadControlData
 }) {
   const api = useApi();
