@@ -195,6 +195,7 @@ function ActivityItem({
   nullableEndTimeInEditActivity,
   allowTeamMode,
   allowSupportActivity = false,
+  allowOtherTask = false,
   datetimeFormatter = formatTimeOfDay,
   activityEvents = [],
   shouldDisplayInitialEmployeeVersion = false,
@@ -213,7 +214,7 @@ function ActivityItem({
 
   const activityLabel = getActivityLabelDependingOnMissionType(
     activity.type,
-    allowSupportActivity
+    allowOtherTask
   );
 
   return (
@@ -313,6 +314,7 @@ function ActivityItem({
           onDispute={onDispute}
           onCancelDispute={onCancelDispute}
           isWithinCancelDelay={isWithinCancelDelay}
+          allowOtherTask={allowOtherTask}
         />
       )}
     </div>
@@ -328,6 +330,7 @@ export function ActivityList({
   teamChanges,
   allowTeamMode = false,
   allowSupportActivity = false,
+  allowOtherTask = false,
   nullableEndTimeInEditActivity,
   isMissionEnded,
   fromTime = null,
@@ -463,6 +466,7 @@ export function ActivityList({
               teamChanges={teamChanges}
               allowTeamMode={allowTeamMode}
               allowSupportActivity={allowSupportActivity}
+              allowOtherTask={allowOtherTask}
               nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
               key={activity.id ? "a" + activity.id : index}
               datetimeFormatter={datetimeFormatter}
@@ -488,7 +492,7 @@ export function ActivityList({
           datetimeFormatter={datetimeFormatter}
           width={ref.current.offsetWidth}
           activities={augmentedAndSortedActivities}
-          allowSupportActivity={allowSupportActivity}
+          allowOtherTask={allowOtherTask}
         />
       )}
       {hasActivitiesAfterMaxTime && (

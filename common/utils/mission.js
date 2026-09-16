@@ -150,21 +150,24 @@ export function computeMissionStats(m, users) {
   const userStats = mapValues(activitiesByUser, (activities, userId) => {
     const user = members.find(m => m.id.toString() === userId);
     const _activities = orderBy(activities, ["startTime", "endTime"]);
-    const isComplete = _activities.every(a => !!a.endTime);
-    const startTime = min(_activities.map(a => a.startTime));
-    const lastActivity = _activities[_activities.length - 1];
+    const _undismissed = _activities.filter(a => !a.dismissedAt);
+    const isComplete = _undismissed.every(a => !!a.endTime);
+    const startTime = min(_undismissed.map(a => a.startTime));
+    const lastActivity = _undismissed.length > 0
+      ? _undismissed[_undismissed.length - 1]
+      : _activities[_activities.length - 1];
     const lastActivityStartTime = lastActivity.startTime;
     const lastActivitySubmitterId = lastActivity.lastSubmitterId;
     const runningActivityStartTime = isComplete ? null : lastActivityStartTime;
-    const endTime = isComplete ? max(_activities.map(a => a.endTime)) : null;
+    const endTime = isComplete ? max(_undismissed.map(a => a.endTime)) : null;
     const endTimeOrNow = endTime || now1;
     const transferDuration = sum(
-      _activities
+      _undismissed
         .filter(a => a.type === ACTIVITIES.transfer.name)
         .map(a => (a.endTime || now1) - a.startTime)
     );
     const totalWorkDuration = sum(
-      _activities.map(a => (a.endTime || now1) - a.startTime)
+      _undismissed.map(a => (a.endTime || now1) - a.startTime)
     );
     return {
       activities: _activities,
@@ -176,7 +179,7 @@ export function computeMissionStats(m, users) {
       service: endTimeOrNow - startTime,
       totalWorkDuration: m.isHoliday ? 0 : totalWorkDuration - transferDuration,
       transferDuration,
-      isComplete: _activities.every(a => !!a.endTime),
+      isComplete: _undismissed.every(a => !!a.endTime),
       breakDuration: m.isHoliday
         ? 0
         : endTimeOrNow - startTime - totalWorkDuration,

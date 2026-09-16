@@ -14,10 +14,6 @@ import { makeStyles } from "@mui/styles";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Link } from "./LinkButton";
 import { useAdminStore, useAdminCompanies } from "../admin/store/store";
-import {
-  useCertificationInfo,
-  useShouldDisplayBadge
-} from "../admin/utils/certificationInfo";
 import { TextWithBadge } from "./TextWithBadge";
 import { ADMIN_ACTIONS } from "../admin/store/reducers/root";
 import { ControllerHeader } from "../controller/components/header/ControllerHeader";
@@ -30,6 +26,8 @@ import { Header } from "@codegouvfr/react-dsfr/Header";
 import { Select } from "@codegouvfr/react-dsfr/Select";
 import MobilicLogoWithText from "common/assets/images/mobilic-logo-with-text.svg";
 import { useIsWidthDown } from "common/utils/useWidth";
+import { useNewMissionFunnel } from "./hooks/useNewMissionFunnel";
+import { pluralizeEntrepriseLabel } from "common/utils/pluralize";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -79,8 +77,18 @@ const useStyles = makeStyles((theme) => ({
     padding: "0.75rem 1rem"
   },
   selectedNavListItem: {
+    position: "relative",
     color: fr.colors.decisions.text.active.blueFrance.default,
     fontWeight: 600,
+    "&:before": {
+      content: '""',
+      position: "absolute",
+      top: "0.75rem",
+      bottom: "0.75rem",
+      left: 0,
+      width: "2px",
+      backgroundColor: fr.colors.decisions.border.active.blueFrance.default
+    }
   },
   nestedListSubheader: {
     padding: "0.75rem 0",
@@ -163,22 +171,22 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies, isLastR
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
-  const shouldDisplayBadge = useShouldDisplayBadge();
-  const { companyWithInfo } = useCertificationInfo();
-  const badge = getBadgeRoutes(
-    useAdminStore(),
-    companyWithInfo,
-    shouldDisplayBadge
-  ).find((br) => br.path === route.path)?.badge;
+  const badge = getBadgeRoutes(useAdminStore()).find(
+    br => br.path === route.path
+  )?.badge;
 
   const selected = route.exact
     ? location.pathname === route.path
     : location.pathname.startsWith(route.path);
 
+  const adminCompaniesCount =
+    companies?.filter((c) => c.admin).length ?? 0;
+  const label = pluralizeEntrepriseLabel(route.label, adminCompaniesCount);
+
   return route.subRoutes ? (
     <>
       <section key={route.path + "subRoutes"} className={classes.navSections}>
-        <p className={classes.nestedListSubheader + " fr-text--md fr-mb-0"}>{route.label}</p>
+        <p className={classes.nestedListSubheader + " fr-text--md fr-mb-0"}>{label}</p>
         {route.subRoutes
           .filter(
             (subRoute) =>
@@ -191,6 +199,7 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies, isLastR
               route={{ ...subRoute, path: `${route.path}${subRoute.path}` }}
               closeDrawer={closeDrawer}
               isSubRoute={true}
+              companies={companies}
             />
           ))}
       </section>
@@ -227,7 +236,7 @@ export function ListRouteItem({ route, closeDrawer, userInfo, companies, isLastR
         }}
       >
         <TextWithBadge invisible={!badge} {...badge}>
-          {route.label}
+          {label}
         </TextWithBadge>
       </Link>
     </div>
@@ -250,6 +259,7 @@ export function NavigationMenu({ open, setOpen, fullScreen = false }) {
   }
 
   const { displayCurrentMission } = useStoreMissions();
+  const { onEnterNewMissionFunnel } = useNewMissionFunnel();
 
   const userName = formatPersonName(userInfo);
   const userEmail = userInfo?.email || "email non renseigné";
@@ -280,9 +290,18 @@ export function NavigationMenu({ open, setOpen, fullScreen = false }) {
                 iconPosition="left"
                 iconId={displayCurrentMission ? "fr-icon-play-circle-line" : "fr-icon-add-line"}
                 onClick={
-                  location.pathname === "/app"
-                    ? () => setOpen(false)
-                    : () => history.push("/app")
+                  displayCurrentMission
+                  ? () => (location.pathname === "/app" ? setOpen(false) : history.push("/app"))
+                  : () => {
+                      if (location.pathname.startsWith("/app")) {
+                        setOpen(false);
+                        onEnterNewMissionFunnel();
+                      } else {
+                        setOpen(false);
+                        history.push("/app");
+                        onEnterNewMissionFunnel();
+                      }
+                    }
                 }
                 className={classes.navItemButton}
               >

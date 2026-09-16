@@ -233,6 +233,7 @@ export const USER_QUERY = gql`
       hasActivatedEmail
       disabledWarnings
       admin
+      bizdev
       totpEnabled
       isImpersonated
       missions(fromTime: $activityAfter, includeDeletedMissions: true) {

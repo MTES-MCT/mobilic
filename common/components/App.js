@@ -1,7 +1,7 @@
 import React from "react";
 import values from "lodash/values";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
-import { ActionsContextProvider, useActions } from "common/utils/actions";
+import { useActions } from "common/utils/actions";
 import { History } from "../../web/pwa/screens/History";
 import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
 import { useApi } from "../utils/api";
@@ -98,7 +98,6 @@ function AppComponent({ ScreenComponent }) {
             currentMission={currentMission}
             pushNewTeamActivityEvent={actions.pushNewTeamActivityEvent}
             editActivityEvent={actions.editActivityEvent}
-            beginNewMission={actions.beginNewMission}
             endMissionForTeam={actions.endMissionForTeam}
             endMission={actions.endMission}
             cancelMission={actions.cancelMission}
@@ -122,12 +121,4 @@ function AppComponent({ ScreenComponent }) {
   );
 }
 
-function App(props) {
-  return (
-    <ActionsContextProvider>
-      <AppComponent {...props} />
-    </ActionsContextProvider>
-  );
-}
-
-export default App;
+export default AppComponent;

@@ -14,6 +14,7 @@ import { DriverResourcePage } from "../landing/ResourcePage/DriverResourcePage";
 import { RegulationPage } from "../landing/ResourcePage/RegulationPage";
 import { ResourcePage } from "../landing/ResourcePage/ResourcePage";
 import Accessibility from "../landing/accessibility";
+import SchemaPluriannuel from "../landing/schemaPluriannuel";
 import Compatibility from "../landing/compatibility";
 import { Certificate } from "../landing/certificate";
 // Import normal pour Navigation (pas de lazy loading pour éviter les problèmes Redux)
@@ -92,6 +93,7 @@ export const CONTROLLER_ROUTE_PREFIX = "/controller";
 const Admin = React.lazy(() => import("../admin/Admin"));
 const OAuth = React.lazy(() => import("../oauth/root"));
 const ImpersonationSearch = React.lazy(() => import("../support/ImpersonationSearch"));
+const NotificationsAdmin = React.lazy(() => import("../support/NotificationsAdmin"));
 
 // Wrapper pour encapsuler chaque composant lazy avec son propre Suspense
 function withSuspense(Component) {
@@ -153,7 +155,7 @@ export const ROUTES = [
       },
       {
         path: "/company",
-        label: "Entreprise(s)"
+        label: "Entreprise"
       },
       {
         path: "/activities",
@@ -223,6 +225,13 @@ export const ROUTES = [
     label: "Déclaration d'accessibilité",
     accessible: () => true,
     component: <Accessibility />,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/schema-pluriannuel",
+    label: "Schéma pluriannuel d'accessibilité",
+    accessible: () => true,
+    component: <SchemaPluriannuel />,
     menuItemFilter: () => false
   },
   {
@@ -448,6 +457,13 @@ export const ROUTES = [
     menuItemFilter: () => false
   },
   {
+    path: "/support/notifications",
+    label: "Notifications",
+    accessible: ({ userInfo }) => !!userInfo?.bizdev && !!userInfo?.totpEnabled,
+    component: withSuspense(NotificationsAdmin),
+    menuItemFilter: () => false
+  },
+  {
     path: "/home",
     label: "Mes informations",
     accessible: () => true,
@@ -457,12 +473,20 @@ export const ROUTES = [
   {
     label: "Support",
     path: "",
-    accessible: ({ userInfo }) => !!userInfo?.admin && !!userInfo?.totpEnabled,
-    menuItemFilter: ({ userInfo }) => !!userInfo?.admin && !!userInfo?.totpEnabled,
+    accessible: ({ userInfo }) =>
+      (!!userInfo?.admin || !!userInfo?.bizdev) && !!userInfo?.totpEnabled,
+    menuItemFilter: ({ userInfo }) =>
+      (!!userInfo?.admin || !!userInfo?.bizdev) && !!userInfo?.totpEnabled,
     subRoutes: [
       {
         path: "/support/impersonation",
-        label: "Accès au compte"
+        label: "Accès au compte",
+        accessible: ({ userInfo }) => !!userInfo?.admin && !!userInfo?.totpEnabled
+      },
+      {
+        path: "/support/notifications",
+        label: "Notifications",
+        accessible: ({ userInfo }) => !!userInfo?.bizdev && !!userInfo?.totpEnabled
       }
     ]
   },
@@ -551,11 +575,7 @@ export function isAccessible(path, storeData) {
   return ROUTES.find(r => path.startsWith(r.path)).accessible(storeData);
 }
 
-export function getBadgeRoutes(
-  adminStore,
-  companyWithCertificationInfo,
-  shouldDisplayBadge
-) {
+export function getBadgeRoutes(adminStore) {
   const pendingValidationCount = adminStore?.pendingValidationsCount ?? 0;
 
   const badgeRoutes = [
@@ -568,51 +588,5 @@ export function getBadgeRoutes(
     }
   ];
 
-  if (shouldDisplayBadge) {
-    const certificateBadge = getCertificateBadge(companyWithCertificationInfo);
-    if (certificateBadge) {
-      badgeRoutes.push({
-        path: "/admin/company",
-        badge: certificateBadge
-      });
-    }
-  }
-
   return badgeRoutes;
-}
-
-export function getCertificateBadge(companyWithCertificationInfo) {
-  let color = null;
-  if (companyWithCertificationInfo.hasNoActivity) {
-    color = "error";
-  } else if (
-    !companyWithCertificationInfo.currentCompanyCertification
-      ?.certificateCriterias?.creationTime
-  ) {
-    return null;
-  } else if (
-    !companyWithCertificationInfo.currentCompanyCertification?.isCertified
-  ) {
-    color = "error";
-  } else {
-    const currentCriterias =
-      companyWithCertificationInfo.currentCompanyCertification
-        .certificateCriterias;
-    if (
-      !currentCriterias.beActive ||
-      !currentCriterias.beCompliant ||
-      !currentCriterias.logInRealTime ||
-      !currentCriterias.notTooManyChanges ||
-      !currentCriterias.validateRegularly
-    ) {
-      color = "warning";
-    } else {
-      color = "success";
-    }
-  }
-
-  return {
-    variant: "dot",
-    color
-  };
 }

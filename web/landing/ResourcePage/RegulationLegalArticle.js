@@ -94,11 +94,17 @@ export const LEGAL_ARTICLES = {
       "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033020112/",
     code: CODES.work
   },
-  calendarWeek: {
-    name: "L.3122-1",
+  calendarWeekWorkRules: {
+    name: "L.3121-35",
     url:
-      "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006902494/2008-05-01",
+      "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033020345",
     code: CODES.work
+  },
+  calendarWeekTransportRules: {
+    name: "D.3312-37",
+    url:
+      "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033450307",
+    code: CODES.transports
   },
   longDistance: {
     name: "D.3312-36",

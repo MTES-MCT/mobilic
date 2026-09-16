@@ -17,7 +17,10 @@ import {
   isoFormatLocalDate,
   now
 } from "common/utils/time";
-import { formatLastActiveDate } from "common/utils/employeeStatus";
+import {
+  formatLastActiveDate,
+  NEVER_USED_MOBILIC_LABEL
+} from "common/utils/employeeStatus";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { loadEmploymentsData } from "../utils/employments";
 import { useLoadingScreen } from "common/utils/loading";
@@ -316,6 +319,15 @@ export function Employees({ company, containerRef }) {
           <Badge noIcon small className={classes.badgeDetache}>
             {"détaché".toUpperCase()}
           </Badge>
+        </Tooltip>
+      );
+    }
+    if (lastActiveAt === null){
+      return (
+        <Tooltip title={NEVER_USED_MOBILIC_LABEL}>
+          <WarningBadge className={classes.badgeCursor}>
+            {"inactif".toUpperCase()}
+          </WarningBadge>
         </Tooltip>
       );
     }

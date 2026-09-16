@@ -66,7 +66,8 @@ export function ContradictoryChanges({
   userId,
   cacheInStore,
   controlId = null,
-  titleProps = {}
+  titleProps = {},
+  allowOtherTask = false
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
@@ -180,7 +181,8 @@ export function ContradictoryChanges({
               {userChangesHistory.map(userChange => {
                 if (userChange.type === "DISPUTE") {
                   const activityLabel = getActivityLabelDependingOnMissionType(
-                    userChange._activityType
+                    userChange._activityType,
+                    allowOtherTask
                   );
                   const action = userChange._disputedAction || "la modification";
                   const text = `a contesté ${action} de l'activité ${activityLabel} (motif : "${userChange._disputeText}")`;
@@ -197,7 +199,7 @@ export function ContradictoryChanges({
                     />
                   );
                 }
-                const changes = getChangeIconAndText(userChange);
+                const changes = getChangeIconAndText(userChange, allowOtherTask);
                 const isSplit = isSplitEvent(userChange);
                 const context = userChange.type === "DELETE"
                   ? userChange.before?.dismissContext

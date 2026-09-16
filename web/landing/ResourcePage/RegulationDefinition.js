@@ -67,12 +67,17 @@ export const DEFINITIONS = {
     content: (
       <span>
         elle débute le lundi à 0 heure et se termine le dimanche à 24 heures
-        (article{" "}
+        (articles{" "}
         <RegulationLegalArticleLink
-          article={LEGAL_ARTICLES.calendarWeek}
+          article={LEGAL_ARTICLES.calendarWeekWorkRules}
           shortLabel
         />{" "}
-        du Code du travail).
+        du Code du travail et{" "}
+         <RegulationLegalArticleLink
+          article={LEGAL_ARTICLES.calendarWeekTransportRules}
+          shortLabel
+        />
+        {" "}du Code des transports).
       </span>
     )
   }
