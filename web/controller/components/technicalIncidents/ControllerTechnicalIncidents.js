@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { makeStyles } from "@mui/styles";
-import { Tag } from "@codegouvfr/react-dsfr/Tag";
 import { fr } from "@codegouvfr/react-dsfr";
 import { useHistory, useLocation } from "react-router-dom";
 import { MobilicHeader } from "../../../common/Header";
@@ -15,7 +14,8 @@ import { TECHNICAL_INCIDENTS_QUERY } from "common/utils/apiQueries/technicalInci
 import { TECHNICAL_INCIDENT_NATURE_LABELS } from "common/utils/technicalIncidents";
 import {
   textualPrettyFormatDayHour,
-  formatShortTimer
+  pluralize,
+  addZero
 } from "common/utils/time";
 import { ControllerControlBackButton } from "../utils/ControllerControlBackButton";
 
@@ -39,14 +39,26 @@ const useStyles = makeStyles(theme => ({
     color: fr.colors.decisions.text.mention.grey.default,
     marginTop: theme.spacing(0.5),
     marginBottom: theme.spacing(0.5)
+  },
+  nature: {
+    fontWeight: 500
   }
 }));
 
-function incidentDuration(incident) {
-  if (incident.endTime) {
-    return formatShortTimer(incident.endTime - incident.startTime);
+function formatIncidentDuration(incident) {
+  if (!incident.endTime) {
+    return "En cours";
   }
-  return "En cours";
+  const totalMinutes = Math.trunc((incident.endTime - incident.startTime) / 60);
+  const hours = Math.trunc(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  if (hours > 0 && minutes > 0) {
+    return `${hours}h${addZero(minutes)} min`;
+  }
+  if (hours > 0) {
+    return pluralize(hours, "heure");
+  }
+  return pluralize(minutes, "minute");
 }
 
 export function ControllerTechnicalIncidents() {
@@ -123,12 +135,12 @@ export function ControllerTechnicalIncidents() {
                   {textualPrettyFormatDayHour(incident.startTime, true)}
                 </Typography>
                 <Typography variant="body2" className={classes.duration}>
-                  {incidentDuration(incident)}
+                  {formatIncidentDuration(incident)}
                 </Typography>
-                <Tag>
+                <Typography variant="body2" className={classes.nature}>
                   {TECHNICAL_INCIDENT_NATURE_LABELS[incident.nature] ||
                     incident.nature}
-                </Tag>
+                </Typography>
                 {incident.description && (
                   <Typography variant="body2" sx={{ mt: 1 }}>
                     {incident.description}
