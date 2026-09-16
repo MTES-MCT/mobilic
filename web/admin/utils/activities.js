@@ -1,7 +1,7 @@
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { loadCompanyWorkDaysAndMissions } from "./loadCompaniesData";
 
-const WORK_DAYS_PAGE_SIZE = 10;
+const WORK_DAYS_PAGE_SIZE = 50;
 
 export async function loadActivitiesData({
   adminStore,
@@ -10,12 +10,11 @@ export async function loadActivitiesData({
   withLoadingScreen,
   minDate = adminStore.activitiesFilters.minDate,
   maxDate = adminStore.activitiesFilters.maxDate,
-  reset = true
+  reset = true,
 }) {
   const userId = adminStore.userId;
   const companyId = adminStore.companyId;
   if (userId && companyId) {
-
     const isSameRange =
       !reset &&
       adminStore.workDaysFetchRange?.minDate === minDate &&
@@ -31,21 +30,31 @@ export async function loadActivitiesData({
               minDate,
               maxDate,
               companyId,
-              { first: WORK_DAYS_PAGE_SIZE, after: isSameRange ? adminStore.workDaysPageInfo?.endCursor : null }
+              {
+                first: WORK_DAYS_PAGE_SIZE,
+                after: isSameRange
+                  ? adminStore.workDaysPageInfo?.endCursor
+                  : null,
+              },
             );
             adminStore.dispatch({
               type: ADMIN_ACTIONS.addWorkDays,
-              payload: { companiesPayload: companyData, minDate, maxDate, reset }
+              payload: {
+                companiesPayload: companyData,
+                minDate,
+                maxDate,
+                reset,
+              },
             });
             adminStore.dispatch({
               type: ADMIN_ACTIONS.addUsers,
-              payload: { companiesPayload: companyData }
+              payload: { companiesPayload: companyData },
             });
           },
           "load-company-data",
-          null
+          null,
         ),
-      { cacheKey: "loadActivities" + companyId }
+      { cacheKey: "loadActivities" + companyId },
     );
   }
 }
