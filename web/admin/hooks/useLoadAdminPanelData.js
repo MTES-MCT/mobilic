@@ -4,8 +4,8 @@ import { useLoadingScreen } from "common/utils/loading";
 import { useAdminStore } from "../store/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { loadActivitiesData } from "../utils/activities";
-import { loadEmploymentsData } from "../utils/employments";
-import { loadTeamsData } from "../utils/teams";
+import { useEnsureEmployments } from "./useEnsureEmployments";
+import { useEnsureTeams } from "./useEnsureTeams";
 
 // Loads the activities/employments/teams data needed by the admin panels
 export const useLoadAdminPanelData = () => {
@@ -13,6 +13,9 @@ export const useLoadAdminPanelData = () => {
   const alerts = useSnackbarAlerts();
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
+
+  useEnsureEmployments();
+  useEnsureTeams();
 
   React.useEffect(() => {
     async function loadActivities() {
@@ -25,18 +28,6 @@ export const useLoadAdminPanelData = () => {
     }
     if (adminStore.companyId && !adminStore.areMissionsActivitiesLoaded) {
       loadActivities();
-    }
-  }, [adminStore.companyId]);
-
-  React.useEffect(() => {
-    if (adminStore.companyId && !adminStore.areEmploymentsLoaded) {
-      loadEmploymentsData({ adminStore, alerts, api, withLoadingScreen });
-    }
-  }, [adminStore.companyId]);
-
-  React.useEffect(() => {
-    if (adminStore.companyId && !adminStore.areTeamsLoaded) {
-      loadTeamsData({ adminStore, alerts, api, withLoadingScreen });
     }
   }, [adminStore.companyId]);
 };

@@ -11,7 +11,6 @@ import { formatDay, isoFormatLocalDate } from "common/utils/time";
 import { formatPersonName } from "common/utils/coworkers";
 import { useAdminStore } from "../store/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import { useLoadingScreen } from "common/utils/loading";
 import uniqBy from "lodash/uniqBy";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import Notice from "../../common/Notice";
@@ -20,19 +19,20 @@ import {
   ALL_TEAMS_COMPANY_QUERY,
   DELETE_TEAM_MUTATION
 } from "common/utils/apiQueries/teams";
-import { loadEmploymentsData } from "../utils/employments";
+import { useEnsureEmployments } from "../hooks/useEnsureEmployments";
 
 export default function CompanyTeamsPanel({ company }) {
   const api = useApi();
   const modals = useModals();
   const adminStore = useAdminStore();
   const alerts = useSnackbarAlerts();
-  const withLoadingScreen = useLoadingScreen();
 
   const [teams, setTeams] = React.useState([]);
   const [loadingTeams, setLoadingTeams] = React.useState(false);
   const [displayNoAdminWarning, setDisplayNoAdminWarning] =
     React.useState(false);
+
+  useEnsureEmployments();
 
   React.useEffect(() => {
     const loadData = async () => {
@@ -45,12 +45,6 @@ export default function CompanyTeamsPanel({ company }) {
     };
     loadData();
   }, [company]);
-
-  React.useEffect(() => {
-    if (adminStore.companyId && !adminStore.areEmploymentsLoaded) {
-      loadEmploymentsData({ adminStore, alerts, api, withLoadingScreen });
-    }
-  }, [adminStore.companyId]);
 
   React.useEffect(() => {
     setDisplayNoAdminWarning(
