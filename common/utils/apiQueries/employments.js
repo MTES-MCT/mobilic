@@ -123,11 +123,13 @@ export const CHANGE_EMPLOYEE_BUSINESS_TYPE = gql`
   mutation changeEmployeeBusinessType(
     $employmentId: Int!
     $businessType: String!
+    $transportType: String!
   ) {
     employments {
       changeEmployeeBusinessType(
         employmentId: $employmentId
         businessType: $businessType
+        transportType: $transportType
       ) {
         teams {
           ...FullTeamData
