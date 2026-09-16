@@ -62,8 +62,8 @@ export const TECHNICAL_INCIDENT_NATURE_LABELS = {
 };
 
 // Incidents chevauchant la journée [dayStartUnix, dayEndUnix] (secondes).
-// La fin effective est fournie par l'API (fin réelle, ou fin forcée à +24h
-// pour un incident en cours).
+// La fin effective est fournie par l'API (fin réelle, ou l'instant présent
+// pour un incident encore en cours).
 export function incidentsOnDay(incidents, dayStartUnix, dayEndUnix) {
   if (!incidents) return [];
   return incidents.filter(

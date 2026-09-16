@@ -9,7 +9,6 @@ export const TECHNICAL_INCIDENT_FIELDS = `
   endTime
   description
   isOngoing
-  hasForcedEnd
   effectiveEndTime
 `;
 

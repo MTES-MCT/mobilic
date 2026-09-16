@@ -23,6 +23,7 @@ import {
 import {
   TECHNICAL_INCIDENTS_QUERY,
   CREATE_TECHNICAL_INCIDENT_MUTATION,
+  UPDATE_TECHNICAL_INCIDENT_MUTATION,
   RESOLVE_TECHNICAL_INCIDENT_MUTATION
 } from "common/utils/apiQueries/technicalIncident";
 import { prettyFormatDayHour } from "common/utils/time";
@@ -31,6 +32,18 @@ const MAX_DESCRIPTION = 2000;
 
 const toTimeStamp = value =>
   value ? Math.floor(new Date(value).getTime() / 1000) : null;
+
+// API returns the enum name (e.g. SERVER_DOWN); Select options use its value.
+const typeValue = t => (t ? t.toLowerCase() : "");
+
+const toDateTimeLocal = seconds => {
+  if (!seconds) return "";
+  const d = new Date(seconds * 1000);
+  const pad = n => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(
+    d.getDate()
+  )}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
 
 export default function TechnicalIncidentsAdmin() {
   usePageTitle("Support - Dysfonctionnements techniques - Mobilic");
@@ -45,6 +58,7 @@ export default function TechnicalIncidentsAdmin() {
   const [submitting, setSubmitting] = React.useState(false);
   const [result, setResult] = React.useState(null);
   const [incidents, setIncidents] = React.useState([]);
+  const [editingId, setEditingId] = React.useState(null);
 
   const userInfo = store.userInfo();
   const companies = store.companies();
@@ -83,31 +97,55 @@ export default function TechnicalIncidentsAdmin() {
 
   const canSubmit = technicalType && startTime;
 
+  const resetForm = () => {
+    setEditingId(null);
+    setTechnicalType("");
+    setStartTime("");
+    setEndTime("");
+    setDescription("");
+  };
+
   const handleSubmit = async () => {
     setSubmitting(true);
     setResult(null);
+    const variables = {
+      technicalType,
+      startTime: toTimeStamp(startTime),
+      endTime: toTimeStamp(endTime),
+      description: description.trim() || null
+    };
     try {
-      await api.graphQlMutate(
-        CREATE_TECHNICAL_INCIDENT_MUTATION,
-        {
-          technicalType,
-          startTime: toTimeStamp(startTime),
-          endTime: toTimeStamp(endTime),
-          description: description.trim() || null
-        },
-        { context: { nonPublicApi: true } }
-      );
+      if (editingId) {
+        await api.graphQlMutate(
+          UPDATE_TECHNICAL_INCIDENT_MUTATION,
+          { incidentId: editingId, ...variables },
+          { context: { nonPublicApi: true } }
+        );
+      } else {
+        await api.graphQlMutate(
+          CREATE_TECHNICAL_INCIDENT_MUTATION,
+          variables,
+          { context: { nonPublicApi: true } }
+        );
+      }
       setResult("success");
-      setTechnicalType("");
-      setStartTime("");
-      setEndTime("");
-      setDescription("");
+      resetForm();
       await loadIncidents();
     } catch (err) {
       setResult(err?.message || "error");
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const startEdit = incident => {
+    setEditingId(incident.id);
+    setTechnicalType(typeValue(incident.technicalType));
+    setStartTime(toDateTimeLocal(incident.startTime));
+    setEndTime(toDateTimeLocal(incident.endTime));
+    setDescription(incident.description || "");
+    setResult(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleResolve = async incident => {
@@ -129,20 +167,27 @@ export default function TechnicalIncidentsAdmin() {
   const tableData = incidents.map(incident => [
     prettyFormatDayHour(incident.startTime),
     incident.endTime ? prettyFormatDayHour(incident.endTime) : "En cours",
-    TECHNICAL_INCIDENT_TYPE_LABELS[incident.technicalType] ||
+    TECHNICAL_INCIDENT_TYPE_LABELS[typeValue(incident.technicalType)] ||
       incident.technicalType,
     TECHNICAL_INCIDENT_NATURE_LABELS[incident.nature] || incident.nature,
-    incident.endTime ? (
-      "—"
-    ) : (
+    <Box sx={{ display: "flex", gap: 1 }}>
       <Button
         size="small"
-        priority="secondary"
-        onClick={() => handleResolve(incident)}
+        priority="tertiary no outline"
+        onClick={() => startEdit(incident)}
       >
-        Clôturer
+        Modifier
       </Button>
-    )
+      {!incident.endTime && (
+        <Button
+          size="small"
+          priority="secondary"
+          onClick={() => handleResolve(incident)}
+        >
+          Clôturer
+        </Button>
+      )}
+    </Box>
   ]);
 
   return (
@@ -157,7 +202,9 @@ export default function TechnicalIncidentsAdmin() {
 
             <Box sx={{ padding: 3 }}>
               <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
-                Enregistrer un dysfonctionnement
+                {editingId
+                  ? "Modifier un dysfonctionnement"
+                  : "Enregistrer un dysfonctionnement"}
               </Typography>
 
               <Select
@@ -208,12 +255,23 @@ export default function TechnicalIncidentsAdmin() {
                 }}
               />
 
-              <Button
-                onClick={handleSubmit}
-                disabled={!canSubmit || submitting}
-              >
-                Enregistrer
-              </Button>
+              <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+                <Button
+                  onClick={handleSubmit}
+                  disabled={!canSubmit || submitting}
+                >
+                  {editingId ? "Mettre à jour" : "Enregistrer"}
+                </Button>
+                {editingId && (
+                  <Button
+                    priority="secondary"
+                    onClick={resetForm}
+                    disabled={submitting}
+                  >
+                    Annuler
+                  </Button>
+                )}
+              </Box>
 
               {result === "success" && (
                 <Box sx={{ mt: 2 }}>

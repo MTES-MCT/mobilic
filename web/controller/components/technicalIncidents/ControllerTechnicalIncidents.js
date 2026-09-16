@@ -46,9 +46,6 @@ function incidentDuration(incident) {
   if (incident.endTime) {
     return formatShortTimer(incident.endTime - incident.startTime);
   }
-  if (incident.hasForcedEnd) {
-    return textualPrettyFormatDayHour(incident.effectiveEndTime, true);
-  }
   return "En cours";
 }
 

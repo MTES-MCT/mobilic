@@ -324,7 +324,6 @@ export const CONTROL_DATA_FRAGMENT = gql`
       startTime
       endTime
       isOngoing
-      hasForcedEnd
       effectiveEndTime
     }
   }
