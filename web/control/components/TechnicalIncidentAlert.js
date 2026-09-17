@@ -1,6 +1,8 @@
 import React from "react";
-import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import Box from "@mui/material/Box";
 import { useHistory, useLocation } from "react-router-dom";
+import { fr } from "@codegouvfr/react-dsfr";
+import Notice from "../../common/Notice";
 import { prettyFormatDay } from "common/utils/time";
 
 // Alerts the controller that a known technical incident may have affected the
@@ -21,15 +23,19 @@ export function TechnicalIncidentAlert({ incidents }) {
   const target = `/controller/technical-incidents?returnTo=${returnTo}${anchor}`;
 
   return (
-    <Alert
-      severity="error"
+    <Notice
+      type="warning"
       title={`Des dysfonctionnements techniques ont affecté Mobilic le ${dates}`}
       description={
         <>
-          {`Les problèmes d'enregistrement de temps signalés peuvent être dus à
-          ces incidents. `}
+          <Box component="span" sx={{ display: "block" }}>
+            {`Les problèmes d'enregistrement de temps signalés peuvent être dus à
+            ces incidents.`}
+          </Box>
           <a
             href={target}
+            className={fr.cx("fr-notice__link")}
+            style={{ display: "inline-block", marginTop: "0.25rem" }}
             onClick={e => {
               e.preventDefault();
               history.push(target);

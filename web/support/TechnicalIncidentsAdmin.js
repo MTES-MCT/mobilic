@@ -170,7 +170,14 @@ export default function TechnicalIncidentsAdmin() {
     TECHNICAL_INCIDENT_TYPE_LABELS[typeValue(incident.technicalType)] ||
       incident.technicalType,
     TECHNICAL_INCIDENT_NATURE_LABELS[incident.nature] || incident.nature,
-    <Box sx={{ display: "flex", gap: 1 }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        gap: 1
+      }}
+    >
       <Button
         size="small"
         priority="tertiary no outline"
