@@ -318,6 +318,14 @@ export const CONTROL_DATA_FRAGMENT = gql`
     controlBulletin {
       locationLieu
     }
+    technicalIncidents {
+      id
+      nature
+      startTime
+      endTime
+      isOngoing
+      effectiveEndTime
+    }
   }
 `;
 

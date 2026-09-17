@@ -12,6 +12,7 @@ import { ControllerHistory } from "../controller/components/history/ControllerHi
 import { ControllerHome } from "../controller/components/home/ControllerHome";
 import { ControllerQRCodeNotRecognized } from "../controller/components/scanQRCode/ControllerQRCodeNotRecognized";
 import { ControllerScanQRCode } from "../controller/components/scanQRCode/ControllerScanQRCode";
+import { ControllerTechnicalIncidents } from "../controller/components/technicalIncidents/ControllerTechnicalIncidents";
 import Home from "../home/AccountInfo/AccountInfo";
 import { RedeemInvite } from "../home/RedeemInvite";
 import { AdminResourcePage } from "../landing/ResourcePage/AdminResourcePage";
@@ -100,6 +101,7 @@ const Admin = React.lazy(() => import("../admin/Admin"));
 const OAuth = React.lazy(() => import("../oauth/root"));
 const ImpersonationSearch = React.lazy(() => import("../support/ImpersonationSearch"));
 const NotificationsAdmin = React.lazy(() => import("../support/NotificationsAdmin"));
+const TechnicalIncidentsAdmin = React.lazy(() => import("../support/TechnicalIncidentsAdmin"));
 
 // Wrapper pour encapsuler chaque composant lazy avec son propre Suspense
 function withSuspense(Component) {
@@ -361,6 +363,13 @@ export const ROUTES = [
     menuItemFilter: () => false
   },
   {
+    path: CONTROLLER_ROUTE_PREFIX + "/technical-incidents",
+    label: "Dysfonctionnements techniques",
+    accessible: ({ controllerInfo }) => !!controllerInfo?.id,
+    component: <ControllerTechnicalIncidents />,
+    menuItemFilter: ({ controllerInfo }) => !!controllerInfo?.id
+  },
+  {
     path: CONTROLLER_ROUTE_PREFIX + "/scan_error",
     label: "Erreur de Scan QR Code",
     accessible: ({ controllerInfo }) => {
@@ -467,6 +476,14 @@ export const ROUTES = [
     label: "Notifications",
     accessible: ({ userInfo }) => !!userInfo?.bizdev && !!userInfo?.totpEnabled,
     component: withSuspense(NotificationsAdmin),
+    menuItemFilter: () => false
+  },
+  {
+    path: "/support/technical-incidents",
+    label: "Dysfonctionnements techniques",
+    accessible: ({ userInfo }) =>
+      (!!userInfo?.admin || !!userInfo?.bizdev) && !!userInfo?.totpEnabled,
+    component: withSuspense(TechnicalIncidentsAdmin),
     menuItemFilter: () => false
   },
   {
