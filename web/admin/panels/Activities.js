@@ -222,6 +222,9 @@ function ActivitiesPanel() {
     });
 
   const isFetchingMoreWorkDaysRef = React.useRef(false);
+  const [isLoadingMoreWorkDays, setIsLoadingMoreWorkDays] = React.useState(
+    false
+  );
   const loadMoreWorkDays = () => {
     if (
       isFetchingMoreWorkDaysRef.current ||
@@ -231,6 +234,7 @@ function ActivitiesPanel() {
       return;
     }
     isFetchingMoreWorkDaysRef.current = true;
+    setIsLoadingMoreWorkDays(true);
     loadActivitiesData({
       adminStore,
       alerts,
@@ -241,6 +245,7 @@ function ActivitiesPanel() {
       reset: false
     }).finally(() => {
       isFetchingMoreWorkDaysRef.current = false;
+      setIsLoadingMoreWorkDays(false);
     });
   };
 
@@ -608,6 +613,7 @@ function ActivitiesPanel() {
           showMissionName={adminStore.settings.requireMissionName}
           loading={loading}
           onLoadMore={loadMoreWorkDays}
+          isLoadingMore={isLoadingMoreWorkDays}
         />
         <Drawer
           anchor="right"

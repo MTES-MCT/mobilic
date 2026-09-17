@@ -26,6 +26,8 @@ import {
 import { RunningTag, ToValidateTag, ValidatedTag, WaitingTag, DeletedTag, AllValidatedTag } from "../drawers/Tags";
 import { MISSION_STATUS, computeMissionStatus } from "../utils/missionsStatus";
 import { MissionStatusTagBtn } from "./MissionStatusTagBtn";
+import CircularProgress from "@mui/material/CircularProgress";
+import { fr } from "@codegouvfr/react-dsfr";
 
 const useStyles = makeStyles((theme) => ({
   expenditures: {
@@ -36,8 +38,17 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(2),
     paddingRight: theme.spacing(4),
     paddingLeft: theme.spacing(4)
+  },
+  loadMoreIndicator: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: theme.spacing(1),
+    padding: theme.spacing(2)
   }
 }));
+
+const LOAD_MORE_ROW_THRESHOLD = 15;
 
 const InfractionsWaiting = ({ tooltipTitle }) => (
   <Tooltip title={tooltipTitle}>
@@ -380,7 +391,8 @@ export function WorkTimeTable({
   showMissionName,
   showExpenditures,
   loading,
-  onLoadMore
+  onLoadMore,
+  isLoadingMore
 }) {
   const { openWorkday } = useDayDrawer();
   const openMission = useMissionDrawer()[1];
@@ -535,7 +547,7 @@ export function WorkTimeTable({
         onRowsRendered={
           onLoadMore &&
           (({ stopIndex, totalCount }) => {
-            if (stopIndex >= totalCount - 1) {
+            if (stopIndex >= totalCount - LOAD_MORE_ROW_THRESHOLD) {
               onLoadMore();
             }
           })
@@ -551,6 +563,13 @@ export function WorkTimeTable({
         }}
         loading={loading}
       />
+
+      {isLoadingMore && (
+        <div className={classes.loadMoreIndicator}>
+          <CircularProgress size="2rem" sx={{ color: fr.colors.decisions.artwork.major.blueFrance.default }} />
+          <span>Chargement…</span>
+        </div>
+      )}
     </>
   );
 }
