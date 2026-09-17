@@ -28,6 +28,7 @@ import { MISSION_STATUS, computeMissionStatus } from "../utils/missionsStatus";
 import { MissionStatusTagBtn } from "./MissionStatusTagBtn";
 import CircularProgress from "@mui/material/CircularProgress";
 import { fr } from "@codegouvfr/react-dsfr";
+import { getThresholds, getThresholdDisplay } from "../utils/weeklyThresholds";
 
 const useStyles = makeStyles((theme) => ({
   expenditures: {
@@ -49,6 +50,19 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const LOAD_MORE_ROW_THRESHOLD = 15;
+
+const ThresholdValue = ({ value, formatted, thresholdKey, thresholds }) => {
+  const display = getThresholdDisplay(value, thresholdKey, thresholds);
+  if (!display) return formatted;
+  return (
+    <Tooltip title={display.tooltip}>
+      <span style={{ color: display.color }}>
+        <span className={cx("fr-icon--sm", display.icon)} aria-hidden="true" />{" "}
+        {formatted}
+      </span>
+    </Tooltip>
+  );
+};
 
 const InfractionsWaiting = ({ tooltipTitle }) => (
   <Tooltip title={tooltipTitle}>
@@ -401,6 +415,7 @@ export function WorkTimeTable({
   const { trackEvent } = useMatomo();
 
   const classes = useStyles();
+  const thresholds = getThresholds(adminStore.weeklyThresholds);
 
   let periodLabel, periodFormatter;
   if (period === "day") {
@@ -486,7 +501,7 @@ export function WorkTimeTable({
   const workedDaysCol = {
     label: "Jours travaillés",
     name: "workedDays",
-    minWidth: 150
+    minWidth: 120
   };
   const missionNamesCol = {
     label: "Mission(s)",
@@ -509,12 +524,28 @@ export function WorkTimeTable({
       statusCol,
     ];
   } else {
+    const withThreshold = period === "week";
+    const restCol = {
+      label: "Repos",
+      name: "maxConsecutiveRest",
+      align: "center",
+      minWidth: 120,
+      flexGrow: 0,
+      format: (v) => v != null ? formatTimer(v, false) : null
+    };
+    const formatWithAlert = (key, formatter) => (v) =>
+      v != null ? ThresholdValue({ value: v, formatted: formatter(v), thresholdKey: key, thresholds }) : null;
+    const withAlert = (col, key, formatter) => withThreshold
+      ? { ...col, format: formatWithAlert(key, formatter) }
+      : col;
+
     columns = [
       employeeCol,
       dailyInfractionsCol,
       weeklyInfractionsCol,
-      workTimeCol,
-      workedDaysCol,
+      withAlert(workTimeCol, "work", formatTimer),
+      withAlert(restCol, "rest", (v) => formatTimer(v, false)),
+      withAlert(workedDaysCol, "workedDays", (v) => v),
       showExpenditures && expenditureCol
     ];
   }

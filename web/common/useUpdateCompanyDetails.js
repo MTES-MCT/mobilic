@@ -33,6 +33,13 @@ export const useUpdateCompanyDetails = (
     [newCompanyBusinessType, adminStore.business?.businessType, adminStore.business?.transportType]
   );
 
+  const isBusinessTypeComplete = React.useMemo(
+    () =>
+      !newCompanyBusinessType?.transportType ||
+      !!newCompanyBusinessType?.businessType,
+    [newCompanyBusinessType]
+  );
+
   const updateCompanyDetails = async (applyBusinessTypeToEmployees) => {
     await alerts.withApiErrorHandling(async () => {
       const apiResponse = await api.graphQlMutate(
@@ -108,6 +115,7 @@ export const useUpdateCompanyDetails = (
     setNewCompanyPhoneNumber,
     setNewCompanyBusinessType,
     hasBusinessTypeChanged,
+    isBusinessTypeComplete,
     updateCompanyDetails,
     newCompanyBusinessType,
     newNbWorkers,

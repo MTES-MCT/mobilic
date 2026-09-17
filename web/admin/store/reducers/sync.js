@@ -148,6 +148,7 @@ export function updateCompanyDetailsReducer(
     pendingValidationsCount:
       companiesPayload[0].dashboardSummary?.pendingValidationsCount || 0,
     areCompanyEssentialsLoaded: true,
+    weeklyThresholds: companiesPayload[0].weeklyThresholds || null,
     business: companiesPayload[0].business || {
       businessType: "",
       transportType: ""

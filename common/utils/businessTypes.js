@@ -23,6 +23,7 @@ export const BUSINESS_TYPES = Object.entries(
 ).flatMap(([transportType, businessTypes]) =>
   Object.entries(businessTypes).map(([value, label]) => ({
     value,
+    transportType,
     label: `${transportType} - ${label}`
   }))
 );
