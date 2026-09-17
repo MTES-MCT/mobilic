@@ -22,23 +22,23 @@ export const PRETTY_LABELS = {
   not_enough_break: "Temps de pause",
   too_much_uninterrupted_work_time: "Durée maximale de travail ininterrompu",
   maximumWorkDayTime: "Durée du travail quotidien",
-  maximumNightWorkDayTime: "Durée du travail de nuit"
+  maximumNightWorkDayTime: "Durée du travail de nuit",
 };
 
 const useStyles = makeStyles((theme) => ({
   title: {
     color: fr.colors.decisions.text.actionHigh.grey.default,
     fontSize: "1.25rem",
-    fontWeight: 700
+    fontWeight: 700,
   },
   description: {
     fontSize: "0.875rem",
-    color: fr.colors.decisions.text.mention.grey.default
+    color: fr.colors.decisions.text.mention.grey.default,
   },
   linkButton: {
     textDecoration: "underline",
-    textUnderlineOffset: "6px"
-  }
+    textUnderlineOffset: "6px",
+  },
 }));
 
 const DisplayAlerts = (alerts, onClickDay, uniqueUserId) => {
@@ -51,7 +51,7 @@ const DisplayAlerts = (alerts, onClickDay, uniqueUserId) => {
           <Box
             key={`alerts__${alerts.alertsType}_${uniqueUserId || ""}`}
             className={classNames("alerts-summary", {
-              expandable: alerts.dayDetails && alerts.dayDetails.length > 0
+              expandable: alerts.dayDetails && alerts.dayDetails.length > 0,
             })}
           >
             <Accordion
@@ -68,7 +68,7 @@ const DisplayAlerts = (alerts, onClickDay, uniqueUserId) => {
                     severity={alerts.nbAlerts === 0 ? "success" : "warning"}
                     style={{
                       marginRight:
-                        uniqueUserId && alerts.nbAlerts === 0 ? "15px" : ""
+                        uniqueUserId && alerts.nbAlerts === 0 ? "15px" : "",
                     }}
                   >
                     {alerts.nbAlerts === 0
@@ -81,11 +81,10 @@ const DisplayAlerts = (alerts, onClickDay, uniqueUserId) => {
               {alerts.dayDetails && alerts.dayDetails.length > 0 && (
                 <Stack direction="column" rowGap={1}>
                   {alerts.dayDetails.map((detail) => {
-                    const [firstName, ...lastNameParts] = detail.userName.split(
-                      " "
-                    );
+                    const [firstName, ...lastNameParts] =
+                      detail.userName.split(" ");
                     const formatedName = `${lastNameParts.join(
-                      " "
+                      " ",
                     )} ${firstName}`;
                     return (
                       <Button
@@ -120,7 +119,7 @@ export const AlertsRecap = ({ ...otherProps }) => {
   const adminStore = useAdminStore();
   const onClickDay = async (day, userId) => {
     let workTimeEntries = adminStore.workDays.filter(
-      (wd) => wd.day === day && wd.user.id === userId
+      (wd) => wd.day === day && wd.user.id === userId,
     );
 
     if (workTimeEntries.length === 0) {
@@ -130,15 +129,17 @@ export const AlertsRecap = ({ ...otherProps }) => {
           adminId: adminStore.userId,
           day,
           userId,
-          companyId: adminStore.companyId
+          companyId: adminStore.companyId,
         },
         {
-          fetchPolicy: "cache-first"
-        }
+          fetchPolicy: "cache-first",
+        },
       );
-      workTimeEntries = [
-        resPayload.data.user.adminedCompanies[0].workDays.edges[0].node
-      ];
+      const entry =
+        resPayload.data.user.adminedCompanies[0].workDays.edges.filter(
+          (e) => e.node.day === day,
+        );
+      workTimeEntries = [entry[0].node];
     }
 
     const aggregates = aggregateWorkDayPeriods(workTimeEntries, "day");
