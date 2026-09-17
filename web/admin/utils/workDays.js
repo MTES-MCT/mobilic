@@ -6,7 +6,26 @@ import {
 } from "common/utils/time";
 import uniq from "lodash/uniq";
 
-function computeWorkDayGroupAggregates(workDayGroup) {
+function getDaysInMonth(timestamp) {
+  const date = new Date(timestamp * 1000);
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+}
+
+function computeMaxConsecutiveRest(workDayGroup, periodStart, periodDurationDays) {
+  if (workDayGroup.length === 0) return null;
+  workDayGroup.sort((a, b) => a.startTime - b.startTime);
+  const periodEnd = periodStart + periodDurationDays * 24 * 3600;
+  let maxRest = workDayGroup[0].startTime - periodStart;
+  for (let i = 1; i < workDayGroup.length; i++) {
+    const gap = workDayGroup[i].startTime - workDayGroup[i - 1].endTime;
+    if (gap > maxRest) maxRest = gap;
+  }
+  const gapAfterLast = periodEnd - workDayGroup[workDayGroup.length - 1].endTime;
+  if (gapAfterLast > maxRest) maxRest = gapAfterLast;
+  return maxRest;
+}
+
+function computeWorkDayGroupAggregates(workDayGroup, periodDurationDays) {
   const aggregateTimers = {};
   const aggregateExpenditures = {};
   let serviceDuration = 0;
@@ -41,9 +60,15 @@ function computeWorkDayGroupAggregates(workDayGroup) {
     weeklyAlerts =
       weeklyAlerts + (wd.regulationComputations?.nbAlertsWeeklyAdmin || 0);
   });
+  const user = workDayGroup[0].user;
+  const periodStart = workDayGroup[0].periodStart;
+  const lastActivityStartTime = workDayGroup[0].lastActivityStartTime;
+  const maxConsecutiveRest = maxEndTime
+    ? computeMaxConsecutiveRest(workDayGroup, periodStart, periodDurationDays)
+    : null;
   return {
-    user: workDayGroup[0].user,
-    periodStart: workDayGroup[0].periodStart,
+    user,
+    periodStart,
     periodActualStart: minStartTime,
     periodActualEnd: maxEndTime,
     workedDays: workDayGroup.length,
@@ -53,6 +78,7 @@ function computeWorkDayGroupAggregates(workDayGroup) {
     rest: maxEndTime
       ? serviceDuration - totalWorkDuration - transferDuration - offDuration
       : null,
+    maxConsecutiveRest,
     timers: aggregateTimers,
     companyIds: uniq(workDayGroup.map((wd) => wd.companyId)),
     missionNames: workDayGroup.reduce(
@@ -60,7 +86,7 @@ function computeWorkDayGroupAggregates(workDayGroup) {
       {}
     ),
     expenditureAggs: aggregateExpenditures,
-    lastActivityStartTime: workDayGroup[0].lastActivityStartTime,
+    lastActivityStartTime,
     dailyAlerts,
     weeklyAlerts
   };
@@ -86,7 +112,10 @@ export function aggregateWorkDayPeriods(workDays, period) {
   const flatAggregatedWorkDays = Object.values(
     workDaysGroupedByUserAndPeriod
   ).map((group) => {
-    const aggregateMetrics = computeWorkDayGroupAggregates(group);
+    const periodDays = period === "month"
+      ? getDaysInMonth(group[0].periodStart)
+      : 7;
+    const aggregateMetrics = computeWorkDayGroupAggregates(group, periodDays);
     return period === "day"
       ? { ...group[0], ...aggregateMetrics }
       : aggregateMetrics;
