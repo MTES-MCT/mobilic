@@ -36,9 +36,3 @@ export function clearUserIdCookie() {
 export function clearControllerIdCookie() {
   document.cookie = "controllerId=;secure;";
 }
-
-export function hasGoogleAdsConsent() {
-  const axeptioData = readCookie("axeptio_authorized_vendors");
-  if (!axeptioData) return false;
-  return axeptioData.includes("google_ads");
-}
