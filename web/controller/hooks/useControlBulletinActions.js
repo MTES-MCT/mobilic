@@ -81,19 +81,20 @@ export function useControlBulletinActions({
   );
 
   const handleSend = React.useCallback(
-    async (adminEmails = null) => {
+    async (emails = null, forAdmin=false) => {
       setIsLoading(true);
       let success = false;
-
       try {
         await alerts.withApiErrorHandling(async () => {
           const variables = {
-            controlId: controlId.toString()
+            controlId: controlId.toString(),
           };
 
-          if (adminEmails) {
-            variables.adminEmails = adminEmails;
+          if (emails) {
+            variables.emails = emails;
           }
+
+          variables.forAdmin = forAdmin;
 
           const response = await api.graphQlMutate(
             SEND_CONTROL_BULLETIN_EMAIL_MUTATION,
@@ -110,15 +111,24 @@ export function useControlBulletinActions({
             if (onControlDataUpdate) {
               onControlDataUpdate((prevData) => ({
                 ...prevData,
-                sentToAdmin: true
+                sentToAdmin: forAdmin ? true : prevData?.sentToAdmin,
+                sentToDriver: !forAdmin ? true : prevData?.sentToDriver
               }));
             }
 
-            alerts.success(
-              `Bulletin de contrôle envoyé avec succès à ${nbEmailsSent} gestionnaire(s)`,
-              "",
-              6000
-            );
+            if (forAdmin) {
+              alerts.success(
+                `Bulletin de contrôle envoyé avec succès à ${nbEmailsSent} gestionnaire(s)`,
+                "",
+                6000
+              );
+            } else {
+              alerts.success(
+                `Bulletin de contrôle envoyé avec succès au conducteur`,
+                "",
+                6000
+              );
+            }
           }
         }, "send-control-bulletin");
       } finally {

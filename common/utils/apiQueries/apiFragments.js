@@ -320,6 +320,7 @@ export const CONTROL_DATA_FRAGMENT = gql`
     nbReportedInfractions
     deliveredByHand
     sentToAdmin
+    sentToDriver
     controlBulletin {
       locationLieu
     }
