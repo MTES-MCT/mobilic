@@ -10,6 +10,7 @@ import { useApi } from "common/utils/api";
 import { useAdminStore } from "../../store/store";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useModals } from "common/utils/modals";
+import { useEnsureEmployments } from "../../hooks/useEnsureEmployments";
 import List from "@mui/material/List";
 import { formatApiError } from "common/utils/errors";
 import { editUserExpenditures } from "common/utils/expenditures";
@@ -137,7 +138,7 @@ export function MissionDetails({
       (mission.missionTooOld ||
         mission.missionNotUpdatedForTooLong ||
         missionCreatedByAdmin(mission, adminStore.employments)),
-    [mission]
+    [mission, adminStore.employments]
   );
 
   const globalFieldsEditable = React.useMemo(
@@ -168,6 +169,8 @@ export function MissionDetails({
     setOverrideValidationJustification("");
     setLoading(false);
   };
+
+  useEnsureEmployments();
 
   React.useEffect(() => {
     if (missionId) loadMission();

@@ -1,11 +1,5 @@
 import React from "react";
 import { Redirect, useParams } from "react-router-dom";
-import groupBy from "lodash/groupBy";
-import size from "lodash/size";
-import {
-  entryToBeValidatedByAdmin,
-  missionsToTableEntries
-} from "../admin/selectors/validationEntriesSelectors";
 import { UserRead } from "../control/UserRead";
 import { XlsxVerifier } from "../control/VerifyXlsxSignature";
 import { ControllerHistory } from "../controller/components/history/ControllerHistory";
@@ -582,15 +576,13 @@ export function isAccessible(path, storeData) {
 }
 
 export function getBadgeRoutes(adminStore) {
-  const entries = missionsToTableEntries(adminStore).filter(entry =>
-    entryToBeValidatedByAdmin(entry, adminStore?.userId)
-  );
+  const pendingValidationCount = adminStore?.pendingValidationsCount ?? 0;
 
   const badgeRoutes = [
     {
       path: "/admin/validations",
       badge: {
-        badgeContent: size(groupBy(entries, "missionId")),
+        badgeContent: pendingValidationCount,
         color: "error"
       }
     }

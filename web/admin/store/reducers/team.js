@@ -86,6 +86,11 @@ export function updateTeamsReducer(state, { teams, employments }) {
       teams: usersAndTeamsFilters.validationsFilters.teams,
       users: usersAndTeamsFilters.validationsFilters.users,
     },
+    exportFilters: {
+      ...state.exportFilters,
+      teams: usersAndTeamsFilters.exportFilters.teams,
+      users: usersAndTeamsFilters.exportFilters.users,
+    },
   };
 }
 
