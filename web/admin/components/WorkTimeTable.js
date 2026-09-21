@@ -402,7 +402,7 @@ export function WorkTimeTable({
   const { trackEvent } = useMatomo();
 
   const classes = useStyles();
-  const thresholds = getThresholds(adminStore.weeklyThresholds);
+  const thresholdsByUserId = adminStore.weeklyThresholdsByUserId || {};
 
   let periodLabel, periodFormatter;
   if (period === "day") {
@@ -520,8 +520,18 @@ export function WorkTimeTable({
       flexGrow: 0,
       format: (v) => v != null ? formatTimer(v, false) : null
     };
-    const formatWithAlert = (key, formatter) => (v) =>
-      v != null ? ThresholdValue({ value: v, formatted: formatter(v), thresholdKey: key, thresholds }) : null;
+    const formatWithAlert = (key, formatter) => (v, row) => {
+      if (v == null) return null;
+      const userThresholds = getThresholds(
+        thresholdsByUserId[row?.user?.id] || adminStore.weeklyThresholds
+      );
+      return ThresholdValue({
+        value: v,
+        formatted: formatter(v),
+        thresholdKey: key,
+        thresholds: userThresholds
+      });
+    };
     const withAlert = (col, key, formatter) => withThreshold
       ? { ...col, format: formatWithAlert(key, formatter) }
       : col;
