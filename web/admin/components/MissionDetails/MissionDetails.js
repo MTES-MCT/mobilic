@@ -169,7 +169,7 @@ export function MissionDetails({
     setLoading(false);
   };
 
-  useEnsureEmployments();
+  useEnsureEmployments(!!missionId);
 
   React.useEffect(() => {
     if (missionId) loadMission();
