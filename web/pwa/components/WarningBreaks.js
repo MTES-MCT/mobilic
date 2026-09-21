@@ -26,7 +26,7 @@ export const WarningBreaks = ({ dismissKey }) => {
       title="Pensez à respecter le temps de pause obligatoire lors de votre prochaine mission afin de respecter la réglementation !"
       link={{
         linkProps: {
-          href: "https://mobilic.beta.gouv.fr/resources/regulations",
+          href: "https://mobilic.beta.gouv.fr/resources/regulations?regle=pause-et-repos-quotidiens",
           style: {
             display: "flex",
             alignItems: "center",
