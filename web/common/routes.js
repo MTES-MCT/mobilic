@@ -510,6 +510,12 @@ export const ROUTES = [
         path: "/support/notifications",
         label: "Notifications",
         accessible: ({ userInfo }) => !!userInfo?.bizdev && !!userInfo?.totpEnabled
+      },
+      {
+        path: "/support/technical-incidents",
+        label: "Dysfonctionnements techniques",
+        accessible: ({ userInfo }) =>
+          (!!userInfo?.admin || !!userInfo?.bizdev) && !!userInfo?.totpEnabled
       }
     ]
   },

@@ -23,8 +23,7 @@ import {
 import {
   TECHNICAL_INCIDENTS_QUERY,
   CREATE_TECHNICAL_INCIDENT_MUTATION,
-  UPDATE_TECHNICAL_INCIDENT_MUTATION,
-  RESOLVE_TECHNICAL_INCIDENT_MUTATION
+  UPDATE_TECHNICAL_INCIDENT_MUTATION
 } from "common/utils/apiQueries/technicalIncident";
 import { prettyFormatDayHour } from "common/utils/time";
 
@@ -32,9 +31,6 @@ const MAX_DESCRIPTION = 2000;
 
 const toTimeStamp = value =>
   value ? Math.floor(new Date(value).getTime() / 1000) : null;
-
-// API returns the enum name (e.g. SERVER_DOWN); Select options use its value.
-const typeValue = t => (t ? t.toLowerCase() : "");
 
 const toDateTimeLocal = seconds => {
   if (!seconds) return "";
@@ -140,7 +136,7 @@ export default function TechnicalIncidentsAdmin() {
 
   const startEdit = incident => {
     setEditingId(incident.id);
-    setTechnicalType(typeValue(incident.technicalType));
+    setTechnicalType(incident.technicalType);
     setStartTime(toDateTimeLocal(incident.startTime));
     setEndTime(toDateTimeLocal(incident.endTime));
     setDescription(incident.description || "");
@@ -148,10 +144,10 @@ export default function TechnicalIncidentsAdmin() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleResolve = async incident => {
+  const handleClose = async incident => {
     try {
       await api.graphQlMutate(
-        RESOLVE_TECHNICAL_INCIDENT_MUTATION,
+        UPDATE_TECHNICAL_INCIDENT_MUTATION,
         {
           incidentId: incident.id,
           endTime: Math.floor(Date.now() / 1000)
@@ -164,10 +160,26 @@ export default function TechnicalIncidentsAdmin() {
     }
   };
 
+  const handleReopen = async incident => {
+    try {
+      await api.graphQlMutate(
+        UPDATE_TECHNICAL_INCIDENT_MUTATION,
+        {
+          incidentId: incident.id,
+          reopen: true
+        },
+        { context: { nonPublicApi: true } }
+      );
+      await loadIncidents();
+    } catch {
+      setResult("error");
+    }
+  };
+
   const tableData = incidents.map(incident => [
     prettyFormatDayHour(incident.startTime),
     incident.endTime ? prettyFormatDayHour(incident.endTime) : "En cours",
-    TECHNICAL_INCIDENT_TYPE_LABELS[typeValue(incident.technicalType)] ||
+    TECHNICAL_INCIDENT_TYPE_LABELS[incident.technicalType] ||
       incident.technicalType,
     TECHNICAL_INCIDENT_NATURE_LABELS[incident.nature] || incident.nature,
     <Box
@@ -185,11 +197,19 @@ export default function TechnicalIncidentsAdmin() {
       >
         Modifier
       </Button>
-      {!incident.endTime && (
+      {incident.endTime ? (
         <Button
           size="small"
           priority="secondary"
-          onClick={() => handleResolve(incident)}
+          onClick={() => handleReopen(incident)}
+        >
+          Rouvrir
+        </Button>
+      ) : (
+        <Button
+          size="small"
+          priority="secondary"
+          onClick={() => handleClose(incident)}
         >
           Clôturer
         </Button>

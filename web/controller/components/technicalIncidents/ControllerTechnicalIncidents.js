@@ -10,12 +10,11 @@ import { Main } from "../../../common/semantics/Main";
 import { usePageTitle } from "../../../common/UsePageTitle";
 import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
-import { TECHNICAL_INCIDENTS_QUERY } from "common/utils/apiQueries/technicalIncident";
+import { CONTROLLER_TECHNICAL_INCIDENTS_QUERY } from "common/utils/apiQueries/technicalIncident";
 import { TECHNICAL_INCIDENT_NATURE_LABELS } from "common/utils/technicalIncidents";
 import {
   textualPrettyFormatDayHour,
-  pluralize,
-  addZero
+  formatLongTimer
 } from "common/utils/time";
 import { ControllerControlBackButton } from "../utils/ControllerControlBackButton";
 
@@ -29,36 +28,42 @@ const useStyles = makeStyles(theme => ({
   incident: {
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
-    borderTop: `1px solid ${fr.colors.decisions.border.default.grey.default}`
+    borderTop: `1px solid ${fr.colors.decisions.border.default.grey.default}`,
+    [theme.breakpoints.up("md")]: {
+      display: "flex",
+      alignItems: "center"
+    }
   },
   date: {
     color: fr.colors.decisions.text.actionHigh.blueFrance.default,
-    fontWeight: 700
+    fontWeight: 700,
+    [theme.breakpoints.up("md")]: {
+      flex: "0 0 40%"
+    }
   },
   duration: {
     color: fr.colors.decisions.text.mention.grey.default,
     marginTop: theme.spacing(0.5),
-    marginBottom: theme.spacing(0.5)
+    marginBottom: theme.spacing(0.5),
+    [theme.breakpoints.up("md")]: {
+      flex: "0 0 25%",
+      marginTop: 0,
+      marginBottom: 0
+    }
   },
   nature: {
-    fontWeight: 500
+    fontWeight: 500,
+    [theme.breakpoints.up("md")]: {
+      flex: "0 0 35%"
+    }
   }
 }));
 
 function formatIncidentDuration(incident) {
-  if (!incident.endTime) {
+  if (incident.isOngoing) {
     return "En cours";
   }
-  const totalMinutes = Math.trunc((incident.endTime - incident.startTime) / 60);
-  const hours = Math.trunc(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  if (hours > 0 && minutes > 0) {
-    return `${hours}h${addZero(minutes)} min`;
-  }
-  if (hours > 0) {
-    return pluralize(hours, "heure");
-  }
-  return pluralize(minutes, "minute");
+  return formatLongTimer(incident.effectiveEndTime - incident.startTime);
 }
 
 export function ControllerTechnicalIncidents() {
@@ -76,17 +81,19 @@ export function ControllerTechnicalIncidents() {
   const returnTo =
     rawReturnTo && /^\/(?!\/)/.test(rawReturnTo) ? rawReturnTo : null;
 
-  // Fetch once on mount: withLoadingScreen/api change identity on every render,
-  // adding them as deps would loop the request.
-  React.useEffect(() => {
-    withLoadingScreen(async () => {
+  const loadIncidents = React.useCallback(async () => {
+    await withLoadingScreen(async () => {
       const response = await api.graphQlQuery(
-        TECHNICAL_INCIDENTS_QUERY,
+        CONTROLLER_TECHNICAL_INCIDENTS_QUERY,
         {},
         { context: { nonPublicApi: true } }
       );
       setIncidents(response.data.technicalIncidents || []);
     });
+  }, [api, withLoadingScreen]);
+
+  React.useEffect(() => {
+    loadIncidents();
   }, []);
 
   // Scroll to the anchored incident once the list is loaded.
@@ -141,11 +148,6 @@ export function ControllerTechnicalIncidents() {
                   {TECHNICAL_INCIDENT_NATURE_LABELS[incident.nature] ||
                     incident.nature}
                 </Typography>
-                {incident.description && (
-                  <Typography variant="body2" sx={{ mt: 1 }}>
-                    {incident.description}
-                  </Typography>
-                )}
               </Box>
             ))
           )}

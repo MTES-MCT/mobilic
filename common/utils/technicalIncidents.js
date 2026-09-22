@@ -51,7 +51,7 @@ export const TECHNICAL_INCIDENT_TYPE_LABELS = Object.fromEntries(
   )
 );
 
-// Nature regroupée affichée au contrôleur (dérivée côté API depuis le type).
+// Grouped nature shown to the controller (derived from the type on the API).
 export const TECHNICAL_INCIDENT_NATURE_LABELS = {
   platform_unavailable: "Plateforme inaccessible",
   time_entry_impossible: "Saisie de temps impossible",
@@ -61,9 +61,9 @@ export const TECHNICAL_INCIDENT_NATURE_LABELS = {
   planned_maintenance: "Maintenance planifiée"
 };
 
-// Incidents chevauchant la journée [dayStartUnix, dayEndUnix] (secondes).
-// La fin effective est fournie par l'API (fin réelle, ou l'instant présent
-// pour un incident encore en cours).
+// Incidents overlapping the day [dayStartUnix, dayEndUnix] (in seconds).
+// The effective end is provided by the API (real end, or the current time
+// for an incident that is still ongoing).
 export function incidentsOnDay(incidents, dayStartUnix, dayEndUnix) {
   if (!incidents) return [];
   return incidents.filter(
