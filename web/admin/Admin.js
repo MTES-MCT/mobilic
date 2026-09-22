@@ -1,4 +1,5 @@
 import React from "react";
+import * as Sentry from "@sentry/browser";
 import {
   Switch,
   Route,
@@ -84,6 +85,7 @@ function InternalAdmin() {
 
   const location = useLocation();
   const isMdUp = useIsWidthUp("md");
+  const hasReportedDashboardReady = React.useRef(false);
 
   const views = ADMIN_VIEWS.map((view) => {
     const absPath = `${path}${view.path}`;
@@ -143,6 +145,11 @@ function InternalAdmin() {
                 type: ADMIN_ACTIONS.updateCompanyDetails,
                 payload: { companiesPayload: companies, minDate }
               });
+
+              if (!hasReportedDashboardReady.current) {
+                hasReportedDashboardReady.current = true;
+                Sentry.getCurrentHub().getScope().getTransaction()?.finish();
+              }
             },
             "load-company-details",
             null
