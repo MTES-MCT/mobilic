@@ -18,10 +18,10 @@ export function getThresholds(weeklyThresholds) {
     },
     rest: {
       min: true,
-      warnAt: minRestSeconds + THRESHOLD_MARGIN,
-      errorAt: minRestSeconds,
-      warnTooltip: `Approche du repos hebdomadaire minimum (${t.minRestInHours} h)`,
-      errorTooltip: `Repos hebdomadaire minimum non respecté (${t.minRestInHours} h)`
+      warnAt: minRestSeconds,
+      errorAt: minRestSeconds - THRESHOLD_MARGIN,
+      warnTooltip: `Approche du repos hebdomadaire minimum (${t.minRestInHours}h)`,
+      errorTooltip: `Repos hebdomadaire minimum non respecté (${t.minRestInHours}h)`
     },
     workedDays: {
       warnAt: t.maxWorkedDays,
@@ -35,7 +35,7 @@ export function getThresholds(weeklyThresholds) {
 function getThresholdLevel(value, { min, warnAt, errorAt }) {
   if (min) {
     if (value < errorAt) return "error";
-    if (value <= warnAt) return "warning";
+    if (value < warnAt) return "warning";
   } else {
     if (value >= errorAt) return "error";
     if (value >= warnAt) return "warning";
