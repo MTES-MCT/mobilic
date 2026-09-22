@@ -63,7 +63,8 @@ function computeWorkDayGroupAggregates(workDayGroup, periodDurationDays) {
   const user = workDayGroup[0].user;
   const periodStart = workDayGroup[0].periodStart;
   const lastActivityStartTime = workDayGroup[0].lastActivityStartTime;
-  const maxConsecutiveRest = maxEndTime
+  const allDaysComplete = workDayGroup.every((wd) => wd.endTime);
+  const maxConsecutiveRest = allDaysComplete
     ? computeMaxConsecutiveRest(workDayGroup, periodStart, periodDurationDays)
     : null;
   return {
