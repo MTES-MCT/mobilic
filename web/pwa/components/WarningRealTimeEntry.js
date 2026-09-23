@@ -1,9 +1,9 @@
 import React from "react";
 import { Notice } from "@codegouvfr/react-dsfr/Notice";
 
-const DISMISSED_STORAGE_KEY_PREFIX = "mobilic.warningBreaks.dismissed.";
+const DISMISSED_STORAGE_KEY_PREFIX = "mobilic.warningRealTimeEntry.dismissed.";
 
-export const WarningBreaks = ({ dismissKey }) => {
+export const WarningRealTimeEntry = ({ dismissKey }) => {
   const storageKey = `${DISMISSED_STORAGE_KEY_PREFIX}${dismissKey}`;
   const [isDismissed, setIsDismissed] = React.useState(
     () => sessionStorage.getItem(storageKey) === "true"
@@ -23,10 +23,10 @@ export const WarningBreaks = ({ dismissKey }) => {
         sessionStorage.setItem(storageKey, "true");
         setIsDismissed(true);
       }}
-      title="Pensez à respecter le temps de pause obligatoire lors de votre prochaine mission afin de respecter la réglementation !"
+      title="Saisissez vos activités en temps réel pour vous assurer que vos heures sont bien rémunérées."
       link={{
         linkProps: {
-          href: "https://mobilic.beta.gouv.fr/resources/regulations?regle=pause-et-repos-quotidiens",
+          href: "https://mobilic.beta.gouv.fr/resources/regulations",
           style: {
             display: "flex",
             alignItems: "center",
@@ -35,7 +35,7 @@ export const WarningBreaks = ({ dismissKey }) => {
         },
         text: (
           <>
-            En savoir plus sur les temps de pause
+            Mieux connaître mes droits
             <span
               className="fr-icon-arrow-right-line fr-icon--sm"
               aria-hidden="true"

@@ -12,6 +12,11 @@ export const COMPANY_SETTINGS_FRAGMENT = gql`
       allowOtherTask
       otherTaskLabel
     }
+    weeklyThresholds {
+      maxWorkInHours
+      minRestInHours
+      maxWorkedDays
+    }
   }
 `;
 
@@ -256,6 +261,11 @@ export const FULL_EMPLOYMENT_FRAGMENT = gql`
     business {
       transportType
       businessType
+    }
+    weeklyThresholds {
+      maxWorkInHours
+      minRestInHours
+      maxWorkedDays
     }
     companyId
     company {

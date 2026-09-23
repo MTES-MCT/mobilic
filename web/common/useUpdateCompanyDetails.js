@@ -20,15 +20,24 @@ export const useUpdateCompanyDetails = (
     company?.phoneNumber
   );
   const [newCompanyBusinessType, setNewCompanyBusinessType] = React.useState(
-    adminStore.business?.businessType
+    { transportType: adminStore.business?.transportType || "", businessType: adminStore.business?.businessType || "" }
   );
   const [newNbWorkers, setNewNbWorkers] = React.useState(
     company?.nbWorkers || null
   );
 
   const hasBusinessTypeChanged = React.useMemo(
-    () => newCompanyBusinessType !== adminStore.business?.businessType,
-    [newCompanyBusinessType, adminStore.business?.businessType]
+    () =>
+      newCompanyBusinessType?.businessType !== adminStore.business?.businessType ||
+      newCompanyBusinessType?.transportType !== adminStore.business?.transportType,
+    [newCompanyBusinessType, adminStore.business?.businessType, adminStore.business?.transportType]
+  );
+
+  const isBusinessTypeComplete = React.useMemo(
+    () =>
+      !newCompanyBusinessType?.transportType ||
+      !!newCompanyBusinessType?.businessType,
+    [newCompanyBusinessType]
   );
 
   const updateCompanyDetails = async (applyBusinessTypeToEmployees) => {
@@ -44,7 +53,8 @@ export const useUpdateCompanyDetails = (
           newNbWorkers: newNbWorkers || null,
           ...(hasBusinessTypeChanged
             ? {
-                newBusinessType: newCompanyBusinessType,
+                newBusinessType: newCompanyBusinessType?.businessType,
+                newTransportType: newCompanyBusinessType?.transportType,
                 applyBusinessTypeToEmployees
               }
             : {})
@@ -105,6 +115,7 @@ export const useUpdateCompanyDetails = (
     setNewCompanyPhoneNumber,
     setNewCompanyBusinessType,
     hasBusinessTypeChanged,
+    isBusinessTypeComplete,
     updateCompanyDetails,
     newCompanyBusinessType,
     newNbWorkers,

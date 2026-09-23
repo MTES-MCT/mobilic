@@ -94,7 +94,7 @@ function getInactiveEmployeesToday(employments, workDays) {
 
     // More expensive checks
     if (emp.endDate && emp.endDate < today) continue;
-    
+
     const lastActiveTimestampMs = unixToJSTimestamp(emp.lastActiveAt);
     if (todayStartMs - lastActiveTimestampMs > THRESHOLD_30_DAYS * 1000)
       continue;
