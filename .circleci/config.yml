@@ -24,6 +24,25 @@ jobs:
           name: Run linting
           command: pnpm run lint
 
+  build:
+    docker:
+      - image: cimg/node:24.11.0
+    steps:
+      - checkout:
+          method: full
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ .Branch }}-{{ checksum "pnpm-lock.yaml" }}
+      - run:
+          name: Enable pnpm via corepack
+          command: corepack enable
+      - run:
+          name: Install dependencies
+          command: pnpm install --frozen-lockfile
+      - run:
+          name: Build front-end
+          command: pnpm run build
+
   deploy:
     docker:
       - image: cimg/node:24.11.0
@@ -49,9 +68,11 @@ workflows:
   build_and_deploy:
     jobs:
       - lint
+      - build
       - deploy:
           requires:
             - lint
+            - build
           filters:
             branches:
               only:
