@@ -81,7 +81,7 @@ export function useControlBulletinActions({
   );
 
   const handleSend = React.useCallback(
-    async (emails = null, forAdmin=false) => {
+    async (emails = null, forAdmin = true) => {
       setIsLoading(true);
       let success = false;
       try {
