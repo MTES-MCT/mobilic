@@ -24,9 +24,18 @@ import {
   missionToValidationEntries
 } from "../selectors/validationEntriesSelectors";
 import { RunningTag, ToValidateTag, ValidatedTag, WaitingTag, DeletedTag, AllValidatedTag } from "../drawers/Tags";
-import { MISSION_STATUS, computeMissionStatus } from "../utils/missionsStatus";
+import {
+  MISSION_STATUS,
+  computeMissionStatus,
+  DEFAULT_VISIBLE_MISSION_STATUSES
+} from "../utils/missionsStatus";
 import { MissionStatusTagBtn } from "./MissionStatusTagBtn";
+import { MissionStatusFilter } from "./MissionStatusFilter";
 import { getThresholds, getThresholdDisplay } from "../utils/weeklyThresholds";
+
+const STATUS_VALUE_TO_KEY = Object.fromEntries(
+  Object.entries(MISSION_STATUS).map(([key, value]) => [value, key])
+);
 
 const useStyles = makeStyles((theme) => ({
   expenditures: {
@@ -399,6 +408,10 @@ export function WorkTimeTable({
   const openMission = useMissionDrawer()[1];
   const adminStore = useAdminStore();
 
+  const [selectedStatuses, setSelectedStatuses] = React.useState(
+    DEFAULT_VISIBLE_MISSION_STATUSES
+  );
+
   const { trackEvent } = useMatomo();
 
   const classes = useStyles();
@@ -473,8 +486,22 @@ export function WorkTimeTable({
     label: "Statut",
     name: "statusKey",
     format: (statusKey, entry) => formatStatus(statusKey, entry, openMission, openWorkday),
+    align: "center",
+    minWidth: 80,
+    flexGrow: 0,
+  };
+
+  const filterCol = {
+    label: "Filtrer",
+    name: "filter",
     align: "left",
-    minWidth: 120
+    minWidth: 50,
+    renderLabel: () => (
+      <MissionStatusFilter
+        selectedStatuses={selectedStatuses}
+        onChange={setSelectedStatuses}
+      />
+    )
   };
   const expenditureCol = {
     label: "Frais",
@@ -509,6 +536,7 @@ export function WorkTimeTable({
       restTimeCol,
       amplitudeCol,
       statusCol,
+      filterCol,
     ];
   } else {
     const withThreshold = period === "week";
@@ -557,12 +585,22 @@ export function WorkTimeTable({
     period
   );
 
+  // Status filter only applies to the day view (the only view with a status column).
+  const visibleWorkTimeEntries =
+    period === "day"
+      ? preFormattedWorkTimeEntries.filter((entry) => {
+          if (!entry.statusKey) return true;
+          const statusKey = STATUS_VALUE_TO_KEY[entry.statusKey];
+          return !statusKey || selectedStatuses.includes(statusKey);
+        })
+      : preFormattedWorkTimeEntries;
+
   return (
     <>
       <AugmentedTable
         key={2}
         columns={columns}
-        entries={preFormattedWorkTimeEntries}
+        entries={visibleWorkTimeEntries}
         small
         virtualizedRowHeight={40}
         defaultSortBy="periodStart"

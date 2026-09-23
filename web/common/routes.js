@@ -168,10 +168,6 @@ export const ROUTES = [
         label: "Activités"
       },
       {
-        label: "Saisies à valider",
-        path: "/validations"
-      },
-      {
         label: "Respect des seuils",
         path: "/regulatory-respect"
       },
@@ -588,7 +584,7 @@ export function getBadgeRoutes(adminStore) {
 
   const badgeRoutes = [
     {
-      path: "/admin/validations",
+      path: "/admin/activities",
       badge: {
         badgeContent: size(groupBy(entries, "missionId")),
         color: "error"
