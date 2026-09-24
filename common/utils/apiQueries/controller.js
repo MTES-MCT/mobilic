@@ -222,9 +222,10 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
 export const SEND_CONTROL_BULLETIN_EMAIL_MUTATION = gql`
   mutation SendControlBulletinEmail(
     $controlId: String!
-    $adminEmails: [Email!]
+    $emails: [Email!]
+    $forAdmin: Boolean
   ) {
-    sendControlBulletinEmail(controlId: $controlId, adminEmails: $adminEmails) {
+    sendControlBulletinEmail(controlId: $controlId, emails: $emails, forAdmin: $forAdmin) {
       success
       nbEmailsSent
     }
