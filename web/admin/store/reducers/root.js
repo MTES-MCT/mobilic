@@ -13,12 +13,15 @@ import { addWorkDaysReducer } from "./workDays";
 import {
   updateCompaniesListReducer,
   updateCompanyDetailsReducer,
+  updateCompanyEmploymentsReducer,
+  updateCompanyTeamsReducer,
   updateCompanyIdReducer,
   updateCompanyNameAndPhoneNumberReducer,
   updateCompanyNbWorkerSnoozeReducer,
   updateEmploymentIdReducer,
   updateShouldSeeCertificateInfoReducer,
-  updateShouldForceNbWorkerInfoReducer
+  updateShouldForceNbWorkerInfoReducer,
+  updatePendingValidationsCountReducer
 } from "./sync";
 import {
   createItemsReducer,
@@ -53,6 +56,9 @@ export const ADMIN_ACTIONS = {
   updateBusinessType: updateBusinessTypeReducer,
   delete: deleteItemReducer,
   updateCompanyDetails: updateCompanyDetailsReducer,
+  updatePendingValidationsCount: updatePendingValidationsCountReducer,
+  updateCompanyEmployments: updateCompanyEmploymentsReducer,
+  updateCompanyTeams: updateCompanyTeamsReducer,
   updateCompaniesList: updateCompaniesListReducer,
   updateCompanyId: updateCompanyIdReducer,
   updateShouldSeeCertificateInfo: updateShouldSeeCertificateInfoReducer,

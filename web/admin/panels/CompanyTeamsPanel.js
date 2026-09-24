@@ -19,6 +19,7 @@ import {
   ALL_TEAMS_COMPANY_QUERY,
   DELETE_TEAM_MUTATION
 } from "common/utils/apiQueries/teams";
+import { useEnsureEmployments } from "../hooks/useEnsureEmployments";
 
 export default function CompanyTeamsPanel({ company }) {
   const api = useApi();
@@ -30,6 +31,8 @@ export default function CompanyTeamsPanel({ company }) {
   const [loadingTeams, setLoadingTeams] = React.useState(false);
   const [displayNoAdminWarning, setDisplayNoAdminWarning] =
     React.useState(false);
+
+  useEnsureEmployments();
 
   React.useEffect(() => {
     const loadData = async () => {
