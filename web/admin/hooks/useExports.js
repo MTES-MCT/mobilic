@@ -10,43 +10,56 @@ export function useExports() {
   const [nbExports, setNbExports] = useState(0);
   const { silentDownload } = useSilentDownload();
 
+  const stopPolling = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
   const updateExports = async () => {
     let res;
     try {
       res = await api.jsonHttpQuery(HTTP_QUERIES.checkOutExports);
     } catch (err) {
       console.error(err);
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+      return;
     }
     setNbExports(res?.nb_wip_exports || 0);
 
-    for (const dlUrl of res.ready_exports_links) {
+    for (const dlUrl of res?.ready_exports_links ?? []) {
       silentDownload(dlUrl);
     }
-  };
 
-  const addExport = async () => {
-    setTimeout(async () => {
-      await updateExports();
-    }, 1000);
-  };
-
-  useEffect(() => {
-    if (nbExports === 0 && intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-      return;
+    if ((res?.nb_wip_exports || 0) === 0) {
+      stopPolling();
     }
+  };
 
-    if (nbExports > 0 && !intervalRef.current) {
+  const startPolling = () => {
+    if (!intervalRef.current) {
       intervalRef.current = setInterval(() => {
         updateExports();
       }, 5000);
     }
+  };
+
+  const addExport = async () => {
+    startPolling();
+    setTimeout(() => {
+      updateExports();
+    }, 1000);
+  };
+
+  useEffect(() => {
+    if (nbExports > 0) {
+      startPolling();
+    }
   }, [nbExports]);
+
+  useEffect(() => {
+    return () => stopPolling();
+  }, []);
 
   const cancelExports = async () => {
     const res = await api.jsonHttpQuery(HTTP_QUERIES.cancelExports);
