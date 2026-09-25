@@ -305,7 +305,9 @@ export function useActivityHistory({
       // if adjacent activity was created by manager or we hit the split fallback → gap is new (AJOUT)
       const isNewGap = prevSplitFallback || nextSplitFallback
         || prev.__virtualAction === "create"
-        || next.__virtualAction === "create";
+        || next.__virtualAction === "create"
+        || prev.__tagType === "AJOUT"
+        || next.__tagType === "AJOUT";
       const hadGap = isNewGap ? false : prevOriginalEnd < nextOriginalStart;
 
       entry.__hasModification = true;
