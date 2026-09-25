@@ -219,7 +219,7 @@ export function DropdownMenu({
         onClose={handleClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
-        PaperProps={{ className: classes.menuPaper }}
+        slotProps={{ paper: { className: classes.menuPaper } }}
         MenuListProps={{ className: classes.menuList }}
       >
         {items.length === 0 && emptyMessage ? (

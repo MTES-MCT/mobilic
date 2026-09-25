@@ -39,6 +39,7 @@ import { Main } from "../common/semantics/Main";
 import { AdminSideMenu } from "./components/SideMenu/SideMenu";
 import { DayDrawerContextProvider } from "./drawers/DayDrawer";
 import { ExportsBanner } from "./components/ExportsBanner";
+import { ActivitiesRedirectBanner } from "./components/ActivitiesRedirectBanner";
 import { useExportsContext } from "./utils/contextExports";
 import { pluralizeEntrepriseLabel } from "common/utils/pluralize";
 
@@ -257,6 +258,7 @@ function InternalAdmin() {
               ref={ref}
             >
               <ExportsBanner />
+              <ActivitiesRedirectBanner />
               <Switch>
                 {views.map((view) => (
                   <Route
