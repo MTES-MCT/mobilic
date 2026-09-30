@@ -1,24 +1,45 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
-import Link from "@mui/material/Link";
-import Notice from "../../common/Notice";
+import { Notice } from "@codegouvfr/react-dsfr/Notice";
+import { makeStyles } from "@mui/styles";
+import { readCookie, setCookie } from "common/utils/cookie";
 
-const BANNER_FIRST_SEEN_KEY = "mobilic.activitiesBanner.firstSeenAt";
-const BANNER_DISMISSED_KEY = "mobilic.activitiesBanner.dismissed";
+const BANNER_FIRST_SEEN_COOKIE = "activitiesBannerFirstSeen";
+const BANNER_DISMISSED_COOKIE = "activitiesBannerDismissed";
+const COOKIE_EXPIRATION_DAYS = 30;
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
+const useStyles = makeStyles(() => ({
+  banner: {
+    width: "100%",
+    "& .fr-container": {
+      maxWidth: "100%"
+    },
+    "& .fr-notice__title": {
+      fontWeight: 400
+    },
+    "& .fr-notice__link": {
+      fontWeight: 700
+    }
+  }
+}));
+
 export function ActivitiesRedirectBanner() {
-  const history = useHistory();
+  const classes = useStyles();
   const [visible, setVisible] = React.useState(false);
 
   React.useEffect(() => {
-    if (localStorage.getItem(BANNER_DISMISSED_KEY) === "true") {
+    if (readCookie(BANNER_DISMISSED_COOKIE) === "true") {
       return;
     }
-    let firstSeenAt = Number(localStorage.getItem(BANNER_FIRST_SEEN_KEY));
+    let firstSeenAt = parseInt(readCookie(BANNER_FIRST_SEEN_COOKIE));
     if (!firstSeenAt) {
       firstSeenAt = Date.now();
-      localStorage.setItem(BANNER_FIRST_SEEN_KEY, firstSeenAt.toString());
+      setCookie(
+        BANNER_FIRST_SEEN_COOKIE,
+        firstSeenAt.toString(),
+        COOKIE_EXPIRATION_DAYS,
+        true
+      );
     }
     if (Date.now() - firstSeenAt < THREE_DAYS_MS) {
       setVisible(true);
@@ -26,7 +47,7 @@ export function ActivitiesRedirectBanner() {
   }, []);
 
   const handleClose = () => {
-    localStorage.setItem(BANNER_DISMISSED_KEY, "true");
+    setCookie(BANNER_DISMISSED_COOKIE, "true", COOKIE_EXPIRATION_DAYS, true);
     setVisible(false);
   };
 
@@ -36,22 +57,15 @@ export function ActivitiesRedirectBanner() {
 
   return (
     <Notice
-      type="info"
+      className={classes.banner}
+      severity="info"
+      isClosable
       onClose={handleClose}
-      title={
-        <>
-          Dès aujourd'hui, validez les missions de vos salariés directement
-          depuis la rubrique{" "}
-          <Link
-            component="button"
-            type="button"
-            onClick={() => history.push("/admin/activities")}
-            sx={{ fontWeight: "inherit" }}
-          >
-            Activités
-          </Link>
-        </>
-      }
+      title="Dès aujourd'hui, validez les missions de vos salariés directement depuis la rubrique"
+      link={{
+        linkProps: { to: "/admin/activities", target: "_self" },
+        text: "Activités"
+      }}
     />
   );
 }

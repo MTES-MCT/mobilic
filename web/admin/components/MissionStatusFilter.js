@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import Menu from "@mui/material/Menu";
 import Box from "@mui/material/Box";
 import { makeStyles } from "@mui/styles";
-import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import {
@@ -13,31 +12,6 @@ import {
 } from "../utils/missionsStatus";
 
 const useStyles = makeStyles(() => ({
-  triggerButton: ({ active }) => ({
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "0.25rem",
-    padding: "0.25rem 0.5rem",
-    height: "2rem",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontFamily: "Marianne, sans-serif",
-    fontSize: "0.875rem",
-    fontWeight: 500,
-    lineHeight: "1.5rem",
-    backgroundColor: active
-      ? fr.colors.decisions.background.actionHigh.blueFrance.default
-      : "transparent",
-    color: active
-      ? fr.colors.decisions.text.inverted.blueFrance.default
-      : fr.colors.decisions.text.actionHigh.blueFrance.default,
-    "&:hover": {
-      backgroundColor: active
-        ? fr.colors.decisions.background.actionHigh.blueFrance.hover
-        : "rgba(0, 0, 0, 0.04)"
-    }
-  }),
   menuPaper: {
     padding: "1rem 1.5rem",
     marginTop: "0.25rem",
@@ -63,7 +37,7 @@ export function MissionStatusFilter({ selectedStatuses, onChange }) {
   );
   const isActive = activeCount > 0;
 
-  const classes = useStyles({ active: isActive });
+  const classes = useStyles();
 
   const toggleStatus = (key) => {
     if (selectedStatuses.includes(key)) {

@@ -298,11 +298,11 @@ export const ADMIN_REFRESH_REGULATION_COMPUTATIONS_QUERY = gql`
 export const ADMIN_DELETED_MISSIONS_QUERY = gql`
   ${FRAGMENT_LOCATION_FULL}
   ${FRAGMENT_ACTIVITY}
-  query refreshDeletedMissions($id: Int!, $companyIds: [Int], $first: Int) {
+  query refreshDeletedMissions($id: Int!, $companyIds: [Int], $first: Int, $fromTime: TimeStamp, $untilTime: TimeStamp) {
     user(id: $id) {
       adminedCompanies(companyIds: $companyIds) {
         id
-        missionsDeleted(first: $first) {
+        missionsDeleted(first: $first, fromTime: $fromTime, untilTime: $untilTime) {
           edges {
             node {
               id

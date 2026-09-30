@@ -250,6 +250,7 @@ function InternalAdmin() {
         refreshData={refreshData}
       >
         <DayDrawerContextProvider>
+          <ActivitiesRedirectBanner />
           <Main maxWidth={false} className={classes.container} disableGutters>
             {isMdUp && <AdminSideMenu views={views} />}
             <Container
@@ -258,7 +259,6 @@ function InternalAdmin() {
               ref={ref}
             >
               <ExportsBanner />
-              <ActivitiesRedirectBanner />
               <Switch>
                 {views.map((view) => (
                   <Route

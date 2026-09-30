@@ -347,12 +347,11 @@ function ActivitiesPanel() {
     });
   }, [period]);
 
-  // Fetch deleted missions so they can be shown in the activities table.
-  React.useEffect(() => {
-    if (adminStore.userId && adminStore.companyId) {
-      refreshDeletedMissions();
-    }
-  }, [adminStore.userId, adminStore.companyId]);
+  // Deleted missions are fetched lazily, only once the user click to show them from the status filter.
+  const [showDeletedMissions, setShowDeletedMissions] = React.useState(false);
+  const handleShowDeletedMissions = React.useCallback(() => {
+    setShowDeletedMissions(true);
+  }, []);
 
   React.useEffect(() => {
     setUsers(adminStore.activitiesFilters.users);
@@ -458,6 +457,20 @@ function ActivitiesPanel() {
 
     return lastValidDateRangeRef.current;
   }, [minDate, maxDate, isDateRangeValid]);
+
+  // Refetch deleted missions scoped to the selected period,
+  React.useEffect(() => {
+    if (!showDeletedMissions || !adminStore.userId || !adminStore.companyId) {
+      return;
+    }
+    refreshDeletedMissions(appliedDateRange.minDate, appliedDateRange.maxDate);
+  }, [
+    showDeletedMissions,
+    appliedDateRange,
+    adminStore.userId,
+    adminStore.companyId,
+    refreshDeletedMissions
+  ]);
 
   const selectedWorkDays = React.useMemo(
     () =>
@@ -707,6 +720,7 @@ function ActivitiesPanel() {
           showExpenditures={adminStore.settings.requireExpenditures}
           showMissionName={adminStore.settings.requireMissionName}
           loading={loading}
+          onDeletedStatusSelected={handleShowDeletedMissions}
         />
         <Drawer
           anchor="right"

@@ -402,7 +402,8 @@ export function WorkTimeTable({
   className,
   showMissionName,
   showExpenditures,
-  loading
+  loading,
+  onDeletedStatusSelected
 }) {
   const { openWorkday } = useDayDrawer();
   const openMission = useMissionDrawer()[1];
@@ -411,6 +412,17 @@ export function WorkTimeTable({
   const [selectedStatuses, setSelectedStatuses] = React.useState(
     DEFAULT_VISIBLE_MISSION_STATUSES
   );
+
+  const handleStatusFilterChange = (newStatuses) => {
+    if (
+      onDeletedStatusSelected &&
+      newStatuses.includes("deleted") &&
+      !selectedStatuses.includes("deleted")
+    ) {
+      onDeletedStatusSelected();
+    }
+    setSelectedStatuses(newStatuses);
+  };
 
   const { trackEvent } = useMatomo();
 
@@ -487,7 +499,7 @@ export function WorkTimeTable({
     name: "statusKey",
     format: (statusKey, entry) => formatStatus(statusKey, entry, openMission, openWorkday),
     align: "center",
-    minWidth: 80,
+    minWidth: 170,
     flexGrow: 0,
   };
 
@@ -499,7 +511,7 @@ export function WorkTimeTable({
     renderLabel: () => (
       <MissionStatusFilter
         selectedStatuses={selectedStatuses}
-        onChange={setSelectedStatuses}
+        onChange={handleStatusFilterChange}
       />
     )
   };
@@ -671,5 +683,6 @@ WorkTimeTable.propTypes = {
   className: PropTypes.string,
   showMissionName: PropTypes.bool,
   showExpenditures: PropTypes.bool,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
+  onDeletedStatusSelected: PropTypes.func
 };
