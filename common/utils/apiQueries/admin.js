@@ -393,6 +393,7 @@ export const ADMIN_WORK_DAYS_QUERY = gql`
                 }
               }
               pastRegistrationJustification
+              endedUserIds
             }
           }
         }
