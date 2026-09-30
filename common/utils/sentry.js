@@ -5,8 +5,7 @@ const ERROR_NAMES_TO_FILTER_OUT = [
   "NetworkError",
   "WrongStatusError",
   "AbortError",
-  "TimeoutError",
-  "InvalidRefreshToken"
+  "TimeoutError"
 ];
 
 const ERROR_MESSAGES_TO_FILTER_OUT = [
