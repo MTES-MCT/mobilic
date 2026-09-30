@@ -73,6 +73,7 @@ export function ActivitiesCard({
   const colCount = showEditColumn ? 6 : 5;
 
   function getComment(event) {
+    if (isSplitEvent(event)) return null;
     const ctx = event.__virtual
       ? event.context || event.after?.context
       : event.type === "DELETE"

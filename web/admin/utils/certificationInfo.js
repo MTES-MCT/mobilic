@@ -1,6 +1,6 @@
 import React from "react";
 import { useApi } from "common/utils/api";
-import { useAdminCompanies, useAdminStore } from "../store/store";
+import { useAdminCompanies } from "../store/store";
 import { COMPANY_CERTIFICATION_COMMUNICATION_QUERY } from "common/utils/apiQueries/certification";
 
 export function useCertificationInfo() {
