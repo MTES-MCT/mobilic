@@ -466,7 +466,10 @@ function ActivitiesPanel() {
     if (!showDeletedMissions || !adminStore.userId || !adminStore.companyId) {
       return;
     }
-    refreshDeletedMissions(appliedDateRange.minDate, appliedDateRange.maxDate);
+    void refreshDeletedMissions(
+      appliedDateRange.minDate,
+      appliedDateRange.maxDate
+    );
   }, [
     showDeletedMissions,
     appliedDateRange,

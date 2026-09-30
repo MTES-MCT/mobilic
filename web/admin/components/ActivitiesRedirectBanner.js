@@ -31,7 +31,7 @@ export function ActivitiesRedirectBanner() {
     if (readCookie(BANNER_DISMISSED_COOKIE) === "true") {
       return;
     }
-    let firstSeenAt = parseInt(readCookie(BANNER_FIRST_SEEN_COOKIE));
+    let firstSeenAt = Number.parseInt(readCookie(BANNER_FIRST_SEEN_COOKIE));
     if (!firstSeenAt) {
       firstSeenAt = Date.now();
       setCookie(
