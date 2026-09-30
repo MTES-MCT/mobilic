@@ -40,7 +40,6 @@ export async function loadCompanyEssentials(api, userId, minDate, companyId) {
     },
     { context: { timeout: process.env.REACT_APP_TIMEOUT_MS || 60000 } }
   ).catch((error) => {
-    console.error("Error loading company essentials data:", error);
     throw error;
   });
 
@@ -73,7 +72,6 @@ export async function loadCompanyEmployments(api, userId, companyId) {
       companyIds: [companyId]
     }
   ).catch((error) => {
-    console.error("Error loading company employments:", error);
     throw error;
   });
 
@@ -85,7 +83,6 @@ export async function loadCompanyTeams(api, companyId) {
     ALL_TEAMS_COMPANY_QUERY,
     { companyId }
   ).catch((error) => {
-    console.error("Error loading company teams:", error);
     throw error;
   });
 
@@ -130,7 +127,6 @@ export const loadCompanyWorkDaysAndMissions = async (
     variables,
     { context: { timeout: process.env.REACT_APP_TIMEOUT_MS || 60000 } }
   ).catch((error) => {
-    console.error("Error loading company work days and missions:", error);
     throw error;
   });
   return response.data.user.adminedCompanies;
