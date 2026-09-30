@@ -33,6 +33,7 @@ import { useApi } from "common/utils/api";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { useLoadAdminPanelData } from "../hooks/useLoadAdminPanelData";
 import {
   ACTIVITY_FILTER_EMPLOYEE,
   ACTIVITY_FILTER_MAX_DATE,
@@ -233,25 +234,25 @@ function ActivitiesPanel() {
   const minDateOfFetchedData = adminStore.minWorkDaysDate;
 
   const datePickerSlotProps = {
-  textField: {
-    size: "small",
-    required: true,
-    variant: "outlined",
-    error: !!dateRangeError,
-    helperText: dateRangeError,
-    FormHelperTextProps: {
-      sx: {
-        position: "absolute",
-        bottom: "-22px",
-        left: 0,
-        color: "error.main",
-        fontSize: "0.75rem",
-        margin: 0,
-        whiteSpace: "nowrap"
+    textField: {
+      size: "small",
+      required: true,
+      variant: "outlined",
+      error: !!dateRangeError,
+      helperText: dateRangeError,
+      FormHelperTextProps: {
+        sx: {
+          position: "absolute",
+          bottom: "-22px",
+          left: 0,
+          color: "error.main",
+          fontSize: "0.75rem",
+          margin: 0,
+          whiteSpace: "nowrap"
+        }
       }
     }
-  }
-};
+  };
 
   const refreshCurrentWorkDays = () =>
     refreshWorkDays(
@@ -287,6 +288,8 @@ function ActivitiesPanel() {
     );
     return daysDiff <= 365;
   }, []);
+
+  useLoadAdminPanelData();
 
   // Validate date range
   React.useEffect(() => {
