@@ -621,6 +621,7 @@ export const UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE = gql`
     $newName: String
     $newPhoneNumber: String
     $newBusinessType: String
+    $newTransportType: String
     $applyBusinessTypeToEmployees: Boolean
     $newNbWorkers: Int
   ) {
@@ -629,6 +630,7 @@ export const UPDATE_COMPANY_DETAILS_WITH_BUSINESS_TYPE = gql`
       newName: $newName
       newPhoneNumber: $newPhoneNumber
       newBusinessType: $newBusinessType
+      newTransportType: $newTransportType
       applyBusinessTypeToEmployees: $applyBusinessTypeToEmployees
       newNbWorkers: $newNbWorkers
     ) {
@@ -720,11 +722,21 @@ export const ADMIN_COMPANY_REGULATORY_ALERTS_SUMMARY_QUERY = gql`
             alertsType
             nbAlerts
             days
+            dayDetails {
+              day
+              userName
+              userId
+            }
           }
           weeklyAlerts {
             alertsType
             nbAlerts
             days
+            dayDetails {
+              day
+              userName
+              userId
+            }
           }
         }
       }

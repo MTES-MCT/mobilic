@@ -22,23 +22,23 @@ export const PRETTY_LABELS = {
   not_enough_break: "Temps de pause",
   too_much_uninterrupted_work_time: "Durée maximale de travail ininterrompu",
   maximumWorkDayTime: "Durée du travail quotidien",
-  maximumNightWorkDayTime: "Durée du travail de nuit"
+  maximumNightWorkDayTime: "Durée du travail de nuit",
 };
 
 const useStyles = makeStyles((theme) => ({
   title: {
     color: fr.colors.decisions.text.actionHigh.grey.default,
     fontSize: "1.25rem",
-    fontWeight: 700
+    fontWeight: 700,
   },
   description: {
     fontSize: "0.875rem",
-    color: fr.colors.decisions.text.mention.grey.default
+    color: fr.colors.decisions.text.mention.grey.default,
   },
   linkButton: {
     textDecoration: "underline",
-    textUnderlineOffset: "6px"
-  }
+    textUnderlineOffset: "6px",
+  },
 }));
 
 const DisplayAlerts = (alerts, onClickDay, uniqueUserId) => {
@@ -51,7 +51,7 @@ const DisplayAlerts = (alerts, onClickDay, uniqueUserId) => {
           <Box
             key={`alerts__${alerts.alertsType}_${uniqueUserId || ""}`}
             className={classNames("alerts-summary", {
-              expandable: alerts.days && alerts.days.length > 0
+              expandable: alerts.dayDetails && alerts.dayDetails.length > 0,
             })}
           >
             <Accordion
@@ -68,7 +68,7 @@ const DisplayAlerts = (alerts, onClickDay, uniqueUserId) => {
                     severity={alerts.nbAlerts === 0 ? "success" : "warning"}
                     style={{
                       marginRight:
-                        uniqueUserId && alerts.nbAlerts === 0 ? "15px" : ""
+                        uniqueUserId && alerts.nbAlerts === 0 ? "15px" : "",
                     }}
                   >
                     {alerts.nbAlerts === 0
@@ -78,21 +78,30 @@ const DisplayAlerts = (alerts, onClickDay, uniqueUserId) => {
                 </Stack>
               }
             >
-              {alerts.days && alerts.days.length > 0 && (
+              {alerts.dayDetails && alerts.dayDetails.length > 0 && (
                 <Stack direction="column" rowGap={1}>
-                  {alerts.days.map((day) => (
-                    <Button
-                      key={`alert__${day}`}
-                      priority="tertiary no outline"
-                      onClick={() => onClickDay(day)}
-                      size="small"
-                      iconId="fr-icon-arrow-right-line"
-                      iconPosition="right"
-                      className={classes.linkButton}
-                    >
-                      Journée du {getPrettyDateByperiod(new Date(day), "day")}
-                    </Button>
-                  ))}
+                  {alerts.dayDetails.map((detail) => {
+                    const [firstName, ...lastNameParts] =
+                      detail.userName.split(" ");
+                    const formatedName = `${lastNameParts.join(
+                      " ",
+                    )} ${firstName}`;
+                    return (
+                      <Button
+                        key={`alert__${detail.day}_${detail.userId}`}
+                        priority="tertiary no outline"
+                        onClick={() => onClickDay(detail.day, detail.userId)}
+                        size="small"
+                        iconId="fr-icon-arrow-right-line"
+                        iconPosition="right"
+                        className={classes.linkButton}
+                      >
+                        Journée du{" "}
+                        {getPrettyDateByperiod(new Date(detail.day), "day")} -{" "}
+                        {formatedName}
+                      </Button>
+                    );
+                  })}
                 </Stack>
               )}
             </Accordion>
@@ -108,10 +117,10 @@ export const AlertsRecap = ({ ...otherProps }) => {
   const { openWorkday } = useDayDrawer();
   const { summary, uniqueUserId } = useRegulatoryAlertsSummaryContext();
   const adminStore = useAdminStore();
-  const onClickDay = async (day) => {
-    let workTimeEntries = adminStore.workDays
-      .filter((wd) => wd.day === day)
-      .filter((wd) => wd.user.id === uniqueUserId);
+  const onClickDay = async (day, userId) => {
+    let workTimeEntries = adminStore.workDays.filter(
+      (wd) => wd.day === day && wd.user.id === userId,
+    );
 
     if (workTimeEntries.length === 0) {
       const resPayload = await api.graphQlQuery(
@@ -119,16 +128,18 @@ export const AlertsRecap = ({ ...otherProps }) => {
         {
           adminId: adminStore.userId,
           day,
-          userId: uniqueUserId,
-          companyId: adminStore.companyId
+          userId,
+          companyId: adminStore.companyId,
         },
         {
-          fetchPolicy: "cache-first"
-        }
+          fetchPolicy: "cache-first",
+        },
       );
-      workTimeEntries = [
-        resPayload.data.user.adminedCompanies[0].workDays.edges[0].node
-      ];
+      const entry =
+        resPayload.data.user.adminedCompanies[0].workDays.edges.filter(
+          (e) => e.node.day === day,
+        );
+      workTimeEntries = [entry[0].node];
     }
 
     const aggregates = aggregateWorkDayPeriods(workTimeEntries, "day");
@@ -153,7 +164,7 @@ export const AlertsRecap = ({ ...otherProps }) => {
         <Typography className={classes.title}>
           Respect des seuils hebdomadaires
         </Typography>
-        {DisplayAlerts(summary.weeklyAlerts, uniqueUserId)}
+        {DisplayAlerts(summary.weeklyAlerts, onClickDay, uniqueUserId)}
       </Stack>
       <ExternalLink
         url="/resources/regulations"

@@ -601,6 +601,7 @@ module.exports = function(webpackEnv) {
       isEnvProduction &&
         new WorkboxWebpackPlugin.GenerateSW({
           additionalManifestEntries: [{ url: "/favicon.svg", revision: "1" }],
+          importScripts: ["/push-handler.js"],
           clientsClaim: true,
           skipWaiting: true,
           maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,

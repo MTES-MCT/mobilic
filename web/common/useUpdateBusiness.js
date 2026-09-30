@@ -10,13 +10,14 @@ export const useUpdateEmployeeBusinessType = (employmentId, companyId) => {
   const adminStore = useAdminStore();
   const alerts = useSnackbarAlerts();
 
-  const udpateEmployeeBusinessType = async (businessType) => {
+  const udpateEmployeeBusinessType = async (businessType, transportType) => {
     try {
       const apiResponse = await api.graphQlMutate(
         CHANGE_EMPLOYEE_BUSINESS_TYPE,
         {
           employmentId,
-          businessType
+          businessType,
+          transportType
         }
       );
       const employments =

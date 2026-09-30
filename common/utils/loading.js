@@ -24,7 +24,7 @@ export function LoadingScreenContextProvider({ children }) {
         await loadingFunctionsQueue.execute(sync, options);
       }
       setSyncingWithBackendCounter(currentCounter => currentCounter - 1);
-    } catch (err) {
+    } catch {
       setSyncingWithBackendCounter(currentCounter => currentCounter - 1);
     }
   };

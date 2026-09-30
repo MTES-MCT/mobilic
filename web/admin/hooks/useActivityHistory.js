@@ -2,7 +2,10 @@ import React from "react";
 import { now } from "common/utils/time";
 import { useApi } from "common/utils/api";
 import {
-  getResourcesAndHistoryForMission,
+  getMissionActivityEvents,
+  getEventTagType,
+  isRetroactiveCreate,
+  isTimeShift,
   MISSION_RESOURCE_TYPES
 } from "common/utils/contradictory";
 
@@ -78,13 +81,10 @@ export function useActivityHistory({
 
     async function loadHistory() {
       try {
-        const { history, resources } = await getResourcesAndHistoryForMission(
+        const { activityEvents, resources } = await getMissionActivityEvents(
           mission,
           api,
           cacheContradictoryInfoInStore
-        );
-        const activityEvents = history.filter(
-          e => e.resourceType === MISSION_RESOURCE_TYPES.activity
         );
         const dismissed = resources
           .filter(

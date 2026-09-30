@@ -13,7 +13,7 @@ export const ADMIN_VIEWS = [
     isDefault: true
   },
   {
-    label: "Entreprise(s)",
+    label: "Entreprise",
     path: "/company",
     component: Company
   },

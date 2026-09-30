@@ -7,7 +7,7 @@ import Skeleton from "@mui/material/Skeleton";
 import { makeStyles } from "@mui/styles";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Event } from "../../common/Event";
-import { MISSION_RESOURCE_TYPES } from "common/utils/contradictory";
+import { MISSION_RESOURCE_TYPES, isSplitEvent } from "common/utils/contradictory";
 import { getChangeIconAndText, getEventAuthorName } from "../../common/logEvent";
 import { now, formatDateTimeLiteral } from "common/utils/time";
 import { ACTIVITIES, getActivityLabelDependingOnMissionType } from "common/utils/activities";
@@ -66,7 +66,8 @@ export function ContradictoryChanges({
   userId,
   cacheInStore,
   controlId = null,
-  titleProps = {}
+  titleProps = {},
+  allowOtherTask = false
 }) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
@@ -178,7 +179,8 @@ export function ContradictoryChanges({
               {userChangesHistory.map(userChange => {
                 if (userChange.type === "DISPUTE") {
                   const activityLabel = getActivityLabelDependingOnMissionType(
-                    userChange._activityType
+                    userChange._activityType,
+                    allowOtherTask
                   );
                   const action = userChange._disputedAction || "la modification";
                   const text = `a contesté ${action} de l'activité ${activityLabel} (motif : "${userChange._disputeText}")`;
@@ -195,7 +197,8 @@ export function ContradictoryChanges({
                     />
                   );
                 }
-                const changes = getChangeIconAndText(userChange);
+                const changes = getChangeIconAndText(userChange, allowOtherTask);
+                const isSplit = isSplitEvent(userChange);
                 const context = userChange.type === "DELETE"
                   ? userChange.before?.dismissContext
                   : userChange.after?.context || userChange.before?.context;

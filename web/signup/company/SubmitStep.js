@@ -101,7 +101,8 @@ export function SubmitStep({
             nbWorkers > MAX_NB_WORKERS ||
             !claimedRights ||
             (usingCompanyName && !companyName) ||
-            (usingCompanyName && !businessType)
+            (usingCompanyName &&
+              (!businessType?.transportType || !businessType?.businessType))
           }
           loading={loading}
         >

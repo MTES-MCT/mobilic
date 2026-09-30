@@ -131,7 +131,8 @@ export function ActivityHistorySection({
   activity,
   onDispute,
   onCancelDispute,
-  isWithinCancelDelay
+  isWithinCancelDelay,
+  allowOtherTask = false
 }) {
   const classes = useStyles();
   const modals = useModals();
@@ -183,7 +184,8 @@ export function ActivityHistorySection({
       <Collapse in={expanded}>
         <div className={classes.eventItem}>
           {filteredEvents.map((event, eventIndex) => {
-            const changes = getChangeIconAndText(event);
+            const changes = getChangeIconAndText(event, allowOtherTask);
+            const isSplit = event.after?.context?.splitFrom;
             const context = event.type === "DELETE"
               ? event.before?.dismissContext
               : event.after?.context || event.before?.context;

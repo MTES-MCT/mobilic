@@ -335,6 +335,7 @@ export function MissionDetails({
             teamChanges={teamChanges}
             allowTeamMode={allowTeamActions}
             allowSupportActivity={allowSupportActivity}
+            allowOtherTask={allowOtherTask}
             nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
             isMissionEnded={isMissionEnded}
             fromTime={fromTime}
@@ -598,6 +599,7 @@ export function MissionDetails({
                 cacheInStore={cacheContradictoryInfoInPwaStore}
                 controlId={controlId}
                 titleProps={titleProps}
+                allowOtherTask={allowOtherTask}
               />
             </MissionReviewSection>
           )}

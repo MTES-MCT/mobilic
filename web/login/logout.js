@@ -25,7 +25,6 @@ export function Logout() {
         history.replace("/support/impersonation");
         return;
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.error(
           "StopImpersonation failed, falling back to full logout",
           err

@@ -149,6 +149,12 @@ export function updateCompanyDetailsReducer(
     pendingValidationsCount:
       companiesPayload[0].dashboardSummary?.pendingValidationsCount || 0,
     areCompanyEssentialsLoaded: true,
+    weeklyThresholds: companiesPayload[0].weeklyThresholds || null,
+    weeklyThresholdsByUserId: Object.fromEntries(
+      allEmployments
+        .filter(e => e.weeklyThresholds && (e.userId || e.user?.id) && e.isActive)
+        .map(e => [e.userId || e.user?.id, e.weeklyThresholds])
+    ),
     business: companiesPayload[0].business || {
       businessType: "",
       transportType: ""

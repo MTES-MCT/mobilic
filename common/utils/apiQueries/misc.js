@@ -24,6 +24,16 @@ export const DISABLE_WARNING_MUTATION = gql`
   }
 `;
 
+export const RESET_PUSH_OPT_IN_BANNER_MUTATION = gql`
+  mutation resetPushOptInBanner {
+    account {
+      resetPushOptInBanner {
+        success
+      }
+    }
+  }
+`;
+
 export const SIREN_QUERY = gql`
   query sirenInfo($siren: String!) {
     sirenInfo(siren: $siren) {

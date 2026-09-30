@@ -212,9 +212,8 @@ export function ActivitySwitch({
                 />
                 <ActivitySwitchCard
                   label={
-                    activity.name === ACTIVITIES.drive.name &&
-                    !company.settings.allowOtherTask
-                      ? "Travail"
+                    activity.name === ACTIVITIES.drive.name
+                      ? (company.settings.allowOtherTask ? "Conduite" : "Travail")
                       : activity.label
                   }
                   subLabel={

@@ -38,11 +38,11 @@ import { shouldUpdateNbWorker } from "common/utils/updateNbWorker";
 import UpdateCompanyBusinessTypeModal from "./modals/UpdateCompanyBusinessTypeModal";
 import UpdateNbWorkerModal from "./modals/UpdateNbWorkerModal";
 import { Main } from "../common/semantics/Main";
-
-import { SideMenu } from "./components/SideMenu/SideMenu";
+import { AdminSideMenu } from "./components/SideMenu/SideMenu";
 import { DayDrawerContextProvider } from "./drawers/DayDrawer";
 import { ExportsBanner } from "./components/ExportsBanner";
 import { useExportsContext } from "./utils/contextExports";
+import { pluralizeEntrepriseLabel } from "common/utils/pluralize";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -72,7 +72,7 @@ function InternalAdmin() {
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
   const adminStore = useAdminStore();
-  const [, company] = useAdminCompanies();
+  const [companies, company] = useAdminCompanies();
   const withLoadingScreen = useLoadingScreen();
   const { path } = useRouteMatch();
   const alerts = useSnackbarAlerts();
@@ -88,9 +88,12 @@ function InternalAdmin() {
   const hasReportedDashboardReady = React.useRef(false);
 
   const views = ADMIN_VIEWS.map((view) => {
+    const viewLabel = pluralizeEntrepriseLabel(view.label, companies.length);
+
     const absPath = `${path}${view.path}`;
     return {
       ...view,
+      label: viewLabel,
       path: absPath
     };
   });
@@ -255,7 +258,7 @@ function InternalAdmin() {
       >
         <DayDrawerContextProvider>
           <Main maxWidth={false} className={classes.container} disableGutters>
-            {isMdUp && <SideMenu views={views} />}
+            {isMdUp && <AdminSideMenu views={views} />}
             <Container
               className={`scrollable ${classes.panelContainer}`}
               maxWidth={false}

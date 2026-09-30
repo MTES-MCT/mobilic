@@ -162,6 +162,7 @@ export async function syncUser(userPayload, api, store) {
     userAgreementStatus,
     notifications,
     admin,
+    bizdev,
     totpEnabled,
     isImpersonated
   } = userPayload;
@@ -207,6 +208,7 @@ export async function syncUser(userPayload, api, store) {
           userAgreementStatus,
           notifications,
           admin,
+          bizdev,
           totpEnabled,
           isImpersonated
         },
