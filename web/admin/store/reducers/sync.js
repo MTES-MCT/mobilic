@@ -1,4 +1,5 @@
 import flatMap from "lodash/flatMap";
+import { addWorkDaysReducer } from "./workDays";
 
 export const preserveSelected = (newItems, existingItems) =>
   newItems.map(item => {
@@ -149,6 +150,11 @@ export function updateCompanyDetailsReducer(
       companiesPayload[0].dashboardSummary?.pendingValidationsCount || 0,
     areCompanyEssentialsLoaded: true,
     weeklyThresholds: companiesPayload[0].weeklyThresholds || null,
+    weeklyThresholdsByUserId: Object.fromEntries(
+      allEmployments
+        .filter(e => e.weeklyThresholds && (e.userId || e.user?.id) && e.isActive)
+        .map(e => [e.userId || e.user?.id, e.weeklyThresholds])
+    ),
     business: companiesPayload[0].business || {
       businessType: "",
       transportType: ""
@@ -174,6 +180,14 @@ export function updateCompanyDetailsReducer(
       minDate
     }
   };
+}
+
+export function updateCompanyActivitiesReducer(state, { companiesData, minDate }) {
+  return addWorkDaysReducer(state, {
+    companiesPayload: companiesData,
+    minDate,
+    reset: true
+  });
 }
 
 export const updateCompanyEmploymentsReducer = (state, { companiesPayload }) => {

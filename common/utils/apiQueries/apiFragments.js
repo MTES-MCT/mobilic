@@ -263,6 +263,11 @@ export const FULL_EMPLOYMENT_FRAGMENT = gql`
       transportType
       businessType
     }
+    weeklyThresholds {
+      maxWorkInHours
+      minRestInHours
+      maxWorkedDays
+    }
     companyId
     company {
       id

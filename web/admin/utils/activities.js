@@ -24,6 +24,8 @@ export async function loadActivitiesData({
       async () =>
         await alerts.withApiErrorHandling(
           async () => {
+            const minDate = adminStore.activitiesFilters.minDate;
+            const maxDate = adminStore.activitiesFilters.maxDate;
             const companyData = await loadCompanyWorkDaysAndMissions(
               api,
               userId,

@@ -5,15 +5,15 @@ import { useAdminStore } from "../store/store";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { loadEmploymentsData } from "../utils/employments";
 
-export const useEnsureEmployments = () => {
+export const useEnsureEmployments = (enabled = true) => {
     const adminStore = useAdminStore();
     const alerts = useSnackbarAlerts();
     const api = useApi();
     const withLoadingScreen = useLoadingScreen();
 
     React.useEffect(() => {
-    if (adminStore.companyId && !adminStore.areEmploymentsLoaded) {
+    if (enabled && adminStore.companyId && !adminStore.areEmploymentsLoaded) {
         loadEmploymentsData({ adminStore, alerts, api, withLoadingScreen });
     }
-    }, [adminStore.companyId]);
+    }, [enabled, adminStore.companyId]);
 }

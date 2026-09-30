@@ -23,10 +23,18 @@ export function updateItemReducer(state, { id, entity, update }) {
       ...items[itemIndex],
       ...update
     };
-  return {
+  const newState = {
     ...state,
     [entity]: items
   };
+  if (entity === "employments") {
+    newState.weeklyThresholdsByUserId = Object.fromEntries(
+      items
+        .filter(e => e.weeklyThresholds && (e.userId || e.user?.id) && e.isActive)
+        .map(e => [e.userId || e.user?.id, e.weeklyThresholds])
+    );
+  }
+  return newState;
 }
 
 export function deleteItemReducer(state, { id, entity }) {

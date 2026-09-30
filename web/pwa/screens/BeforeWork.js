@@ -136,6 +136,11 @@ export function BeforeWork({ openHistory, missions }) {
     hasBeenEditedByEmployee &&
     lastMission &&
     Date.now() / 1000 - lastMission.endTime < DAY;
+  const shouldShowBreaksWarning =
+    process.env.REACT_APP_ENOUGH_BREAK_BANNER === "1" &&
+    !hasEnoughBreak &&
+    lastMission &&
+    Date.now() / 1000 - lastMission.endTime < DAY;
   const nonValidatedMissions = orderBy(
     missionsInHistory.filter(
       m =>
@@ -163,11 +168,20 @@ export function BeforeWork({ openHistory, missions }) {
     <Container maxWidth={false} className={classes.outer} disableGutters>
       <MobilicHeader forceMobile />
       <PushNotificationBanner />
-      {shouldShowRealTimeEntryWarning && (
-        <WarningRealTimeEntry dismissKey={`${userId}-${lastMission?.id}`} />
-      )}
-      {process.env.REACT_APP_ENOUGH_BREAK_BANNER === "1" &&
-        !hasEnoughBreak && <WarningBreaks />}
+      <Box sx={{ display: "grid", alignItems: "start" }}>
+        {shouldShowBreaksWarning && (
+          <Box sx={{ gridArea: "1 / 1" }}>
+            <WarningBreaks dismissKey={`${userId}-${lastMission?.id}`} />
+          </Box>
+        )}
+        {shouldShowRealTimeEntryWarning && (
+          <Box sx={{ gridArea: "1 / 1", zIndex: 1 }}>
+            <WarningRealTimeEntry
+              dismissKey={`${userId}-${lastMission?.id}`}
+            />
+          </Box>
+        )}
+      </Box>
       <Stack
         direction="column"
         alignItems="center"

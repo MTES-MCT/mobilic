@@ -13,6 +13,7 @@ import { addWorkDaysReducer } from "./workDays";
 import {
   updateCompaniesListReducer,
   updateCompanyDetailsReducer,
+  updateCompanyActivitiesReducer,
   updateCompanyEmploymentsReducer,
   updateCompanyTeamsReducer,
   updateCompanyIdReducer,
@@ -56,6 +57,7 @@ export const ADMIN_ACTIONS = {
   updateBusinessType: updateBusinessTypeReducer,
   delete: deleteItemReducer,
   updateCompanyDetails: updateCompanyDetailsReducer,
+  updateCompanyActivities: updateCompanyActivitiesReducer,
   updatePendingValidationsCount: updatePendingValidationsCountReducer,
   updateCompanyEmployments: updateCompanyEmploymentsReducer,
   updateCompanyTeams: updateCompanyTeamsReducer,

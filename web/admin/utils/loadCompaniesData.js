@@ -28,7 +28,7 @@ export async function loadCompaniesList(api, userId) {
   return sortedCompaniesByName;
 }
 
-export async function loadCompanyEssentials(api, userId, minDate, maxDate, companyId) {
+export async function loadCompanyEssentials(api, userId, minDate, companyId) {
   const companyIds = [companyId];
 
   const companyResponse = await api.graphQlQuery(
