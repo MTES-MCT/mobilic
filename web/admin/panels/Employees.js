@@ -37,6 +37,8 @@ import BatchInviteModal from "../modals/BatchInviteModal";
 import { EmployeeProgressBar } from "../components/EmployeeProgressBar";
 import { useEmployeeProgress } from "../hooks/useEmployeeProgress";
 import { useAutoUpdateNbWorkers } from "../hooks/useAutoUpdateNbWorkers";
+import { useEnsureEmployments } from "../hooks/useEnsureEmployments";
+import { useEnsureTeams } from "../hooks/useEnsureTeams";
 import { InviteButtons } from "../components/InviteButtons";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
@@ -131,6 +133,9 @@ export function Employees({ company, containerRef }) {
   const [hasClosedInviteModal, setHasClosedInviteModal] = React.useState(false);
 
   const companyId = React.useMemo(() => company?.id || null, [company]);
+
+  useEnsureEmployments();
+  useEnsureTeams();
 
   React.useEffect(() => {
     if (teams.length > 0) {

@@ -90,6 +90,7 @@ export function addWorkDaysReducer(
     ...state,
     workDays: [...(reset ? [] : state.workDays), ...workDaysToAdd],
     missions,
-    minWorkDaysCursor: actualMinCursor
+    minWorkDaysCursor: actualMinCursor,
+    areMissionsActivitiesLoaded: true
   };
 }
