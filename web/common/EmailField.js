@@ -14,6 +14,7 @@ export function EmailField({
   label = "Email professionnel",
   required = false,
   showHint = false,
+  disabled = false,
   ...props
 }) {
   const [actualInput, setActualInput] = React.useState(value);
@@ -47,6 +48,7 @@ export function EmailField({
         },
         ...props
       }}
+      disabled={disabled}
       required={required}
     />
   );
