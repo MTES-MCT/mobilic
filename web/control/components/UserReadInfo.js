@@ -21,6 +21,7 @@ import { InfoItem } from "../../home/InfoField";
 import { formatDateTime } from "common/utils/time";
 import { useIsWidthUp } from "common/utils/useWidth";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { TechnicalIncidentAlert } from "./TechnicalIncidentAlert";
 
 const useStyles = makeStyles((theme) => ({
   exportButton: {
@@ -140,6 +141,9 @@ export function UserReadInfo({
           daysAddedPosterioriNumber={daysAddedPosterioriNumber}
           daysModifiedNumber={daysModifiedNumber}
           onChangeTab={onChangeTab}
+        />
+        <TechnicalIncidentAlert
+          incidents={controlData?.technicalIncidents}
         />
         {controlData && <ControllerControlNote />}
         {allowC1BExport && (
