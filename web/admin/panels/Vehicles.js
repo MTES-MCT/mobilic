@@ -57,7 +57,11 @@ const useStyles = makeStyles(() => ({
 }));
 
 function isValidRegistrationNumber(value) {
-  return /^(?=.*\d)(?=.*[A-Z])[A-Z0-9-]{4,}$/i.test(value);
+  return (
+    /^(?=.*\d)(?=.*[A-Z])[A-Z0-9-]{4,}$/i.test(value) ||
+    /^\d{6,8}$/.test(value) ||
+    /^\d{4} \d{4}$/.test(value)
+  );
 }
 
 function normalizeRegistrationNumber(token) {
@@ -225,11 +229,12 @@ export default function VehicleAdmin({ company }) {
           </p>
         }
         inputLabel="Immatriculations"
-        inputHintText="Saisissez les immatriculations au format AA-123-AA. Si vous les copiez-collez, veillez à bien les séparer par un espace, une virgule ou un point-virgule dans le fichier d'origine. Une immatriculation ne doit pas contenir d'espace."
+        inputHintText="Saisissez les immatriculations au format AA-123-AA, ou en chiffres pour les véhicules militaires (ex. 6184 0001). Si vous les copiez-collez, séparez-les par une virgule, un point-virgule ou un retour à la ligne."
         acceptButtonTitle="Ajouter"
         validationFn={isValidRegistrationNumber}
         normalizeFn={normalizeRegistrationNumber}
-        validationErrorMessage="Cette immatriculation n'est pas reconnue. Exemples attendus : AB-123-CD, 1234-AB-56, AB12-CDE, 1-ABC-123."
+        separatorsRegex={/[,;\n]/}
+        validationErrorMessage="Cette immatriculation n'est pas reconnue. Exemples attendus : AB-123-CD, 1234-AB-56, AB12-CDE, 1-ABC-123, 6184 0001."
         trackingEventFn={BATCH_ADD_VEHICLES_SUBMIT}
       />
     </>
