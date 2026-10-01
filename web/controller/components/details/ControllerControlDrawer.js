@@ -19,8 +19,9 @@ const InnerControllerControlDrawer = ({ onClose }) => {
   const handleClose = React.useCallback(() => {
     const bulletinExists = !!controlData?.controlBulletinCreationTime;
     const deliveryNotSet = controlData?.deliveredByHand === null;
+    const isControlTypeMobilic = controlType === CONTROL_TYPES.MOBILIC.label;
 
-    if (bulletinExists && deliveryNotSet) {
+    if (bulletinExists && deliveryNotSet && !isControlTypeMobilic) {
       actions.openHandDeliveryModal();
     } else {
       onClose();

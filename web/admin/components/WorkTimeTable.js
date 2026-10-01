@@ -31,6 +31,8 @@ import {
 } from "../utils/missionsStatus";
 import { MissionStatusTagBtn } from "./MissionStatusTagBtn";
 import { MissionStatusFilter } from "./MissionStatusFilter";
+import CircularProgress from "@mui/material/CircularProgress";
+import { fr } from "@codegouvfr/react-dsfr";
 import { getThresholds, getThresholdDisplay } from "../utils/weeklyThresholds";
 
 const STATUS_VALUE_TO_KEY = Object.fromEntries(
@@ -46,8 +48,17 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(2),
     paddingRight: theme.spacing(4),
     paddingLeft: theme.spacing(4)
+  },
+  loadMoreIndicator: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: theme.spacing(1),
+    padding: theme.spacing(2)
   }
 }));
+
+const LOAD_MORE_ROW_THRESHOLD = 15;
 
 const ThresholdValue = ({ value, formatted, thresholdKey, thresholds }) => {
   const display = getThresholdDisplay(value, thresholdKey, thresholds);
@@ -403,7 +414,9 @@ export function WorkTimeTable({
   showMissionName,
   showExpenditures,
   loading,
-  onDeletedStatusSelected
+  onDeletedStatusSelected,
+  onLoadMore,
+  isLoadingMore
 }) {
   const { openWorkday } = useDayDrawer();
   const openMission = useMissionDrawer()[1];
@@ -622,6 +635,14 @@ export function WorkTimeTable({
         onRowClick={(entry) =>
           onRowClick(entry, trackEvent, openWorkday, openMission)
         }
+        onRowsRendered={
+          onLoadMore &&
+          (({ stopIndex, totalCount }) => {
+            if (stopIndex >= totalCount - LOAD_MORE_ROW_THRESHOLD) {
+              onLoadMore();
+            }
+          })
+        }
         groupByColumn={{
           label: periodLabel,
           name: "periodStart",
@@ -633,6 +654,13 @@ export function WorkTimeTable({
         }}
         loading={loading}
       />
+
+      {isLoadingMore && (
+        <div className={classes.loadMoreIndicator}>
+          <CircularProgress size="2rem" sx={{ color: fr.colors.decisions.artwork.major.blueFrance.default }} />
+          <span>Chargement…</span>
+        </div>
+      )}
     </>
   );
 }
