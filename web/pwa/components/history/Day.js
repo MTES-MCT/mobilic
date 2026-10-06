@@ -12,6 +12,7 @@ import { useCacheContradictoryInfoInPwaStore } from "common/utils/contradictory"
 import { prettyFormatDay, textualPrettyFormatDay } from "common/utils/time";
 import { getNextHeadingComponent } from "common/utils/html";
 import { AlertsInHistory } from "../../../control/components/AlertsInHistory";
+import { TechnicalIncidentAlert } from "../../../control/components/TechnicalIncidentAlert";
 import Notice from "../../../common/Notice";
 import { DayKpis } from "./DayKpis";
 import { NoContradictory } from "./NoContradictory";
@@ -38,7 +39,8 @@ export function Day({
   userId,
   controlId = null,
   headingComponent,
-  alertsInPeriod = null
+  alertsInPeriod = null,
+  technicalIncidentsInPeriod = null
 }) {
   const [
     shouldDisplayInitialEmployeeVersion,
@@ -197,6 +199,10 @@ export function Day({
         ))}
 
       <Stack direction="column" px={2} pt={2} rowGap={2}>
+        {technicalIncidentsInPeriod &&
+          technicalIncidentsInPeriod.length > 0 && (
+            <TechnicalIncidentAlert incidents={technicalIncidentsInPeriod} />
+          )}
         {alertsInPeriod && alertsInPeriod.length > 0 && (
           <AlertsInHistory alertsInPeriod={alertsInPeriod} />
         )}
