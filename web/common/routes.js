@@ -588,5 +588,5 @@ export function getBadgeRoutes(adminStore) {
     }
   ];
 
-  return badgeRoutes;
+  return badgeRoutes.filter(route => route.badge.badgeContent > 0);
 }
