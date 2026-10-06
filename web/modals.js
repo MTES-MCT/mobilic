@@ -102,7 +102,7 @@ export const MODAL_DICT = {
   confirmationRemoveInfringementModal: ConfirmationRemoveInfringementModal,
   confirmationCancelInfringementModal: ConfirmationCancelInfringementModal,
   typeformModal: TypeformModal,
-  updateCompanyDetails: UpdateCompanyDetailsModal,
+  updateCompanyDetailsModal: UpdateCompanyDetailsModal,
   blockedTime: BlockedTimeModal,
   successMessage: SuccessMessageModal,
   webinars: WebinarsModal,

@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: "4px",
     border: "1px solid",
     borderColor: fr.colors.decisions.border.default.grey.default,
-    //padding: "8px 12px 12px 12px",
+    padding: "12px 16px",
     [theme.breakpoints.up("sm")]: {
       maxWidth: "50%"
     }
