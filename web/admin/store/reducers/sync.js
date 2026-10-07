@@ -1,5 +1,6 @@
 import flatMap from "lodash/flatMap";
 import { addWorkDaysReducer } from "./workDays";
+import { computeWeeklyThresholdsByUserId } from "../../utils/weeklyThresholds";
 
 export const preserveSelected = (newItems, existingItems) =>
   newItems.map(item => {
@@ -124,22 +125,15 @@ export function updateCompanyDetailsReducer(
       c.currentUsers.map(u => ({ ...u, companyId: c.id }))
     )
   );
-  // `employments` here is scoped to the current admin's own employment
-  // (query uses `employments(latestPerUser: true, userIds: [$id])`), not
-  // the full company roster. It must not overwrite state.employments,
-  // which updateCompanyEmploymentsReducer maintains from the dedicated,
+  // companiesPayload[*].employments here is scoped to the current admin's
+  // own employment (query uses `employments(latestPerUser: true, userIds:
+  // [$id])`), not the full company roster - it is only used upstream to
+  // derive the admin's own shouldSeeCertificateInfo/shouldForceNbWorkerInfo
+  // flags. It must not overwrite state.employments, which
+  // updateCompanyEmploymentsReducer maintains from the dedicated,
   // unrestricted employments query - otherwise whichever of the two
   // independently-triggered fetches resolves last wins, and the full
   // roster can get silently clobbered down to a single employment.
-  const adminOwnEmployments = flatMap(
-    companiesPayload.map(c =>
-      c.employments.map(e => ({
-        ...e,
-        companyId: c.id,
-        company: { id: c.id, name: c.name, siren: c.siren }
-      }))
-    )
-  );
 
   return {
     ...state,
@@ -155,10 +149,12 @@ export function updateCompanyDetailsReducer(
       companiesPayload[0].dashboardSummary?.pendingValidationsCount || 0,
     areCompanyEssentialsLoaded: true,
     weeklyThresholds: companiesPayload[0].weeklyThresholds || null,
-    weeklyThresholdsByUserId: Object.fromEntries(
-      adminOwnEmployments
-        .filter(e => e.weeklyThresholds && (e.userId || e.user?.id) && e.isActive)
-        .map(e => [e.userId || e.user?.id, e.weeklyThresholds])
+    // Derived from the full roster (state.employments, maintained by
+    // updateCompanyEmploymentsReducer) rather than adminOwnEmployments:
+    // per-employee threshold overrides must cover every employee, not just
+    // the current admin.
+    weeklyThresholdsByUserId: computeWeeklyThresholdsByUserId(
+      state.employments
     ),
     business: companiesPayload[0].business || {
       businessType: "",
@@ -209,7 +205,8 @@ export const updateCompanyEmploymentsReducer = (state, { companiesPayload }) => 
   return {
     ...state,
     employments: allEmployments,
-    areEmploymentsLoaded: true
+    areEmploymentsLoaded: true,
+    weeklyThresholdsByUserId: computeWeeklyThresholdsByUserId(allEmployments)
   };
 };
 
