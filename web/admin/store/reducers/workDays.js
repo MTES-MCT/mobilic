@@ -7,7 +7,7 @@ export function addWorkDaysReducer(
   let actualMinCursor = minDate;
   companiesPayload.forEach((c) => {
     const wds = c.workDays;
-    if (wds.pageInfo.hasNextPage) {
+    if (wds.pageInfo.hasNextPage && wds.edges.length > 0) {
       const oldestWorkDay = wds.edges[wds.edges.length - 1].node;
       const oldestCursor = `${oldestWorkDay.day}${oldestWorkDay.user.id}`;
       actualMinCursor =
