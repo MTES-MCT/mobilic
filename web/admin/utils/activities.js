@@ -1,25 +1,19 @@
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { loadCompanyWorkDaysAndMissions } from "./loadCompaniesData";
 
-const WORK_DAYS_PAGE_SIZE = 50;
-
+// Pagination (first/after) is temporarily disabled - it could stall or loop
+// on empty pages. Omitting first/after makes the backend return everything
+// in one query instead (already supported).
 export async function loadActivitiesData({
   adminStore,
   alerts,
   api,
   withLoadingScreen,
-  minDate = adminStore.activitiesFilters.minDate,
-  maxDate = adminStore.activitiesFilters.maxDate,
   reset = true,
 }) {
   const userId = adminStore.userId;
   const companyId = adminStore.companyId;
   if (userId && companyId) {
-    const isSameRange =
-      !reset &&
-      adminStore.workDaysFetchRange?.minDate === minDate &&
-      adminStore.workDaysFetchRange?.maxDate === maxDate;
-
     await withLoadingScreen(
       async () =>
         await alerts.withApiErrorHandling(
@@ -32,12 +26,6 @@ export async function loadActivitiesData({
               minDate,
               maxDate,
               companyId,
-              {
-                first: WORK_DAYS_PAGE_SIZE,
-                after: isSameRange
-                  ? adminStore.workDaysPageInfo?.endCursor
-                  : null,
-              },
             );
             adminStore.dispatch({
               type: ADMIN_ACTIONS.addWorkDays,
