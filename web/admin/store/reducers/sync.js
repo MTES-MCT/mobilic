@@ -116,7 +116,6 @@ export function updateCompanyDetailsReducer(
   state,
   { companiesPayload, minDate }
 ) {
-
   const users = flatMap(
     companiesPayload.map(c => c.users.map(u => ({ ...u, companyId: c.id })))
   );
@@ -125,7 +124,14 @@ export function updateCompanyDetailsReducer(
       c.currentUsers.map(u => ({ ...u, companyId: c.id }))
     )
   );
-  const allEmployments = flatMap(
+  // `employments` here is scoped to the current admin's own employment
+  // (query uses `employments(latestPerUser: true, userIds: [$id])`), not
+  // the full company roster. It must not overwrite state.employments,
+  // which updateCompanyEmploymentsReducer maintains from the dedicated,
+  // unrestricted employments query - otherwise whichever of the two
+  // independently-triggered fetches resolves last wins, and the full
+  // roster can get silently clobbered down to a single employment.
+  const adminOwnEmployments = flatMap(
     companiesPayload.map(c =>
       c.employments.map(e => ({
         ...e,
@@ -139,7 +145,6 @@ export function updateCompanyDetailsReducer(
     ...state,
     users,
     currentUsers,
-    employments: allEmployments,
     vehicles: flatMap(
       companiesPayload.map(c =>
         c.vehicles.map(v => ({ ...v, companyId: c.id }))
@@ -151,7 +156,7 @@ export function updateCompanyDetailsReducer(
     areCompanyEssentialsLoaded: true,
     weeklyThresholds: companiesPayload[0].weeklyThresholds || null,
     weeklyThresholdsByUserId: Object.fromEntries(
-      allEmployments
+      adminOwnEmployments
         .filter(e => e.weeklyThresholds && (e.userId || e.user?.id) && e.isActive)
         .map(e => [e.userId || e.user?.id, e.weeklyThresholds])
     ),
