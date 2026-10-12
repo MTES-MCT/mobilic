@@ -64,7 +64,7 @@ export function ActivitiesRedirectBanner() {
       title="Dès aujourd'hui, validez les missions de vos salariés directement depuis la rubrique"
       link={{
         linkProps: { to: "/admin/activities", target: "_self" },
-        text: "Activités"
+        text: "Activités."
       }}
     />
   );
