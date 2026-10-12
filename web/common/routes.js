@@ -578,7 +578,11 @@ export function isAccessible(path, storeData) {
 export function getBadgeRoutes(adminStore) {
   const pendingValidationCount = adminStore?.pendingValidationsCount ?? null;
 
-  const badgeRoutes = [
+  if (!pendingValidationCount || pendingValidationCount <= 0) {
+    return [];
+  }
+
+  return [
     {
       path: "/admin/validations",
       badge: {
@@ -587,6 +591,4 @@ export function getBadgeRoutes(adminStore) {
       }
     }
   ];
-
-  return badgeRoutes.filter(route => route.badge.badgeContent > 0);
 }
