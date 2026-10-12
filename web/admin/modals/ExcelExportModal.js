@@ -56,6 +56,7 @@ export default function ExcelExportModal({
 
   const [isEnabledDownload, setIsEnabledDownload] = React.useState(true);
   const [consolidatedFile, setConsolidatedFile] = React.useState(true);
+  const [controlFormat, setControlFormat] = React.useState(false);
   const [exportValidation, setExportValidation] = React.useState(null);
 
   React.useEffect(() => {
@@ -79,6 +80,7 @@ export default function ExcelExportModal({
     setMinDate(defaultMinDate);
     setMaxDate(defaultMaxDate);
     setConsolidatedFile(true);
+    setControlFormat(false);
   }, [open]);
 
   const handleUserFilterChange = (newUsers) => {
@@ -118,16 +120,9 @@ export default function ExcelExportModal({
       open={open}
       handleClose={handleClose}
       title={
-        <>
-          <Typography variant="h2" component="h1" mt={2} className={classes.subtitle}>
-            Télécharger le rapport d'activité
-          </Typography>
-          <Notice
-            type="warning"
-            description="En cas d'export pour les agents de contrôle, veillez à ne pas
-            modifier la mise en page du fichier avant envoi."
-          />
-        </>
+        <Typography variant="h2" component="h1" mt={2} className={classes.subtitle}>
+          Télécharger le rapport d'activité
+        </Typography>
       }
       size="lg"
       content={
@@ -153,8 +148,27 @@ export default function ExcelExportModal({
               </Typography>
             </li>
           </ul>
+          <Checkbox
+            className={classes.subtitle}
+            options={[
+              {
+                label: "Format conforme pour un contrôle par un agent de contrôle habilité",
+                hintText: "Cochez cette case pour générer un export dans le format attendu par les agents de contrôle.",
+                nativeInputProps: {
+                  checked: controlFormat,
+                  onChange: (e) => setControlFormat(e.target.checked)
+                }
+              }
+            ]}
+          />
+          {controlFormat && (
+            <Notice
+              type="warning"
+              description="Veillez à ne pas modifier la mise en page du fichier avant envoi aux agents de contrôle."
+            />
+          )}
           <Typography component="h2" variant="h6" className={classes.subtitle}>
-            Options d'export
+            Option d'export
           </Typography>
 
           <Grid spacing={4} container>
@@ -275,7 +289,8 @@ export default function ExcelExportModal({
                 let selectedUsers = users.filter((u) => u.selected);
                 const options = {
                   company_ids: [selectedCompany.id],
-                  one_file_by_employee: !consolidatedFile
+                  one_file_by_employee: !consolidatedFile,
+                  control_format: controlFormat
                 };
                 if (selectedUsers.length > 0)
                   options["user_ids"] = selectedUsers.map((u) => u.id);
