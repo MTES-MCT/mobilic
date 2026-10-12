@@ -14,7 +14,6 @@ import { getActivityLabelDependingOnMissionType } from "common/utils/activities"
 import { useActivitiesCardStyles } from "./styles/ActivitiesCardStyle";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
   ADD_ACTIVITY_IN_MISSION_PANEL,
@@ -168,19 +167,7 @@ export function ActivitiesCard({
         </TableCell>
         {showEditColumn && (
           <TableCell className={classes.cellAction}>
-            {simplified && config ? (
-              <IconButton
-                size="small"
-                aria-expanded={isExpanded}
-                aria-label="Afficher l'historique"
-                onClick={e => {
-                  e.stopPropagation();
-                  toggleExpand();
-                }}
-              >
-                <KeyboardArrowDownIcon className={`${classes.chevron} ${isExpanded ? classes.chevronExpanded : ""}`} />
-              </IconButton>
-            ) : simplified || entry.__tagType === "SUPPRESSION" ? null : (
+            {entry.__tagType !== "SUPPRESSION" && onEditActivity && (
               <IconButton
                 className={classes.editButton}
                 onClick={e => {
@@ -190,6 +177,20 @@ export function ActivitiesCard({
                 }}
               >
                 <EditIcon className={classes.editButtonIcon} />
+              </IconButton>
+            )}
+            {simplified && (
+              <IconButton
+                size="small"
+                aria-expanded={isExpanded}
+                aria-label="Afficher l'historique"
+                className={`${classes.historyChevron} ${!config ? classes.hiddenChevron : ""}`}
+                onClick={e => {
+                  e.stopPropagation();
+                  if (config) toggleExpand();
+                }}
+              >
+                <span className={`fr-icon--sm fr-icon-arrow-down-s-line ${classes.chevron} ${isExpanded ? classes.chevronExpanded : ""}`} />
               </IconButton>
             )}
           </TableCell>

@@ -27,12 +27,13 @@ export function formatRangeString(startTime, endTime) {
 }
 
 export function WorkTimeSummaryKpiGrid({ metrics, cardProps = {}, loading }) {
+  const defaultSize = metrics.filter(m => !m.fullWidth).length === 3 ? 4 : 6;
   return (
     <Grid container spacing={2}>
       {metrics.map((metric, index) => {
         const CardComponent = metric.render ? InfoCard : MetricCard;
         return (
-          <Grid item xs={6} key={index} sx={{ display: "flex" }}>
+          <Grid item xs={metric.fullWidth ? 12 : defaultSize} key={index} sx={{ display: "flex" }}>
             <CardComponent
               {...omit(metric, "render")}
               {...cardProps}
@@ -182,11 +183,18 @@ export function renderMissionKpis(
     diffInS = adminKpis.timers.totalWork - employeeKpis.timers.totalWork;
   }
   formattedKpis.push({
-    label: "Temps de travail",
+    label: "Travail",
     value: formatTimer(timers ? timers.totalWork : 0),
     subText,
     hideSubText: true,
     diffText: diffSecondsToText(diffInS)
+  });
+
+  formattedKpis.push({
+    label: "Pause",
+    value: formatTimer(timers ? timers.break : 0),
+    subText,
+    hideSubText: true
   });
 
   return formattedKpis;
@@ -337,6 +345,15 @@ export function renderPeriodKpis(
   };
 
   formattedKpis.push(workTimeKpis);
+
+  formattedKpis.push({
+    name: "pause",
+    label: "Pause",
+    value: formatTimer(kpis.timers ? kpis.timers.break : 0),
+    subText,
+    hideSubText: true
+  });
+
   if (Object.keys(kpis.expendituresCount).length > 0) {
     Object.keys(kpis.expendituresCount).forEach((type) => {
       const label = EXPENDITURES[type].plural;

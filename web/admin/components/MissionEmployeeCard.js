@@ -1,13 +1,15 @@
 import React from "react";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Accordion from "@mui/material/Accordion";
+import Collapse from "@mui/material/Collapse";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { formatPersonName } from "common/utils/coworkers";
 import Typography from "@mui/material/Typography";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
 import { MetricCard } from "../../common/InfoCard";
-import { formatTimer, useDateTimeFormatter } from "common/utils/time";
+import { formatTimer, formatTimeOfDay, getStartOfDay, useDateTimeFormatter } from "common/utils/time";
 import { ExpendituresCard } from "./ExpendituresCard";
 import { ActivitiesCard } from "./ActivitiesCard";
 import {
@@ -81,6 +83,26 @@ const useStyles = makeStyles(theme => ({
   },
   accordionDetails: {
     display: "block"
+  },
+  sectionLabel: {
+    fontWeight: 700,
+    marginBottom: theme.spacing(2)
+  },
+  amplitudeSubText: {
+    textAlign: "center",
+    display: "block"
+  },
+  collapseChevron: {
+    marginRight: theme.spacing(1),
+    padding: 0
+  },
+  chevronExpanded: {
+    transform: "rotate(180deg)",
+    transition: "transform 0.2s"
+  },
+  chevronCollapsed: {
+    transform: "rotate(0deg)",
+    transition: "transform 0.2s"
   }
 }));
 
@@ -107,6 +129,9 @@ export function MissionEmployeeCard({
   const activities = stats.activities || [];
 
   const [open, setOpen] = React.useState(alwaysOpen || defaultOpen);
+  const [userExpanded, setUserExpanded] = React.useState(
+    !showUserName || !stats.adminValidation
+  );
 
   const classes = useStyles();
 
@@ -124,6 +149,12 @@ export function MissionEmployeeCard({
     augmentedAndSortedActivities,
     false
   );
+
+  const sameDay =
+    stats.startTime &&
+    stats.endTimeOrNow &&
+    getStartOfDay(stats.startTime) === getStartOfDay(stats.endTimeOrNow);
+  const amplitudeFormatter = sameDay ? formatTimeOfDay : datetimeFormatter;
 
   const cacheContradictoryInfoInAdminStore = useCacheContradictoryInfoInAdminStore();
 
@@ -154,6 +185,18 @@ export function MissionEmployeeCard({
         <div className={classes.userNameRow}>
           {showUserName && (
             <>
+              <IconButton
+                size="small"
+                onClick={() => setUserExpanded(!userExpanded)}
+                aria-label={userExpanded ? "Replier" : "Déplier"}
+                className={classes.collapseChevron}
+              >
+                <ExpandMoreIcon
+                  className={
+                    userExpanded ? classes.chevronExpanded : classes.chevronCollapsed
+                  }
+                />
+              </IconButton>
               <Typography
                 component={headingComponent || "h3"}
                 className={classes.userName}
@@ -179,155 +222,196 @@ export function MissionEmployeeCard({
           )}
         </div>
       )}
-      <Grid item container spacing={3} alignItems="stretch">
-        <Grid xs={12} sm={6} item className={classes.cardRecapKPIContainer}>
-          <MetricCard
-            className={classes.cardRecapKPI}
-            textAlign="center"
-            py={3}
-            variant="outlined"
-            title="Amplitude"
-            titleProps={{
-              variant: "h5",
-              component: getNextHeadingComponent(headingComponent)
-            }}
-            value={
-              !stats.isComplete && isDeleted
-                ? "-"
-                : formatTimer(stats.service)
-            }
-            valueProps={{
-              variant: "body1",
-              className:
-                !stats.isComplete && !isDeleted
-                  ? classes.runningMissionText
-                  : ""
-            }}
-            subText={
-              stats.startTime ? (
-                <span>
-                  de {datetimeFormatter(stats.startTime)} à{" "}
-                  {!stats.isComplete && isDeleted
-                    ? " -"
-                    : datetimeFormatter(stats.endTimeOrNow)}{" "}
-                  {!stats.isComplete && !isDeleted ? (
-                    <span className={classes.runningMissionText}>
-                      (en cours)
-                    </span>
-                  ) : (
-                    ""
-                  )}
-                </span>
-              ) : (
-                ""
-              )
-            }
-          />
-        </Grid>
-        <Grid xs={12} sm={6} item className={classes.cardRecapKPIContainer}>
-          <MetricCard
-            className={classes.cardRecapKPI}
-            textAlign="center"
-            py={3}
-            variant="outlined"
-            title="Temps de travail"
-            titleProps={{
-              variant: "h5",
-              component: getNextHeadingComponent(headingComponent)
-            }}
-            value={
-              !stats.isComplete && isDeleted
-                ? "-"
-                : formatTimer(stats.totalWorkDuration)
-            }
-            valueProps={{
-              variant: "body1",
-              className:
-                !stats.isComplete && !isDeleted
-                  ? classes.runningMissionText
-                  : ""
-            }}
-            subText={
-              !stats.isComplete && !isDeleted ? (
-                <span className={classes.runningMissionText}>En cours</span>
-              ) : null
-            }
-          />
-        </Grid>
-      </Grid>
-      <Grid item xs={12} className={classes.sectionSpacing}>
-        <ActivitiesCard
-          cardClassName={classes.flatCard}
-          missionDeleted={isDeleted}
-          isHoliday={mission.isHoliday}
-          activities={augmentedAndSortedActivities}
-          onCreateActivity={onCreateActivity}
-          onEditActivity={onEditActivity}
-          day={day}
-          title="Activités"
-          datetimeFormatter={datetimeFormatter}
-          titleProps={{
-            variant: "h6",
-            component: getNextHeadingComponent(headingComponent)
-          }}
-          {...(overrideValidation &&
-            adminAutoValidationOnly && {
-              onActionButtonClick: overrideValidation,
-              actionButtonLabel: "J'ai été absent : modifier les saisies"
-            })}
-          allowOtherTask={
-            mission?.company?.settings?.allowOtherTask ?? true
-          }
-          mission={mission}
-          cacheContradictoryInfoInStore={cacheContradictoryInfoInAdminStore}
-          simplified={simplified}
-        />
-      </Grid>
-      {showExpenditures && (
-        <Grid item xs={12} className={classes.sectionSpacing}>
-          <ExpendituresCard
-            cardClassName={classes.flatCard}
-            title="Frais"
-            expenditures={stats.expenditures || []}
-            editModalTitle={`Frais pour ${formatPersonName(user)}`}
-            onEditExpenditures={onEditExpenditures}
-            minSpendingDate={stats.startTime}
-            maxSpendingDate={stats.endTime}
-            titleProps={{
-              variant: "h5",
-              component: getNextHeadingComponent(headingComponent)
-            }}
-          />
-        </Grid>
-      )}
-      {alwaysOpen && (
-        <Grid item xs={12} className={classes.sectionSpacing}>
-          <MissionInfoCard
-            className={classes.flatCard}
-            title="Historique des validations"
-            titleProps={{
-              variant: "h5",
-              component: getNextHeadingComponent(headingComponent)
-            }}
+      <Collapse in={!showUserName || userExpanded} unmountOnExit={false}>
+        {!showUserName && (
+          <Typography
+            variant="h6"
+            component={headingComponent || "h3"}
+            className={classes.sectionLabel}
           >
-            {isAdminBypassingEmployeeValidation && (
-              <Notice
-                type="warning"
-                description={
-                  <>La validation par le salarié n'a pas eu lieu pour </>
-                }
-                linkText="l'une des raisons suivantes."
-                linkUrl="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic/suivi-et-validation-du-temps-de-travail#en-tant-que-gestionnaire-je-peux-uniquement-modifier-et-valider-les-missions-validees-par-les-salari"
-              />
-            )}
-            <AdminMissionValidations
-              mission={mission}
-              validations={stats.validations}
-              userId={user.id}
+            Résumé
+          </Typography>
+        )}
+        <Grid item container spacing={3} alignItems="stretch">
+          <Grid xs={12} sm={4} item className={classes.cardRecapKPIContainer}>
+            <MetricCard
+              className={classes.cardRecapKPI}
+              textAlign="center"
+              py={3}
+              variant="outlined"
+              title="Amplitude"
+              titleProps={{
+                variant: "h5",
+                component: getNextHeadingComponent(headingComponent)
+              }}
+              value={
+                !stats.isComplete && isDeleted
+                  ? "-"
+                  : formatTimer(stats.service)
+              }
+              valueProps={{
+                variant: "body1",
+                className:
+                  !stats.isComplete && !isDeleted
+                    ? classes.runningMissionText
+                    : ""
+              }}
+              subText={
+                stats.startTime ? (
+                  <span className={classes.amplitudeSubText}>
+                    de {amplitudeFormatter(stats.startTime)}
+                    {stats.isComplete || !isDeleted ? (
+                      <> à {amplitudeFormatter(stats.endTimeOrNow)}</>
+                    ) : (
+                      " à -"
+                    )}
+                    {!stats.isComplete && !isDeleted && (
+                      <span className={classes.runningMissionText}>
+                        {" "}(en cours)
+                      </span>
+                    )}
+                  </span>
+                ) : (
+                  ""
+                )
+              }
             />
-          </MissionInfoCard>
+          </Grid>
+          <Grid xs={12} sm={4} item className={classes.cardRecapKPIContainer}>
+            <MetricCard
+              className={classes.cardRecapKPI}
+              textAlign="center"
+              py={3}
+              variant="outlined"
+              title="Travail"
+              titleProps={{
+                variant: "h5",
+                component: getNextHeadingComponent(headingComponent)
+              }}
+              value={
+                !stats.isComplete && isDeleted
+                  ? "-"
+                  : formatTimer(stats.totalWorkDuration)
+              }
+              valueProps={{
+                variant: "body1",
+                className:
+                  !stats.isComplete && !isDeleted
+                    ? classes.runningMissionText
+                    : ""
+              }}
+              subText={
+                !stats.isComplete && !isDeleted ? (
+                  <span className={classes.runningMissionText}>En cours</span>
+                ) : null
+              }
+            />
+          </Grid>
+          <Grid xs={12} sm={4} item className={classes.cardRecapKPIContainer}>
+            <MetricCard
+              className={classes.cardRecapKPI}
+              textAlign="center"
+              py={3}
+              variant="outlined"
+              title="Pause"
+              titleProps={{
+                variant: "h5",
+                component: getNextHeadingComponent(headingComponent)
+              }}
+              value={
+                !stats.isComplete && isDeleted
+                  ? "-"
+                  : formatTimer(stats.breakDuration)
+              }
+              valueProps={{
+                variant: "body1",
+                className:
+                  !stats.isComplete && !isDeleted
+                    ? classes.runningMissionText
+                    : ""
+              }}
+              subText={
+                !stats.isComplete && !isDeleted ? (
+                  <span className={classes.runningMissionText}>En cours</span>
+                ) : null
+              }
+            />
+          </Grid>
         </Grid>
-      )}
+        <Grid item xs={12} className={classes.sectionSpacing}>
+          <ActivitiesCard
+            cardClassName={classes.flatCard}
+            missionDeleted={isDeleted}
+            isHoliday={mission.isHoliday}
+            activities={augmentedAndSortedActivities}
+            onCreateActivity={onCreateActivity}
+            onEditActivity={onEditActivity}
+            day={day}
+            title="Activités"
+            datetimeFormatter={datetimeFormatter}
+            titleProps={{
+              variant: "h6",
+              component: getNextHeadingComponent(headingComponent)
+            }}
+            {...(overrideValidation &&
+              adminAutoValidationOnly && {
+                onActionButtonClick: overrideValidation,
+                actionButtonLabel: "J'ai été absent : modifier les saisies"
+              })}
+            allowOtherTask={
+              mission?.company?.settings?.allowOtherTask ?? true
+            }
+            mission={mission}
+            cacheContradictoryInfoInStore={cacheContradictoryInfoInAdminStore}
+            simplified={simplified}
+          />
+        </Grid>
+        {showExpenditures && (
+          <Grid item xs={12} className={classes.sectionSpacing}>
+            <ExpendituresCard
+              cardClassName={classes.flatCard}
+              title="Frais"
+              expenditures={stats.expenditures || []}
+              editModalTitle={`Frais pour ${formatPersonName(user)}`}
+              onEditExpenditures={onEditExpenditures}
+              minSpendingDate={stats.startTime}
+              maxSpendingDate={stats.endTime}
+              titleProps={{
+                variant: "h5",
+                component: getNextHeadingComponent(headingComponent)
+              }}
+            />
+          </Grid>
+        )}
+        {alwaysOpen && (
+          <Grid item xs={12} className={classes.sectionSpacing}>
+            <MissionInfoCard
+              className={classes.flatCard}
+              title="Historique des validations"
+              titleProps={{
+                variant: "h5",
+                component: getNextHeadingComponent(headingComponent)
+              }}
+            >
+              {isAdminBypassingEmployeeValidation && (
+                <Notice
+                  type="warning"
+                  description={
+                    <>La validation par le salarié n'a pas eu lieu pour </>
+                  }
+                  linkText="l'une des raisons suivantes."
+                  linkUrl="https://faq.mobilic.beta.gouv.fr/usages-et-fonctionnement-de-mobilic/suivi-et-validation-du-temps-de-travail#en-tant-que-gestionnaire-je-peux-uniquement-modifier-et-valider-les-missions-validees-par-les-salari"
+                />
+              )}
+              <AdminMissionValidations
+                mission={mission}
+                validations={stats.validations}
+                userId={user.id}
+              />
+            </MissionInfoCard>
+          </Grid>
+        )}
+      </Collapse>
     </Grid>
   );
 
