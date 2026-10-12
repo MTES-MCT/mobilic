@@ -29,6 +29,7 @@ export function UserReadHistory({
       controlId={controlId}
       regulationComputationsByDay={regulationComputationsByDay}
       groupedAlerts={groupedAlerts}
+      technicalIncidents={controlData?.technicalIncidents}
     />
   );
 }
