@@ -20,13 +20,13 @@ import {
 } from "common/utils/time";
 import ListSubheader from "@mui/material/ListSubheader";
 import orderBy from "lodash/orderBy";
+import maxBy from "lodash/maxBy";
 import { LoadingButton } from "common/components/LoadingButton";
-import { useLoadingScreen } from "common/utils/loading";
 import BackgroundImage from "common/assets/images/landing-hero-vertical-without-text-logo.svg";
 import LogoWithText from "common/assets/images/mobilic-logo-white-with-text.svg";
 import { shouldDisplayEmployeeSocialImpactSurveyOnMainPage } from "common/utils/surveys";
 import { usePageTitle } from "../../common/UsePageTitle";
-
+import { useNewMissionFunnel } from "../../common/hooks/useNewMissionFunnel";
 import { useHolidays } from "../../common/useHolidays";
 import { WarningBreaks } from "../components/WarningBreaks";
 import { useEnoughBreak } from "../../common/useEnoughBreak";
@@ -35,6 +35,9 @@ import { Notifications } from "../components/notifications/Notifications";
 import { MobilicHeader } from "../../common/Header";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { fr } from "@codegouvfr/react-dsfr";
+import { WarningRealTimeEntry } from "../components/WarningRealTimeEntry";
+import { useLastMissionEditType } from "../../common/useLastMissionEditType";
+import PushNotificationBanner from "common/components/PushNotificationBanner";
 
 const MAX_NON_VALIDATED_MISSIONS_TO_DISPLAY = 5;
 
@@ -108,88 +111,18 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function BeforeWork({ beginNewMission, openHistory, missions }) {
+export function BeforeWork({ openHistory, missions }) {
   usePageTitle("Saisie Temps - Mobilic");
   const modals = useModals();
   const store = useStoreSyncedWithLocalStorage();
-  const withLoadingScreen = useLoadingScreen();
   const { openHolidaysModal } = useHolidays();
   const { hasEnoughBreak } = useEnoughBreak();
 
   const companies = store.companies();
   const userId = store.userId();
   const userInfo = store.userInfo();
-  const lastCompanyId = store.lastSelectedCompanyId();
 
-  const areAllCompaniesWithoutAdmins = React.useMemo(
-    () => companies.every(c => !!c.hasNoAdmin),
-    [companies]
-  );
-
-  function handleFirstActivitySelection(teamMates, missionInfos) {
-    const team = teamMates ? [userId, ...teamMates.map(cw => cw.id)] : [userId];
-    modals.open("firstActivity", {
-      team,
-      handleActivitySelection: async (
-        activityType,
-        driverId,
-        vehicle,
-        kilometerReading
-      ) => {
-        await withLoadingScreen(
-          async () => {
-            await beginNewMission({
-              firstActivityType: activityType,
-              driverId,
-              companyId: missionInfos.company.id,
-              name: missionInfos.mission,
-              vehicle: vehicle || missionInfos.vehicle || null,
-              startLocation: missionInfos.address,
-              kilometerReading:
-                kilometerReading || missionInfos.kilometerReading,
-              team
-            });
-            await modals.closeAll();
-          },
-          {},
-          true
-        );
-      },
-      requireVehicle: !missionInfos.vehicle,
-      company: missionInfos.company
-    });
-  }
-
-  const onEnterNewMissionFunnel = () => {
-    if (areAllCompaniesWithoutAdmins) {
-      modals.open("blockedTime", {});
-    } else {
-      modals.open("newMission", {
-        companies,
-        currentCompanyId: lastCompanyId,
-        companyAddresses: store.getEntity("knownAddresses"),
-        handleContinue: missionInfos => {
-          const company = companies.find(c => c.id === missionInfos.company.id);
-          if (company.settings && company.settings.allowTeamMode) {
-            modals.open("teamOrSoloChoice", {
-              handleContinue: isTeamMode => {
-                if (isTeamMode) {
-                  modals.open("teamSelection", {
-                    mission: null,
-                    companyId: missionInfos.company.id,
-                    handleContinue: teamMates =>
-                      handleFirstActivitySelection(teamMates, missionInfos)
-                  });
-                } else handleFirstActivitySelection(null, missionInfos);
-              }
-            });
-          } else handleFirstActivitySelection(null, missionInfos);
-        },
-        onSelectNoAdminCompany: () => modals.open("blockedTime", {})
-      });
-    }
-  };
-
+  const { onEnterNewMissionFunnel } = useNewMissionFunnel(); 
   const onEnterNewHolidayFunnel = () => openHolidaysModal();
 
   const classes = useStyles();
@@ -197,6 +130,17 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   const currentTime = startOfDay(new Date(Date.now()));
 
   const missionsInHistory = missions.filter(m => m.isComplete && m.ended);
+  const lastMission = maxBy(missionsInHistory, "endTime");
+  const { hasBeenEditedByEmployee } = useLastMissionEditType(lastMission);
+  const shouldShowRealTimeEntryWarning =
+    hasBeenEditedByEmployee &&
+    lastMission &&
+    Date.now() / 1000 - lastMission.endTime < DAY;
+  const shouldShowBreaksWarning =
+    process.env.REACT_APP_ENOUGH_BREAK_BANNER === "1" &&
+    !hasEnoughBreak &&
+    lastMission &&
+    Date.now() / 1000 - lastMission.endTime < DAY;
   const nonValidatedMissions = orderBy(
     missionsInHistory.filter(
       m =>
@@ -223,6 +167,21 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
   return (
     <Container maxWidth={false} className={classes.outer} disableGutters>
       <MobilicHeader forceMobile />
+      <PushNotificationBanner />
+      <Box sx={{ display: "grid", alignItems: "start" }}>
+        {shouldShowBreaksWarning && (
+          <Box sx={{ gridArea: "1 / 1" }}>
+            <WarningBreaks dismissKey={`${userId}-${lastMission?.id}`} />
+          </Box>
+        )}
+        {shouldShowRealTimeEntryWarning && (
+          <Box sx={{ gridArea: "1 / 1", zIndex: 1 }}>
+            <WarningRealTimeEntry
+              dismissKey={`${userId}-${lastMission?.id}`}
+            />
+          </Box>
+        )}
+      </Box>
       <Stack
         direction="column"
         alignItems="center"
@@ -234,8 +193,6 @@ export function BeforeWork({ beginNewMission, openHistory, missions }) {
           <img alt="mobilic-logo-text" src={LogoWithText} width={117} />
         </Box>
         <Stack direction="column" rowGap={2} alignItems="center">
-          {process.env.REACT_APP_ENOUGH_BREAK_BANNER === "1" &&
-            !hasEnoughBreak && <WarningBreaks />}
           <Button
             size="large"
             onClick={onEnterNewMissionFunnel}

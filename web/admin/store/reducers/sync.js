@@ -1,6 +1,5 @@
 import flatMap from "lodash/flatMap";
 import { addWorkDaysReducer } from "./workDays";
-import { computeUsersAndTeamFilters } from "./team";
 
 export const preserveSelected = (newItems, existingItems) =>
   newItems.map(item => {
@@ -9,9 +8,18 @@ export const preserveSelected = (newItems, existingItems) =>
   });
 
 export function updateCompanyIdReducer(state, { companyId }) {
+  const isNewCompany = companyId !== state.companyId;
   return {
     ...state,
-    companyId
+    companyId,
+    areMissionsActivitiesLoaded: isNewCompany
+      ? false
+      : state.areMissionsActivitiesLoaded,
+    areCompanyEssentialsLoaded: isNewCompany
+      ? false
+      : state.areCompanyEssentialsLoaded,
+    areEmploymentsLoaded: isNewCompany ? false : state.areEmploymentsLoaded,
+    areTeamsLoaded: isNewCompany ? false : state.areTeamsLoaded
   };
 }
 
@@ -108,12 +116,6 @@ export function updateCompanyDetailsReducer(
   state,
   { companiesPayload, minDate }
 ) {
-  const stateWithWorkDays = addWorkDaysReducer(state, {
-    companiesPayload,
-    minDate,
-    reset: true
-  });
-
   const users = flatMap(
     companiesPayload.map(c => c.users.map(u => ({ ...u, companyId: c.id })))
   );
@@ -122,7 +124,14 @@ export function updateCompanyDetailsReducer(
       c.currentUsers.map(u => ({ ...u, companyId: c.id }))
     )
   );
-  const allEmployments = flatMap(
+  // `employments` here is scoped to the current admin's own employment
+  // (query uses `employments(latestPerUser: true, userIds: [$id])`), not
+  // the full company roster. It must not overwrite state.employments,
+  // which updateCompanyEmploymentsReducer maintains from the dedicated,
+  // unrestricted employments query - otherwise whichever of the two
+  // independently-triggered fetches resolves last wins, and the full
+  // roster can get silently clobbered down to a single employment.
+  const adminOwnEmployments = flatMap(
     companiesPayload.map(c =>
       c.employments.map(e => ({
         ...e,
@@ -132,38 +141,25 @@ export function updateCompanyDetailsReducer(
     )
   );
 
-  const teams = flatMap(
-    companiesPayload.map(c => c.teams.map(t => ({ ...t, companyId: t.id })))
-  );
-
-  const usersAndTeamsFilters = computeUsersAndTeamFilters(
-    users,
-    allEmployments,
-    teams
-  );
-
-  const regularMissions = flatMap(
-    companiesPayload.map(c =>
-      c.missions.edges.map(m => ({
-        ...m.node,
-        companyId: c.id,
-        isDeleted: false
-      }))
-    )
-  );
-
   return {
-    ...stateWithWorkDays,
+    ...state,
     users,
     currentUsers,
-    teams: teams,
-    employments: allEmployments,
     vehicles: flatMap(
       companiesPayload.map(c =>
         c.vehicles.map(v => ({ ...v, companyId: c.id }))
       )
     ),
     settings: companiesPayload[0].settings,
+    pendingValidationsCount:
+      companiesPayload[0].dashboardSummary?.pendingValidationsCount || 0,
+    areCompanyEssentialsLoaded: true,
+    weeklyThresholds: companiesPayload[0].weeklyThresholds || null,
+    weeklyThresholdsByUserId: Object.fromEntries(
+      adminOwnEmployments
+        .filter(e => e.weeklyThresholds && (e.userId || e.user?.id) && e.isActive)
+        .map(e => [e.userId || e.user?.id, e.weeklyThresholds])
+    ),
     business: companiesPayload[0].business || {
       businessType: "",
       transportType: ""
@@ -184,22 +180,50 @@ export function updateCompanyDetailsReducer(
           )
       )
     ),
-    missions: regularMissions,
     activitiesFilters: {
       ...state.activitiesFilters,
-      teams: preserveSelected(usersAndTeamsFilters.activitiesFilters.teams, state.activitiesFilters.teams),
-      users: preserveSelected(usersAndTeamsFilters.activitiesFilters.users, state.activitiesFilters.users),
-      minDate,
-    },
-    validationsFilters: {
-      ...state.validationsFilters,
-      teams: preserveSelected(usersAndTeamsFilters.validationsFilters.teams, state.validationsFilters.teams),
-      users: preserveSelected(usersAndTeamsFilters.validationsFilters.users, state.validationsFilters.users),
-    },
-    exportFilters: {
-      ...state.exportFilters,
-      teams: usersAndTeamsFilters.exportFilters.teams,
-      users: usersAndTeamsFilters.exportFilters.users
+      minDate
     }
   };
 }
+
+export function updateCompanyActivitiesReducer(state, { companiesData, minDate }) {
+  return addWorkDaysReducer(state, {
+    companiesPayload: companiesData,
+    minDate,
+    reset: true
+  });
+}
+
+export const updateCompanyEmploymentsReducer = (state, { companiesPayload }) => {
+  const allEmployments = flatMap(
+    companiesPayload.map(c =>
+      c.employments.map(e => ({
+        ...e,
+        companyId: c.id,
+        company: { id: c.id, name: c.name, siren: c.siren }
+      }))
+    )
+  );
+
+  return {
+    ...state,
+    employments: allEmployments,
+    areEmploymentsLoaded: true
+  };
+};
+
+export const updatePendingValidationsCountReducer = (state, { count }) => {
+  return {
+    ...state,
+    pendingValidationsCount: count
+  };
+};
+
+export const updateCompanyTeamsReducer = (state, { teams }) => {
+  return {
+    ...state,
+    teams,
+    areTeamsLoaded: true
+  };
+};

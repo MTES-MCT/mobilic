@@ -73,6 +73,7 @@ export function ControllerControlBottomMenu({
   const [openSendNoLicModal, setOpenSendNoLicModal] = React.useState(false);
 
   const sentToAdmin = controlData?.sentToAdmin;
+  const sentToDriver = controlData?.sentToDriver;
 
   const isBulletinAvailableForDriver = React.useMemo(() => {
     if (!controlData?.controlBulletinUpdateTime) {
@@ -95,19 +96,22 @@ export function ControllerControlBottomMenu({
   });
 
   const handleSendNoLic = React.useCallback(
-    async emailAddress => {
-      const success = await handleSend([emailAddress]);
-      if (success) {
-        if (setControlData) {
+    async (emailAddress, forAdmin=true) => {
+      const success = await handleSend([emailAddress], forAdmin);
+      if (success && setControlData) {
+        if (forAdmin) {
           setControlData(prev => ({ ...prev, sentToAdmin: true }));
+        } else {
+          setControlData(prev => ({ ...prev, sentToDriver: true }));
         }
-        setOpenSendNoLicModal(false);
       }
+      return success;
     },
     [handleSend, setControlData]
   );
 
   const bulletinExists = bdcAlreadyExists || canDownloadBDC;
+
   return (
     <Stack
       direction="column"
@@ -123,17 +127,21 @@ export function ControllerControlBottomMenu({
         <Typography variant="h5" component="h2">
           Bulletin de contrôle
         </Typography>
-        <Button
-          priority={bulletinExists ? "tertiary" : "primary"}
-          size="small"
-          onClick={e => {
-            e.preventDefault();
-            editBDC();
-          }}
-          iconId={!bulletinExists ? "fr-icon-add-line" : ""}
-        >
-          {bulletinExists ? "Modifier" : "Créer"}
-        </Button>
+        {
+          (!sentToAdmin && !sentToDriver) && (
+          <Button
+            priority={bulletinExists ? "tertiary" : "primary"}
+            size="small"
+            onClick={e => {
+              e.preventDefault();
+              editBDC();
+            }}
+            iconId={!bulletinExists ? "fr-icon-add-line" : ""}
+          >
+            {bulletinExists ? "Modifier" : "Créer"}
+          </Button>
+          )
+        }
       </TitleContainer>
 
       {bulletinExists ? (
@@ -173,13 +181,14 @@ export function ControllerControlBottomMenu({
                   label: "Remis au format papier",
                   nativeInputProps: {
                     checked: handDelivered,
-                    onChange: handleHandDeliveredChange
-                  }
+                    onChange: handleHandDeliveredChange,
+                    disabled: sentToDriver
+                  },
                 }
               ]}
             />
 
-            {isBulletinAvailableForDriver && (
+            {isBulletinAvailableForDriver && !isNoLicContext && (
               <Badge severity="info" noIcon className={classes.badge}>
                 <i
                   className={classNames(
@@ -187,7 +196,7 @@ export function ControllerControlBottomMenu({
                     classes.badgeIcon
                   )}
                 ></i>
-                Remis au format numérique
+                Remis au conducteur (via Mobilic)
               </Badge>
             )}
 
@@ -199,7 +208,19 @@ export function ControllerControlBottomMenu({
                     classes.badgeIcon
                   )}
                 ></i>
-                Envoyé par e-mail à l'entreprise
+                Envoyé à l'entreprise
+              </Badge>
+            )}
+
+            {(sentToDriver || handDelivered) && (
+              <Badge severity="info" noIcon className={classes.badge}>
+                <i
+                  className={classNames(
+                    "fr-icon-success-line",
+                    classes.badgeIcon
+                  )}
+                ></i>
+                Remis au conducteur {handDelivered ? "(papier)" : "(via email)"}
               </Badge>
             )}
           </Box>
@@ -218,26 +239,24 @@ export function ControllerControlBottomMenu({
             >
               Télécharger
             </Button>
-            {!sentToAdmin && (
-              <Button
-                priority="primary"
-                size="medium"
-                onClick={e => {
-                  e.preventDefault();
-                  if (isNoLicContext) {
-                    setOpenSendNoLicModal(true);
-                  } else {
-                    setOpenSendModal(true);
-                  }
-                }}
-                iconId="fr-icon-send-plane-line"
-                iconPosition="left"
-                className={classes.button}
-                disabled={!canDownloadBDC}
-              >
-                Envoyer
-              </Button>
-            )}
+            <Button
+              priority="primary"
+              size="medium"
+              onClick={e => {
+                e.preventDefault();
+                if (isNoLicContext) {
+                  setOpenSendNoLicModal(true);
+                } else {
+                  setOpenSendModal(true);
+                }
+              }}
+              iconId="fr-icon-send-plane-line"
+              iconPosition="left"
+              className={classes.button}
+              disabled={!canDownloadBDC}
+            >
+              Envoyer
+            </Button>
           </Box>
         </Stack>
       ) : (
@@ -254,6 +273,10 @@ export function ControllerControlBottomMenu({
             handleClose={() => setOpenSendNoLicModal(false)}
             handleSend={handleSendNoLic}
             isLoading={isLoading}
+            sentToDriver={sentToDriver}
+            sentToAdmin={sentToAdmin}
+            handDelivered={handDelivered}
+            handleHandDeliveredChange={handleHandDeliveredChange}
           />
         ) : (
           <ControlSendEmailModal
@@ -261,7 +284,7 @@ export function ControllerControlBottomMenu({
             handleClose={() => setOpenSendModal(false)}
             handleSend={async shouldSendToAdmin => {
               if (shouldSendToAdmin) {
-                const success = await handleSend();
+                const success = await handleSend(null, true);
                 if (success) {
                   if (setControlData) {
                     setControlData(prev => ({ ...prev, sentToAdmin: true }));

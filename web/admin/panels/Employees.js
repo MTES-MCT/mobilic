@@ -17,7 +17,10 @@ import {
   isoFormatLocalDate,
   now
 } from "common/utils/time";
-import { formatLastActiveDate } from "common/utils/employeeStatus";
+import {
+  formatLastActiveDate,
+  NEVER_USED_MOBILIC_LABEL
+} from "common/utils/employeeStatus";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { EMPLOYMENT_ROLE } from "common/utils/employments";
 import { TeamFilter } from "../components/TeamFilter";
@@ -34,6 +37,8 @@ import BatchInviteModal from "../modals/BatchInviteModal";
 import { EmployeeProgressBar } from "../components/EmployeeProgressBar";
 import { useEmployeeProgress } from "../hooks/useEmployeeProgress";
 import { useAutoUpdateNbWorkers } from "../hooks/useAutoUpdateNbWorkers";
+import { useEnsureEmployments } from "../hooks/useEnsureEmployments";
+import { useEnsureTeams } from "../hooks/useEnsureTeams";
 import { InviteButtons } from "../components/InviteButtons";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import {
@@ -128,6 +133,9 @@ export function Employees({ company, containerRef }) {
   const [hasClosedInviteModal, setHasClosedInviteModal] = React.useState(false);
 
   const companyId = React.useMemo(() => company?.id || null, [company]);
+
+  useEnsureEmployments();
+  useEnsureTeams();
 
   React.useEffect(() => {
     if (teams.length > 0) {
@@ -301,6 +309,15 @@ export function Employees({ company, containerRef }) {
           <Badge noIcon small className={classes.badgeDetache}>
             {"détaché".toUpperCase()}
           </Badge>
+        </Tooltip>
+      );
+    }
+    if (lastActiveAt === null){
+      return (
+        <Tooltip title={NEVER_USED_MOBILIC_LABEL}>
+          <WarningBadge className={classes.badgeCursor}>
+            {"inactif".toUpperCase()}
+          </WarningBadge>
         </Tooltip>
       );
     }

@@ -28,6 +28,7 @@ export default function UpdateCompanyDetailsModal({
     setNewCompanyPhoneNumber,
     setNewCompanyBusinessType,
     hasBusinessTypeChanged,
+    isBusinessTypeComplete,
     updateCompanyDetails,
     newCompanyBusinessType,
     newNbWorkers,
@@ -44,6 +45,7 @@ export default function UpdateCompanyDetailsModal({
       newCompanyName &&
       newNbWorkers >= MIN_NB_WORKERS &&
       newNbWorkers <= MAX_NB_WORKERS &&
+      isBusinessTypeComplete &&
       (newCompanyName !== company?.name ||
         newCompanyPhoneNumber !== company?.phoneNumber ||
         newNbWorkers !== company?.nbWorkers ||
@@ -56,6 +58,7 @@ export default function UpdateCompanyDetailsModal({
       newCompanyPhoneNumber,
       newNbWorkers,
       hasBusinessTypeChanged,
+      isBusinessTypeComplete,
       newCompanyBusinessType
     ]
   );

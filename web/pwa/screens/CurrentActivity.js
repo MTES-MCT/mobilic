@@ -4,11 +4,7 @@ import { resolveTeamAt } from "common/utils/coworkers";
 import { CurrentActivityOverview } from "../components/CurrentActivityOverview";
 import { MissionDetails } from "../components/MissionDetails";
 import Box from "@mui/material/Box";
-import {
-  ACTIVITIES,
-  ACTIVITIES_OPERATIONS,
-  getCurrentActivityDuration
-} from "common/utils/activities";
+import { ACTIVITIES, ACTIVITIES_OPERATIONS } from "common/utils/activities";
 import { now } from "common/utils/time";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useModals } from "common/utils/modals";

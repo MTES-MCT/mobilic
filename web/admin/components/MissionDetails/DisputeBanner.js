@@ -62,6 +62,7 @@ function getLastManagerEvent(activity) {
 
 export function DisputeBanner({ mission }) {
   const classes = useStyles();
+  const allowOtherTask = mission?.company?.settings?.allowOtherTask ?? true;
   const { activities, userNameById } = React.useMemo(() => {
     const base = mission.activities || [];
     const history = mission.resourcesWithHistory?.resources
@@ -94,7 +95,7 @@ export function DisputeBanner({ mission }) {
         const event = getLastManagerEvent(a);
         let description = "";
         if (event) {
-          const texts = getChangeIconAndText(event);
+          const texts = getChangeIconAndText(event, allowOtherTask);
           const authorName = event.submitter ? formatPersonName(event.submitter) : "";
           description = texts.map(t => `${authorName} ${t.text}`).join(" et ");
         }

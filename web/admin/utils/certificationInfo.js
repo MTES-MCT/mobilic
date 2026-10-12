@@ -1,6 +1,6 @@
 import React from "react";
 import { useApi } from "common/utils/api";
-import { useAdminCompanies, useAdminStore } from "../store/store";
+import { useAdminCompanies } from "../store/store";
 import { COMPANY_CERTIFICATION_COMMUNICATION_QUERY } from "common/utils/apiQueries/certification";
 
 export function useCertificationInfo() {
@@ -27,21 +27,4 @@ export function useCertificationInfo() {
   }, [company]);
 
   return { companyWithInfo, loadingInfo };
-}
-
-export function useShouldDisplayBadge() {
-  const adminStore = useAdminStore();
-  const [shouldDisplayBadge, setShouldDisplayBadge] = React.useState(false);
-
-  React.useEffect(() => {
-    const { userId, shouldSeeCertificateInfo } = adminStore;
-    if (!userId || !shouldSeeCertificateInfo) {
-      setShouldDisplayBadge(false);
-      return;
-    }
-
-    setShouldDisplayBadge(true);
-  }, [adminStore.userId, adminStore.shouldSeeCertificateInfo]);
-
-  return shouldDisplayBadge;
 }

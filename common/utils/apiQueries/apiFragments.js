@@ -12,6 +12,11 @@ export const COMPANY_SETTINGS_FRAGMENT = gql`
       allowOtherTask
       otherTaskLabel
     }
+    weeklyThresholds {
+      maxWorkInHours
+      minRestInHours
+      maxWorkedDays
+    }
   }
 `;
 
@@ -159,6 +164,7 @@ export const WORK_DAYS_DATA_FRAGMENT = gql`
     }
     pageInfo {
       hasNextPage
+      endCursor
     }
   }
 `;
@@ -257,6 +263,11 @@ export const FULL_EMPLOYMENT_FRAGMENT = gql`
       transportType
       businessType
     }
+    weeklyThresholds {
+      maxWorkInHours
+      minRestInHours
+      maxWorkedDays
+    }
     companyId
     company {
       id
@@ -315,6 +326,7 @@ export const CONTROL_DATA_FRAGMENT = gql`
     nbReportedInfractions
     deliveredByHand
     sentToAdmin
+    sentToDriver
     controlBulletin {
       locationLieu
     }

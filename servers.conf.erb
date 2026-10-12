@@ -59,11 +59,13 @@ server {
 
     # HTML files
     location ~ \.html$ {
+      add_header Cache-Control "no-cache, must-revalidate";
       try_files $uri @404;
     }
 
     # Root location - fallback to SPA
     location / {
+      add_header Cache-Control "no-cache, must-revalidate";
       try_files $uri $uri/ /index.html;
     }
 

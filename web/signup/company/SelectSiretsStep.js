@@ -13,13 +13,13 @@ import { Button } from "@codegouvfr/react-dsfr/Button";
 import {
   NbWorkersInput,
   MIN_NB_WORKERS,
-  MAX_NB_WORKERS
+  MAX_NB_WORKERS,
 } from "../../common/forms/NbWorkersInput";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   verticalFormButton: {
-    marginTop: theme.spacing(4)
-  }
+    marginTop: theme.spacing(4),
+  },
 }));
 
 export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
@@ -29,41 +29,44 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
   const updateFacility = useCallback(
     (facility, field, newValue) =>
       setFacilities(
-        facilities.map(f =>
-          f.siret === facility.siret ? { ...f, [field]: newValue } : f
-        )
+        facilities.map((f) =>
+          f.siret === facility.siret ? { ...f, [field]: newValue } : f,
+        ),
       ),
-    [facilities, setFacilities]
+    [facilities, setFacilities],
   );
 
-  const selectedSirets = useMemo(() => facilities.filter(f => f.selected), [
-    facilities
-  ]);
+  const selectedSirets = useMemo(
+    () => facilities.filter((f) => f.selected),
+    [facilities],
+  );
   const areFacilitiesCorrectlySet = useMemo(() => {
     if (selectedSirets.length === 0) {
       return false;
     }
-    const selectedNames = selectedSirets.map(f => f.usualName);
+    const selectedNames = selectedSirets.map((f) => f.usualName);
 
     // no value should be empty
     if (selectedNames.filter(Boolean).length < selectedNames.length) {
       return false;
     }
 
-    const selectedBusinessTypes = selectedSirets.map(f => f.businessType);
+    const selectedBusinessTypes = selectedSirets.map((f) => f.businessType);
 
-    // no value should be empty
+    // transportType and businessType should both be set
     if (
-      selectedBusinessTypes.filter(Boolean).length <
-      selectedBusinessTypes.length
+      selectedBusinessTypes.some(
+        (businessType) =>
+          !businessType?.transportType || !businessType?.businessType,
+      )
     ) {
       return false;
     }
 
     if (
       selectedSirets
-        .map(f => f.nbWorkers)
-        .some(nb => nb < MIN_NB_WORKERS || nb > MAX_NB_WORKERS)
+        .map((f) => f.nbWorkers)
+        .some((nb) => nb < MIN_NB_WORKERS || nb > MAX_NB_WORKERS)
     ) {
       return false;
     }
@@ -73,10 +76,10 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
   }, [selectedSirets]);
 
   const getFacilityError = useMemo(() => {
-    return facility => {
+    return (facility) => {
       if (
-        selectedSirets.filter(f => f.usualName === facility.usualName).length >
-        1
+        selectedSirets.filter((f) => f.usualName === facility.usualName)
+          .length > 1
       ) {
         return "Ce nom est utilisé plusieurs fois";
       }
@@ -87,14 +90,14 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
   const allFacilitiesAlreadyRegistered = useMemo(
     () =>
       facilities.length > 0 &&
-      facilities.filter(f => !f.registered).length === 0,
-    [facilities]
+      facilities.filter((f) => !f.registered).length === 0,
+    [facilities],
   );
 
   return (
     <Step
       reset={() => {
-        setFacilities(fs => fs.map(f => ({ ...f, selected: false })));
+        setFacilities((fs) => fs.map((f) => ({ ...f, selected: false })));
         setHasValidatedChoice(false);
       }}
       complete={hasValidatedChoice && areFacilitiesCorrectlySet}
@@ -112,7 +115,7 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                   const newFacilities = [...facilities];
                   newFacilities.splice(index, 1, {
                     ...facility,
-                    selected: !facility.selected
+                    selected: !facility.selected,
                   });
                   setFacilities(newFacilities);
                 }}
@@ -138,21 +141,21 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                     required
                     nativeInputProps={{
                       value: facility.usualName,
-                      onChange: e => {
+                      onChange: (e) => {
                         setHasValidatedChoice(false);
                         updateFacility(facility, "usualName", e.target.value);
-                      }
+                      },
                     }}
                     {...(getFacilityError(facility)
                       ? {
                           state: "error",
-                          stateRelatedMessage: getFacilityError(facility)
+                          stateRelatedMessage: getFacilityError(facility),
                         }
                       : {})}
                   />
                   <PhoneNumber
                     currentPhoneNumber={facility.phone_number}
-                    setCurrentPhoneNumber={newPhoneNumber => {
+                    setCurrentPhoneNumber={(newPhoneNumber) => {
                       setHasValidatedChoice(false);
                       updateFacility(facility, "phoneNumber", newPhoneNumber);
                     }}
@@ -161,13 +164,13 @@ export function SelectSiretsStep({ facilities, setFacilities, ...props }) {
                   />
                   <NbWorkersInput
                     initialValue={0}
-                    onChangeValue={newNbWorkers => {
+                    onChangeValue={(newNbWorkers) => {
                       setHasValidatedChoice(false);
                       updateFacility(facility, "nbWorkers", newNbWorkers);
                     }}
                   />
                   <BusinessType
-                    onChangeBusinessType={newBusinessType => {
+                    onChangeBusinessType={(newBusinessType) => {
                       setHasValidatedChoice(false);
                       updateFacility(facility, "businessType", newBusinessType);
                     }}

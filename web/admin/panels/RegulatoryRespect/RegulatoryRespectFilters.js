@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useEnsureEmployments } from "../../hooks/useEnsureEmployments";
+import { useEnsureTeams } from "../../hooks/useEnsureTeams";
 import { Stack } from "@mui/material";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { addDaysToDate, lastMonth } from "common/utils/time";
@@ -15,6 +17,9 @@ export default function RegulatoryRespectFilters() {
   const maxDate = lastMonth();
   const [teams, setTeams] = useState([]);
   const [users, setUsers] = useState([]);
+
+  useEnsureEmployments();
+  useEnsureTeams();
 
   React.useEffect(() => {
     const _teams = adminStore.exportFilters.teams;

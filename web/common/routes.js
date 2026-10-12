@@ -1,17 +1,12 @@
 import React from "react";
 import { Redirect, useParams } from "react-router-dom";
-import groupBy from "lodash/groupBy";
-import size from "lodash/size";
-import {
-  entryToBeValidatedByAdmin,
-  missionsToTableEntries
-} from "../admin/selectors/validationEntriesSelectors";
 import { UserRead } from "../control/UserRead";
 import { XlsxVerifier } from "../control/VerifyXlsxSignature";
 import { ControllerHistory } from "../controller/components/history/ControllerHistory";
 import { ControllerHome } from "../controller/components/home/ControllerHome";
 import { ControllerQRCodeNotRecognized } from "../controller/components/scanQRCode/ControllerQRCodeNotRecognized";
 import { ControllerScanQRCode } from "../controller/components/scanQRCode/ControllerScanQRCode";
+import { ControllerTechnicalIncidents } from "../controller/components/technicalIncidents/ControllerTechnicalIncidents";
 import Home from "../home/AccountInfo/AccountInfo";
 import { RedeemInvite } from "../home/RedeemInvite";
 import { AdminResourcePage } from "../landing/ResourcePage/AdminResourcePage";
@@ -20,6 +15,7 @@ import { DriverResourcePage } from "../landing/ResourcePage/DriverResourcePage";
 import { RegulationPage } from "../landing/ResourcePage/RegulationPage";
 import { ResourcePage } from "../landing/ResourcePage/ResourcePage";
 import Accessibility from "../landing/accessibility";
+import SchemaPluriannuel from "../landing/schemaPluriannuel";
 import Compatibility from "../landing/compatibility";
 import { Certificate } from "../landing/certificate";
 // Import normal pour Navigation (pas de lazy loading pour éviter les problèmes Redux)
@@ -98,6 +94,8 @@ export const CONTROLLER_ROUTE_PREFIX = "/controller";
 const Admin = React.lazy(() => import("../admin/Admin"));
 const OAuth = React.lazy(() => import("../oauth/root"));
 const ImpersonationSearch = React.lazy(() => import("../support/ImpersonationSearch"));
+const NotificationsAdmin = React.lazy(() => import("../support/NotificationsAdmin"));
+const TechnicalIncidentsAdmin = React.lazy(() => import("../support/TechnicalIncidentsAdmin"));
 
 // Wrapper pour encapsuler chaque composant lazy avec son propre Suspense
 function withSuspense(Component) {
@@ -159,15 +157,11 @@ export const ROUTES = [
       },
       {
         path: "/company",
-        label: "Entreprise(s)"
+        label: "Entreprise"
       },
       {
         path: "/activities",
         label: "Activités"
-      },
-      {
-        label: "Saisies à valider",
-        path: "/validations"
       },
       {
         label: "Respect des seuils",
@@ -229,6 +223,13 @@ export const ROUTES = [
     label: "Déclaration d'accessibilité",
     accessible: () => true,
     component: <Accessibility />,
+    menuItemFilter: () => false
+  },
+  {
+    path: "/schema-pluriannuel",
+    label: "Schéma pluriannuel d'accessibilité",
+    accessible: () => true,
+    component: <SchemaPluriannuel />,
     menuItemFilter: () => false
   },
   {
@@ -352,6 +353,13 @@ export const ROUTES = [
     menuItemFilter: () => false
   },
   {
+    path: CONTROLLER_ROUTE_PREFIX + "/technical-incidents",
+    label: "Dysfonctionnements techniques",
+    accessible: ({ controllerInfo }) => !!controllerInfo?.id,
+    component: <ControllerTechnicalIncidents />,
+    menuItemFilter: ({ controllerInfo }) => !!controllerInfo?.id
+  },
+  {
     path: CONTROLLER_ROUTE_PREFIX + "/scan_error",
     label: "Erreur de Scan QR Code",
     accessible: ({ controllerInfo }) => {
@@ -454,6 +462,21 @@ export const ROUTES = [
     menuItemFilter: () => false
   },
   {
+    path: "/support/notifications",
+    label: "Notifications",
+    accessible: ({ userInfo }) => !!userInfo?.bizdev && !!userInfo?.totpEnabled,
+    component: withSuspense(NotificationsAdmin),
+    menuItemFilter: () => false
+  },
+  {
+    path: "/support/technical-incidents",
+    label: "Dysfonctionnements techniques",
+    accessible: ({ userInfo }) =>
+      (!!userInfo?.admin || !!userInfo?.bizdev) && !!userInfo?.totpEnabled,
+    component: withSuspense(TechnicalIncidentsAdmin),
+    menuItemFilter: () => false
+  },
+  {
     path: "/home",
     label: "Mes informations",
     accessible: () => true,
@@ -463,12 +486,26 @@ export const ROUTES = [
   {
     label: "Support",
     path: "",
-    accessible: ({ userInfo }) => !!userInfo?.admin && !!userInfo?.totpEnabled,
-    menuItemFilter: ({ userInfo }) => !!userInfo?.admin && !!userInfo?.totpEnabled,
+    accessible: ({ userInfo }) =>
+      (!!userInfo?.admin || !!userInfo?.bizdev) && !!userInfo?.totpEnabled,
+    menuItemFilter: ({ userInfo }) =>
+      (!!userInfo?.admin || !!userInfo?.bizdev) && !!userInfo?.totpEnabled,
     subRoutes: [
       {
         path: "/support/impersonation",
-        label: "Accès au compte"
+        label: "Accès au compte",
+        accessible: ({ userInfo }) => !!userInfo?.admin && !!userInfo?.totpEnabled
+      },
+      {
+        path: "/support/notifications",
+        label: "Notifications",
+        accessible: ({ userInfo }) => !!userInfo?.bizdev && !!userInfo?.totpEnabled
+      },
+      {
+        path: "/support/technical-incidents",
+        label: "Dysfonctionnements techniques",
+        accessible: ({ userInfo }) =>
+          (!!userInfo?.admin || !!userInfo?.bizdev) && !!userInfo?.totpEnabled
       }
     ]
   },
@@ -557,70 +594,18 @@ export function isAccessible(path, storeData) {
   return ROUTES.find(r => path.startsWith(r.path)).accessible(storeData);
 }
 
-export function getBadgeRoutes(
-  adminStore,
-  companyWithCertificationInfo,
-  shouldDisplayBadge
-) {
-  const entries = missionsToTableEntries(adminStore).filter(entry =>
-    entryToBeValidatedByAdmin(entry, adminStore?.userId)
-  );
+export function getBadgeRoutes(adminStore) {
+  const pendingValidationCount = adminStore?.pendingValidationsCount ?? null;
 
   const badgeRoutes = [
     {
-      path: "/admin/validations",
+      path: "/admin/activities",
       badge: {
-        badgeContent: size(groupBy(entries, "missionId")),
+        badgeContent: pendingValidationCount,
         color: "error"
       }
     }
   ];
 
-  if (shouldDisplayBadge) {
-    const certificateBadge = getCertificateBadge(companyWithCertificationInfo);
-    if (certificateBadge) {
-      badgeRoutes.push({
-        path: "/admin/company",
-        badge: certificateBadge
-      });
-    }
-  }
-
   return badgeRoutes;
-}
-
-export function getCertificateBadge(companyWithCertificationInfo) {
-  let color = null;
-  if (companyWithCertificationInfo.hasNoActivity) {
-    color = "error";
-  } else if (
-    !companyWithCertificationInfo.currentCompanyCertification
-      ?.certificateCriterias?.creationTime
-  ) {
-    return null;
-  } else if (
-    !companyWithCertificationInfo.currentCompanyCertification?.isCertified
-  ) {
-    color = "error";
-  } else {
-    const currentCriterias =
-      companyWithCertificationInfo.currentCompanyCertification
-        .certificateCriterias;
-    if (
-      !currentCriterias.beActive ||
-      !currentCriterias.beCompliant ||
-      !currentCriterias.logInRealTime ||
-      !currentCriterias.notTooManyChanges ||
-      !currentCriterias.validateRegularly
-    ) {
-      color = "warning";
-    } else {
-      color = "success";
-    }
-  }
-
-  return {
-    variant: "dot",
-    color
-  };
 }

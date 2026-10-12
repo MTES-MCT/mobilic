@@ -2,12 +2,12 @@ import flatMap from "lodash/flatMap";
 
 export function addWorkDaysReducer(
   state,
-  { companiesPayload, minDate, reset = false }
+  { companiesPayload, minDate, maxDate, reset = false }
 ) {
   let actualMinCursor = minDate;
   companiesPayload.forEach((c) => {
     const wds = c.workDays;
-    if (wds.pageInfo.hasNextPage) {
+    if (wds.pageInfo.hasNextPage && wds.edges.length > 0) {
       const oldestWorkDay = wds.edges[wds.edges.length - 1].node;
       const oldestCursor = `${oldestWorkDay.day}${oldestWorkDay.user.id}`;
       actualMinCursor =
@@ -90,6 +90,9 @@ export function addWorkDaysReducer(
     ...state,
     workDays: [...(reset ? [] : state.workDays), ...workDaysToAdd],
     missions,
-    minWorkDaysCursor: actualMinCursor
+    minWorkDaysCursor: actualMinCursor,
+    workDaysPageInfo: companiesPayload[0]?.workDays?.pageInfo ?? state.workDaysPageInfo,
+    workDaysFetchRange: { minDate, maxDate },
+    areMissionsActivitiesLoaded: true
   };
 }

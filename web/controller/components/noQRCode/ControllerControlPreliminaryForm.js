@@ -17,6 +17,9 @@ import { BUSINESS_TYPES } from "common/utils/businessTypes";
 import { CompanyControlData } from "../forms/CompanyControlData";
 import { CONTROLLER_SAVE_CONTROL_BULLETIN } from "common/utils/apiQueries/controller";
 
+const toBusinessOptionValue = (transportType, businessType) =>
+  `${transportType}__${businessType}`;
+
 export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
   const api = useApi();
   const withLoadingScreen = useLoadingScreen();
@@ -30,6 +33,7 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
   const [companyName, setCompanyName] = React.useState("");
   const [companyAddress, setCompanyAddress] = React.useState("");
   const [businessType, setBusinessType] = React.useState("");
+  const [transportType, setTransportType] = React.useState("");
   const [vehicleRegistrationNumber, setVehicleRegistrationNumber] =
     React.useState("");
   const [isDayPageFilled, setIsDayPageFilled] = React.useState(null);
@@ -75,6 +79,7 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
             companyName,
             companyAddress,
             businessType,
+            transportType,
             vehicleRegistrationNumber,
             isDayPageFilled
           },
@@ -149,8 +154,16 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
         <Select
           label="Type d'activité"
           nativeSelectProps={{
-            onChange: (e) => setBusinessType(e.target.value),
-            value: businessType
+            onChange: (e) => {
+              const [newTransportType, newBusinessType] =
+                e.target.value.split("__");
+              setTransportType(newTransportType);
+              setBusinessType(newBusinessType);
+            },
+            value:
+              transportType && businessType
+                ? toBusinessOptionValue(transportType, businessType)
+                : ""
           }}
           required
         >
@@ -159,9 +172,12 @@ export function ControllerControlPreliminaryForm({ type, onSubmit, onClose }) {
               Non renseigné
             </option>
           )}
-          {BUSINESS_TYPES.map((businessType) => (
-            <option key={businessType.value} value={businessType.value}>
-              {businessType.label}
+          {BUSINESS_TYPES.map((option) => (
+            <option
+              key={toBusinessOptionValue(option.transportType, option.value)}
+              value={toBusinessOptionValue(option.transportType, option.value)}
+            >
+              {option.label}
             </option>
           ))}
         </Select>

@@ -13,9 +13,8 @@ import { aggregateWorkDayPeriods } from "../utils/workDays";
 import { useAdminStore, useAdminCompanies } from "../store/store";
 import { useModals } from "common/utils/modals";
 import {
-  getEndOfDay,
+  getStartOfDay,
   isoFormatLocalDate,
-  startOfDay,
   startOfDayAsDate
 } from "common/utils/time";
 import Grid from "@mui/material/Grid";
@@ -33,6 +32,8 @@ import { useApi } from "common/utils/api";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { useLoadAdminPanelData } from "../hooks/useLoadAdminPanelData";
+import { loadActivitiesData } from "../utils/activities";
 import {
   ACTIVITY_FILTER_EMPLOYEE,
   ACTIVITY_FILTER_MAX_DATE,
@@ -56,7 +57,6 @@ import { Button } from "@codegouvfr/react-dsfr/Button";
 import { fr } from "@codegouvfr/react-dsfr";
 import CloseButton from "../../common/CloseButton";
 import { PickersDay } from "@mui/x-date-pickers/PickersDay";
-import { ADMIN_WORK_DAYS_QUERY } from "common/utils/apiQueries/admin";
 import {
   buildLogLocationPayloadFromAddress,
   CREATE_MISSION_MUTATION,
@@ -65,6 +65,8 @@ import {
 } from "common/utils/apiQueries/missions";
 import { InactiveEmployeesDropdown } from "../components/InactiveEmployeesDropdown";
 import { missionWithStats } from "../selectors/missionSelectors";
+import { useRefreshDeletedMissions } from "../hooks/useRefreshDeletedMissions";
+import { useMissionDrawer } from "../drawers/MissionDrawer";
 
 const useStyles = makeStyles((theme) => ({
   pageHeader: {
@@ -126,67 +128,28 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const refreshWorkDays = async (
-  setLoading,
-  alerts,
-  api,
-  userId,
-  minDate,
-  maxDate,
-  companyId,
-  addWorkDays,
-  addUsers
-) => {
-  setLoading(true);
-  await alerts.withApiErrorHandling(async () => {
-    // Use inclusive day boundaries and cap to 1 year.
-    const minMissionTimestamp = startOfDay(new Date(minDate));
-    const selectedMaxMissionTimestamp = getEndOfDay(
-      startOfDay(new Date(maxDate))
-    );
-    const maxMissionTimestamp = Math.min(
-      selectedMaxMissionTimestamp,
-      minMissionTimestamp + (365 * 24 * 60 * 60) - 1
-    );
 
-    const companiesPayload = await api.graphQlQuery(ADMIN_WORK_DAYS_QUERY, {
-      id: userId,
-      activityAfter: minDate,
-      activityBefore: maxDate,
-      endedMissionsAfter: minMissionTimestamp,
-      endedMissionsBefore: maxMissionTimestamp,
-      companyIds: [companyId]
-    });
-    addWorkDays(companiesPayload.data.user.adminedCompanies, minDate);
-    addUsers(companiesPayload.data.user.adminedCompanies);
-  }, "load-work-days");
-  setLoading(false);
+const withLocalLoadingScreen = (setLoading) => async (sync) => {
+  setLoading(true);
+  try {
+    await sync();
+  } finally {
+    setLoading(false);
+  }
 };
 
 const onMinDateChange = debounce(
-  async (
-    newMinDate,
-    maxDate,
-    userId,
-    companyId,
-    setLoading,
-    addWorkDays,
-    addUsers,
-    api,
-    alerts
-  ) => {
+  async ({ newMinDate, maxDate, adminStore, api, alerts, setLoading }) => {
     if (newMinDate < maxDate) {
-      await refreshWorkDays(
-        setLoading,
+      await loadActivitiesData({
+        adminStore,
         alerts,
         api,
-        userId,
-        newMinDate,
+        withLoadingScreen: withLocalLoadingScreen(setLoading),
+        minDate: newMinDate,
         maxDate,
-        companyId,
-        addWorkDays,
-        addUsers
-      );
+        reset: false
+      });
     }
   },
   500
@@ -208,6 +171,8 @@ function ActivitiesPanel() {
   const location = useLocation();
   const { trackEvent } = useMatomo();
   const { getUsersSinceDate } = useGetUsersSinceDate();
+  const openMission = useMissionDrawer()[1];
+  const { refresh: refreshDeletedMissions } = useRefreshDeletedMissions();
 
   const [users, setUsers] = React.useState(adminStore.activitiesFilters.users);
   const [teams, setTeams] = React.useState(adminStore.activitiesFilters.teams);
@@ -233,46 +198,64 @@ function ActivitiesPanel() {
   const minDateOfFetchedData = adminStore.minWorkDaysDate;
 
   const datePickerSlotProps = {
-  textField: {
-    size: "small",
-    required: true,
-    variant: "outlined",
-    error: !!dateRangeError,
-    helperText: dateRangeError,
-    FormHelperTextProps: {
-      sx: {
-        position: "absolute",
-        bottom: "-22px",
-        left: 0,
-        color: "error.main",
-        fontSize: "0.75rem",
-        margin: 0,
-        whiteSpace: "nowrap"
+    textField: {
+      size: "small",
+      required: true,
+      variant: "outlined",
+      error: !!dateRangeError,
+      helperText: dateRangeError,
+      FormHelperTextProps: {
+        sx: {
+          position: "absolute",
+          bottom: "-22px",
+          left: 0,
+          color: "error.main",
+          fontSize: "0.75rem",
+          margin: 0,
+          whiteSpace: "nowrap"
+        }
       }
     }
-  }
-};
+  };
 
   const refreshCurrentWorkDays = () =>
-    refreshWorkDays(
-      setLoading,
+    loadActivitiesData({
+      adminStore,
       alerts,
       api,
-      adminStore.userId,
+      withLoadingScreen: withLocalLoadingScreen(setLoading),
       minDate,
       maxDate,
-      company.id,
-      (companiesPayload, newMinDate) =>
-        adminStore.dispatch({
-          type: ADMIN_ACTIONS.addWorkDays,
-          payload: { companiesPayload, minDate: newMinDate, reset: true }
-        }),
-      (companiesPayload) =>
-        adminStore.dispatch({
-          type: ADMIN_ACTIONS.addUsers,
-          payload: { companiesPayload }
-        })
-    );
+      reset: true
+    });
+
+  const isFetchingMoreWorkDaysRef = React.useRef(false);
+  const [isLoadingMoreWorkDays, setIsLoadingMoreWorkDays] = React.useState(
+    false
+  );
+  const loadMoreWorkDays = () => {
+    if (
+      isFetchingMoreWorkDaysRef.current ||
+      !adminStore.areMissionsActivitiesLoaded ||
+      !adminStore.workDaysPageInfo?.hasNextPage
+    ) {
+      return;
+    }
+    isFetchingMoreWorkDaysRef.current = true;
+    setIsLoadingMoreWorkDays(true);
+    loadActivitiesData({
+      adminStore,
+      alerts,
+      api,
+      withLoadingScreen: async (sync) => await sync(),
+      minDate,
+      maxDate,
+      reset: false
+    }).finally(() => {
+      isFetchingMoreWorkDaysRef.current = false;
+      setIsLoadingMoreWorkDays(false);
+    });
+  };
 
   const today = new Date();
   // 1-year limit to avoid performance issues
@@ -287,6 +270,8 @@ function ActivitiesPanel() {
     );
     return daysDiff <= 365;
   }, []);
+
+  useLoadAdminPanelData();
 
   // Validate date range
   React.useEffect(() => {
@@ -342,6 +327,12 @@ function ActivitiesPanel() {
     });
   }, [period]);
 
+  // Deleted missions are fetched lazily, only once the user click to show them from the status filter.
+  const [showDeletedMissions, setShowDeletedMissions] = React.useState(false);
+  const handleShowDeletedMissions = React.useCallback(() => {
+    setShowDeletedMissions(true);
+  }, []);
+
   React.useEffect(() => {
     setUsers(adminStore.activitiesFilters.users);
   }, [adminStore.activitiesFilters.users]);
@@ -356,25 +347,14 @@ function ActivitiesPanel() {
       return;
     }
 
-    onMinDateChange(
-      minDate,
-      minDateOfFetchedData,
-      adminStore.userId,
-      adminStore.companyId,
-      setLoading,
-      (companiesPayload, newMinDate) =>
-        adminStore.dispatch({
-          type: ADMIN_ACTIONS.addWorkDays,
-          payload: { companiesPayload, minDate: newMinDate }
-        }),
-      (companiesPayload) =>
-        adminStore.dispatch({
-          type: ADMIN_ACTIONS.addUsers,
-          payload: { companiesPayload }
-        }),
+    onMinDateChange({
+      newMinDate: minDate,
+      maxDate: minDateOfFetchedData,
+      adminStore,
       api,
-      alerts
-    );
+      alerts,
+      setLoading
+    });
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateActivitiesFilters,
       payload: { minDate }
@@ -447,6 +427,23 @@ function ActivitiesPanel() {
     return lastValidDateRangeRef.current;
   }, [minDate, maxDate, isDateRangeValid]);
 
+  // Refetch deleted missions scoped to the selected period,
+  React.useEffect(() => {
+    if (!showDeletedMissions || !adminStore.userId || !adminStore.companyId) {
+      return;
+    }
+    void refreshDeletedMissions(
+      appliedDateRange.minDate,
+      appliedDateRange.maxDate
+    );
+  }, [
+    showDeletedMissions,
+    appliedDateRange,
+    adminStore.userId,
+    adminStore.companyId,
+    refreshDeletedMissions
+  ]);
+
   const selectedWorkDays = React.useMemo(
     () =>
       adminStore.workDays.filter(
@@ -473,6 +470,55 @@ function ActivitiesPanel() {
   const periodAggregates = React.useMemo(
     () => aggregateWorkDayPeriods(selectedWorkDays, period),
     [selectedWorkDays, period]
+  );
+
+  // Deleted missions are excluded from the server-computed workDays, so we build
+  // synthetic day-view entries for them. They are hidden by default in the table
+  // through the mission status filter ("Mission supprimée").
+  const deletedMissionEntries = React.useMemo(() => {
+    if (period !== "day") {
+      return [];
+    }
+    const selectedUserIds = new Set(selectedUsers.map((u) => u.id));
+    const entries = [];
+    Object.values(missionsById).forEach((mission) => {
+      if (!mission.isDeleted || !mission.userStats) {
+        return;
+      }
+      Object.values(mission.userStats).forEach((userStat) => {
+        const user = userStat.user;
+        if (!user || !selectedUserIds.has(user.id)) {
+          return;
+        }
+        const startTime = userStat.startTime || mission.startTime;
+        if (!startTime) {
+          return;
+        }
+        const day = isoFormatLocalDate(new Date(startTime * 1000));
+        if (appliedDateRange.minDate && day < appliedDateRange.minDate) {
+          return;
+        }
+        if (appliedDateRange.maxDate && day > appliedDateRange.maxDate) {
+          return;
+        }
+        entries.push({
+          user,
+          day,
+          periodStart: getStartOfDay(startTime),
+          startTime,
+          lastActivityStartTime:
+            userStat.lastActivityStartTime || startTime,
+          missionNames: { [mission.id]: mission.name },
+          regulationComputations: null
+        });
+      });
+    });
+    return entries;
+  }, [period, missionsById, selectedUsers, appliedDateRange]);
+
+  const workTimeEntries = React.useMemo(
+    () => [...periodAggregates, ...deletedMissionEntries],
+    [periodAggregates, deletedMissionEntries]
   );
   const ref = React.useRef(null);
 
@@ -641,11 +687,14 @@ function ActivitiesPanel() {
         <WorkTimeTable
           className={classes.workTimeTable}
           period={period}
-          workTimeEntries={periodAggregates}
+          workTimeEntries={workTimeEntries}
           missionsById={missionsById}
           showExpenditures={adminStore.settings.requireExpenditures}
           showMissionName={adminStore.settings.requireMissionName}
           loading={loading}
+          onDeletedStatusSelected={handleShowDeletedMissions}
+          onLoadMore={loadMoreWorkDays}
+          isLoadingMore={isLoadingMoreWorkDays}
         />
         <Drawer
           anchor="right"
@@ -764,9 +813,8 @@ function ActivitiesPanel() {
                   .then((response) => response.data.activities.logLocation);
 
                 await Promise.all([startLocationResponse, endLocationResponse]);
-                history.push(`/admin/validations?mission=${mission.id}`, {
-                  day: (new Date(missionInfos.day).getTime() / 1000) >> 0
-                });
+                history.push("/admin/activities");
+                openMission(mission.id);
                 setOpenNewMission(false);
               }, "create-mission")
             }

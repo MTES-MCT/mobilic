@@ -1,4 +1,5 @@
 import React from "react";
+import * as Sentry from "@sentry/browser";
 import { useHistory } from "react-router-dom";
 import Container from "@mui/material/Container";
 import { useApi } from "common/utils/api";
@@ -29,6 +30,16 @@ import {
 } from "common/utils/apiQueries/loginSignup";
 import { Stepper } from "@codegouvfr/react-dsfr/Stepper";
 import { OtpInput } from "../common/OtpInput";
+
+// Starts a Sentry transaction measuring the time from a successful login
+// until the admin dashboard's essential data is loaded.
+function startLoginToDashboardTransaction() {
+  const transaction = Sentry.startTransaction({
+    name: "admin.login_to_dashboard_ready",
+    op: "navigation"
+  });
+  Sentry.configureScope((scope) => scope.setSpan(transaction));
+}
 
 const useStyles = makeStyles((theme) => ({
   forgotPasswordLink: {
@@ -87,6 +98,7 @@ export default function Login() {
           setTotpStep(true);
           return;
         }
+        startLoginToDashboardTransaction();
         await store.updateUserIdAndInfo();
       },
       "login",
@@ -139,6 +151,7 @@ export default function Login() {
             },
             true
           );
+          startLoginToDashboardTransaction();
           await store.updateUserIdAndInfo();
         },
         "login",

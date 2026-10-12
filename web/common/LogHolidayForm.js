@@ -59,7 +59,7 @@ const MOTIFS = [
   },
   {
     id: "heavy-truck-driving",
-    label: "Conduite RSE",
+    label: "Activités tachygraphe",
   },
   {
     id: "training",

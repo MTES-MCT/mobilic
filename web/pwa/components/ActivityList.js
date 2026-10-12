@@ -230,6 +230,7 @@ function ActivityItem({
   nullableEndTimeInEditActivity,
   allowTeamMode,
   allowSupportActivity = false,
+  allowOtherTask = false,
   datetimeFormatter = formatTimeOfDay,
   activityEvents = [],
   shouldDisplayInitialEmployeeVersion = false,
@@ -249,7 +250,7 @@ function ActivityItem({
 
   const activityLabel = getActivityLabelDependingOnMissionType(
     activity.type,
-    allowSupportActivity
+    allowOtherTask
   );
 
   return (
@@ -349,6 +350,7 @@ function ActivityItem({
           onDispute={onDispute}
           onCancelDispute={onCancelDispute}
           isWithinCancelDelay={isWithinCancelDelay}
+          allowOtherTask={allowOtherTask}
         />
       )}
       {breakBadgeType && BADGE_CONFIG[breakBadgeType] && (
@@ -378,6 +380,7 @@ export function ActivityList({
   teamChanges,
   allowTeamMode = false,
   allowSupportActivity = false,
+  allowOtherTask = false,
   nullableEndTimeInEditActivity,
   isMissionEnded,
   fromTime = null,
@@ -504,37 +507,38 @@ export function ActivityList({
               <Description>Pas d'activités sur cette journée</Description>
             )}
           {augmentedAndSortedActivities.map((activity, index) => {
-            const isBreak = activity.type === ACTIVITIES.break.name;
-            const breakBadgeType = isBreak
-              ? computeBreakBadgeType(
-                  augmentedAndSortedActivities[index - 1],
-                  augmentedAndSortedActivities[index + 1],
-                  eventsByActivityId
-                )
-              : null;
-            return (
-              <ActivityItem
-                activity={activity}
-                editActivityEvent={editActivityEvent}
-                createActivity={createActivity}
-                allMissionActivities={allMissionActivities}
-                previousMissionEnd={previousMissionEnd}
-                teamChanges={teamChanges}
-                allowTeamMode={allowTeamMode}
-                allowSupportActivity={allowSupportActivity}
-                nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
-                key={activity.id ? "a" + activity.id : index}
-                datetimeFormatter={datetimeFormatter}
-                activityEvents={eventsByActivityId.get(activity.id) || []}
-                shouldDisplayInitialEmployeeVersion={shouldDisplayInitialEmployeeVersion}
-                employeeValidationTime={validationTimeByMission?.get(activity.missionId) || null}
-                onDispute={onDispute}
-                onCancelDispute={onCancelDispute}
-                isWithinCancelDelay={isWithinCancelDelay}
-                breakBadgeType={breakBadgeType}
-              />
-            );
-          })}
+              const isBreak = activity.type === ACTIVITIES.break.name;
+              const breakBadgeType = isBreak
+                ? computeBreakBadgeType(
+                    augmentedAndSortedActivities[index - 1],
+                    augmentedAndSortedActivities[index + 1],
+                    eventsByActivityId
+                  )
+                : null;
+              return (
+                <ActivityItem
+                  activity={activity}
+                  editActivityEvent={editActivityEvent}
+                  createActivity={createActivity}
+                  allMissionActivities={allMissionActivities}
+                  previousMissionEnd={previousMissionEnd}
+                  teamChanges={teamChanges}
+                  allowTeamMode={allowTeamMode}
+                  allowSupportActivity={allowSupportActivity}
+                  allowOtherTask={allowOtherTask}
+                  nullableEndTimeInEditActivity={nullableEndTimeInEditActivity}
+                  key={activity.id ? "a" + activity.id : index}
+                  datetimeFormatter={datetimeFormatter}
+                  activityEvents={eventsByActivityId.get(activity.id) || []}
+                  shouldDisplayInitialEmployeeVersion={shouldDisplayInitialEmployeeVersion}
+                  employeeValidationTime={validationTimeByMission?.get(activity.missionId) || null}
+                  onDispute={onDispute}
+                  onCancelDispute={onCancelDispute}
+                  isWithinCancelDelay={isWithinCancelDelay}
+                  breakBadgeType={breakBadgeType}
+                />
+              );
+            })}
         </div>
       )}
       {view === "chart" && canDisplayChart && (
@@ -549,7 +553,7 @@ export function ActivityList({
           datetimeFormatter={datetimeFormatter}
           width={ref.current.offsetWidth}
           activities={augmentedAndSortedActivities}
-          allowSupportActivity={allowSupportActivity}
+          allowOtherTask={allowOtherTask}
         />
       )}
       {hasActivitiesAfterMaxTime && (

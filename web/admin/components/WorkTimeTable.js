@@ -24,8 +24,20 @@ import {
   missionToValidationEntries
 } from "../selectors/validationEntriesSelectors";
 import { RunningTag, ToValidateTag, ValidatedTag, WaitingTag, DeletedTag, AllValidatedTag } from "../drawers/Tags";
-import { MISSION_STATUS, computeMissionStatus } from "../utils/missionsStatus";
+import {
+  MISSION_STATUS,
+  computeMissionStatus,
+  DEFAULT_VISIBLE_MISSION_STATUSES
+} from "../utils/missionsStatus";
 import { MissionStatusTagBtn } from "./MissionStatusTagBtn";
+import { MissionStatusFilter } from "./MissionStatusFilter";
+import CircularProgress from "@mui/material/CircularProgress";
+import { fr } from "@codegouvfr/react-dsfr";
+import { getThresholds, getThresholdDisplay } from "../utils/weeklyThresholds";
+
+const STATUS_VALUE_TO_KEY = Object.fromEntries(
+  Object.entries(MISSION_STATUS).map(([key, value]) => [value, key])
+);
 
 const useStyles = makeStyles((theme) => ({
   expenditures: {
@@ -36,8 +48,30 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(2),
     paddingRight: theme.spacing(4),
     paddingLeft: theme.spacing(4)
+  },
+  loadMoreIndicator: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: theme.spacing(1),
+    padding: theme.spacing(2)
   }
 }));
+
+const LOAD_MORE_ROW_THRESHOLD = 15;
+
+const ThresholdValue = ({ value, formatted, thresholdKey, thresholds }) => {
+  const display = getThresholdDisplay(value, thresholdKey, thresholds);
+  if (!display) return formatted;
+  return (
+    <Tooltip title={display.tooltip}>
+      <span style={{ color: display.color }}>
+        <span className={cx("fr-icon--sm", display.icon)} aria-hidden="true" />{" "}
+        {formatted}
+      </span>
+    </Tooltip>
+  );
+};
 
 const InfractionsWaiting = ({ tooltipTitle }) => (
   <Tooltip title={tooltipTitle}>
@@ -379,15 +413,34 @@ export function WorkTimeTable({
   className,
   showMissionName,
   showExpenditures,
-  loading
+  loading,
+  onDeletedStatusSelected,
+  onLoadMore,
+  isLoadingMore
 }) {
   const { openWorkday } = useDayDrawer();
   const openMission = useMissionDrawer()[1];
   const adminStore = useAdminStore();
 
+  const [selectedStatuses, setSelectedStatuses] = React.useState(
+    DEFAULT_VISIBLE_MISSION_STATUSES
+  );
+
+  const handleStatusFilterChange = (newStatuses) => {
+    if (
+      onDeletedStatusSelected &&
+      newStatuses.includes("deleted") &&
+      !selectedStatuses.includes("deleted")
+    ) {
+      onDeletedStatusSelected();
+    }
+    setSelectedStatuses(newStatuses);
+  };
+
   const { trackEvent } = useMatomo();
 
   const classes = useStyles();
+  const thresholdsByUserId = adminStore.weeklyThresholdsByUserId || {};
 
   let periodLabel, periodFormatter;
   if (period === "day") {
@@ -458,8 +511,22 @@ export function WorkTimeTable({
     label: "Statut",
     name: "statusKey",
     format: (statusKey, entry) => formatStatus(statusKey, entry, openMission, openWorkday),
+    align: "center",
+    minWidth: 170,
+    flexGrow: 0,
+  };
+
+  const filterCol = {
+    label: "Filtrer",
+    name: "filter",
     align: "left",
-    minWidth: 120
+    minWidth: 50,
+    renderLabel: () => (
+      <MissionStatusFilter
+        selectedStatuses={selectedStatuses}
+        onChange={handleStatusFilterChange}
+      />
+    )
   };
   const expenditureCol = {
     label: "Frais",
@@ -473,7 +540,7 @@ export function WorkTimeTable({
   const workedDaysCol = {
     label: "Jours travaillés",
     name: "workedDays",
-    minWidth: 150
+    minWidth: 120
   };
   const missionNamesCol = {
     label: "Mission(s)",
@@ -494,14 +561,41 @@ export function WorkTimeTable({
       restTimeCol,
       amplitudeCol,
       statusCol,
+      filterCol,
     ];
   } else {
+    const withThreshold = period === "week";
+    const restCol = {
+      label: "Repos",
+      name: "maxConsecutiveRest",
+      align: "center",
+      minWidth: 120,
+      flexGrow: 0,
+      format: (v) => v != null ? formatTimer(v, false) : null
+    };
+    const formatWithAlert = (key, formatter) => (v, row) => {
+      if (v == null) return null;
+      const userThresholds = getThresholds(
+        thresholdsByUserId[row?.user?.id] || adminStore.weeklyThresholds
+      );
+      return ThresholdValue({
+        value: v,
+        formatted: formatter(v),
+        thresholdKey: key,
+        thresholds: userThresholds
+      });
+    };
+    const withAlert = (col, key, formatter) => withThreshold
+      ? { ...col, format: formatWithAlert(key, formatter) }
+      : col;
+
     columns = [
       employeeCol,
       dailyInfractionsCol,
       weeklyInfractionsCol,
-      workTimeCol,
-      workedDaysCol,
+      withAlert(workTimeCol, "work", formatTimer),
+      withAlert(restCol, "rest", (v) => formatTimer(v, false)),
+      withAlert(workedDaysCol, "workedDays", (v) => v),
       showExpenditures && expenditureCol
     ];
   }
@@ -516,12 +610,22 @@ export function WorkTimeTable({
     period
   );
 
+  // Status filter only applies to the day view (the only view with a status column).
+  const visibleWorkTimeEntries =
+    period === "day"
+      ? preFormattedWorkTimeEntries.filter((entry) => {
+          if (!entry.statusKey) return true;
+          const statusKey = STATUS_VALUE_TO_KEY[entry.statusKey];
+          return !statusKey || selectedStatuses.includes(statusKey);
+        })
+      : preFormattedWorkTimeEntries;
+
   return (
     <>
       <AugmentedTable
         key={2}
         columns={columns}
-        entries={preFormattedWorkTimeEntries}
+        entries={visibleWorkTimeEntries}
         small
         virtualizedRowHeight={40}
         defaultSortBy="periodStart"
@@ -530,6 +634,14 @@ export function WorkTimeTable({
         virtualized
         onRowClick={(entry) =>
           onRowClick(entry, trackEvent, openWorkday, openMission)
+        }
+        onRowsRendered={
+          onLoadMore &&
+          (({ stopIndex, totalCount }) => {
+            if (stopIndex >= totalCount - LOAD_MORE_ROW_THRESHOLD) {
+              onLoadMore();
+            }
+          })
         }
         groupByColumn={{
           label: periodLabel,
@@ -542,6 +654,13 @@ export function WorkTimeTable({
         }}
         loading={loading}
       />
+
+      {isLoadingMore && (
+        <div className={classes.loadMoreIndicator}>
+          <CircularProgress size="2rem" sx={{ color: fr.colors.decisions.artwork.major.blueFrance.default }} />
+          <span>Chargement…</span>
+        </div>
+      )}
     </>
   );
 }
@@ -592,5 +711,6 @@ WorkTimeTable.propTypes = {
   className: PropTypes.string,
   showMissionName: PropTypes.bool,
   showExpenditures: PropTypes.bool,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
+  onDeletedStatusSelected: PropTypes.func
 };

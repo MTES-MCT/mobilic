@@ -429,6 +429,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
       userAgreementStatus,
       notifications,
       admin,
+      bizdev,
       totpEnabled,
       isImpersonated
     },
@@ -453,6 +454,7 @@ export class StoreSyncedWithLocalStorageProvider extends React.Component {
             userAgreementStatus,
             notifications,
             admin,
+            bizdev,
             totpEnabled,
             isImpersonated
           }

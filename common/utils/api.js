@@ -394,7 +394,7 @@ class Api {
     try {
       const response = await this.graphQlQuery(CHECK_AUTH_QUERY);
       return response.data.checkAuth.userId === userId;
-    } catch (err) {
+    } catch {
       return false;
     }
   }

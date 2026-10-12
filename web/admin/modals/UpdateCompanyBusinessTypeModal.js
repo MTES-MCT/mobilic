@@ -22,12 +22,14 @@ export default function UpdateCompanyBusinessTypeModal() {
   const {
     setNewCompanyBusinessType,
     hasBusinessTypeChanged,
+    isBusinessTypeComplete,
     updateCompanyDetails
   } = useUpdateCompanyDetails(company, adminStore, handleClose);
 
-  const canSubmit = React.useMemo(() => !!hasBusinessTypeChanged, [
-    hasBusinessTypeChanged
-  ]);
+  const canSubmit = React.useMemo(
+    () => hasBusinessTypeChanged && isBusinessTypeComplete,
+    [hasBusinessTypeChanged, isBusinessTypeComplete]
+  );
 
   const handleSubmit = async () => {
     await updateCompanyDetails(true);
