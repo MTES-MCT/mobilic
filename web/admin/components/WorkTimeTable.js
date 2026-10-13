@@ -96,6 +96,10 @@ const formatInfractions = (_, entry) => {
   if (!entry.totalWork) {
     return null;
   }
+  // Deleted missions have nothing to validate, so no infractions indicator.
+  if (missionStatus === MISSION_STATUS.deleted) {
+    return null;
+  }
   // if worker has more recent missions in the same day for which infractions are being computed, so we don't display anything to avoid confusion
   if (entry.hasHiddenInfractionsBecauseNewerMissionExists) {
     return null;
@@ -350,10 +354,14 @@ const preFormatWorkTimeEntries = (
       currentUserId,
       openMission
     );
-    const areAllMissionsValidated = missionsStatus.every(
-      (status) =>
-        status === MISSION_STATUS.validated
+    const nonDeletedStatuses = missionsStatus.filter(
+      (status) => status !== MISSION_STATUS.deleted
     );
+    const areAllMissionsValidated =
+      nonDeletedStatuses.length > 0 &&
+      nonDeletedStatuses.every(
+        (status) => status === MISSION_STATUS.validated
+      );
 
     if (areAllMissionsValidated) {
       return [buildAllValidatedEntry(wte)];
@@ -511,21 +519,23 @@ export function WorkTimeTable({
     label: "Statut",
     name: "statusKey",
     format: (statusKey, entry) => formatStatus(statusKey, entry, openMission, openWorkday),
-    align: "center",
-    minWidth: 170,
-    flexGrow: 0,
-  };
-
-  const filterCol = {
-    label: "Filtrer",
-    name: "filter",
     align: "left",
-    minWidth: 50,
+    minWidth: 250,
+    flexGrow: 0,
     renderLabel: () => (
-      <MissionStatusFilter
-        selectedStatuses={selectedStatuses}
-        onChange={handleStatusFilterChange}
-      />
+      <span
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <span>Statut</span>
+        <MissionStatusFilter
+          selectedStatuses={selectedStatuses}
+          onChange={handleStatusFilterChange}
+        />
+      </span>
     )
   };
   const expenditureCol = {
@@ -561,7 +571,6 @@ export function WorkTimeTable({
       restTimeCol,
       amplitudeCol,
       statusCol,
-      filterCol,
     ];
   } else {
     const withThreshold = period === "week";
