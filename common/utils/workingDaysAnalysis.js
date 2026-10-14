@@ -1,28 +1,10 @@
-import { getDaysBetweenTwoDates } from "./time";
+import { getDaysBetweenTwoDates, HOUR } from "./time";
 
-// Helper: Check if activity was added after the day it describes
-function isActivityAddedLate(activity, dayString) {
-  if (!activity.receptionTime) return false;
-  
-  const dayEnd = new Date(dayString);
-  dayEnd.setHours(23, 59, 59, 999);
-  
-  return new Date(activity.receptionTime) > dayEnd;
-}
-
-// Helper: Check if mission was registered as "past registration"
-function isMissionPosteriori(mission) {
-  if (mission.pastRegistrationJustification) return true;
-  
-  if (!mission.allActivities?.length) return false;
-  
-  const missionEndDate = new Date(mission.endTime || Date.now());
-  missionEndDate.setHours(23, 59, 59, 999);
-  
-  return mission.allActivities.every(activity => {
-    if (!activity.receptionTime) return false;
-    return new Date(activity.receptionTime) > missionEndDate;
-  });
+// Received at least one hour after it started. Same window as the
+// certification real-time criterion. Crossing midnight is not late.
+function isActivityLoggedLate(activity) {
+  if (!activity.receptionTime || activity.startTime == null) return false;
+  return activity.receptionTime - activity.startTime >= HOUR;
 }
 
 // Helper: get days modified by an activity (original + current), or empty array
@@ -49,19 +31,17 @@ export function analyzeWorkingDays(missions, referenceDate) {
   const daysModified = new Set();
   
   missions.forEach((mission) => {
-    const missionAddedLate = isMissionPosteriori(mission);
-
     mission.allActivities?.forEach((activity) => {
       const activityDays = getDaysBetweenTwoDates(
         activity.startTime,
         activity.endTime
       );
+      const loggedLate = isActivityLoggedLate(activity);
 
       activityDays.forEach((day) => {
         allWorkingDays.add(day);
 
-        // Check if day was added after it occurred
-        if (missionAddedLate || isActivityAddedLate(activity, day)) {
+        if (loggedLate) {
           daysAddedPosteriori.add(day);
         }
 
