@@ -1,5 +1,4 @@
 import React from "react";
-import debounce from "lodash/debounce";
 import { useHistory, useLocation } from "react-router-dom";
 import { EmployeeFilter } from "../components/EmployeeFilter";
 import Paper from "@mui/material/Paper";
@@ -138,22 +137,7 @@ const withLocalLoadingScreen = (setLoading) => async (sync) => {
   }
 };
 
-const onMinDateChange = debounce(
-  async ({ newMinDate, maxDate, adminStore, api, alerts, setLoading }) => {
-    if (newMinDate < maxDate) {
-      await loadActivitiesData({
-        adminStore,
-        alerts,
-        api,
-        withLoadingScreen: withLocalLoadingScreen(setLoading),
-        minDate: newMinDate,
-        maxDate,
-        reset: false
-      });
-    }
-  },
-  500
-);
+const MIN_DISPLAYED_ROWS_BEFORE_AUTO_LOAD = 20;
 
 const renderPickersDay = (pickersDayProps) => {
   const { key, ...safeProps } = pickersDayProps;
@@ -175,6 +159,16 @@ function ActivitiesPanel() {
   const { refresh: refreshDeletedMissions } = useRefreshDeletedMissions();
 
   const [users, setUsers] = React.useState(adminStore.activitiesFilters.users);
+
+  const employeeFilterUserIds = users.some((u) => u.selected)
+    ? users.filter((u) => u.selected).map((u) => u.id)
+    : null;
+  const employeeFilterKey = employeeFilterUserIds
+    ? employeeFilterUserIds
+        .slice()
+        .sort((a, b) => a - b)
+        .join(",")
+    : "";
   const [teams, setTeams] = React.useState(adminStore.activitiesFilters.teams);
   const [companies, setCompanies] = React.useState([]);
   const [minDate, setMinDate] = React.useState(
@@ -226,18 +220,19 @@ function ActivitiesPanel() {
       withLoadingScreen: withLocalLoadingScreen(setLoading),
       minDate,
       maxDate,
-      reset: true
+      reset: true,
+      userIds: employeeFilterUserIds
     });
 
   const isFetchingMoreWorkDaysRef = React.useRef(false);
   const [isLoadingMoreWorkDays, setIsLoadingMoreWorkDays] = React.useState(
     false
   );
-  const loadMoreWorkDays = () => {
+  const loadMoreWorkDays = (force = false) => {
     if (
       isFetchingMoreWorkDaysRef.current ||
       !adminStore.areMissionsActivitiesLoaded ||
-      !adminStore.workDaysPageInfo?.hasNextPage
+      (!force && !adminStore.workDaysPageInfo?.hasNextPage)
     ) {
       return;
     }
@@ -250,7 +245,8 @@ function ActivitiesPanel() {
       withLoadingScreen: async (sync) => await sync(),
       minDate,
       maxDate,
-      reset: false
+      reset: false,
+      userIds: employeeFilterUserIds
     }).finally(() => {
       isFetchingMoreWorkDaysRef.current = false;
       setIsLoadingMoreWorkDays(false);
@@ -282,7 +278,15 @@ function ActivitiesPanel() {
     }
   }, [minDate, maxDate, isDateRangeValid]);
 
-  // Reload data when date range changes (backward pagination handled by onMinDateChange)
+  React.useEffect(() => {
+    if (minDate) {
+      adminStore.dispatch({
+        type: ADMIN_ACTIONS.updateActivitiesFilters,
+        payload: { minDate }
+      });
+    }
+  }, [minDate]);
+
   const prevDateRangeRef = React.useRef({ minDate, maxDate });
   React.useEffect(() => {
     if (!minDate || !maxDate || !company?.id) return;
@@ -295,30 +299,51 @@ function ActivitiesPanel() {
 
     const prevMinDate = prevDateRangeRef.current.minDate;
     const prevMaxDate = prevDateRangeRef.current.maxDate;
+    prevDateRangeRef.current = { minDate, maxDate };
 
-    // Reload if maxDate changed or minDate moved forward, and range is valid (≤ 365 days)
-    const shouldReload = maxDate !== prevMaxDate || minDate > prevMinDate;
+    const maxDateChanged = maxDate !== prevMaxDate;
+    const minDateChanged = minDate !== prevMinDate;
 
-    if (shouldReload) {
+    if (!maxDateChanged && !minDateChanged) {
+      return;
+    }
+    
+    if (maxDateChanged) {
       const timeoutId = setTimeout(() => {
         refreshCurrentWorkDays();
       }, 500); // 500ms debounce
-
-      prevDateRangeRef.current = { minDate, maxDate };
       return () => clearTimeout(timeoutId);
     }
-    
-    prevDateRangeRef.current = { minDate, maxDate };
-  }, [
-    minDate,
-    maxDate,
-    company?.id,
-    isDateRangeValid,
-    alerts,
-    api,
-    adminStore,
-    company
-  ]);
+
+    if (adminStore.areMissionsActivitiesLoaded) {
+      const timeoutId = setTimeout(() => {
+        loadMoreWorkDays(true);
+      }, 500);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [minDate, maxDate, company?.id, isDateRangeValid]);
+
+
+  React.useEffect(() => {
+    if (minDate && (!maxDate || maxDate < minDate)) {
+      setMaxDate(minDate);
+    } else if (maxDate && (!minDate || minDate > maxDate)) {
+      setMinDate(maxDate);
+    }
+  }, [minDate, maxDate]);
+
+  const prevEmployeeFilterKeyRef = React.useRef(employeeFilterKey);
+  React.useEffect(() => {
+    if (employeeFilterKey === prevEmployeeFilterKeyRef.current) {
+      return;
+    }
+    prevEmployeeFilterKeyRef.current = employeeFilterKey;
+
+    const timeoutId = setTimeout(() => {
+      refreshCurrentWorkDays();
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [employeeFilterKey]);
 
   React.useEffect(() => {
     adminStore.dispatch({
@@ -342,28 +367,7 @@ function ActivitiesPanel() {
   }, [adminStore.activitiesFilters.minDate]);
 
   React.useEffect(() => {
-    if (minDate && (!maxDate || maxDate < minDate)) setMaxDate(minDate);
-    if (!isDateRangeValid(minDate, maxDate)) {
-      return;
-    }
-
-    onMinDateChange({
-      newMinDate: minDate,
-      maxDate: minDateOfFetchedData,
-      adminStore,
-      api,
-      alerts,
-      setLoading
-    });
-    adminStore.dispatch({
-      type: ADMIN_ACTIONS.updateActivitiesFilters,
-      payload: { minDate }
-    });
-  }, [minDate, maxDate, isDateRangeValid]);
-
-  React.useEffect(() => {
     if (maxDate && !minDate) setMinDate(minDateOfFetchedData);
-    if (maxDate && minDate && minDate > maxDate) setMinDate(maxDate);
     if (!isDateRangeValid(minDate, maxDate)) {
       return;
     }
@@ -454,6 +458,24 @@ function ActivitiesPanel() {
       ),
     [appliedDateRange, selectedUsers, adminStore.workDays]
   );
+
+  // Keep auto-loading more pages while the filtered view has too few rows,
+  // instead of relying only on scroll. Re-checks on new page (endCursor) or
+  // filter change (selectedWorkDays.length), so applying a filter after
+  // pagination already stopped still triggers another load if needed.
+  React.useEffect(() => {
+    if (
+      adminStore.areMissionsActivitiesLoaded &&
+      adminStore.workDaysPageInfo?.hasNextPage &&
+      selectedWorkDays.length < MIN_DISPLAYED_ROWS_BEFORE_AUTO_LOAD
+    ) {
+      loadMoreWorkDays();
+    }
+  }, [
+    adminStore.workDaysPageInfo?.endCursor,
+    adminStore.areMissionsActivitiesLoaded,
+    selectedWorkDays.length
+  ]);
 
   // We create this object to have missions filled with stats easily accessible by id to avoid doing costly computations for each entry in the work time table.
   // This allows us to quickly look up mission details without iterating through the entire list of missions for each work day entry.
