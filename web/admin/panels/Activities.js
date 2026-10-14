@@ -310,7 +310,7 @@ function ActivitiesPanel() {
     
     if (maxDateChanged) {
       const timeoutId = setTimeout(() => {
-        refreshCurrentWorkDays();
+        void refreshCurrentWorkDays();
       }, 500); // 500ms debounce
       return () => clearTimeout(timeoutId);
     }
@@ -340,7 +340,7 @@ function ActivitiesPanel() {
     prevEmployeeFilterKeyRef.current = employeeFilterKey;
 
     const timeoutId = setTimeout(() => {
-      refreshCurrentWorkDays();
+      void refreshCurrentWorkDays();
     }, 500);
     return () => clearTimeout(timeoutId);
   }, [employeeFilterKey]);
