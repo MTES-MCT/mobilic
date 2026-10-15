@@ -357,7 +357,7 @@ export const ROUTES = [
     label: "Dysfonctionnements techniques",
     accessible: ({ controllerInfo }) => !!controllerInfo?.id,
     component: <ControllerTechnicalIncidents />,
-    menuItemFilter: ({ controllerInfo }) => !!controllerInfo?.id
+    menuItemFilter: () => false
   },
   {
     path: CONTROLLER_ROUTE_PREFIX + "/scan_error",
@@ -381,6 +381,10 @@ export const ROUTES = [
       {
         path: "/history",
         label: "Historique des contrôles"
+      },
+      {
+        path:"/technical-incidents",
+        label: "Dysfonctionnements techniques"
       }
     ]
   },
