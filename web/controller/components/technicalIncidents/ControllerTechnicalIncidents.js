@@ -12,18 +12,21 @@ import { useApi } from "common/utils/api";
 import { useLoadingScreen } from "common/utils/loading";
 import { CONTROLLER_TECHNICAL_INCIDENTS_QUERY } from "common/utils/apiQueries/technicalIncident";
 import { TECHNICAL_INCIDENT_NATURE_LABELS } from "common/utils/technicalIncidents";
-import {
-  textualPrettyFormatDayHour,
-  formatLongTimer
-} from "common/utils/time";
+import { textualPrettyFormatDayHour, pluralize } from "common/utils/time";
 import { ControllerControlBackButton } from "../utils/ControllerControlBackButton";
 
 const useStyles = makeStyles(theme => ({
   container: {
+    alignItems: "center",
+    maxWidth: "80%",
     paddingTop: theme.spacing(3),
     paddingBottom: theme.spacing(7),
     paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
+    paddingRight: theme.spacing(2),
+    [theme.breakpoints.up("md")]: {
+      paddingLeft: theme.spacing(12.5),
+      paddingRight: theme.spacing(12.5)
+    }
   },
   incident: {
     paddingTop: theme.spacing(2),
@@ -42,9 +45,12 @@ const useStyles = makeStyles(theme => ({
     }
   },
   duration: {
+    display: "flex",
+    alignItems: "center",
+    gap: theme.spacing(1),
     color: fr.colors.decisions.text.mention.grey.default,
     marginTop: theme.spacing(0.5),
-    marginBottom: theme.spacing(0.5),
+    marginBottom: theme.spacing(2),
     [theme.breakpoints.up("md")]: {
       flex: "0 0 25%",
       marginTop: 0,
@@ -63,7 +69,14 @@ function formatIncidentDuration(incident) {
   if (incident.isOngoing) {
     return "En cours";
   }
-  return formatLongTimer(incident.effectiveEndTime - incident.startTime);
+  const totalMinutes = Math.floor(
+    (incident.effectiveEndTime - incident.startTime) / 60
+  );
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  if (hours === 0) return pluralize(minutes, "minute");
+  if (minutes === 0) return pluralize(hours, "heure");
+  return `${hours}h${String(minutes).padStart(2, "0")} min`;
 }
 
 export function ControllerTechnicalIncidents() {
@@ -107,8 +120,8 @@ export function ControllerTechnicalIncidents() {
   return (
     <>
       <MobilicHeader />
-      <Main>
-        <Container maxWidth="md" className={classes.container}>
+      <Main maxWidth={false}>
+        <Container maxWidth={false} className={classes.container}>
           {returnTo && (
             <Box sx={{ mb: 2 }}>
               <ControllerControlBackButton
@@ -122,9 +135,9 @@ export function ControllerTechnicalIncidents() {
             Registre des dysfonctionnements techniques connus par Mobilic
           </Typography>
           <Typography sx={{ mb: 3 }}>
-            Consultez ce registre pour établir si un problème d'enregistrement
-            de temps signalé par un salarié résulte d'un dysfonctionnement
-            technique de la plateforme.
+            Vérifiez si une impossibilité d’enregistrement du temps de travail
+            signalée par un salarié résulte d’un dysfonctionnement technique de
+            la plateforme.
           </Typography>
 
           {incidents.length === 0 ? (
@@ -142,6 +155,10 @@ export function ControllerTechnicalIncidents() {
                   {textualPrettyFormatDayHour(incident.startTime, true)}
                 </Typography>
                 <Typography variant="body2" className={classes.duration}>
+                  <span
+                    className="fr-icon--sm fr-icon-time-line"
+                    aria-hidden="true"
+                  />
                   {formatIncidentDuration(incident)}
                 </Typography>
                 <Typography variant="body2" className={classes.nature}>

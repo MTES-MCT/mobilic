@@ -16,8 +16,7 @@ import { useApi } from "common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { getFallbackRoute } from "../common/routes";
 import {
-  TECHNICAL_INCIDENT_TYPES,
-  TECHNICAL_INCIDENT_TYPE_LABELS,
+  NATURE_TO_TECHNICAL_TYPE,
   TECHNICAL_INCIDENT_NATURE_LABELS
 } from "common/utils/technicalIncidents";
 import {
@@ -47,7 +46,7 @@ export default function TechnicalIncidentsAdmin() {
   const store = useStoreSyncedWithLocalStorage();
   const history = useHistory();
 
-  const [technicalType, setTechnicalType] = React.useState("");
+  const [nature, setNature] = React.useState("");
   const [startTime, setStartTime] = React.useState("");
   const [endTime, setEndTime] = React.useState("");
   const [description, setDescription] = React.useState("");
@@ -91,11 +90,11 @@ export default function TechnicalIncidentsAdmin() {
     loadIncidents();
   }, [loadIncidents]);
 
-  const canSubmit = technicalType && startTime;
+  const canSubmit = nature && startTime;
 
   const resetForm = () => {
     setEditingId(null);
-    setTechnicalType("");
+    setNature("");
     setStartTime("");
     setEndTime("");
     setDescription("");
@@ -105,7 +104,7 @@ export default function TechnicalIncidentsAdmin() {
     setSubmitting(true);
     setResult(null);
     const variables = {
-      technicalType,
+      technicalType: NATURE_TO_TECHNICAL_TYPE[nature],
       startTime: toTimeStamp(startTime),
       endTime: toTimeStamp(endTime),
       description: description.trim() || null
@@ -136,7 +135,7 @@ export default function TechnicalIncidentsAdmin() {
 
   const startEdit = incident => {
     setEditingId(incident.id);
-    setTechnicalType(incident.technicalType);
+    setNature(incident.nature);
     setStartTime(toDateTimeLocal(incident.startTime));
     setEndTime(toDateTimeLocal(incident.endTime));
     setDescription(incident.description || "");
@@ -179,8 +178,6 @@ export default function TechnicalIncidentsAdmin() {
   const tableData = incidents.map(incident => [
     prettyFormatDayHour(incident.startTime),
     incident.endTime ? prettyFormatDayHour(incident.endTime) : "En cours",
-    TECHNICAL_INCIDENT_TYPE_LABELS[incident.technicalType] ||
-      incident.technicalType,
     TECHNICAL_INCIDENT_NATURE_LABELS[incident.nature] || incident.nature,
     <Box
       sx={{
@@ -235,24 +232,22 @@ export default function TechnicalIncidentsAdmin() {
               </Typography>
 
               <Select
-                label="Nature technique"
+                label="Nature"
                 nativeSelectProps={{
-                  value: technicalType,
-                  onChange: e => setTechnicalType(e.target.value)
+                  value: nature,
+                  onChange: e => setNature(e.target.value)
                 }}
               >
                 <option value="" disabled>
                   Sélectionnez une nature
                 </option>
-                {TECHNICAL_INCIDENT_TYPES.map(group => (
-                  <optgroup key={group.category} label={group.categoryLabel}>
-                    {group.options.map(o => (
-                      <option key={o.value} value={o.value}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
+                {Object.entries(TECHNICAL_INCIDENT_NATURE_LABELS).map(
+                  ([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  )
+                )}
               </Select>
 
               <Input
@@ -332,8 +327,7 @@ export default function TechnicalIncidentsAdmin() {
                 headers={[
                   "Début",
                   "Fin",
-                  "Type technique",
-                  "Nature affichée",
+                  "Nature",
                   "Action"
                 ]}
                 data={tableData}
