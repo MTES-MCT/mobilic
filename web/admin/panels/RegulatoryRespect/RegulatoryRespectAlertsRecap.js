@@ -136,10 +136,13 @@ export const AlertsRecap = ({ ...otherProps }) => {
         },
       );
       const entry =
-        resPayload.data.user.adminedCompanies[0].workDays.edges.filter(
+        resPayload.data.user.adminedCompanies[0].workDays.edges.find(
           (e) => e.node.day === day,
-        );
-      workTimeEntries = [entry[0].node];
+        )?.node;
+      if (!entry) {
+        return;
+      }
+      workTimeEntries = [entry];
     }
 
     const aggregates = aggregateWorkDayPeriods(workTimeEntries, "day");
