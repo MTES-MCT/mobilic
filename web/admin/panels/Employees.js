@@ -1013,23 +1013,6 @@ export function Employees({ company, containerRef }) {
           </>
         )}
 
-        <Box className={classes.title}>
-          <Typography variant="h4" component="h2">
-            Salariés ({validEmployments.length})
-          </Typography>
-          {!canDisplayPendingEmployments && (
-            <InviteButtons
-              onBatchInvite={handleBatchInvite}
-              onSingleInvite={handleSingleInvite}
-              shouldShowBadge={
-                !hasMadeInvitations &&
-                !employeeProgressData?.shouldShowSingleInviteButton &&
-                employeeProgressData?.shouldShowBadge
-              }
-              employeeProgressData={employeeProgressData}
-            />
-          )}
-        </Box>
         <Stack direction="row" alignItems="center" spacing={2}>
           {adminStore?.teams?.length > 0 && teams && (
             <TeamFilter
