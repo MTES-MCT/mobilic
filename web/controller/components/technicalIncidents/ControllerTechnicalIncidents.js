@@ -18,12 +18,13 @@ import { ControllerControlBackButton } from "../utils/ControllerControlBackButto
 const useStyles = makeStyles(theme => ({
   container: {
     alignItems: "center",
-    maxWidth: "80%",
+    maxWidth: "100%",
     paddingTop: theme.spacing(3),
     paddingBottom: theme.spacing(7),
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
     [theme.breakpoints.up("md")]: {
+      maxWidth: "80%",
       paddingLeft: theme.spacing(12.5),
       paddingRight: theme.spacing(12.5)
     }
@@ -40,6 +41,9 @@ const useStyles = makeStyles(theme => ({
   date: {
     color: fr.colors.decisions.text.actionHigh.blueFrance.default,
     fontWeight: 700,
+    "&::first-letter": {
+      textTransform: "uppercase"
+    },
     [theme.breakpoints.up("md")]: {
       flex: "0 0 40%"
     }
@@ -132,7 +136,7 @@ export function ControllerTechnicalIncidents() {
             </Box>
           )}
           <Typography variant="h1" sx={{ fontSize: "1.5rem", mb: 2 }}>
-            Registre des dysfonctionnements techniques connus par Mobilic
+            Registre des dysfonctionnements connus par Mobilic
           </Typography>
           <Typography sx={{ mb: 3 }}>
             Vérifiez si une impossibilité d’enregistrement du temps de travail
