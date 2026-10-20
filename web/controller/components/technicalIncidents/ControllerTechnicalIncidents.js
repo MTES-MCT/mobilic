@@ -155,7 +155,7 @@ export function ControllerTechnicalIncidents() {
                 id={`incident-${incident.id}`}
                 className={classes.incident}
               >
-                <Typography className={classes.date}>
+                <Typography variant="body2" className={classes.date}>
                   {textualPrettyFormatDayHour(incident.startTime, true)}
                 </Typography>
                 <Typography variant="body2" className={classes.duration}>
