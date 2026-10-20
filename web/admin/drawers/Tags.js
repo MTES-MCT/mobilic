@@ -23,8 +23,8 @@ const tagsStyles = makeStyles((theme) => ({
     backgroundColor: fr.colors.decisions.background.contrast.grey.default
   },
   deleted: {
-    color: fr.colors.decisions.background.flat.greenEmeraude.default,
-    backgroundColor: fr.colors.decisions.background.contrast.greenEmeraude.default
+    color: fr.colors.decisions.text.disabled.grey.default,
+    backgroundColor: fr.colors.decisions.background.alt.grey.default
   },
   toValidate: {
     color: fr.colors.decisions.background.flat.yellowTournesol.default,

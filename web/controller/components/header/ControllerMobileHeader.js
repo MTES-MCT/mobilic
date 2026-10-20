@@ -15,8 +15,8 @@ export function ControllerMobileHeader({ disableMenu }) {
         <IconButton
           aria-label="Menu"
           key={0}
-          edge="end"
           onClick={() => setOpenNavDrawer(!openNavDrawer)}
+          sx={{ mr: 1 }}
         >
           <MenuIcon />
         </IconButton>,

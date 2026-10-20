@@ -161,6 +161,14 @@ export const CONTROLLER_READ_CONTROL_DATA = gql`
   query readControlData($controlId: Int!) {
     controlData(controlId: $controlId) {
       ...ControlData
+      technicalIncidents {
+        id
+        nature
+        startTime
+        endTime
+        isOngoing
+        effectiveEndTime
+      }
       historyStartDate
       controlBulletin {
         ...ControlBulletin

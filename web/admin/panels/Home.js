@@ -566,7 +566,7 @@ export default function Home({ setShouldRefreshData }) {
                   )
                 }
                 buttonLabel="Valider les saisies"
-                onButtonClick={() => history.push("/admin/validations")}
+                onButtonClick={() => history.push("/admin/activities")}
               />
             </Stack>
 
@@ -603,12 +603,7 @@ export default function Home({ setShouldRefreshData }) {
               <ClickableLine
                 count={summary.autoValidatedMissionsCount}
                 label="mission(s) validée(s) automatiquement"
-                onClick={() =>
-                  history.push({
-                    pathname: "/admin/validations",
-                    state: { tab: 2 }
-                  })
-                }
+                onClick={() => history.push("/admin/activities")}
               />
             </Stack>
           </Box>
