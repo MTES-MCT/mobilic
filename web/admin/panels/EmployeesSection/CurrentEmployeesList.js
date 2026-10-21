@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { makeStyles } from "@mui/styles";
-import { fr } from "@codegouvfr/react-dsfr";
 import { AugmentedTable } from "../../components/AugmentedTable";
 import { formatPersonName } from "common/utils/coworkers";
 import Notice from "../../../common/Notice";
+import { useAugmentedTableStyles } from "./useAugmentedTableStyles";
+import CollapsibleSectionHeader from "./CollapsibleSectionHeader";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -15,48 +16,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
     gap: theme.spacing(2)
-  },
-  expandBtn: {
-    display: "flex",
-    alignItems: "center",
-    gap: theme.spacing(1),
-    cursor: "pointer",
-    border: "none",
-    background: "none",
-    padding: 0,
-    font: "inherit",
-    color: "inherit",
-    textAlign: "left"
-  },
-  sectionLabel: {
-    margin: 0,
-    color: fr.colors.decisions.text.title.blueFrance.default,
-    fontWeight: 500
-  },
-  arrowIcon: {
-    color: fr.colors.decisions.background.active.blueFrance.default
-  },
-  augmentedTable: {
-    "& .ReactVirtualized__Table__headerRow": {
-      backgroundColor: fr.colors.decisions.background.contrastRaised.grey.default,
-      borderTop: "none",
-      borderBottom: `2px solid ${fr.colors.decisions.border.plain.grey.default}`
-    },
-    "& .ReactVirtualized__Table__row": {
-      borderBottom: `1px solid ${fr.colors.decisions.border.default.grey.default}`
-    },
-    "& select": {
-      borderBottom: "none"
-    },
-    "& .fr-select-group": {
-      marginBottom: 0
-    },
-    "& .fr-select": {
-      boxShadow: "none",
-      textOverflow: "ellipsis",
-      overflow: "hidden",
-      whiteSpace: "nowrap"
-    }
   },
   terminatedEmployment: {
     color: theme.palette.text.disabled
@@ -75,25 +34,17 @@ const CurrentEmployeesList = ({
   containerRef
 }) => {
   const classes = useStyles();
+  const tableClasses = useAugmentedTableStyles();
   const [open, setOpen] = useState(true);
 
   return (
     <div className={classes.root}>
       <div className={classes.topSection}>
-        <h3 className={`${classes.sectionLabel} fr-text--md`}>
-          <button
-            type="button"
-            className={classes.expandBtn}
-            onClick={() => setOpen((value) => !value)}
-            aria-expanded={open}
-          >
-            <div
-              className={`fr-icon-arrow-${open ? "down" : "up"}-s-line fr-icon--sm ${classes.arrowIcon}`}
-              aria-hidden="true"
-            />
-            Salariés
-          </button>
-        </h3>
+        <CollapsibleSectionHeader
+          label="Salariés"
+          open={open}
+          onToggle={() => setOpen((value) => !value)}
+        />
       </div>
       {areThereEmploymentsWithoutBusinessType && (
         <Notice
@@ -138,7 +89,7 @@ const CurrentEmployeesList = ({
           columns={validEmploymentColumns}
           entries={validEmployments}
           virtualizedRowHeight={56}
-          className={classes.augmentedTable}
+          className={tableClasses.augmentedTable}
           virtualizedMaxHeight={"100%"}
           ref={validEmploymentsTableRef}
           defaultSortBy="lastName"

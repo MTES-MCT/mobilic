@@ -5,8 +5,9 @@ import { useSnackbarAlerts } from "../../../common/Snackbar";
 
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import { fr } from "@codegouvfr/react-dsfr";
 import { AugmentedTable } from "../../components/AugmentedTable";
+import { useAugmentedTableStyles } from "./useAugmentedTableStyles";
+import CollapsibleSectionHeader from "./CollapsibleSectionHeader";
 
 
 const useStyles = makeStyles(theme => ({
@@ -25,49 +26,6 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center",
     justifyContent: "space-between",
     gap: theme.spacing(1),
-  },
-  expandBtn: {
-    display: "flex",
-    alignItems: "center",
-    gap: theme.spacing(1),
-    cursor: "pointer",
-    border: "none",
-    background: "none",
-    padding: 0,
-    font: "inherit",
-    color: "inherit",
-    textAlign: "left"
-  },
-  sectionLabel: {
-    margin: 0,
-    color: fr.colors.decisions.text.title.blueFrance.default,
-
-    fontWeight: 500
-  },
-  arrowIcon: {
-    color: fr.colors.decisions.background.active.blueFrance.default
-  },
-  augmentedTable: {
-    "& .ReactVirtualized__Table__headerRow": {
-      backgroundColor: fr.colors.decisions.background.contrastRaised.grey.default,
-      borderTop: "none",
-      borderBottom: `2px solid ${fr.colors.decisions.border.plain.grey.default}`
-    },
-    "& .ReactVirtualized__Table__row": {
-      borderBottom: `1px solid ${fr.colors.decisions.border.default.grey.default}`
-    },
-    "& select": {
-      borderBottom: "none"
-    },
-    "& .fr-select-group": {
-      marginBottom: 0
-    },
-    "& .fr-select": {
-      boxShadow: "none",
-      textOverflow: "ellipsis",
-      overflow: "hidden",
-      whiteSpace: "nowrap"
-    }
   }
 }));
 
@@ -87,25 +45,17 @@ const PendingEmployeesSection = ({
 }) => {
     const alerts = useSnackbarAlerts();
     const classes = useStyles();
+    const tableClasses = useAugmentedTableStyles();
 
     return (
       <div className={classes.root}>
         <div className={classes.topSection}>
           <div className={classes.topLeftSection}>
-            <h3 className={`${classes.sectionLabel} fr-text--md`}>
-              <button
-                type="button"
-                className={classes.expandBtn}
-                onClick={onToggle}
-                aria-expanded={open}
-              >
-                <div
-                  className={`fr-icon-arrow-${open ? "down" : "up"}-s-line fr-icon--sm ${classes.arrowIcon}`}
-                  aria-hidden="true"
-                />
-                Invitations en attente
-              </button>
-            </h3>
+            <CollapsibleSectionHeader
+              label="Invitations en attente"
+              open={open}
+              onToggle={onToggle}
+            />
             <Badge
               severity="new"
               noIcon="true"
@@ -144,7 +94,7 @@ const PendingEmployeesSection = ({
             ref={pendingEmploymentsTableRef}
             onScroll={updateValidListScrollPosition}
             dense
-            className={classes.augmentedTable}
+            className={tableClasses.augmentedTable}
             validateRow={({ idOrEmail, hasAdminRights }) =>
               !!idOrEmail && !!hasAdminRights
             }
