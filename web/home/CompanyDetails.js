@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
   detailsRow: {
     display: "flex",
     flexDirection: "row",
+    flexWrap: 'wrap',
     gap: theme.spacing(3),
   },
   companyName: {

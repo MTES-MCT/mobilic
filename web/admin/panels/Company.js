@@ -44,7 +44,7 @@ export const usePanelStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     flexDirection: "column",
-    gap: theme.spacing(2),
+    gap: theme.spacing(3),
     padding: theme.spacing(4),
   },
   top: {
@@ -76,7 +76,7 @@ export const usePanelStyles = makeStyles((theme) => ({
     cursor: "pointer",
     "&.active": {
       color: fr.colors.decisions.text.actionHigh.blueFrance.default,
-      fontWeight: "bold",
+      fontWeight: "regular",
       borderBottom: `2px solid ${fr.colors.decisions.border.active.blueFrance.default}`,
     },
   },
