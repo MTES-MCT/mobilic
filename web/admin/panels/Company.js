@@ -2,7 +2,7 @@ import React from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
 import { useAdminCompanies } from "../store/store";
-import { Employees } from "./Employees";
+import { Employees } from "./EmployeesSection/Employees";
 import VehicleAdmin from "./Vehicles";
 import KnownAddressAdmin from "./KnownAddresses";
 import SettingAdmin from "./Settings";
