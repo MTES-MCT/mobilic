@@ -63,7 +63,7 @@ export default function CompanyTeamsPanel({ company }) {
 
   React.useEffect(() => {
     setDisplayNoAdminWarning(
-      teams.some((team) => !team.adminUsers?.length > 0),
+      teams.some((team) => !team.adminUsers?.length),
     );
   }, [teams]);
 
