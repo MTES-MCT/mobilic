@@ -29,9 +29,11 @@ export function VehicleField({
   const sortedVehicles = React.useMemo(
     () =>
       values(vehicles).sort((a, b) =>
-        getVehicleName(a, true).localeCompare(getVehicleName(b, true), "fr", {
-          numeric: true
-        })
+        (a.registrationNumber || "").localeCompare(
+          b.registrationNumber || "",
+          "fr",
+          { numeric: true }
+        )
       ),
     [vehicles]
   );
