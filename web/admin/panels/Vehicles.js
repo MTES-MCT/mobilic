@@ -59,8 +59,7 @@ const useStyles = makeStyles(() => ({
 function isValidRegistrationNumber(value) {
   return (
     /^(?=.*\d)(?=.*[A-Z])[A-Z0-9-]{4,}$/i.test(value) ||
-    /^\d{6,8}$/.test(value) ||
-    /^\d{4} \d{4}$/.test(value)
+    /^\d{3,4} ?\d{3,4}$/.test(value)
   );
 }
 
@@ -234,7 +233,7 @@ export default function VehicleAdmin({ company }) {
         validationFn={isValidRegistrationNumber}
         normalizeFn={normalizeRegistrationNumber}
         separatorsRegex={/[,;\n]/}
-        validationErrorMessage="Cette immatriculation n'est pas reconnue. Exemples attendus : AB-123-CD, 1234-AB-56, AB12-CDE, 1-ABC-123, 6184 0001."
+        validationErrorMessage="Cette immatriculation n'est pas reconnue. Exemples attendus : AB-123-CD, 1234-AB-56, AB12-CDE, 1-ABC-123, 6184 0001, 123 456."
         trackingEventFn={BATCH_ADD_VEHICLES_SUBMIT}
       />
     </>
