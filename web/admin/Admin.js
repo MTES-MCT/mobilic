@@ -187,20 +187,6 @@ function InternalAdmin() {
     if (adminStore.companyId) loadDataCompanyEssentials();
   }, [adminStore.companyId]);
 
-  const prevMinDate = React.useRef(adminStore.activitiesFilters.minDate);
-
-  // Update activities and missions when changing the min date filter in the activities panel.
-  React.useEffect(() => {
-    // Do not load company details on the first render of the activities panel to avoid loading data twice
-    // on initial load since company details are already loaded when the company is selected.
-    if (adminStore.activitiesFilters.minDate === prevMinDate.current) {
-      return;
-    }
-    prevMinDate.current = adminStore.activitiesFilters.minDate;
-    if (adminStore.companyId) {
-      loadActivitiesData({ adminStore, alerts, api, withLoadingScreen });
-    }
-  }, [adminStore.activitiesFilters.minDate]);
 
   React.useEffect(() => {
     const { userId, companyId, employments } = adminStore;

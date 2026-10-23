@@ -1,32 +1,54 @@
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { loadCompanyWorkDaysAndMissions } from "./loadCompaniesData";
 
-// Pagination (first/after) is temporarily disabled - it could stall or loop
-// on empty pages. Omitting first/after makes the backend return everything
-// in one query instead (already supported).
+const WORK_DAYS_PAGE_SIZE = 50;
+let latestRequestId = 0;
+
 export async function loadActivitiesData({
   adminStore,
   alerts,
   api,
   withLoadingScreen,
+  minDate = adminStore.activitiesFilters.minDate,
+  maxDate = adminStore.activitiesFilters.maxDate,
   reset = true,
+  userIds = null,
 }) {
   const userId = adminStore.userId;
   const companyId = adminStore.companyId;
   if (userId && companyId) {
+    // The cursor paginates backward in time anchored on maxDate: changing
+    // maxDate invalidates it (reset), but minDate only moves the lower
+    // bound the backend stops at - it doesn't invalidate the cursor, so it
+    // is intentionally excluded from this comparison.
+    const canReuseCursor =
+      !reset && adminStore.workDaysFetchRange?.maxDate === maxDate;
+
+    const requestId = ++latestRequestId;
+
     await withLoadingScreen(
       async () =>
         await alerts.withApiErrorHandling(
           async () => {
-            const minDate = adminStore.activitiesFilters.minDate;
-            const maxDate = adminStore.activitiesFilters.maxDate;
             const companyData = await loadCompanyWorkDaysAndMissions(
               api,
               userId,
               minDate,
               maxDate,
               companyId,
+              {
+                first: WORK_DAYS_PAGE_SIZE,
+                after: canReuseCursor
+                  ? adminStore.workDaysPageInfo?.endCursor
+                  : null,
+                userIds,
+              },
             );
+
+            if (requestId !== latestRequestId) {
+              return;
+            }
+
             adminStore.dispatch({
               type: ADMIN_ACTIONS.addWorkDays,
               payload: {
