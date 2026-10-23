@@ -3,8 +3,6 @@ import { useApi } from "common/utils/api";
 import { useAdminStore } from "../store/store";
 import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "../../common/Snackbar";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { AugmentedTable } from "../components/AugmentedTable";
 import { usePanelStyles } from "./Company";
@@ -19,7 +17,14 @@ import {
 import BatchInviteModal from "../modals/BatchInviteModal";
 import { BATCH_ADD_VEHICLES_SUBMIT } from "common/utils/matomoTags";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
+  title: {
+    ...theme.typography.h4,
+  },
+  description: {
+    ...theme.typography.body1,
+    marginBottom: theme.spacing(2),
+  },
   augmentedTable: {
     "& table.MuiTable-root": {
       borderTop: "none !important",
@@ -151,20 +156,18 @@ export default function VehicleAdmin({ company }) {
 
   return (
     <>
-      <Box className={classes.title}>
-        <Typography variant="h4" component="h2">
-          Véhicules ({vehicles.length})
-        </Typography>
+      <div className={classes.title}>
+        <h2 className={tableClasses.title}>Véhicules ({vehicles.length})</h2>
         <Button size="small" onClick={() => setBatchModalOpen(true)}>
           Ajouter vos véhicules
         </Button>
-      </Box>
-      <Typography variant="body1" sx={{ marginBottom: 2 }}>
+      </div>
+      <p className={tableClasses.description}>
         Les véhicules que vous ajoutez ici seront proposés aux salariés
         lorsqu'ils renseigneront les informations d'une mission dans leur outil
         mobile.
-      </Typography>
-      <Box>
+      </p>
+      <div>
         <AugmentedTable
           columns={vehicleColumns}
           entries={vehicles}
@@ -216,7 +219,7 @@ export default function VehicleAdmin({ company }) {
             })
           }
         />
-      </Box>
+      </div>
       <BatchInviteModal
         open={batchModalOpen}
         handleClose={() => setBatchModalOpen(false)}
