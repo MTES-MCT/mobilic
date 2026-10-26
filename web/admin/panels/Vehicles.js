@@ -18,6 +18,10 @@ import {
 } from "common/utils/apiQueries/admin";
 import BatchInviteModal from "../modals/BatchInviteModal";
 import { BATCH_ADD_VEHICLES_SUBMIT } from "common/utils/matomoTags";
+import {
+  canonicalizeRegistrationNumber,
+  formatRegistrationNumber,
+} from "common/utils/vehicles";
 
 const useStyles = makeStyles(() => ({
   augmentedTable: {
@@ -59,8 +63,7 @@ const useStyles = makeStyles(() => ({
 function isValidRegistrationNumber(value) {
   return (
     /^(?=.*\d)(?=.*[A-Z])[A-Z0-9-]{4,}$/i.test(value) ||
-    /^\d{6,8}$/.test(value) ||
-    /^\d{4} \d{4}$/.test(value)
+    /^\d{3,4} ?\d{3,4}$/.test(value)
   );
 }
 
@@ -84,8 +87,10 @@ export default function VehicleAdmin({ company }) {
     {
       label: "Immatriculation",
       name: "registrationNumber",
+      propertyForSorting: "registrationNumberCanonical",
       sortable: true,
-      format: (registrationNumber) => registrationNumber?.toUpperCase(),
+      format: (registrationNumber) =>
+        formatRegistrationNumber(registrationNumber),
     },
     {
       label: "Nom usuel",
@@ -94,7 +99,14 @@ export default function VehicleAdmin({ company }) {
       sortable: true,
     },
   ];
-  const vehicles = adminStore.vehicles.filter((v) => v.companyId === companyId);
+  const vehicles = adminStore.vehicles
+    .filter((v) => v.companyId === companyId)
+    .map((v) => ({
+      ...v,
+      registrationNumberCanonical: canonicalizeRegistrationNumber(
+        v.registrationNumber
+      ),
+    }));
 
   const handleBatchAddVehicles = async ({ entries }) => {
     let successCount = 0;
@@ -191,7 +203,7 @@ export default function VehicleAdmin({ company }) {
               captureSentryException(err);
             }
           }}
-          defaultSortBy="registrationNumber"
+          defaultSortBy="registrationNumberCanonical"
           onRowDelete={(vehicle) =>
             modals.open("confirmation", {
               textButtons: true,
@@ -234,7 +246,7 @@ export default function VehicleAdmin({ company }) {
         validationFn={isValidRegistrationNumber}
         normalizeFn={normalizeRegistrationNumber}
         separatorsRegex={/[,;\n]/}
-        validationErrorMessage="Cette immatriculation n'est pas reconnue. Exemples attendus : AB-123-CD, 1234-AB-56, AB12-CDE, 1-ABC-123, 6184 0001."
+        validationErrorMessage="Cette immatriculation n'est pas reconnue. Exemples attendus : AB-123-CD, 1234-AB-56, AB12-CDE, 1-ABC-123, 6184 0001, 123 456."
         trackingEventFn={BATCH_ADD_VEHICLES_SUBMIT}
       />
     </>

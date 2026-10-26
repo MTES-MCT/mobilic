@@ -2,7 +2,11 @@ import React from "react";
 import values from "lodash/values";
 import TextField from "common/utils/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
-import { getSanitizedVehicleName, getVehicleName } from "common/utils/vehicles";
+import {
+  canonicalizeRegistrationNumber,
+  getSanitizedVehicleName,
+  getVehicleName
+} from "common/utils/vehicles";
 import KilometerReadingField from "./KilometerReadingField";
 
 export function VehicleField({
@@ -29,9 +33,11 @@ export function VehicleField({
   const sortedVehicles = React.useMemo(
     () =>
       values(vehicles).sort((a, b) =>
-        getVehicleName(a, true).localeCompare(getVehicleName(b, true), "fr", {
-          numeric: true
-        })
+        canonicalizeRegistrationNumber(a.registrationNumber).localeCompare(
+          canonicalizeRegistrationNumber(b.registrationNumber),
+          "fr",
+          { numeric: true }
+        )
       ),
     [vehicles]
   );
