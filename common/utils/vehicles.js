@@ -2,6 +2,10 @@ export function canonicalizeRegistrationNumber(value) {
   return (value || "").replace(/[\s-]/g, "").toUpperCase();
 }
 
+export function registrationSortKey(vehicle) {
+  return canonicalizeRegistrationNumber(vehicle?.registrationNumber);
+}
+
 export function formatRegistrationNumber(value) {
   const canonical = canonicalizeRegistrationNumber(value);
   if (!canonical) return value || "";

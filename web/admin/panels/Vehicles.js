@@ -19,8 +19,8 @@ import {
 import BatchInviteModal from "../modals/BatchInviteModal";
 import { BATCH_ADD_VEHICLES_SUBMIT } from "common/utils/matomoTags";
 import {
-  canonicalizeRegistrationNumber,
   formatRegistrationNumber,
+  registrationSortKey,
 } from "common/utils/vehicles";
 
 const useStyles = makeStyles(() => ({
@@ -103,9 +103,7 @@ export default function VehicleAdmin({ company }) {
     .filter((v) => v.companyId === companyId)
     .map((v) => ({
       ...v,
-      registrationNumberCanonical: canonicalizeRegistrationNumber(
-        v.registrationNumber
-      ),
+      registrationNumberCanonical: registrationSortKey(v),
     }));
 
   const handleBatchAddVehicles = async ({ entries }) => {
