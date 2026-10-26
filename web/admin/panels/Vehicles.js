@@ -18,6 +18,7 @@ import {
 } from "common/utils/apiQueries/admin";
 import BatchInviteModal from "../modals/BatchInviteModal";
 import { BATCH_ADD_VEHICLES_SUBMIT } from "common/utils/matomoTags";
+import { formatRegistrationNumber } from "common/utils/vehicles";
 
 const useStyles = makeStyles(() => ({
   augmentedTable: {
@@ -84,7 +85,8 @@ export default function VehicleAdmin({ company }) {
       label: "Immatriculation",
       name: "registrationNumber",
       sortable: true,
-      format: (registrationNumber) => registrationNumber?.toUpperCase(),
+      format: (registrationNumber) =>
+        formatRegistrationNumber(registrationNumber),
     },
     {
       label: "Nom usuel",
