@@ -14,6 +14,7 @@ export function useAutoUpdateNbWorkers(company, validEmployments, adminStore) {
     const prevCount = prevCountRef.current;
     const declaredNbWorkers = company?.nbWorkers || 0;
     if (
+      prevCount > 0 &&
       currentCount > prevCount &&
       declaredNbWorkers > 0 &&
       currentCount > declaredNbWorkers
