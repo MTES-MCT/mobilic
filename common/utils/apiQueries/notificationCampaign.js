@@ -70,6 +70,20 @@ export const UPDATE_PUSH_BANNER_TEXT_MUTATION = gql`
   }
 `;
 
+export const UPDATE_GLOBAL_BANNER_MUTATION = gql`
+  mutation updateGlobalBanner(
+    $enabled: Boolean!
+    $message: String!
+    $level: String!
+  ) {
+    notificationCampaigns {
+      updateGlobalBanner(enabled: $enabled, message: $message, level: $level) {
+        success
+      }
+    }
+  }
+`;
+
 export const SEARCH_USERS_FOR_CAMPAIGN_QUERY = gql`
   query searchUsersForCampaign(
     $search: String!
