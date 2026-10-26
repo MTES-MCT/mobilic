@@ -18,7 +18,10 @@ import {
 } from "common/utils/apiQueries/admin";
 import BatchInviteModal from "../modals/BatchInviteModal";
 import { BATCH_ADD_VEHICLES_SUBMIT } from "common/utils/matomoTags";
-import { formatRegistrationNumber } from "common/utils/vehicles";
+import {
+  canonicalizeRegistrationNumber,
+  formatRegistrationNumber,
+} from "common/utils/vehicles";
 
 const useStyles = makeStyles(() => ({
   augmentedTable: {
@@ -84,6 +87,7 @@ export default function VehicleAdmin({ company }) {
     {
       label: "Immatriculation",
       name: "registrationNumber",
+      propertyForSorting: "registrationNumberCanonical",
       sortable: true,
       format: (registrationNumber) =>
         formatRegistrationNumber(registrationNumber),
@@ -95,7 +99,14 @@ export default function VehicleAdmin({ company }) {
       sortable: true,
     },
   ];
-  const vehicles = adminStore.vehicles.filter((v) => v.companyId === companyId);
+  const vehicles = adminStore.vehicles
+    .filter((v) => v.companyId === companyId)
+    .map((v) => ({
+      ...v,
+      registrationNumberCanonical: canonicalizeRegistrationNumber(
+        v.registrationNumber
+      ),
+    }));
 
   const handleBatchAddVehicles = async ({ entries }) => {
     let successCount = 0;
@@ -192,7 +203,7 @@ export default function VehicleAdmin({ company }) {
               captureSentryException(err);
             }
           }}
-          defaultSortBy="registrationNumber"
+          defaultSortBy="registrationNumberCanonical"
           onRowDelete={(vehicle) =>
             modals.open("confirmation", {
               textButtons: true,
