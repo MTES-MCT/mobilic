@@ -32,13 +32,11 @@ export function VehicleField({
 
   const sortedVehicles = React.useMemo(
     () =>
-      values(vehicles).sort((a, b) =>
-        canonicalizeRegistrationNumber(a.registrationNumber).localeCompare(
-          canonicalizeRegistrationNumber(b.registrationNumber),
-          "fr",
-          { numeric: true }
-        )
-      ),
+      values(vehicles).sort((a, b) => {
+        const keyA = canonicalizeRegistrationNumber(a.registrationNumber);
+        const keyB = canonicalizeRegistrationNumber(b.registrationNumber);
+        return keyA < keyB ? -1 : keyA > keyB ? 1 : 0;
+      }),
     [vehicles]
   );
 
