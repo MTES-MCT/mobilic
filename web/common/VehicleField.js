@@ -3,9 +3,9 @@ import values from "lodash/values";
 import TextField from "common/utils/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import {
-  canonicalizeRegistrationNumber,
   getSanitizedVehicleName,
-  getVehicleName
+  getVehicleName,
+  registrationSortKey
 } from "common/utils/vehicles";
 import KilometerReadingField from "./KilometerReadingField";
 
@@ -33,8 +33,8 @@ export function VehicleField({
   const sortedVehicles = React.useMemo(
     () =>
       values(vehicles).sort((a, b) => {
-        const keyA = canonicalizeRegistrationNumber(a.registrationNumber);
-        const keyB = canonicalizeRegistrationNumber(b.registrationNumber);
+        const keyA = registrationSortKey(a);
+        const keyB = registrationSortKey(b);
         return keyA < keyB ? -1 : keyA > keyB ? 1 : 0;
       }),
     [vehicles]
