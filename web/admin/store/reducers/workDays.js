@@ -76,12 +76,14 @@ export function addWorkDaysReducer(
       )
     );
     
+    const newMissionIds = new Set(newMissions.map(m => m.id));
     if (reset) {
-      missions = newMissions;
+      const keptDeletedMissions = state.missions.filter(
+        m => m.isDeleted && !newMissionIds.has(m.id)
+      );
+      missions = [...keptDeletedMissions, ...newMissions];
     } else {
-      // Merge and deduplicate (keep new ones)
-      const existingMissionIds = new Set(newMissions.map(m => m.id));
-      const filteredOldMissions = state.missions.filter(m => !existingMissionIds.has(m.id));
+      const filteredOldMissions = state.missions.filter(m => !newMissionIds.has(m.id));
       missions = [...filteredOldMissions, ...newMissions];
     }
   }
