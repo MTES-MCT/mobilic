@@ -19,7 +19,9 @@ export function updateCompanyIdReducer(state, { companyId }) {
       ? false
       : state.areCompanyEssentialsLoaded,
     areEmploymentsLoaded: isNewCompany ? false : state.areEmploymentsLoaded,
-    areTeamsLoaded: isNewCompany ? false : state.areTeamsLoaded
+    areTeamsLoaded: isNewCompany ? false : state.areTeamsLoaded,
+    missions: isNewCompany ? [] : state.missions,
+    workDays: isNewCompany ? [] : state.workDays
   };
 }
 

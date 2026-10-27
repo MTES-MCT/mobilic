@@ -13,7 +13,6 @@ import Box from "@mui/material/Box";
 import TableContainer from "@mui/material/TableContainer";
 import MaterialTable from "@mui/material/Table";
 import { Table, AutoSizer, Column, WindowScroller } from "react-virtualized";
-import "react-virtualized/styles.css";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import CircularProgress from "@mui/material/CircularProgress";

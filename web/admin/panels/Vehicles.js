@@ -18,6 +18,10 @@ import {
 } from "common/utils/apiQueries/admin";
 import BatchInviteModal from "../modals/BatchInviteModal";
 import { BATCH_ADD_VEHICLES_SUBMIT } from "common/utils/matomoTags";
+import {
+  formatRegistrationNumber,
+  registrationSortKey,
+} from "common/utils/vehicles";
 
 const useStyles = makeStyles(() => ({
   augmentedTable: {
@@ -57,7 +61,10 @@ const useStyles = makeStyles(() => ({
 }));
 
 function isValidRegistrationNumber(value) {
-  return /^(?=.*\d)(?=.*[A-Z])[A-Z0-9-]{4,}$/i.test(value);
+  return (
+    /^(?=.*\d)(?=.*[A-Z])[A-Z0-9-]{4,}$/i.test(value) ||
+    /^\d{3,4} ?\d{3,4}$/.test(value)
+  );
 }
 
 function normalizeRegistrationNumber(token) {
@@ -80,8 +87,10 @@ export default function VehicleAdmin({ company }) {
     {
       label: "Immatriculation",
       name: "registrationNumber",
+      propertyForSorting: "registrationNumberCanonical",
       sortable: true,
-      format: (registrationNumber) => registrationNumber?.toUpperCase(),
+      format: (registrationNumber) =>
+        formatRegistrationNumber(registrationNumber),
     },
     {
       label: "Nom usuel",
@@ -90,7 +99,12 @@ export default function VehicleAdmin({ company }) {
       sortable: true,
     },
   ];
-  const vehicles = adminStore.vehicles.filter((v) => v.companyId === companyId);
+  const vehicles = adminStore.vehicles
+    .filter((v) => v.companyId === companyId)
+    .map((v) => ({
+      ...v,
+      registrationNumberCanonical: registrationSortKey(v),
+    }));
 
   const handleBatchAddVehicles = async ({ entries }) => {
     let successCount = 0;
@@ -187,7 +201,7 @@ export default function VehicleAdmin({ company }) {
               captureSentryException(err);
             }
           }}
-          defaultSortBy="registrationNumber"
+          defaultSortBy="registrationNumberCanonical"
           onRowDelete={(vehicle) =>
             modals.open("confirmation", {
               textButtons: true,
@@ -225,11 +239,12 @@ export default function VehicleAdmin({ company }) {
           </p>
         }
         inputLabel="Immatriculations"
-        inputHintText="Saisissez les immatriculations au format AA-123-AA. Si vous les copiez-collez, veillez à bien les séparer par un espace, une virgule ou un point-virgule dans le fichier d'origine. Une immatriculation ne doit pas contenir d'espace."
+        inputHintText="Saisissez les immatriculations au format AA-123-AA, ou en chiffres pour les véhicules militaires (ex. 6184 0001). Si vous les copiez-collez, séparez-les par une virgule, un point-virgule ou un retour à la ligne."
         acceptButtonTitle="Ajouter"
         validationFn={isValidRegistrationNumber}
         normalizeFn={normalizeRegistrationNumber}
-        validationErrorMessage="Cette immatriculation n'est pas reconnue. Exemples attendus : AB-123-CD, 1234-AB-56, AB12-CDE, 1-ABC-123."
+        separatorsRegex={/[,;\n]/}
+        validationErrorMessage="Cette immatriculation n'est pas reconnue. Exemples attendus : AB-123-CD, 1234-AB-56, AB12-CDE, 1-ABC-123, 6184 0001, 123 456."
         trackingEventFn={BATCH_ADD_VEHICLES_SUBMIT}
       />
     </>
