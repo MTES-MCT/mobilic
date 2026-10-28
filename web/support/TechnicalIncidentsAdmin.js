@@ -68,18 +68,35 @@ export default function TechnicalIncidentsAdmin() {
   const companies = store.companies();
 
   React.useEffect(() => {
-    fetch(`${API_HOST}/global-banner`)
-      .then(res => res.json())
+    const controller = new AbortController();
+    fetch(`${API_HOST}/global-banner`, { signal: controller.signal })
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
       .then(data => {
         if (!data) return;
         setBannerEnabled(!!data.enabled);
         if (data.message) setBannerMessage(data.message);
-        if (data.level) setBannerLevel(data.level);
+        if (["info", "warning", "error"].includes(data.level)) {
+          setBannerLevel(data.level);
+        }
       })
-      .catch(() => {});
+      .catch(err => {
+        if (err?.name === "AbortError") return;
+        console.error("Impossible de charger le bandeau global", err);
+        setBannerResult("Impossible de charger l'état actuel du bandeau.");
+      });
+    return () => controller.abort();
   }, []);
 
   const handleSaveBanner = async enabled => {
+    if (enabled && !bannerMessage.trim()) {
+      setBannerResult("Le message est requis pour activer le bandeau.");
+      return;
+    }
+    const previousEnabled = bannerEnabled;
+    setBannerEnabled(enabled);
     setBannerSaving(true);
     setBannerResult(null);
     try {
@@ -92,9 +109,9 @@ export default function TechnicalIncidentsAdmin() {
         },
         { context: { nonPublicApi: true } }
       );
-      setBannerEnabled(enabled);
       setBannerResult("success");
     } catch (err) {
+      setBannerEnabled(previousEnabled);
       setBannerResult(err?.message || "error");
     } finally {
       setBannerSaving(false);
