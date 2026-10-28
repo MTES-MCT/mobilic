@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<%
+  require "cgi"
+  default_message = "Mobilic est momentanément indisponible. Nos équipes travaillent à rétablir le service au plus vite. Merci de votre patience."
+  message = ENV["MAINTENANCE_MESSAGE"].to_s.strip
+  message = default_message if message.empty?
+%>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Mobilic — Maintenance</title>
+    <style>
+      :root {
+        --blue-france: #000091;
+        --grey-text: #3a3a3a;
+        --grey-bg: #f6f6f6;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--grey-bg);
+        color: var(--grey-text);
+        font-family: "Marianne", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Helvetica, Arial, sans-serif;
+        padding: 1.5rem;
+      }
+      .card {
+        max-width: 560px;
+        width: 100%;
+        background: #fff;
+        border-top: 4px solid var(--blue-france);
+        border-radius: 4px;
+        box-shadow: 0 2px 6px rgba(0, 0, 18, 0.16);
+        padding: 2.5rem 2rem;
+        text-align: center;
+      }
+      .brand {
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--blue-france);
+        letter-spacing: 0.02em;
+        margin-bottom: 1.5rem;
+      }
+      h1 {
+        font-size: 1.5rem;
+        margin: 0 0 1rem;
+        color: #161616;
+      }
+      p {
+        font-size: 1rem;
+        line-height: 1.6;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <div class="brand">Mobilic</div>
+      <h1>Site en maintenance</h1>
+      <p><%= CGI.escapeHTML(message) %></p>
+    </main>
+  </body>
+</html>

@@ -10,6 +10,14 @@
     "REACT_APP_SENTRY_ENVIRONMENT": {
       "generator": "template",
       "template": "review-pr%PR_NUMBER%"
+    },
+    "MAINTENANCE_MODE": {
+      "description": "Set to any non-empty value to serve the maintenance page (HTTP 503) instead of the app. Leave unset/empty to disable. Takes effect after a restart (nginx config is rendered at container boot).",
+      "required": false
+    },
+    "MAINTENANCE_MESSAGE": {
+      "description": "Text displayed on the maintenance page. Falls back to a default message if unset.",
+      "required": false
     }
   },
   "formation": {
