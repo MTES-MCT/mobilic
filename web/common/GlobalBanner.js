@@ -3,7 +3,7 @@ import { API_HOST } from "common/utils/api";
 import { captureSentryException } from "common/utils/sentry";
 import Notice from "./Notice";
 
-const ALLOWED_LEVELS = ["info", "warning", "error"];
+const ALLOWED_LEVELS = new Set(["info", "warning", "error"]);
 
 // Network failures (offline, aborted request) are expected and not worth reporting.
 const isNetworkError = err =>
@@ -27,7 +27,7 @@ export function GlobalBanner() {
   }, []);
 
   if (!banner) return null;
-  const level = ALLOWED_LEVELS.includes(banner.level) ? banner.level : "info";
+  const level = ALLOWED_LEVELS.has(banner.level) ? banner.level : "info";
 
   return (
     <div role="status" aria-live="polite" style={{ width: "100%" }}>
