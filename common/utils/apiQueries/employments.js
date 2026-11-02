@@ -1,5 +1,9 @@
 import { gql } from "graphql-tag";
-import { FULL_EMPLOYMENT_FRAGMENT, FULL_TEAM_FRAGMENT } from "./apiFragments";
+import {
+  COMPANY_SETTINGS_FRAGMENT,
+  FULL_EMPLOYMENT_FRAGMENT,
+  FULL_TEAM_FRAGMENT
+} from "./apiFragments";
 
 export const VALIDATE_EMPLOYMENT_MUTATION = gql`
   mutation validateEmployment($employmentId: Int!) {
@@ -257,10 +261,12 @@ export const REDEEM_INVITE_QUERY = gql`
           id
           name
           siren
+          ...CompanySettings
         }
       }
     }
   }
+  ${COMPANY_SETTINGS_FRAGMENT}
 `;
 
 export const UPDATE_HIDE_EMAIL_MUTATION = gql`
