@@ -50,6 +50,7 @@ import {
 import { usePageTitle } from "../../common/UsePageTitle";
 
 import { DEFAULT_MONTH_RANGE_HISTORY } from "common/utils/mission";
+import { incidentsOnDay } from "common/utils/technicalIncidents";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { Day } from "../components/history/Day";
 import { Mission } from "../components/history/Mission";
@@ -184,7 +185,8 @@ export function History({
   openPeriod = null,
   controlId = null,
   regulationComputationsByDay = [],
-  groupedAlerts = null
+  groupedAlerts = null,
+  technicalIncidents = null
 }) {
   const location = useLocation();
   const history = useHistory();
@@ -392,6 +394,16 @@ export function History({
     }
     return null;
   }, [selectedPeriod, currentTab, groupedAlerts]);
+
+  const technicalIncidentsInPeriod = React.useMemo(
+    () =>
+      incidentsOnDay(
+        technicalIncidents,
+        selectedPeriod,
+        selectedPeriodEnd
+      ),
+    [technicalIncidents, selectedPeriod, selectedPeriodEnd]
+  );
 
   /* MANAGE MESSAGE WHEN NO DATA */
 
@@ -605,7 +617,8 @@ export function History({
             vehicles,
             userId: actualUserId,
             controlId: controlId,
-            alertsInPeriod
+            alertsInPeriod,
+            technicalIncidentsInPeriod
           })
         ) : (
           <Box className={classes.placeholder}>

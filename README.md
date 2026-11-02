@@ -65,6 +65,7 @@ La partie suivante couvre uniquement le front. Pour le back il faut se rendre da
 - [Node](https://nodejs.org/en/) 24.x LTS
 - [pnpm](https://pnpm.io/) 10.24.0 (installé automatiquement via [corepack](https://nodejs.org/api/corepack.html))
 - Eventuellement [Nginx](https://fr.wikipedia.org/wiki/NGINX) pour reproduire à l'identique l'environnement de production. Facultatif pour le développement local.
+- Eventuellement [gitleaks](https://github.com/gitleaks/gitleaks#installing) pour le scan de secrets exécuté par le hook de pre-commit (`brew install gitleaks`, `pacman -S gitleaks`...). Le hook est ignoré si gitleaks n'est pas installé.
 
 ### Installation
 

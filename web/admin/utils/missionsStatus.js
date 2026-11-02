@@ -9,6 +9,21 @@ export const MISSION_STATUS = {
   deleted: "Mission supprimée"
 };
 
+// Display order of the status filter (matches the mockups).
+export const MISSION_STATUS_FILTER_ORDER = [
+  "ongoing",
+  "toValidateAdmin",
+  "waitingWorker",
+  "validated",
+  "deleted",
+  "allValidated"
+];
+
+// "Mission supprimée" is the only status hidden by default.
+export const DEFAULT_VISIBLE_MISSION_STATUSES = MISSION_STATUS_FILTER_ORDER.filter(
+  (key) => key !== "deleted"
+);
+
 export const computeMissionStatus = (
   validationEntries,
   currentUserId,

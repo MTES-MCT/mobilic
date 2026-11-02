@@ -12,7 +12,11 @@ import { WorkTimeTable } from "../components/WorkTimeTable";
 import { aggregateWorkDayPeriods } from "../utils/workDays";
 import { useAdminStore, useAdminCompanies } from "../store/store";
 import { useModals } from "common/utils/modals";
-import { isoFormatLocalDate, startOfDayAsDate } from "common/utils/time";
+import {
+  getStartOfDay,
+  isoFormatLocalDate,
+  startOfDayAsDate
+} from "common/utils/time";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
@@ -61,6 +65,8 @@ import {
 } from "common/utils/apiQueries/missions";
 import { InactiveEmployeesDropdown } from "../components/InactiveEmployeesDropdown";
 import { missionWithStats } from "../selectors/missionSelectors";
+import { useRefreshDeletedMissions } from "../hooks/useRefreshDeletedMissions";
+import { useMissionDrawer } from "../drawers/MissionDrawer";
 
 const useStyles = makeStyles((theme) => ({
   pageHeader: {
@@ -165,6 +171,8 @@ function ActivitiesPanel() {
   const location = useLocation();
   const { trackEvent } = useMatomo();
   const { getUsersSinceDate } = useGetUsersSinceDate();
+  const openMission = useMissionDrawer()[1];
+  const { refresh: refreshDeletedMissions } = useRefreshDeletedMissions();
 
   const [users, setUsers] = React.useState(adminStore.activitiesFilters.users);
   const [teams, setTeams] = React.useState(adminStore.activitiesFilters.teams);
@@ -319,6 +327,12 @@ function ActivitiesPanel() {
     });
   }, [period]);
 
+  // Deleted missions are fetched lazily, only once the user click to show them from the status filter.
+  const [showDeletedMissions, setShowDeletedMissions] = React.useState(false);
+  const handleShowDeletedMissions = React.useCallback(() => {
+    setShowDeletedMissions(true);
+  }, []);
+
   React.useEffect(() => {
     setUsers(adminStore.activitiesFilters.users);
   }, [adminStore.activitiesFilters.users]);
@@ -413,6 +427,23 @@ function ActivitiesPanel() {
     return lastValidDateRangeRef.current;
   }, [minDate, maxDate, isDateRangeValid]);
 
+  // Refetch deleted missions scoped to the selected period,
+  React.useEffect(() => {
+    if (!showDeletedMissions || !adminStore.userId || !adminStore.companyId) {
+      return;
+    }
+    void refreshDeletedMissions(
+      appliedDateRange.minDate,
+      appliedDateRange.maxDate
+    );
+  }, [
+    showDeletedMissions,
+    appliedDateRange,
+    adminStore.userId,
+    adminStore.companyId,
+    refreshDeletedMissions
+  ]);
+
   const selectedWorkDays = React.useMemo(
     () =>
       adminStore.workDays.filter(
@@ -439,6 +470,55 @@ function ActivitiesPanel() {
   const periodAggregates = React.useMemo(
     () => aggregateWorkDayPeriods(selectedWorkDays, period),
     [selectedWorkDays, period]
+  );
+
+  // Deleted missions are excluded from the server-computed workDays, so we build
+  // synthetic day-view entries for them. They are hidden by default in the table
+  // through the mission status filter ("Mission supprimée").
+  const deletedMissionEntries = React.useMemo(() => {
+    if (period !== "day") {
+      return [];
+    }
+    const selectedUserIds = new Set(selectedUsers.map((u) => u.id));
+    const entries = [];
+    Object.values(missionsById).forEach((mission) => {
+      if (!mission.isDeleted || !mission.userStats) {
+        return;
+      }
+      Object.values(mission.userStats).forEach((userStat) => {
+        const user = userStat.user;
+        if (!user || !selectedUserIds.has(user.id)) {
+          return;
+        }
+        const startTime = userStat.startTime || mission.startTime;
+        if (!startTime) {
+          return;
+        }
+        const day = isoFormatLocalDate(new Date(startTime * 1000));
+        if (appliedDateRange.minDate && day < appliedDateRange.minDate) {
+          return;
+        }
+        if (appliedDateRange.maxDate && day > appliedDateRange.maxDate) {
+          return;
+        }
+        entries.push({
+          user,
+          day,
+          periodStart: getStartOfDay(startTime),
+          startTime,
+          lastActivityStartTime:
+            userStat.lastActivityStartTime || startTime,
+          missionNames: { [mission.id]: mission.name },
+          regulationComputations: null
+        });
+      });
+    });
+    return entries;
+  }, [period, missionsById, selectedUsers, appliedDateRange]);
+
+  const workTimeEntries = React.useMemo(
+    () => [...periodAggregates, ...deletedMissionEntries],
+    [periodAggregates, deletedMissionEntries]
   );
   const ref = React.useRef(null);
 
@@ -607,11 +687,12 @@ function ActivitiesPanel() {
         <WorkTimeTable
           className={classes.workTimeTable}
           period={period}
-          workTimeEntries={periodAggregates}
+          workTimeEntries={workTimeEntries}
           missionsById={missionsById}
           showExpenditures={adminStore.settings.requireExpenditures}
           showMissionName={adminStore.settings.requireMissionName}
           loading={loading}
+          onDeletedStatusSelected={handleShowDeletedMissions}
           onLoadMore={loadMoreWorkDays}
           isLoadingMore={isLoadingMoreWorkDays}
         />
@@ -732,9 +813,8 @@ function ActivitiesPanel() {
                   .then((response) => response.data.activities.logLocation);
 
                 await Promise.all([startLocationResponse, endLocationResponse]);
-                history.push(`/admin/validations?mission=${mission.id}`, {
-                  day: (new Date(missionInfos.day).getTime() / 1000) >> 0
-                });
+                history.push("/admin/activities");
+                openMission(mission.id);
                 setOpenNewMission(false);
               }, "create-mission")
             }

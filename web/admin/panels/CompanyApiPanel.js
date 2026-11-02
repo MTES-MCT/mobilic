@@ -32,17 +32,22 @@ export default function CompanyApiPanel({ company }) {
     React.useState(false);
   React.useEffect(() => {
     const loadData = async () => {
-      const apiResponse = await api.graphQlQuery(
-        THIRD_PARTY_CLIENTS_COMPANY_QUERY,
-        {
-          userId: currentUserId(),
-          companyIds: [company.id]
-        }
-      );
-      setAuthorizedClients(
-        apiResponse?.data?.user?.adminedCompanies[0]?.authorizedClients
-      );
-      setLoadingAuthorizedClients(false);
+      setLoadingAuthorizedClients(true);
+      setAuthorizedClients([]);
+      try {
+        const apiResponse = await api.graphQlQuery(
+          THIRD_PARTY_CLIENTS_COMPANY_QUERY,
+          {
+            userId: currentUserId(),
+            companyIds: [company.id]
+          }
+        );
+        setAuthorizedClients(
+          apiResponse?.data?.user?.adminedCompanies?.[0]?.authorizedClients ?? []
+        );
+      } finally {
+        setLoadingAuthorizedClients(false);
+      }
     };
     loadData();
   }, [company]);

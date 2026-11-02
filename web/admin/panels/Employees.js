@@ -138,6 +138,10 @@ export function Employees({ company, containerRef }) {
   useEnsureTeams();
 
   React.useEffect(() => {
+    setTeams([]);
+  }, [companyId]);
+
+  React.useEffect(() => {
     if (teams.length > 0) {
       return;
     }
