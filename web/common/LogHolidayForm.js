@@ -20,6 +20,7 @@ const DEFAULT_START_HOUR = 7;
 const DEFAULT_END_HOUR = 16;
 
 const OTHER_MOTIF_ID = "other";
+export const HEAVY_TRUCK_DRIVING_MOTIF_LABEL = "Activités tachygraphe";
 const MOTIFS = [
   {
     id: "sick-leave",
@@ -59,7 +60,7 @@ const MOTIFS = [
   },
   {
     id: "heavy-truck-driving",
-    label: "Activités tachygraphe",
+    label: HEAVY_TRUCK_DRIVING_MOTIF_LABEL,
   },
   {
     id: "training",
