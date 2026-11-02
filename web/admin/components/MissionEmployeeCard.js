@@ -191,10 +191,10 @@ export function MissionEmployeeCard({
                 aria-label={userExpanded ? "Replier" : "Déplier"}
                 className={classes.collapseChevron}
               >
-                <ExpandMoreIcon
-                  className={
+                <span
+                  className={`fr-icon--sm fr-icon-arrow-down-s-line ${
                     userExpanded ? classes.chevronExpanded : classes.chevronCollapsed
-                  }
+                  }`}
                 />
               </IconButton>
               <Typography
