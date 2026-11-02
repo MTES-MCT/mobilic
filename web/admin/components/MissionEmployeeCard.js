@@ -265,11 +265,6 @@ export function MissionEmployeeCard({
                     ) : (
                       " à -"
                     )}
-                    {!stats.isComplete && !isDeleted && (
-                      <span className={classes.runningMissionText}>
-                        {" "}(en cours)
-                      </span>
-                    )}
                   </span>
                 ) : (
                   ""
@@ -300,11 +295,6 @@ export function MissionEmployeeCard({
                     ? classes.runningMissionText
                     : ""
               }}
-              subText={
-                !stats.isComplete && !isDeleted ? (
-                  <span className={classes.runningMissionText}>En cours</span>
-                ) : null
-              }
             />
           </Grid>
           <Grid xs={12} sm={4} item className={classes.cardRecapKPIContainer}>
@@ -330,11 +320,6 @@ export function MissionEmployeeCard({
                     ? classes.runningMissionText
                     : ""
               }}
-              subText={
-                !stats.isComplete && !isDeleted ? (
-                  <span className={classes.runningMissionText}>En cours</span>
-                ) : null
-              }
             />
           </Grid>
         </Grid>
