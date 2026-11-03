@@ -39,8 +39,9 @@ export const useActivitiesCardStyles = makeStyles(theme => ({
     minWidth: 120
   },
   cellAction: {
-    width: 64,
-    textAlign: "center"
+    width: 88,
+    textAlign: "right",
+    whiteSpace: "nowrap"
   },
   activityRow: {
     borderTop: `1px solid ${borderGrey}`,
@@ -148,11 +149,14 @@ export const useActivitiesCardStyles = makeStyles(theme => ({
     fontSize: 16,
     color: blueFrance
   },
+  historyChevron: {
+    marginLeft: 12
+  },
+  hiddenChevron: {
+    visibility: "hidden"
+  },
   chevron: {
-    fontSize: 20,
     color: blueFrance,
-    display: "block",
-    margin: "auto",
     transition: "transform 0.2s"
   },
   chevronExpanded: {
