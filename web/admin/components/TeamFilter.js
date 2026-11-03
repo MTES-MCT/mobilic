@@ -76,7 +76,6 @@ export function TeamFilter({
       options={orderBy(teams, [orderByProperty])}
       limitTags={1}
       size={size}
-      popupIcon={<span className="fr-icon-arrow-down-s-line" aria-hidden="true" />}
       disableCloseOnSelect={multiple}
       getOptionLabel={(option) => option.name}
       renderOption={(props, option) => (

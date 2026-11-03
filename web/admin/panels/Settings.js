@@ -1,6 +1,7 @@
 import React from "react";
 import { useApi } from "common/utils/api";
-import { makeStyles } from "@mui/styles";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { usePanelStyles } from "./Company";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -10,13 +11,6 @@ import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { OtherTask } from "../components/OtherTask";
 import { EDIT_COMPANY_SETTINGS_MUTATION } from "common/utils/apiQueries/admin";
 
-const useStyles = makeStyles((theme) => ({
-  title: {
-    ...theme.typography.h4,
-    fontSize: "1.375rem",
-  },
-}));
-
 export default function SettingAdmin({ company }) {
   const api = useApi();
   const adminStore = useAdminStore();
@@ -25,23 +19,24 @@ export default function SettingAdmin({ company }) {
     const response = await api.graphQlMutate(
       EDIT_COMPANY_SETTINGS_MUTATION,
       { [name]: value, companyId: company.id },
-      { context: { nonPublicApi: true } },
+      { context: { nonPublicApi: true } }
     );
     const payload = response.data.editCompanySettings.settings;
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateSettings,
-      payload: { settings: payload },
+      payload: { settings: payload }
     });
   }
 
   const classes = usePanelStyles();
-  const localClasses = useStyles();
 
   return (
     <>
-      <div className={classes.title}>
-        <h2 className={localClasses.title}>Paramètres</h2>
-      </div>
+      <Box className={classes.title}>
+        <Typography variant="h4" component="h2" fontSize="1.375rem">
+          Paramètres
+        </Typography>
+      </Box>
       <hr />
       <List>
         <ListItem>

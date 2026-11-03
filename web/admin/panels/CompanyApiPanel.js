@@ -1,10 +1,12 @@
 import React from "react";
 import { useApi } from "common/utils/api";
-import { makeStyles } from "@mui/styles";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { usePanelStyles } from "./Company";
 import { currentUserId } from "common/utils/cookie";
 import Skeleton from "@mui/material/Skeleton";
 import { CompanyClientCard } from "./CompanyClientCard";
+import Grid from "@mui/material/Grid";
 import TextField from "common/utils/TextField";
 import { LoadingButton } from "common/components/LoadingButton";
 import { useSnackbarAlerts } from "../../common/Snackbar";
@@ -14,66 +16,8 @@ import { Button } from "@codegouvfr/react-dsfr/Button";
 import { THIRD_PARTY_CLIENTS_COMPANY_QUERY } from "common/utils/apiQueries/admin";
 import {
   GENERATE_THIRD_PARTY_COMPANY_TOKEN_MUTATION,
-  OAUTH_CLIENT_QUERY,
+  OAUTH_CLIENT_QUERY
 } from "common/utils/apiQueries/auth";
-
-const useStyles = makeStyles((theme) => ({
-  noticeSpacing: {
-    marginBottom: theme.spacing(2),
-  },
-  fullWidthField: {
-    width: "100%",
-  },
-  authorizedClientsList: {
-    marginTop: theme.spacing(4),
-  },
-  heading: {
-    ...theme.typography.h4,
-  },
-  paragraph: {
-    ...theme.typography.body1,
-  },
-  paragraphSpacing: {
-    ...theme.typography.body1,
-    marginBottom: theme.spacing(2),
-  },
-  headerRow: {
-    display: "flex",
-  },
-  headerCol: {
-    flexBasis: "50%",
-    maxWidth: "50%",
-    boxSizing: "border-box",
-  },
-  gridItemFull: {
-    flexBasis: "100%",
-    maxWidth: "100%",
-    boxSizing: "border-box",
-  },
-  gridItemTextField: {
-    flexBasis: "100%",
-    maxWidth: "100%",
-    boxSizing: "border-box",
-    [theme.breakpoints.up("sm")]: {
-      flexBasis: "50%",
-      maxWidth: "50%",
-    },
-    [theme.breakpoints.up("md")]: {
-      flexBasis: "25%",
-      maxWidth: "25%",
-    },
-  },
-  gridItemButtons: {
-    flexBasis: "100%",
-    maxWidth: "100%",
-    boxSizing: "border-box",
-    marginBottom: theme.spacing(2),
-    [theme.breakpoints.up("sm")]: {
-      flexBasis: "50%",
-      maxWidth: "50%",
-    },
-  },
-}));
 
 export default function CompanyApiPanel({ company }) {
   const api = useApi();
@@ -95,12 +39,11 @@ export default function CompanyApiPanel({ company }) {
           THIRD_PARTY_CLIENTS_COMPANY_QUERY,
           {
             userId: currentUserId(),
-            companyIds: [company.id],
-          },
+            companyIds: [company.id]
+          }
         );
         setAuthorizedClients(
-          apiResponse?.data?.user?.adminedCompanies?.[0]?.authorizedClients ??
-            [],
+          apiResponse?.data?.user?.adminedCompanies?.[0]?.authorizedClients ?? []
         );
       } finally {
         setLoadingAuthorizedClients(false);
@@ -110,7 +53,6 @@ export default function CompanyApiPanel({ company }) {
   }, [company]);
 
   const classes = usePanelStyles();
-  const localClasses = useStyles();
 
   const confirmAddNewClientId = async () => {
     await alerts.withApiErrorHandling(async () => {
@@ -118,9 +60,9 @@ export default function CompanyApiPanel({ company }) {
         GENERATE_THIRD_PARTY_COMPANY_TOKEN_MUTATION,
         {
           companyId: company.id,
-          clientId: newClientId,
+          clientId: newClientId
         },
-        { context: { nonPublicApi: true } },
+        { context: { nonPublicApi: true } }
       );
       const apiAccessTokens = apiResponse.data.generateCompanyToken;
       setAuthorizedClients([]);
@@ -130,7 +72,7 @@ export default function CompanyApiPanel({ company }) {
       alerts.success(
         "L'autorisation a bien été accordée au logiciel'",
         "",
-        6000,
+        6000
       );
     });
   };
@@ -144,16 +86,16 @@ export default function CompanyApiPanel({ company }) {
       alerts.info(
         "Le client id renseigné est déjà associé à votre entreprise",
         "",
-        6000,
+        6000
       );
     } else {
       await alerts.withApiErrorHandling(async () => {
         const apiResponse = await api.graphQlQuery(
           OAUTH_CLIENT_QUERY,
           {
-            clientId: newClientId,
+            clientId: newClientId
           },
-          { context: { nonPublicApi: true } },
+          { context: { nonPublicApi: true } }
         );
         const oAuthClient = apiResponse?.data?.oauthClient;
         if (!oAuthClient) {
@@ -165,13 +107,13 @@ export default function CompanyApiPanel({ company }) {
             cancelButtonLabel: "Annuler",
             content: (
               <>
-                <p className={localClasses.paragraphSpacing}>
+                <Typography mb={2}>
                   Le client_id renseigné ({oAuthClient?.id}) correspond au
                   logiciel {oAuthClient?.name}
-                </p>
-                <p className={localClasses.paragraph}>
+                </Typography>
+                <Typography>
                   Les droits suivants lui seront attribués:
-                </p>
+                </Typography>
                 <ul>
                   <li>Rattacher des salariés à l'entreprise</li>
                   <li>
@@ -181,7 +123,7 @@ export default function CompanyApiPanel({ company }) {
                 </ul>
               </>
             ),
-            handleConfirm: confirmAddNewClientId,
+            handleConfirm: confirmAddNewClientId
           });
         }
       });
@@ -189,19 +131,19 @@ export default function CompanyApiPanel({ company }) {
   };
 
   return [
-    <div key={0} className={localClasses.headerRow}>
-      <div className={localClasses.headerCol}>
-        <div className={classes.title}>
-          <h2 className={localClasses.heading}>
+    <Grid key={0} container>
+      <Grid item xs={6}>
+        <Box className={classes.title}>
+          <Typography variant="h4" component="h2">
             Mes logiciels autorisés{" "}
             {!loadingAuthorizedClients && (
               <span> ({authorizedClients?.length || 0})</span>
             )}
-          </h2>
-        </div>
-      </div>
+          </Typography>
+        </Box>
+      </Grid>
       {!newTokenSectionVisible && (
-        <div className={`${localClasses.headerCol} ${classes.buttonAddToken}`}>
+        <Grid item xs={6} className={classes.buttonAddToken}>
           <Button
             size="small"
             onClick={() => {
@@ -210,36 +152,41 @@ export default function CompanyApiPanel({ company }) {
           >
             Ajouter un Client ID
           </Button>
-        </div>
+        </Grid>
       )}
-    </div>,
+    </Grid>,
     newTokenSectionVisible && (
-      <div className={classes.addNewTokenSection}>
-        <div className={localClasses.gridItemFull}>
+      <Grid
+        container
+        alignItems={"center"}
+        className={classes.addNewTokenSection}
+      >
+        <Grid item xs={12}>
           <Notice
             description="Rapprochez-vous de votre éditeur de logiciel pour obtenir son
               client_id."
-            className={localClasses.noticeSpacing}
+            sx={{ marginBottom: 2 }}
             size="small"
           />
-        </div>
-        <div className={localClasses.gridItemFull}>
-          <p className={localClasses.paragraph}>client_id</p>
-        </div>
-        <div className={localClasses.gridItemTextField}>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography>client_id</Typography>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
           <TextField
             required
             hiddenLabel
             variant="filled"
             size="small"
+            style={{ width: "100%" }}
             value={newClientId}
             onChange={(e) => {
               setNewClientId(e.target.value);
             }}
-            className={`${classes.newClientIdField} ${localClasses.fullWidthField}`}
+            className={classes.newClientIdField}
           />
-        </div>
-        <div className={localClasses.gridItemButtons}>
+        </Grid>
+        <Grid item xs={12} sm={6} mb={2}>
           <LoadingButton
             type="submit"
             size="small"
@@ -262,13 +209,13 @@ export default function CompanyApiPanel({ company }) {
           >
             Annuler
           </Button>
-        </div>
-      </div>
+        </Grid>
+      </Grid>
     ),
     loadingAuthorizedClients ? (
       <Skeleton key={2} variant="rectangular" width="100%" height={100} />
     ) : (
-      <div key={2} className={localClasses.authorizedClientsList}>
+      <Box key={2} mt={4}>
         {authorizedClients.map((ac) => (
           <CompanyClientCard
             key={ac.id}
@@ -277,7 +224,7 @@ export default function CompanyApiPanel({ company }) {
             companyId={company.id}
           />
         ))}
-      </div>
+      </Box>
     ),
     authorizedClients?.length > 0 && (
       <Notice
@@ -287,9 +234,9 @@ export default function CompanyApiPanel({ company }) {
             à votre éditeur, afin qu'il puisse utiliser l'API Mobilic.
           </>
         }
-        className={localClasses.noticeSpacing}
+        sx={{ marginBottom: 2 }}
         size="small"
       />
-    ),
+    )
   ];
 }

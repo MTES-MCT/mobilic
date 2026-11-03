@@ -3,6 +3,8 @@ import { useApi } from "common/utils/api";
 import { useAdminStore } from "../store/store";
 import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "../../common/Snackbar";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { AugmentedTable } from "../components/AugmentedTable";
 import { usePanelStyles } from "./Company";
@@ -21,14 +23,7 @@ import {
   registrationSortKey,
 } from "common/utils/vehicles";
 
-const useStyles = makeStyles((theme) => ({
-  title: {
-    ...theme.typography.h4,
-  },
-  description: {
-    ...theme.typography.body1,
-    marginBottom: theme.spacing(2),
-  },
+const useStyles = makeStyles(() => ({
   augmentedTable: {
     "& table.MuiTable-root": {
       borderTop: "none !important",
@@ -166,18 +161,20 @@ export default function VehicleAdmin({ company }) {
 
   return (
     <>
-      <div className={classes.title}>
-        <h2 className={tableClasses.title}>Véhicules ({vehicles.length})</h2>
+      <Box className={classes.title}>
+        <Typography variant="h4" component="h2">
+          Véhicules ({vehicles.length})
+        </Typography>
         <Button size="small" onClick={() => setBatchModalOpen(true)}>
           Ajouter vos véhicules
         </Button>
-      </div>
-      <p className={tableClasses.description}>
+      </Box>
+      <Typography variant="body1" sx={{ marginBottom: 2 }}>
         Les véhicules que vous ajoutez ici seront proposés aux salariés
         lorsqu'ils renseigneront les informations d'une mission dans leur outil
         mobile.
-      </p>
-      <div>
+      </Typography>
+      <Box>
         <AugmentedTable
           columns={vehicleColumns}
           entries={vehicles}
@@ -229,7 +226,7 @@ export default function VehicleAdmin({ company }) {
             })
           }
         />
-      </div>
+      </Box>
       <BatchInviteModal
         open={batchModalOpen}
         handleClose={() => setBatchModalOpen(false)}

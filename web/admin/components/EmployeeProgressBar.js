@@ -1,8 +1,9 @@
 import React from "react";
 import { Box, Typography, LinearProgress } from "@mui/material";
-import { fr } from "@codegouvfr/react-dsfr";
+import { useTheme } from "@mui/material/styles";
 
 export function EmployeeProgressBar({ progressData }) {
+  const theme = useTheme();
 
   if (!progressData) {
     return null;
@@ -11,15 +12,15 @@ export function EmployeeProgressBar({ progressData }) {
   const getProgressColor = color => {
     switch (color) {
       case "info":
-        return { backgroundColor: fr.colors.decisions.background.flat.blueFrance.default };
+        return { backgroundColor: theme.palette.primary.main };
       case "warning":
-        return { backgroundColor: fr.colors.decisions.background.flat.warning.default };
+        return { backgroundColor: theme.palette.warning.light };
       case "success":
         return { color: "success" };
       case "error":
         return { color: "error" };
       default:
-        return { backgroundColor: fr.colors.decisions.background.flat.blueFrance.default };
+        return { backgroundColor: theme.palette.primary.main };
     }
   };
 
@@ -28,11 +29,8 @@ export function EmployeeProgressBar({ progressData }) {
   return (
     <Box sx={{ maxWidth: 400 }}>
       <Typography mb={1}>
-        Inscrits sur Mobilic : {" "}
-        <span style={{ fontWeight: "bold" }}>
-          {progressData.registeredEmployees} sur{" "}
-          {progressData.declaredNbWorkers}
-        </span>
+        Inscrits sur Mobilic : {progressData.registeredEmployees} sur{" "}
+        {progressData.declaredNbWorkers}
       </Typography>
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
         <Box sx={{ width: "300px" }}>
