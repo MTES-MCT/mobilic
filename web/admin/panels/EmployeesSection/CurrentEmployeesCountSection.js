@@ -28,9 +28,6 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center",
     gap: theme.spacing(2),
   },
-  progressBar: {
-    border: "1px solid blue",
-  } ,
   bottomSection: {
     display: "flex",
     flexDirection: "row",

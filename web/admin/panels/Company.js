@@ -76,7 +76,7 @@ export const usePanelStyles = makeStyles((theme) => ({
     cursor: "pointer",
     "&.active": {
       color: fr.colors.decisions.text.actionHigh.blueFrance.default,
-      fontWeight: "regular",
+      fontWeight: "normal",
       borderBottom: `2px solid ${fr.colors.decisions.border.active.blueFrance.default}`,
     },
   },
@@ -121,10 +121,14 @@ function SubNavigationToggle({ view }) {
   const history = useHistory();
 
   return (
-    <div className={classes.tertiaryHeader}>
+    <div className={classes.tertiaryHeader} role="tablist">
       {COMPANY_SUB_PANELS.map((panelInfos) => (
         <button
           key={panelInfos.view}
+          id={`tab-${panelInfos.view}`}
+          role="tab"
+          aria-selected={view === panelInfos.view}
+          aria-controls={`tabpanel-${panelInfos.view}`}
           onClick={() => history.push(`?tab=${panelInfos.view}`)}
           className={`${classes.navButton}${
             view === panelInfos.view ? " active" : ""
@@ -166,7 +170,12 @@ function CompanyPanel({ containerRef }) {
         <SubNavigationToggle view={view} />
         <div className={classes.separator} />
       </div>
-      <div className={classes.subPanel}>
+      <div
+        className={classes.subPanel}
+        role="tabpanel"
+        id={`tabpanel-${view}`}
+        aria-labelledby={`tab-${view}`}
+      >
         {company ? subPanel.component({ company, containerRef }) : null}
       </div>
     </div>
