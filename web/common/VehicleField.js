@@ -1,7 +1,12 @@
 import React from "react";
+import values from "lodash/values";
 import TextField from "common/utils/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
-import { getSanitizedVehicleName, getVehicleName } from "common/utils/vehicles";
+import {
+  getSanitizedVehicleName,
+  getVehicleName,
+  registrationSortKey
+} from "common/utils/vehicles";
 import KilometerReadingField from "./KilometerReadingField";
 
 export function VehicleField({
@@ -25,6 +30,16 @@ export function VehicleField({
       inputValue: getSanitizedVehicleName(vehicle) || ""
     });
 
+  const sortedVehicles = React.useMemo(
+    () =>
+      values(vehicles).sort((a, b) => {
+        const keyA = registrationSortKey(a);
+        const keyB = registrationSortKey(b);
+        return keyA < keyB ? -1 : keyA > keyB ? 1 : 0;
+      }),
+    [vehicles]
+  );
+
   React.useEffect(() => {
     if (setKilometerReading) {
       if (vehicle.lastKilometerReading) {
@@ -43,7 +58,7 @@ export function VehicleField({
       className={className}
       freeSolo={allowCreate}
       disabled={disabled}
-      options={vehicles}
+      options={sortedVehicles}
       getOptionLabel={v => getVehicleName(v, true)}
       value={vehicle}
       filterOptions={filterOptions}

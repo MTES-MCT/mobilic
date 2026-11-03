@@ -49,7 +49,7 @@ import { PastMissionNotice } from "./PastMissionNotice";
 import { MISSION_QUERY } from "common/utils/apiQueries/missions";
 import { MissionDrawerHeader } from "../../drawers/DrawerHeader";
 import { MissionDetailsObservations } from "./MissionDetailsObservations";
-import { ToValidateTag, WaitingTag, ValidatedTag, DeletedTag } from "../../drawers/Tags";
+import { RunningTag, ToValidateTag, WaitingTag, ValidatedTag, DeletedTag } from "../../drawers/Tags";
 import { computeMissionStatus } from "../../utils/missionsStatus";
 
 export function MissionDetails({
@@ -382,7 +382,9 @@ export function MissionDetails({
                 showUserName={hasMultipleWorkers}
                 showExpenditures={showExpenditures}
                 headingComponent="h3"
-                statusTag={hasMultipleWorkers ? <ToValidateTag /> : null}
+                statusTag={hasMultipleWorkers ? (
+                  e.hasEndedMission ? <ToValidateTag /> : <RunningTag />
+                ) : null}
                 onCreateActivity={
                   entryToBeValidatedByAdmin(
                     e,
@@ -473,6 +475,7 @@ export function MissionDetails({
                   )
                 }
                 alwaysOpen
+                simplified
                 day={day}
               />
             </ListItem>
@@ -514,8 +517,11 @@ export function MissionDetails({
                 user={e.user}
                 showUserName={hasMultipleWorkers}
                 showExpenditures={showExpenditures}
-                statusTag={hasMultipleWorkers ? <WaitingTag /> : null}
+                statusTag={hasMultipleWorkers ? (
+                  e.hasEndedMission ? <WaitingTag /> : <RunningTag />
+                ) : null}
                 alwaysOpen
+                simplified
                 day={day}
               />
             </ListItem>

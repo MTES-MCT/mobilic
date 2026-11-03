@@ -50,6 +50,7 @@ import { isGoogleAdsInitiated, initGoogleAds } from "common/utils/trackAds";
 import { createMuiDsfrThemeProvider } from "@codegouvfr/react-dsfr/mui";
 import "./index.css";
 import "common/assets/styles/root.scss";
+import "react-virtualized/styles.css";
 import { loadControllerUserData } from "./controller/utils/loadControllerUserData";
 import { LocalizationProvider, frFR } from "@mui/x-date-pickers";
 import { shouldUpdatePassword } from "common/utils/updatePassword";
