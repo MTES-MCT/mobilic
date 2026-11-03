@@ -66,6 +66,10 @@ export function useEmployeesData(company) {
   useEnsureTeams();
 
   React.useEffect(() => {
+    setTeams([]);
+  }, [companyId]);
+
+  React.useEffect(() => {
     if (teams.length > 0) {
       return;
     }
