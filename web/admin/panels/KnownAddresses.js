@@ -4,7 +4,8 @@ import { useAdminStore } from "../store/store";
 import { useModals } from "common/utils/modals";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { AddressField } from "../../common/AddressField";
-import { makeStyles } from "@mui/styles";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { AugmentedTable } from "../components/AugmentedTable";
 import { usePanelStyles } from "./Company";
 import { captureSentryException } from "common/utils/sentry";
@@ -15,17 +16,8 @@ import { Explanation } from "../../common/typography/Explanation";
 import {
   CREATE_KNOWN_ADDRESS_MUTATION,
   EDIT_KNOWN_ADDRESS_MUTATION,
-  TERMINATE_KNOWN_ADDRESS_MUTATION,
+  TERMINATE_KNOWN_ADDRESS_MUTATION
 } from "common/utils/apiQueries/admin";
-
-const useStyles = makeStyles((theme) => ({
-  title: {
-    ...theme.typography.h4,
-  },
-  addressCity: {
-    fontStyle: "italic",
-  },
-}));
 
 export default function KnownAddressAdmin({ company }) {
   const api = useApi();
@@ -36,7 +28,6 @@ export default function KnownAddressAdmin({ company }) {
 
   const tableRef = React.useRef();
   const classes = usePanelStyles();
-  const localClasses = useStyles();
 
   const knownAddressColumns = [
     {
@@ -46,7 +37,7 @@ export default function KnownAddressAdmin({ company }) {
       format: (address) => (
         <span>
           <span className="bold">{address.name}</span>{" "}
-          <span className={localClasses.addressCity}>
+          <span style={{ fontStyle: "italic" }}>
             {address.postalCode} {address.city}
           </span>
         </span>
@@ -63,15 +54,15 @@ export default function KnownAddressAdmin({ company }) {
       ),
       create: true,
       sortable: true,
-      minWidth: 200,
+      minWidth: 200
     },
     {
       label: "Nom usuel",
       name: "alias",
       create: true,
       edit: true,
-      sortable: true,
-    },
+      sortable: true
+    }
   ];
 
   const knownAddresses = adminStore.knownAddresses
@@ -80,14 +71,14 @@ export default function KnownAddressAdmin({ company }) {
 
   return (
     <>
-      <div className={classes.title}>
-        <h2 className={localClasses.title}>
+      <Box className={classes.title}>
+        <Typography variant="h4" component="h2">
           Adresses fréquentes ({knownAddresses.length})
-        </h2>
+        </Typography>
         <Button size="small" onClick={() => tableRef.current.newRow()}>
           Ajouter un lieu
         </Button>
-      </div>
+      </Box>
       <Explanation>
         Vous pouvez ajouter ici les lieux de travail fréquents dans votre
         entreprise, comme le dépôt. Ces lieux seront proposés aux salariés
@@ -106,9 +97,9 @@ export default function KnownAddressAdmin({ company }) {
               EDIT_KNOWN_ADDRESS_MUTATION,
               {
                 companyKnownAddressId: address.id,
-                alias,
+                alias
               },
-              { context: { nonPublicApi: true } },
+              { context: { nonPublicApi: true } }
             );
             adminStore.dispatch({
               type: ADMIN_ACTIONS.update,
@@ -117,9 +108,9 @@ export default function KnownAddressAdmin({ company }) {
                 entity: "knownAddresses",
                 update: {
                   ...apiResponse.data.locations.editKnownAddress,
-                  companyId,
-                },
-              },
+                  companyId
+                }
+              }
             });
           } catch (err) {
             captureSentryException(err);
@@ -133,9 +124,9 @@ export default function KnownAddressAdmin({ company }) {
               {
                 alias,
                 companyId,
-                ...buildBackendPayloadForAddress(address),
+                ...buildBackendPayloadForAddress(address)
               },
-              { context: { nonPublicApi: true } },
+              { context: { nonPublicApi: true } }
             );
             adminStore.dispatch({
               type: ADMIN_ACTIONS.create,
@@ -144,10 +135,10 @@ export default function KnownAddressAdmin({ company }) {
                 items: [
                   {
                     ...apiResponse.data.locations.createKnownAddress,
-                    companyId,
-                  },
-                ],
-              },
+                    companyId
+                  }
+                ]
+              }
             });
           }, "create-known-address");
         }}
@@ -160,18 +151,18 @@ export default function KnownAddressAdmin({ company }) {
                 await api.graphQlMutate(
                   TERMINATE_KNOWN_ADDRESS_MUTATION,
                   {
-                    companyKnownAddressId: address.id,
+                    companyKnownAddressId: address.id
                   },
-                  { context: { nonPublicApi: true } },
+                  { context: { nonPublicApi: true } }
                 );
                 adminStore.dispatch({
                   type: ADMIN_ACTIONS.delete,
-                  payload: { id: address.id, entity: "knownAddresses" },
+                  payload: { id: address.id, entity: "knownAddresses" }
                 });
               } catch (err) {
                 captureSentryException(err);
               }
-            },
+            }
           })
         }
       />
