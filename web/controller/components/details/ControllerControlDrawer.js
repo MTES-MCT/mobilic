@@ -7,6 +7,7 @@ import { InfractionsProvider } from "../../utils/contextInfractions";
 import { ControlProvider, useControl } from "../../utils/contextControl";
 import { useControlBulletinActions } from "../../hooks/useControlBulletinActions";
 import ControlHandDeliveryModal from "../modals/ControlHandDeliveryModal";
+import ControlCreateBulletinModal from "../modals/ControlCreateBulletinModal";
 
 const InnerControllerControlDrawer = ({ onClose }) => {
   const { controlData, setControlData, controlId, controlType } = useControl();
@@ -16,12 +17,18 @@ const InnerControllerControlDrawer = ({ onClose }) => {
     onControlDataUpdate: setControlData
   });
 
+  const [isCreateBulletinModalOpen, setIsCreateBulletinModalOpen] =
+    React.useState(false);
+  const [isEditingBC, setIsEditingBC] = React.useState(false);
+
   const handleClose = React.useCallback(() => {
     const bulletinExists = !!controlData?.controlBulletinCreationTime;
     const deliveryNotSet = controlData?.deliveredByHand === null;
     const isControlTypeMobilic = controlType === CONTROL_TYPES.MOBILIC.label;
 
-    if (bulletinExists && deliveryNotSet && !isControlTypeMobilic) {
+    if (!bulletinExists) {
+      setIsCreateBulletinModalOpen(true);
+    } else if (deliveryNotSet && !isControlTypeMobilic) {
       actions.openHandDeliveryModal();
     } else {
       onClose();
@@ -44,6 +51,8 @@ const InnerControllerControlDrawer = ({ onClose }) => {
             controlData={controlData}
             setControlData={setControlData}
             onClose={handleClose}
+            isEditingBC={isEditingBC}
+            setIsEditingBC={setIsEditingBC}
           />
         </ControlDrawer>
       ) : (
@@ -54,6 +63,20 @@ const InnerControllerControlDrawer = ({ onClose }) => {
           onClose={onClose}
         />
       )}
+
+      <ControlCreateBulletinModal
+        open={isCreateBulletinModalOpen}
+        askCompanyEmail={controlType !== CONTROL_TYPES.MOBILIC.label}
+        handleClose={() => setIsCreateBulletinModalOpen(false)}
+        handleCreate={() => {
+          setIsCreateBulletinModalOpen(false);
+          setIsEditingBC(true);
+        }}
+        handleCloseControl={() => {
+          setIsCreateBulletinModalOpen(false);
+          onClose();
+        }}
+      />
 
       <ControlHandDeliveryModal
         open={actions.isHandDeliveryModalOpen}
