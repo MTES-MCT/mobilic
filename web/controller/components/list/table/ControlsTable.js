@@ -1,5 +1,12 @@
 import React from "react";
 import { useIsWidthUp } from "common/utils/useWidth";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
+
+const BULLETIN_BADGES = {
+  delivered: { label: "Remis", severity: "success" },
+  inProgress: { label: "En cours", severity: "warning" },
+  notCreated: { label: "Non créé", severity: "error" }
+};
 
 const ControlsTable = ({ entries, onRowClick, period = "day" }) => {
   const columns = React.useMemo(
@@ -12,6 +19,7 @@ const ControlsTable = ({ entries, onRowClick, period = "day" }) => {
       },
       { name: "controlLocation", label: "Lieu contrôle" },
       { name: "type", label: "Type" },
+      { name: "bulletinStatus", label: "Bulletin de contrôle" },
       { name: "company", label: "Nom entreprise" },
       { name: "nbControlledDays", label: "Jours contrôlés" },
       { name: "nbReportedInfractions", label: "Infractions retenues" }
@@ -42,8 +50,20 @@ const ControlsTable = ({ entries, onRowClick, period = "day" }) => {
               onClick={() => onRowClick(entry.id, entry.type)}
             >
               {columns.map((column, idxColumn) => {
+                const badge =
+                  column.name === "bulletinStatus"
+                    ? BULLETIN_BADGES[entry.bulletinStatus]
+                    : null;
                 return (
-                  <td key={`table_row_${idxColumn}`}>{entry[column.name]}</td>
+                  <td key={`table_row_${idxColumn}`}>
+                    {badge ? (
+                      <Badge small noIcon severity={badge.severity}>
+                        {badge.label}
+                      </Badge>
+                    ) : (
+                      entry[column.name]
+                    )}
+                  </td>
                 );
               })}
             </tr>
