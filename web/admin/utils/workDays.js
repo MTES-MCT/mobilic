@@ -25,6 +25,11 @@ function computeMaxConsecutiveRest(workDayGroup, periodStart, periodDurationDays
   return maxRest;
 }
 
+const hasWorkActivity = (workDay) =>
+  Object.entries(workDay.activityDurations).some(
+    ([type, duration]) => type !== ACTIVITIES.off.name && duration > 0
+  );
+
 function computeWorkDayGroupAggregates(workDayGroup, periodDurationDays) {
   const aggregateTimers = {};
   const aggregateExpenditures = {};
@@ -72,7 +77,7 @@ function computeWorkDayGroupAggregates(workDayGroup, periodDurationDays) {
     periodStart,
     periodActualStart: minStartTime,
     periodActualEnd: maxEndTime,
-    workedDays: workDayGroup.length,
+    workedDays: workDayGroup.filter(hasWorkActivity).length,
     service: serviceDuration,
     totalWork: maxEndTime ? totalWorkDuration : null,
     transferDuration,
