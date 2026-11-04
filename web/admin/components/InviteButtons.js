@@ -30,9 +30,9 @@ export function InviteButtons({
     );
   }
   return (
-    <Box sx={{ display: "flex", gap: 1 }}>
+    <Box sx={{ display: "flex", gap: 2 }}>
       <Button priority="secondary" size="small" onClick={onBatchInvite}>
-        Inviter une liste d'emails
+        Inviter une liste de salariés
       </Button>
       <Button size="small" onClick={onSingleInvite}>
         {shouldShowBadge && (
