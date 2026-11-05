@@ -3,11 +3,11 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Input } from "@codegouvfr/react-dsfr/Input";
 import { Select } from "@codegouvfr/react-dsfr/Select";
 import { Table } from "@codegouvfr/react-dsfr/Table";
-import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch";
 import { MobilicHeader } from "../common/Header";
 import { Main } from "../common/semantics/Main";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
@@ -63,6 +63,10 @@ export default function TechnicalIncidentsAdmin() {
   const [bannerLevel, setBannerLevel] = React.useState("warning");
   const [bannerSaving, setBannerSaving] = React.useState(false);
   const [bannerLoaded, setBannerLoaded] = React.useState(false);
+  const [bannerPublished, setBannerPublished] = React.useState({
+    message: "",
+    level: "warning"
+  });
   const [bannerResult, setBannerResult] = React.useState(null);
 
   const userInfo = store.userInfo();
@@ -78,11 +82,14 @@ export default function TechnicalIncidentsAdmin() {
       .then(data => {
         if (!data) return;
         setBannerLoaded(true);
+        const level = ["info", "warning", "error"].includes(data.level)
+          ? data.level
+          : "warning";
+        const message = data.message || "";
         setBannerEnabled(!!data.enabled);
-        if (data.message) setBannerMessage(data.message);
-        if (["info", "warning", "error"].includes(data.level)) {
-          setBannerLevel(data.level);
-        }
+        setBannerPublished({ message, level });
+        setBannerMessage(message);
+        setBannerLevel(level);
       })
       .catch(err => {
         if (err?.name === "AbortError") return;
@@ -92,9 +99,11 @@ export default function TechnicalIncidentsAdmin() {
     return () => controller.abort();
   }, []);
 
-  const handleSaveBanner = async () => {
-    if (bannerEnabled && !bannerMessage.trim()) {
-      setBannerResult("Le message est requis pour activer le bandeau.");
+  const handleSaveBanner = async enabled => {
+    const message = enabled ? bannerMessage.trim() : bannerPublished.message;
+    const level = enabled ? bannerLevel : bannerPublished.level;
+    if (enabled && !message) {
+      setBannerResult("Le message est requis pour afficher le bandeau.");
       return;
     }
     setBannerSaving(true);
@@ -102,13 +111,13 @@ export default function TechnicalIncidentsAdmin() {
     try {
       await api.graphQlMutate(
         UPDATE_GLOBAL_BANNER_MUTATION,
-        {
-          enabled: bannerEnabled,
-          message: bannerMessage.trim(),
-          level: bannerLevel
-        },
+        { enabled, message, level },
         { context: { nonPublicApi: true } }
       );
+      setBannerEnabled(enabled);
+      setBannerPublished({ message, level });
+      setBannerMessage(message);
+      setBannerLevel(level);
       setBannerResult("success");
     } catch (err) {
       setBannerResult(err?.message || "error");
@@ -116,6 +125,10 @@ export default function TechnicalIncidentsAdmin() {
       setBannerSaving(false);
     }
   };
+
+  const bannerHasChanges =
+    bannerMessage.trim() !== bannerPublished.message ||
+    bannerLevel !== bannerPublished.level;
 
   React.useEffect(() => {
     if (
@@ -292,21 +305,29 @@ export default function TechnicalIncidentsAdmin() {
                 borderRadius: 1
               }}
             >
-              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
-                Bandeau d'information global
-              </Typography>
-              <ToggleSwitch
-                label="Afficher le bandeau"
-                checked={bannerEnabled}
-                showCheckedHint={false}
-                disabled={!bannerLoaded || bannerSaving}
-                onChange={checked => {
-                  setBannerEnabled(checked);
-                  setBannerResult(null);
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  mb: 2
                 }}
-              />
+              >
+                <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  Bandeau d'information global
+                </Typography>
+                {bannerLoaded && (
+                  <Badge
+                    small
+                    noIcon
+                    severity={bannerEnabled ? "success" : undefined}
+                  >
+                    {bannerEnabled ? "Bandeau actif" : "Bandeau inactif"}
+                  </Badge>
+                )}
+              </Box>
               <Select
-                label="Niveau"
+                label="Type de bandeau"
                 nativeSelectProps={{
                   value: bannerLevel,
                   onChange: e => setBannerLevel(e.target.value)
@@ -317,26 +338,45 @@ export default function TechnicalIncidentsAdmin() {
                 <option value="error">Erreur</option>
               </Select>
               <Input
-                label="Message affiché aux utilisateurs"
+                label="Message affiché aux utilisateurs *"
+                hintText="Obligatoire pour afficher le bandeau"
+                state={
+                  bannerLoaded && !bannerMessage.trim() ? "error" : "default"
+                }
+                stateRelatedMessage="Veuillez saisir un message."
                 textArea
                 nativeTextAreaProps={{
                   value: bannerMessage,
                   onChange: e => setBannerMessage(e.target.value),
                   maxLength: MAX_BANNER_MESSAGE,
+                  required: true,
                   rows: 2
                 }}
               />
-              <Button
-                size="small"
-                onClick={handleSaveBanner}
-                disabled={
-                  !bannerLoaded ||
-                  bannerSaving ||
-                  (bannerEnabled && !bannerMessage.trim())
-                }
-              >
-                Enregistrer le bandeau
-              </Button>
+              <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                <Button
+                  size="small"
+                  onClick={() => handleSaveBanner(true)}
+                  disabled={
+                    !bannerLoaded ||
+                    bannerSaving ||
+                    !bannerMessage.trim() ||
+                    (bannerEnabled && !bannerHasChanges)
+                  }
+                >
+                  {bannerEnabled && bannerHasChanges
+                    ? "Mettre à jour le bandeau"
+                    : "Afficher le bandeau"}
+                </Button>
+                <Button
+                  size="small"
+                  priority="secondary"
+                  onClick={() => handleSaveBanner(false)}
+                  disabled={!bannerLoaded || bannerSaving || !bannerEnabled}
+                >
+                  Retirer le bandeau
+                </Button>
+              </Box>
               {bannerResult === "success" && (
                 <Box sx={{ mt: 2 }}>
                   <Alert
