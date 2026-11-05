@@ -17,5 +17,6 @@ mkdir -p nginx/logs
 erb nginx/base_conf/base_conf.erb > nginx/conf/nginx.conf
 cp nginx/base_conf/mime.types nginx/conf/mime.types
 erb servers.conf.erb > nginx/conf/servers.conf
+erb public/maintenance.html.erb > ${BUILD_FOLDER}/maintenance.html
 
 nginx -p ${ROOT_PROJECT_DIR}/nginx -c ${ROOT_PROJECT_DIR}/nginx/conf/nginx.conf

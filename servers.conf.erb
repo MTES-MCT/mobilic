@@ -21,6 +21,23 @@ server {
         }
     <% end %>
 
+    <% if %w[1 true].include?(ENV['MAINTENANCE_MODE'].to_s.strip.downcase) %>
+    error_page 503 @maintenance;
+    return 503;
+
+    location @maintenance {
+        internal;
+        add_header Retry-After 3600 always;
+        add_header Cache-Control "no-store" always;
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+        add_header X-Frame-Options "deny" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+        add_header Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" always;
+        try_files /maintenance.html =503;
+    }
+    <% end %>
+
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
     add_header X-Frame-Options "deny";
     add_header X-Content-Type-Options "nosniff";

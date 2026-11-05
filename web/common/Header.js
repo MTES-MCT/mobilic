@@ -28,6 +28,7 @@ import MobilicLogoWithText from "common/assets/images/mobilic-logo-with-text.svg
 import { useIsWidthDown } from "common/utils/useWidth";
 import { useNewMissionFunnel } from "./hooks/useNewMissionFunnel";
 import { pluralizeEntrepriseLabel } from "common/utils/pluralize";
+import { GlobalBanner } from "./GlobalBanner";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -162,6 +163,7 @@ export const HeaderComponent = ({ fitContainer, children }) => {
       style={{ backgroundColor: theme.palette.background.paper }}
     >
       {children}
+      <GlobalBanner />
     </Box>
   );
 };

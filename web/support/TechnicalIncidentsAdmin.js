@@ -7,12 +7,13 @@ import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Input } from "@codegouvfr/react-dsfr/Input";
 import { Select } from "@codegouvfr/react-dsfr/Select";
 import { Table } from "@codegouvfr/react-dsfr/Table";
+import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch";
 import { MobilicHeader } from "../common/Header";
 import { Main } from "../common/semantics/Main";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 import { usePageTitle } from "../common/UsePageTitle";
 import { useHistory } from "react-router-dom";
-import { useApi } from "common/utils/api";
+import { useApi, API_HOST } from "common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { getFallbackRoute } from "../common/routes";
 import {
@@ -24,9 +25,11 @@ import {
   CREATE_TECHNICAL_INCIDENT_MUTATION,
   UPDATE_TECHNICAL_INCIDENT_MUTATION
 } from "common/utils/apiQueries/technicalIncident";
+import { UPDATE_GLOBAL_BANNER_MUTATION } from "common/utils/apiQueries/notificationCampaign";
 import { prettyFormatDayHour } from "common/utils/time";
 
 const MAX_DESCRIPTION = 2000;
+const MAX_BANNER_MESSAGE = 500;
 
 const toTimeStamp = value =>
   value ? Math.floor(new Date(value).getTime() / 1000) : null;
@@ -55,8 +58,65 @@ export default function TechnicalIncidentsAdmin() {
   const [incidents, setIncidents] = React.useState([]);
   const [editingId, setEditingId] = React.useState(null);
 
+  const [bannerEnabled, setBannerEnabled] = React.useState(false);
+  const [bannerMessage, setBannerMessage] = React.useState("");
+  const [bannerLevel, setBannerLevel] = React.useState("warning");
+  const [bannerSaving, setBannerSaving] = React.useState(false);
+  const [bannerResult, setBannerResult] = React.useState(null);
+
   const userInfo = store.userInfo();
   const companies = store.companies();
+
+  React.useEffect(() => {
+    const controller = new AbortController();
+    fetch(`${API_HOST}/global-banner`, { signal: controller.signal })
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        if (!data) return;
+        setBannerEnabled(!!data.enabled);
+        if (data.message) setBannerMessage(data.message);
+        if (["info", "warning", "error"].includes(data.level)) {
+          setBannerLevel(data.level);
+        }
+      })
+      .catch(err => {
+        if (err?.name === "AbortError") return;
+        console.error("Impossible de charger le bandeau global", err);
+        setBannerResult("Impossible de charger l'état actuel du bandeau.");
+      });
+    return () => controller.abort();
+  }, []);
+
+  const handleSaveBanner = async enabled => {
+    if (enabled && !bannerMessage.trim()) {
+      setBannerResult("Le message est requis pour activer le bandeau.");
+      return;
+    }
+    const previousEnabled = bannerEnabled;
+    setBannerEnabled(enabled);
+    setBannerSaving(true);
+    setBannerResult(null);
+    try {
+      await api.graphQlMutate(
+        UPDATE_GLOBAL_BANNER_MUTATION,
+        {
+          enabled,
+          message: bannerMessage.trim(),
+          level: bannerLevel
+        },
+        { context: { nonPublicApi: true } }
+      );
+      setBannerResult("success");
+    } catch (err) {
+      setBannerEnabled(previousEnabled);
+      setBannerResult(err?.message || "error");
+    } finally {
+      setBannerSaving(false);
+    }
+  };
 
   React.useEffect(() => {
     if (
@@ -223,6 +283,77 @@ export default function TechnicalIncidentsAdmin() {
             <PaperContainerTitle variant="h1" sx={{ textAlign: "center" }}>
               Dysfonctionnements techniques
             </PaperContainerTitle>
+
+            <Box
+              sx={{
+                padding: 3,
+                mb: 2,
+                border: "1px solid",
+                borderColor: "var(--border-default-grey)",
+                borderRadius: 1
+              }}
+            >
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+                Bandeau d'information global
+              </Typography>
+              <ToggleSwitch
+                label="Afficher un bandeau sur tout le site"
+                checked={bannerEnabled}
+                showCheckedHint={false}
+                disabled={bannerSaving || (!bannerEnabled && !bannerMessage.trim())}
+                onChange={checked => handleSaveBanner(checked)}
+              />
+              <Select
+                label="Niveau"
+                nativeSelectProps={{
+                  value: bannerLevel,
+                  onChange: e => setBannerLevel(e.target.value)
+                }}
+              >
+                <option value="info">Information</option>
+                <option value="warning">Avertissement</option>
+                <option value="error">Erreur</option>
+              </Select>
+              <Input
+                label="Message affiché aux utilisateurs"
+                textArea
+                nativeTextAreaProps={{
+                  value: bannerMessage,
+                  onChange: e => setBannerMessage(e.target.value),
+                  maxLength: MAX_BANNER_MESSAGE,
+                  rows: 2
+                }}
+              />
+              <Button
+                size="small"
+                onClick={() => handleSaveBanner(bannerEnabled)}
+                disabled={bannerSaving}
+              >
+                Enregistrer le bandeau
+              </Button>
+              {bannerResult === "success" && (
+                <Box sx={{ mt: 2 }}>
+                  <Alert
+                    severity="success"
+                    small
+                    description="Bandeau mis à jour."
+                  />
+                </Box>
+              )}
+              {bannerResult && bannerResult !== "success" && (
+                <Box sx={{ mt: 2 }}>
+                  <Alert
+                    severity="error"
+                    small
+                    description={
+                      bannerResult === "error"
+                        ? "Une erreur est survenue."
+                        : bannerResult
+                    }
+                  />
+                </Box>
+              )}
+            </Box>
 
             <Box sx={{ padding: 3 }}>
               <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
