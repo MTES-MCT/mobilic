@@ -339,11 +339,6 @@ export default function TechnicalIncidentsAdmin() {
               </Select>
               <Input
                 label="Message affiché aux utilisateurs *"
-                hintText="Obligatoire pour afficher le bandeau"
-                state={
-                  bannerLoaded && !bannerMessage.trim() ? "error" : "default"
-                }
-                stateRelatedMessage="Veuillez saisir un message."
                 textArea
                 nativeTextAreaProps={{
                   value: bannerMessage,
