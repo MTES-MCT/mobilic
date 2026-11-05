@@ -1,104 +1,25 @@
-import React from "react";
-import debounce from "lodash/debounce";
-import { useHistory, useLocation } from "react-router-dom";
-import { EmployeeFilter } from "../components/EmployeeFilter";
+import React, { useState, useEffect, useRef } from "react";
 import Paper from "@mui/material/Paper";
-import { addDays } from "date-fns";
-import { PeriodToggle } from "../components/PeriodToggle";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { WorkTimeTable } from "../components/WorkTimeTable";
-import { aggregateWorkDayPeriods } from "../utils/workDays";
-import { useAdminStore, useAdminCompanies } from "../store/store";
-import { useModals } from "common/utils/modals";
-import {
-  getStartOfDay,
-  isoFormatLocalDate,
-  startOfDayAsDate
-} from "common/utils/time";
-import Grid from "@mui/material/Grid";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import SvgIcon from "@mui/material/SvgIcon";
-import { ReactComponent as ExcelIcon } from "common/assets/images/excel.svg";
-import { ReactComponent as TachoIcon } from "common/assets/images/tacho.svg";
-import { LoadingButton } from "common/components/LoadingButton";
-import Drawer from "@mui/material/Drawer";
-import NewMissionForm from "../../common/NewMissionForm";
-import { useSnackbarAlerts } from "../../common/Snackbar";
-import { useApi } from "common/utils/api";
-import { MobileDatePicker } from "@mui/x-date-pickers";
+import { useAdminStore } from "../store/store";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { useLoadAdminPanelData } from "../hooks/useLoadAdminPanelData";
-import { loadActivitiesData } from "../utils/activities";
 import {
   ACTIVITY_FILTER_EMPLOYEE,
-  ACTIVITY_FILTER_MAX_DATE,
-  ACTIVITY_FILTER_MIN_DATE,
-  ADMIN_ADD_HOLIDAY,
-  ADMIN_ADD_MISSION,
-  ADMIN_EXPORT_C1B,
-  ADMIN_EXPORT_EXCEL
 } from "common/utils/matomoTags";
-import { TeamFilter } from "../components/TeamFilter";
-import {
-  getUsersToSelectFromTeamSelection,
-  unselectAndGetAllTeams
-} from "../store/reducers/team";
-import { LogHolidayButton } from "../../common/LogHolidayButton";
-import { LogHolidayForm } from "../../common/LogHolidayForm";
-import { graphQLErrorMatchesCode } from "common/utils/errors";
 import { usePageTitle } from "../../common/UsePageTitle";
-import { useGetUsersSinceDate } from "../../common/hooks/useGetUsersSinceDate";
-import { Button } from "@codegouvfr/react-dsfr/Button";
 import { fr } from "@codegouvfr/react-dsfr";
-import CloseButton from "../../common/CloseButton";
-import { PickersDay } from "@mui/x-date-pickers/PickersDay";
-import {
-  buildLogLocationPayloadFromAddress,
-  CREATE_MISSION_MUTATION,
-  LOG_HOLIDAY_MUTATION,
-  LOG_LOCATION_MUTATION
-} from "common/utils/apiQueries/missions";
-import { InactiveEmployeesDropdown } from "../components/InactiveEmployeesDropdown";
-import { missionWithStats } from "../selectors/missionSelectors";
-import { useRefreshDeletedMissions } from "../hooks/useRefreshDeletedMissions";
-import { useMissionDrawer } from "../drawers/MissionDrawer";
+import ActivitiesPanelHeader from "./ActivitiesSection/ActivitiesPanelHeader";
+import ActivitiesPanelFilters from "./ActivitiesSection/ActivitiesPanelFilters";
+import { useActivitiesData } from "./ActivitiesSection/useActivitiesData";
+import { useActivitiesWorkTimeEntries } from "./ActivitiesSection/useActivitiesWorkTimeEntries";
+import LogHolidayDrawer from "./ActivitiesSection/LogHolidayDrawer";
+import NewMissionDrawer from "./ActivitiesSection/NewMissionDrawer";
+import useLoadMoreWorkDays from "./ActivitiesSection/useLoadMoreWorkDays";
 
 const useStyles = makeStyles((theme) => ({
-  pageHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingTop: theme.spacing(2),
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-    paddingBottom: theme.spacing(1)
-  },
-  pageHeaderLeft: {
-    display: "flex",
-    alignItems: "center",
-    gap: theme.spacing(2)
-  },
-  pageTitle: {
-    fontSize: "1.5rem",
-    fontWeight: 700,
-    margin: 0,
-    lineHeight: "2.5rem"
-  },
-  filterGrid: {
-    paddingTop: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-    flexShrink: 0
-  },
-  tableTitle: {
-    marginBottom: theme.spacing(3),
-    paddingLeft: theme.spacing(2)
-  },
   container: {
     height: "100%",
     flexGrow: 1,
@@ -116,573 +37,76 @@ const useStyles = makeStyles((theme) => ({
   },
   workTimeTableContainer: {
     padding: theme.spacing(2),
-    paddingTop: theme.spacing(1)
-  },
-  missionTitle: {
-    marginRight: theme.spacing(4)
-  },
-  missionTitleContainer: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center"
+    paddingTop: theme.spacing(1),
+    marginTop: theme.spacing(1)
   }
 }));
-
-
-const withLocalLoadingScreen = (setLoading) => async (sync) => {
-  setLoading(true);
-  try {
-    await sync();
-  } finally {
-    setLoading(false);
-  }
-};
-
-const onMinDateChange = debounce(
-  async ({ newMinDate, maxDate, adminStore, api, alerts, setLoading }) => {
-    if (newMinDate < maxDate) {
-      await loadActivitiesData({
-        adminStore,
-        alerts,
-        api,
-        withLoadingScreen: withLocalLoadingScreen(setLoading),
-        minDate: newMinDate,
-        maxDate,
-        reset: false
-      });
-    }
-  },
-  500
-);
-
-const renderPickersDay = (pickersDayProps) => {
-  const { key, ...safeProps } = pickersDayProps;
-  return <PickersDay {...safeProps} />;
-};
 
 function ActivitiesPanel() {
   usePageTitle("Activités - Mobilic");
   const adminStore = useAdminStore();
-  const [adminCompanies, company] = useAdminCompanies();
-  const modals = useModals();
-  const alerts = useSnackbarAlerts();
-  const api = useApi();
-  const history = useHistory();
-  const location = useLocation();
   const { trackEvent } = useMatomo();
-  const { getUsersSinceDate } = useGetUsersSinceDate();
-  const openMission = useMissionDrawer()[1];
-  const { refresh: refreshDeletedMissions } = useRefreshDeletedMissions();
-
-  const [users, setUsers] = React.useState(adminStore.activitiesFilters.users);
-  const [teams, setTeams] = React.useState(adminStore.activitiesFilters.teams);
-  const [companies, setCompanies] = React.useState([]);
-  const [minDate, setMinDate] = React.useState(
-    adminStore.activitiesFilters.minDate
-  );
-  const [maxDate, setMaxDate] = React.useState(
-    adminStore.activitiesFilters.maxDate
-  );
-  const [loading, setLoading] = React.useState(false);
-  const [period, setPeriod] = React.useState(
+  const { users, teams } = adminStore.activitiesFilters;
+  const [period, setPeriod] = useState(
     adminStore.activitiesFilters.period
   );
-  const [openNewMission, setOpenNewMission] = React.useState(false);
-  const [openLogHoliday, setOpenLogHoliday] = React.useState(false);
-  const [dateRangeError, setDateRangeError] = React.useState("");
-  const lastValidDateRangeRef = React.useRef({
-    minDate: adminStore.activitiesFilters.minDate,
-    maxDate: adminStore.activitiesFilters.maxDate
-  });
+  const [openNewMission, setOpenNewMission] = useState(false);
+  const [openLogHoliday, setOpenLogHoliday] = useState(false);
 
-  const minDateOfFetchedData = adminStore.minWorkDaysDate;
+  const { minDate, setMinDate, maxDate, setMaxDate, dateRangeError, loading, refreshCurrentWorkDays, company, companies, appliedDateRange } = useActivitiesData()
+  const { isLoadingMoreWorkDays, loadMoreWorkDays} = useLoadMoreWorkDays({minDate, maxDate})
 
-  const datePickerSlotProps = {
-    textField: {
-      size: "small",
-      required: true,
-      variant: "outlined",
-      error: !!dateRangeError,
-      helperText: dateRangeError,
-      FormHelperTextProps: {
-        sx: {
-          position: "absolute",
-          bottom: "-22px",
-          left: 0,
-          color: "error.main",
-          fontSize: "0.75rem",
-          margin: 0,
-          whiteSpace: "nowrap"
-        }
-      }
-    }
-  };
-
-  const refreshCurrentWorkDays = () =>
-    loadActivitiesData({
-      adminStore,
-      alerts,
-      api,
-      withLoadingScreen: withLocalLoadingScreen(setLoading),
-      minDate,
-      maxDate,
-      reset: true
-    });
-
-  const isFetchingMoreWorkDaysRef = React.useRef(false);
-  const [isLoadingMoreWorkDays, setIsLoadingMoreWorkDays] = React.useState(
-    false
-  );
-  const loadMoreWorkDays = () => {
-    if (
-      isFetchingMoreWorkDaysRef.current ||
-      !adminStore.areMissionsActivitiesLoaded ||
-      !adminStore.workDaysPageInfo?.hasNextPage
-    ) {
-      return;
-    }
-    isFetchingMoreWorkDaysRef.current = true;
-    setIsLoadingMoreWorkDays(true);
-    loadActivitiesData({
-      adminStore,
-      alerts,
-      api,
-      withLoadingScreen: async (sync) => await sync(),
-      minDate,
-      maxDate,
-      reset: false
-    }).finally(() => {
-      isFetchingMoreWorkDaysRef.current = false;
-      setIsLoadingMoreWorkDays(false);
-    });
-  };
-
-  const today = new Date();
-  // 1-year limit to avoid performance issues
-  const maxAllowedEndDate = minDate ? addDays(new Date(minDate), 365) : today;
-  const isDateRangeValid = React.useCallback((start, end) => {
-    if (!start || !end || start > end) {
-      return false;
-    }
-
-    const daysDiff = Math.ceil(
-      (new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)
-    );
-    return daysDiff <= 365;
-  }, []);
 
   useLoadAdminPanelData();
 
-  // Validate date range
-  React.useEffect(() => {
-    if (minDate && maxDate && !isDateRangeValid(minDate, maxDate)) {
-      setDateRangeError("La période ne peut pas dépasser 1 an");
-    } else {
-      setDateRangeError("");
-    }
-  }, [minDate, maxDate, isDateRangeValid]);
-
-  // Reload data when date range changes (backward pagination handled by onMinDateChange)
-  const prevDateRangeRef = React.useRef({ minDate, maxDate });
-  React.useEffect(() => {
-    if (!minDate || !maxDate || !company?.id) return;
-
-    if (!isDateRangeValid(minDate, maxDate)) {
-      return;
-    }
-
-    lastValidDateRangeRef.current = { minDate, maxDate };
-
-    const prevMinDate = prevDateRangeRef.current.minDate;
-    const prevMaxDate = prevDateRangeRef.current.maxDate;
-
-    // Reload if maxDate changed or minDate moved forward, and range is valid (≤ 365 days)
-    const shouldReload = maxDate !== prevMaxDate || minDate > prevMinDate;
-
-    if (shouldReload) {
-      const timeoutId = setTimeout(() => {
-        refreshCurrentWorkDays();
-      }, 500); // 500ms debounce
-
-      prevDateRangeRef.current = { minDate, maxDate };
-      return () => clearTimeout(timeoutId);
-    }
-    
-    prevDateRangeRef.current = { minDate, maxDate };
-  }, [
-    minDate,
-    maxDate,
-    company?.id,
-    isDateRangeValid,
-    alerts,
-    api,
-    adminStore,
-    company
-  ]);
-
-  React.useEffect(() => {
+  useEffect(() => {
     adminStore.dispatch({
       type: ADMIN_ACTIONS.updateActivitiesFilters,
       payload: { period }
     });
   }, [period]);
 
-  // Deleted missions are fetched lazily, only once the user click to show them from the status filter.
-  const [showDeletedMissions, setShowDeletedMissions] = React.useState(false);
-  const handleShowDeletedMissions = React.useCallback(() => {
-    setShowDeletedMissions(true);
-  }, []);
-
-  React.useEffect(() => {
-    setUsers(adminStore.activitiesFilters.users);
-  }, [adminStore.activitiesFilters.users]);
-
-  React.useEffect(() => {
-    setMinDate(adminStore.activitiesFilters.minDate);
-  }, [adminStore.activitiesFilters.minDate]);
-
-  React.useEffect(() => {
-    if (minDate && (!maxDate || maxDate < minDate)) setMaxDate(minDate);
-    if (!isDateRangeValid(minDate, maxDate)) {
-      return;
-    }
-
-    onMinDateChange({
-      newMinDate: minDate,
-      maxDate: minDateOfFetchedData,
-      adminStore,
-      api,
-      alerts,
-      setLoading
-    });
-    adminStore.dispatch({
-      type: ADMIN_ACTIONS.updateActivitiesFilters,
-      payload: { minDate }
-    });
-  }, [minDate, maxDate, isDateRangeValid]);
-
-  React.useEffect(() => {
-    if (maxDate && !minDate) setMinDate(minDateOfFetchedData);
-    if (maxDate && minDate && minDate > maxDate) setMinDate(maxDate);
-    if (!isDateRangeValid(minDate, maxDate)) {
-      return;
-    }
-    adminStore.dispatch({
-      type: ADMIN_ACTIONS.updateActivitiesFilters,
-      payload: { maxDate }
-    });
-  }, [maxDate, minDate, isDateRangeValid]);
-
-  const [exportMenuAnchorEl, setExportMenuAnchorEl] = React.useState(null);
-
-  React.useEffect(() => {
-    if (adminCompanies) {
-      const newCompaniesWithCurrentSelectionStatus = adminCompanies.map(
-        (company) => ({
-          ...company,
-          selected: company.id === adminStore.companyId
-        })
-      );
-      setCompanies(newCompaniesWithCurrentSelectionStatus);
-    }
-  }, [adminCompanies]);
-
-  React.useEffect(() => {
-    setTeams(adminStore.activitiesFilters.teams);
-  }, [adminStore.activitiesFilters.teams]);
-
-  const handleUserFilterChange = (newUsers) => {
-    const unselectedTeams = unselectAndGetAllTeams(teams);
-    adminStore.dispatch({
-      type: ADMIN_ACTIONS.updateActivitiesFilters,
-      payload: { teams: unselectedTeams, users: newUsers }
-    });
-  };
-
-  const handleTeamFilterChange = (newTeams) => {
-    const usersToSelect = getUsersToSelectFromTeamSelection(newTeams, users);
-    adminStore.dispatch({
-      type: ADMIN_ACTIONS.updateActivitiesFilters,
-      payload: { teams: newTeams, users: usersToSelect }
-    });
-  };
-
-  React.useEffect(() => {
+  useEffect(() => {
     trackEvent(ACTIVITY_FILTER_EMPLOYEE);
   }, [users]);
 
-  const selectedUsers = React.useMemo(() => {
-    const selected = users.filter((u) => u.selected);
-    if (selected.length === 0) {
-      return users;
-    }
-    return selected;
-  }, [users]);
-
-  const appliedDateRange = React.useMemo(() => {
-    if (isDateRangeValid(minDate, maxDate)) {
-      return { minDate, maxDate };
-    }
-
-    return lastValidDateRangeRef.current;
-  }, [minDate, maxDate, isDateRangeValid]);
-
-  // Refetch deleted missions scoped to the selected period,
-  React.useEffect(() => {
-    if (!showDeletedMissions || !adminStore.userId || !adminStore.companyId) {
-      return;
-    }
-    void refreshDeletedMissions(
-      appliedDateRange.minDate,
-      appliedDateRange.maxDate
-    );
-  }, [
-    showDeletedMissions,
+  const {
+    missionsById,
+    workTimeEntries,
+    handleShowDeletedMissions
+  } = useActivitiesWorkTimeEntries({
+    period,
     appliedDateRange,
-    adminStore.userId,
-    adminStore.companyId,
-    refreshDeletedMissions
-  ]);
+  });
 
-  const selectedWorkDays = React.useMemo(
-    () =>
-      adminStore.workDays.filter(
-        (wd) =>
-          selectedUsers.map((u) => u.id).includes(wd.user.id) &&
-          (!appliedDateRange.minDate || wd.day >= appliedDateRange.minDate) &&
-          (!appliedDateRange.maxDate || wd.day <= appliedDateRange.maxDate)
-      ),
-    [appliedDateRange, selectedUsers, adminStore.workDays]
-  );
-
-  // We create this object to have missions filled with stats easily accessible by id to avoid doing costly computations for each entry in the work time table.
-  // This allows us to quickly look up mission details without iterating through the entire list of missions for each work day entry.
-  const missionsById = React.useMemo(() => {
-    const missions = missionWithStats(adminStore) || [];
-
-    return missions.reduce((acc, mission) => {
-      acc[mission.id] = mission;
-      return acc;
-    }, {});
-  }, [adminStore]);
-
-
-  const periodAggregates = React.useMemo(
-    () => aggregateWorkDayPeriods(selectedWorkDays, period),
-    [selectedWorkDays, period]
-  );
-
-  // Deleted missions are excluded from the server-computed workDays, so we build
-  // synthetic day-view entries for them. They are hidden by default in the table
-  // through the mission status filter ("Mission supprimée").
-  const deletedMissionEntries = React.useMemo(() => {
-    if (period !== "day") {
-      return [];
-    }
-    const selectedUserIds = new Set(selectedUsers.map((u) => u.id));
-    const entries = [];
-    Object.values(missionsById).forEach((mission) => {
-      if (!mission.isDeleted || !mission.userStats) {
-        return;
-      }
-      Object.values(mission.userStats).forEach((userStat) => {
-        const user = userStat.user;
-        if (!user || !selectedUserIds.has(user.id)) {
-          return;
-        }
-        const startTime = userStat.startTime || mission.startTime;
-        if (!startTime) {
-          return;
-        }
-        const day = isoFormatLocalDate(new Date(startTime * 1000));
-        if (appliedDateRange.minDate && day < appliedDateRange.minDate) {
-          return;
-        }
-        if (appliedDateRange.maxDate && day > appliedDateRange.maxDate) {
-          return;
-        }
-        entries.push({
-          user,
-          day,
-          periodStart: getStartOfDay(startTime),
-          startTime,
-          lastActivityStartTime:
-            userStat.lastActivityStartTime || startTime,
-          missionNames: { [mission.id]: mission.name },
-          regulationComputations: null
-        });
-      });
-    });
-    return entries;
-  }, [period, missionsById, selectedUsers, appliedDateRange]);
-
-  const workTimeEntries = React.useMemo(
-    () => [...periodAggregates, ...deletedMissionEntries],
-    [periodAggregates, deletedMissionEntries]
-  );
-  const ref = React.useRef(null);
+  const ref = useRef(null);
 
   const classes = useStyles();
-  return [
+  return (
     <Paper
       className={`scrollable ${classes.container}`}
       variant="outlined"
-      key={0}
       ref={ref}
     >
-      <Box className={classes.pageHeader}>
-        <Box className={classes.pageHeaderLeft}>
-          <Typography component="h1" className={classes.pageTitle}>
-            Activités
-          </Typography>
-          <LoadingButton
-            priority="secondary"
-            size="small"
-            style={{ whiteSpace: "nowrap" }}
-            onClick={() => {
-              trackEvent(ADMIN_ADD_MISSION);
-              setOpenNewMission(true);
-            }}
-          >
-            Ajouter des activités
-          </LoadingButton>
-          <LogHolidayButton
-            priority="secondary"
-            size="small"
-            style={{ whiteSpace: "nowrap" }}
-            onClick={() => {
-              trackEvent(ADMIN_ADD_HOLIDAY);
-              setOpenLogHoliday(true);
-            }}
-          />
-        </Box>
-        <InactiveEmployeesDropdown
-          employments={adminStore.employments}
-          workDays={adminStore.workDays}
-          defaultOpen={location.state?.openInactiveDropdown}
-        />
-      </Box>
-      <Grid
-        spacing={2}
-        container
-        alignItems="center"
-        justifyContent="space-between"
-        wrap="nowrap"
-        className={classes.filterGrid}
-      >
-        {teams?.length > 0 && (
-          <Grid item>
-            <TeamFilter teams={teams} setTeams={handleTeamFilterChange} />
-          </Grid>
-        )}
-        <Grid item>
-          <EmployeeFilter users={users} setUsers={handleUserFilterChange} />
-        </Grid>
-        <Grid item>
-          <PeriodToggle period={period} setPeriod={setPeriod} />
-        </Grid>
-        <Grid item>
-          <MobileDatePicker
-            label="Début"
-            value={new Date(minDate)}
-            inputFormat="d MMMM yyyy"
-            fullWidth
-            disableCloseOnSelect={false}
-            disableMaskedInput={true}
-            onAccept={(val) => {
-              trackEvent(ACTIVITY_FILTER_MIN_DATE);
-              setMinDate(isoFormatLocalDate(val));
-            }}
-            cancelText={null}
-            maxDate={today}
-            slotProps={datePickerSlotProps}
-            // renderDay is needed to fix issue caused by key being passed with props
-            renderDay={renderPickersDay}
-          />
-        </Grid>
-        <Grid item>
-          <MobileDatePicker
-            label="Fin"
-            value={new Date(maxDate)}
-            inputFormat="d MMMM yyyy"
-            fullWidth
-            disableCloseOnSelect={false}
-            disableMaskedInput={true}
-            onAccept={(val) => {
-              trackEvent(ACTIVITY_FILTER_MAX_DATE);
-              setMaxDate(isoFormatLocalDate(val));
-            }}
-            cancelText={null}
-            maxDate={maxAllowedEndDate > today ? today : maxAllowedEndDate}
-            slotProps={datePickerSlotProps}
-            // renderDay is needed to fix issue caused by key being passed with props
-            renderDay={renderPickersDay}
-          />
-        </Grid>
-        <Grid item>
-          <Button
-            onClick={(e) => setExportMenuAnchorEl(e.currentTarget)}
-            size="medium"
-          >
-            Exporter
-          </Button>
-          <Menu
-            keepMounted
-            open={Boolean(exportMenuAnchorEl)}
-            onClose={() => setExportMenuAnchorEl(null)}
-            anchorEl={exportMenuAnchorEl}
-          >
-            <MenuItem
-              onClick={() => {
-                setExportMenuAnchorEl(null);
-                trackEvent(ADMIN_EXPORT_EXCEL);
-                modals.open("dataExport", {
-                  companies,
-                  initialUsers: adminStore.exportFilters.users,
-                  initialTeams: adminStore.exportFilters.teams,
-                  defaultCompany: company,
-                  defaultMinDate: minDate ? new Date(minDate) : null,
-                  defaultMaxDate: maxDate
-                    ? new Date(maxDate)
-                    : startOfDayAsDate(new Date()),
-                  getUsersSinceDate
-                });
-              }}
-            >
-              <ListItemIcon>
-                <SvgIcon viewBox="0 0 64 64" component={ExcelIcon} />
-              </ListItemIcon>
-              <Typography>Export Excel</Typography>
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                setExportMenuAnchorEl(null);
-                trackEvent(ADMIN_EXPORT_C1B);
-                modals.open("tachographExport", {
-                  companies,
-                  initialUsers: adminStore.exportFilters.users,
-                  initialTeams: adminStore.exportFilters.teams,
-                  defaultCompany: company,
-                  defaultMinDate: minDate ? new Date(minDate) : null,
-                  defaultMaxDate: maxDate
-                    ? new Date(maxDate)
-                    : startOfDayAsDate(new Date()),
-                  getUsersSinceDate
-                });
-              }}
-            >
-              <ListItemIcon>
-                <SvgIcon viewBox="0 0 640 512" component={TachoIcon} />
-              </ListItemIcon>
-              <Typography>Export C1B</Typography>
-            </MenuItem>
-          </Menu>
-        </Grid>
-      </Grid>
-      <Box
+      <ActivitiesPanelHeader
+        setOpenLogHoliday={setOpenLogHoliday}
+        setOpenNewMission={setOpenNewMission}
+      />
+      <ActivitiesPanelFilters
+        teams={teams}
+        users={users}
+        period={period}
+        setPeriod={setPeriod}
+        minDate={minDate}
+        setMinDate={setMinDate}
+        maxDate={maxDate}
+        setMaxDate={setMaxDate}
+        dateRangeError={dateRangeError}
+        companies={companies}
+      />
+      <div
         className={`flex-column ${classes.workTimeTableContainer}`}
         style={{ maxHeight: ref.current ? ref.current.clientHeight : 0 }}
-        sx={{ marginTop: 1 }}
       >
         <WorkTimeTable
           className={classes.workTimeTable}
@@ -696,133 +120,20 @@ function ActivitiesPanel() {
           onLoadMore={loadMoreWorkDays}
           isLoadingMore={isLoadingMoreWorkDays}
         />
-        <Drawer
-          anchor="right"
+        <LogHolidayDrawer
           open={openLogHoliday}
-          onClose={() => {
-            setOpenLogHoliday(false);
-          }}
-        >
-          <Box p={3} className={classes.missionTitleContainer}>
-            <Typography variant="h1" className={classes.missionTitle}>
-              Congé ou absence passé
-            </Typography>
-            <CloseButton
-              onClick={() => {
-                setOpenLogHoliday(false);
-              }}
-            />
-          </Box>
-          <LogHolidayForm
-            users={users}
-            handleSubmit={async (payload) =>
-              await alerts.withApiErrorHandling(
-                async () => {
-                  await api.graphQlMutate(LOG_HOLIDAY_MUTATION, {
-                    ...payload,
-                    companyId: company.id
-                  });
-                  alerts.success(
-                    "Votre congé ou absence a bien été enregistré(e)",
-                    "",
-                    6000
-                  );
-                  setOpenLogHoliday(false);
-                  refreshCurrentWorkDays();
-                },
-                "create-holiday",
-                (graphQLError) => {
-                  if (
-                    graphQLErrorMatchesCode(
-                      graphQLError,
-                      "OVERLAPPING_MISSIONS"
-                    )
-                  ) {
-                    return "Des activités sont déjà enregistrées sur cette période.";
-                  }
-                }
-              )
-            }
-          />
-        </Drawer>
-        <Drawer
-          anchor="right"
+          onClose={() => setOpenLogHoliday(false)}
+          users={users}
+          company={company}
+          refreshCurrentWorkDays={refreshCurrentWorkDays}
+        />
+        <NewMissionDrawer
           open={openNewMission}
-          onClose={() => {
-            setOpenNewMission(false);
-          }}
-        >
-          <Box key={0} p={3} className={classes.missionTitleContainer}>
-            <Typography variant="h1" className={classes.missionTitle}>
-              Mission passée
-            </Typography>
-            <CloseButton
-              onClick={() => {
-                setOpenNewMission(false);
-              }}
-            />
-          </Box>
-          <NewMissionForm
-            companies={adminCompanies}
-            companyId={adminStore.companyId}
-            overrideSettings={adminStore.settings}
-            companyAddresses={adminStore.knownAddresses}
-            currentPosition={null}
-            disableGeolocation={true}
-            disableKilometerReading={true}
-            withDay={true}
-            withEndLocation={true}
-            handleSubmit={async (missionInfos) =>
-              await alerts.withApiErrorHandling(async () => {
-                const missionResponse = await api.graphQlMutate(
-                  CREATE_MISSION_MUTATION,
-                  {
-                    name: missionInfos.mission,
-                    companyId: missionInfos.company.id,
-                    vehicleId: missionInfos.vehicle
-                      ? missionInfos.vehicle.id
-                      : null,
-                    vehicleRegistrationNumber: missionInfos.vehicle
-                      ? missionInfos.vehicle.registrationNumber
-                      : null,
-                    pastRegistrationJustification:
-                      missionInfos.pastRegistrationJustification
-                  }
-                );
-                const mission = missionResponse.data.activities.createMission;
-                const startLocationResponse = api
-                  .graphQlMutate(
-                    LOG_LOCATION_MUTATION,
-                    buildLogLocationPayloadFromAddress(
-                      missionInfos.address,
-                      mission.id,
-                      true
-                    )
-                  )
-                  .then((response) => response.data.activities.logLocation);
-
-                const endLocationResponse = api
-                  .graphQlMutate(
-                    LOG_LOCATION_MUTATION,
-                    buildLogLocationPayloadFromAddress(
-                      missionInfos.endAddress,
-                      mission.id,
-                      false
-                    )
-                  )
-                  .then((response) => response.data.activities.logLocation);
-
-                await Promise.all([startLocationResponse, endLocationResponse]);
-                history.push("/admin/activities");
-                openMission(mission.id);
-                setOpenNewMission(false);
-              }, "create-mission")
-            }
-          />
-        </Drawer>
-      </Box>
+          onClose={() => setOpenNewMission(false)}
+        />
+      </div>
     </Paper>
-  ];
+  );
 }
 
 export default ActivitiesPanel;
