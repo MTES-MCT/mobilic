@@ -62,6 +62,7 @@ export default function TechnicalIncidentsAdmin() {
   const [bannerMessage, setBannerMessage] = React.useState("");
   const [bannerLevel, setBannerLevel] = React.useState("warning");
   const [bannerSaving, setBannerSaving] = React.useState(false);
+  const [bannerLoaded, setBannerLoaded] = React.useState(false);
   const [bannerResult, setBannerResult] = React.useState(null);
 
   const userInfo = store.userInfo();
@@ -76,6 +77,7 @@ export default function TechnicalIncidentsAdmin() {
       })
       .then(data => {
         if (!data) return;
+        setBannerLoaded(true);
         setBannerEnabled(!!data.enabled);
         if (data.message) setBannerMessage(data.message);
         if (["info", "warning", "error"].includes(data.level)) {
@@ -90,20 +92,18 @@ export default function TechnicalIncidentsAdmin() {
     return () => controller.abort();
   }, []);
 
-  const handleSaveBanner = async enabled => {
-    if (enabled && !bannerMessage.trim()) {
+  const handleSaveBanner = async () => {
+    if (bannerEnabled && !bannerMessage.trim()) {
       setBannerResult("Le message est requis pour activer le bandeau.");
       return;
     }
-    const previousEnabled = bannerEnabled;
-    setBannerEnabled(enabled);
     setBannerSaving(true);
     setBannerResult(null);
     try {
       await api.graphQlMutate(
         UPDATE_GLOBAL_BANNER_MUTATION,
         {
-          enabled,
+          enabled: bannerEnabled,
           message: bannerMessage.trim(),
           level: bannerLevel
         },
@@ -111,7 +111,6 @@ export default function TechnicalIncidentsAdmin() {
       );
       setBannerResult("success");
     } catch (err) {
-      setBannerEnabled(previousEnabled);
       setBannerResult(err?.message || "error");
     } finally {
       setBannerSaving(false);
@@ -297,11 +296,14 @@ export default function TechnicalIncidentsAdmin() {
                 Bandeau d'information global
               </Typography>
               <ToggleSwitch
-                label="Afficher un bandeau sur tout le site"
+                label="Afficher le bandeau"
                 checked={bannerEnabled}
                 showCheckedHint={false}
-                disabled={bannerSaving || (!bannerEnabled && !bannerMessage.trim())}
-                onChange={checked => handleSaveBanner(checked)}
+                disabled={!bannerLoaded || bannerSaving}
+                onChange={checked => {
+                  setBannerEnabled(checked);
+                  setBannerResult(null);
+                }}
               />
               <Select
                 label="Niveau"
@@ -326,8 +328,12 @@ export default function TechnicalIncidentsAdmin() {
               />
               <Button
                 size="small"
-                onClick={() => handleSaveBanner(bannerEnabled)}
-                disabled={bannerSaving}
+                onClick={handleSaveBanner}
+                disabled={
+                  !bannerLoaded ||
+                  bannerSaving ||
+                  (bannerEnabled && !bannerMessage.trim())
+                }
               >
                 Enregistrer le bandeau
               </Button>

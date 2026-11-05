@@ -22,11 +22,19 @@ server {
     <% end %>
 
     <% if %w[1 true].include?(ENV['MAINTENANCE_MODE'].to_s.strip.downcase) %>
+    <%
+      require "erb"
+      # Rendered at boot (the nginx buildpack only renders this file) and inlined
+      # as an nginx string: escape backslashes/quotes and "$" to avoid variable expansion.
+      maintenance_html = ERB.new(File.read("public/maintenance.html.erb"), eoutvar: "@maintenance_out").result(binding)
+      maintenance_html = maintenance_html.gsub("\\", "\\\\\\\\").gsub("'", "\\\\'").gsub("$", "&#36;")
+    %>
     error_page 503 @maintenance;
     return 503;
 
     location @maintenance {
         internal;
+        default_type "text/html; charset=utf-8";
         add_header Retry-After 3600 always;
         add_header Cache-Control "no-store" always;
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
@@ -34,7 +42,7 @@ server {
         add_header X-Content-Type-Options "nosniff" always;
         add_header X-XSS-Protection "1; mode=block" always;
         add_header Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" always;
-        try_files /maintenance.html =503;
+        return 503 '<%= maintenance_html %>';
     }
     <% end %>
 
