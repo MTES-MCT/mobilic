@@ -26,7 +26,7 @@ server {
       require "erb"
       # Rendered at boot (the nginx buildpack only renders this file) and inlined
       # as an nginx string: escape backslashes/quotes and "$" to avoid variable expansion.
-      maintenance_html = ERB.new(File.read("public/maintenance.html.erb"), eoutvar: "@maintenance_out").result(binding)
+      maintenance_html = ERB.new(File.read("public/maintenance.html.erb", encoding: "UTF-8"), eoutvar: "@maintenance_out").result(binding)
       maintenance_html = maintenance_html.gsub("\\", "\\\\\\\\").gsub("'", "\\\\'").gsub("$", "&#36;")
     %>
     error_page 503 @maintenance;

@@ -2,7 +2,7 @@
 <%
   require "cgi"
   default_message = "Mobilic est momentanément indisponible. Nos équipes travaillent à rétablir le service au plus vite. Merci de votre patience."
-  message = ENV["MAINTENANCE_MESSAGE"].to_s.strip
+  message = ENV["MAINTENANCE_MESSAGE"].to_s.dup.force_encoding("UTF-8").strip
   message = default_message if message.empty?
 %>
 <html lang="fr">
