@@ -12,11 +12,7 @@ const useStyles = makeStyles((theme) => ({
     pageHeader: {
         display: "flex",
         justifyContent: "space-between",
-        alignItems: "center",
-        paddingTop: theme.spacing(2),
-        paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(2),
-        paddingBottom: theme.spacing(1)
+        alignItems: "center"
     },
     pageHeaderLeft: {
         display: "flex",

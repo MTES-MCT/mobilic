@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
         dense ? theme.spacing(0.5) : theme.spacing(2),
       paddingBottom: ({ dense }) =>
         dense ? theme.spacing(0.5) : theme.spacing(2),
-      fontSize: ({ small }) => (small ? "0.75rem" : null)
+      fontSize: ({ small }) => (small ? "0.875rem" : null)
     }
   },
   tableContainer: {
@@ -63,7 +63,7 @@ const useStyles = makeStyles(theme => ({
   },
   row: {
     boxSizing: "border-box",
-    fontSize: ({ small }) => (small ? "0.75rem" : "0.875rem"), // DSFR fr-text--sm
+    fontSize: "0.875rem", // DSFR fr-text--sm
     "& > *": {
       borderBottom: "unset"
     },
@@ -99,7 +99,7 @@ const useStyles = makeStyles(theme => ({
     borderTop: `1px solid ${fr.colors.decisions.border.plain.grey.default}`,
     borderRadius: "2px",
     fontWeight: 700,
-    fontSize: ({ small }) => (small ? "0.75rem" : "0.875rem"),
+    fontSize: "0.875rem",
     textTransform: "none !important"
   },
   cell: {

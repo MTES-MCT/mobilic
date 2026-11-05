@@ -33,9 +33,6 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: "space-between",
         flexWrap: "nowrap",
         gap: theme.spacing(2),
-        paddingTop: theme.spacing(1),
-        paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(2),
         flexShrink: 0
     },
 }));
@@ -70,6 +67,11 @@ const ActivitiesPanelFilters = (props) => {
         variant: "outlined",
         error: !!dateRangeError,
         helperText: dateRangeError,
+        sx: {
+            "& .MuiFormLabel-asterisk": {
+                display: "none"
+            }
+        },
         FormHelperTextProps: {
             sx: {
             position: "absolute",
