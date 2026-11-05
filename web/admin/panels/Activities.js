@@ -23,7 +23,14 @@ const useStyles = makeStyles((theme) => ({
   container: {
     height: "100%",
     flexGrow: 1,
-    border: "none"
+    border: "none",
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing(2),
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    paddingLeft: "2.5rem",
+    paddingRight: "2.5rem"
   },
   workTimeTable: {
     overflowY: "hidden",
@@ -35,11 +42,6 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: `2px solid ${fr.colors.decisions.border.plain.grey.default}`
     }
   },
-  workTimeTableContainer: {
-    padding: theme.spacing(2),
-    paddingTop: theme.spacing(1),
-    marginTop: theme.spacing(1)
-  }
 }));
 
 function ActivitiesPanel() {
@@ -105,7 +107,7 @@ function ActivitiesPanel() {
         companies={companies}
       />
       <div
-        className={`flex-column ${classes.workTimeTableContainer}`}
+        className="flex-column"
         style={{ maxHeight: ref.current ? ref.current.clientHeight : 0 }}
       >
         <WorkTimeTable

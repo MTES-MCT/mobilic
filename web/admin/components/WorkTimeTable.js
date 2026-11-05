@@ -637,6 +637,7 @@ export function WorkTimeTable({
         entries={visibleWorkTimeEntries}
         small
         virtualizedRowHeight={40}
+        virtualizedHeaderHeight={48}
         defaultSortBy="periodStart"
         defaultSortType="desc"
         className={className}
