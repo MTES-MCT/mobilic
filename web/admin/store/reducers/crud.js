@@ -1,3 +1,5 @@
+import { computeWeeklyThresholdsByUserId } from "../../utils/weeklyThresholds";
+
 export function createItemsReducer(state, { items, entity }) {
   return {
     ...state,
@@ -28,11 +30,7 @@ export function updateItemReducer(state, { id, entity, update }) {
     [entity]: items
   };
   if (entity === "employments") {
-    newState.weeklyThresholdsByUserId = Object.fromEntries(
-      items
-        .filter(e => e.weeklyThresholds && (e.userId || e.user?.id) && e.isActive)
-        .map(e => [e.userId || e.user?.id, e.weeklyThresholds])
-    );
+    newState.weeklyThresholdsByUserId = computeWeeklyThresholdsByUserId(items);
   }
   return newState;
 }
