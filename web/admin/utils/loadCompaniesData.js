@@ -97,7 +97,7 @@ export const loadCompanyWorkDaysAndMissions = async (
   minDate,
   maxDate,
   companyId,
-  { after = null, first = null } = {}
+  { after = null, first = null, userIds = null } = {}
 ) => {
   const companyIds = [companyId];
 
@@ -121,6 +121,7 @@ export const loadCompanyWorkDaysAndMissions = async (
   };
   if (first) variables.maxWorkDaysRange = first;
   if (after) variables.workDaysAfter = after;
+  if (userIds) variables.workDaysUserIds = userIds;
 
   const response = await api.graphQlQuery(
     ADMIN_WORK_DAYS_QUERY,
