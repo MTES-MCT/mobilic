@@ -95,7 +95,7 @@ export function useEmployeesData(company) {
   })[1];
 
   const [wantsToAddEmployment, setWantsToAddEmployment] = React.useState(false);
-  const [openPendingTable, setOpenPendingTable] = React.useState(true);
+  const [openPendingTable, setOpenPendingTable] = React.useState(false);
 
   const pendingEmploymentsTableRef = React.useRef();
   const validEmploymentsTableRef = React.useRef();
