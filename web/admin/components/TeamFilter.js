@@ -20,7 +20,16 @@ const useStyles = makeStyles((theme) => ({
     },
     "& .MuiOutlinedInput-notchedOutline": {
       border: "none"
+    },
+    "& .MuiInputBase-input": {
+      fontSize: "0.875rem" // fr-text--sm
+    },
+    "& .MuiAutocomplete-tag": {
+      fontSize: "0.875rem" // fr-text--sm
     }
+  },
+  dsfrOption: {
+    fontSize: "0.875rem" // fr-text--sm
   }
 }));
 
@@ -80,7 +89,7 @@ export function TeamFilter({
       disableCloseOnSelect={multiple}
       getOptionLabel={(option) => option.name}
       renderOption={(props, option) => (
-        <li {...props}>
+        <li {...props} className={`${props.className} ${classes.dsfrOption}`}>
           {multiple && (
             <Checkbox
               color="primary"

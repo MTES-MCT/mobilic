@@ -21,7 +21,16 @@ const useStyles = makeStyles((theme) => ({
     },
     "& .MuiOutlinedInput-notchedOutline": {
       border: "none"
+    },
+    "& .MuiInputBase-input": {
+      fontSize: "0.875rem" // fr-text--sm
+    },
+    "& .MuiAutocomplete-tag": {
+      fontSize: "0.875rem" // fr-text--sm
     }
+  },
+  dsfrOption: {
+    fontSize: "0.875rem" // fr-text--sm
   }
 }));
 
@@ -94,7 +103,7 @@ export function EmployeeFilter({
       disableCloseOnSelect={multiple}
       getOptionLabel={(option) => formatPersonName(option, true)}
       renderOption={(props, option) => (
-        <li {...props} key={option.id}>
+        <li {...props} key={option.id} className={`${props.className} ${classes.dsfrOption}`}>
           {multiple && (
             <Checkbox
               color="primary"
