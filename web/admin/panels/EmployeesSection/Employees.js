@@ -25,8 +25,8 @@ const useStyles = makeStyles((theme) => ({
     padding: 0,
     margin: '2rem 0 1rem 0'
   },
-  separatorNoMarginTop: {
-    marginTop: 0
+  separatorReducedMarginTop: {
+    marginTop: '1rem'
   },
 }));
 
@@ -108,7 +108,7 @@ export function Employees({ company, containerRef }) {
           />
         }
         <div
-          className={`${classes.separator} ${classes.separatorNoMarginTop}`}
+          className={`${classes.separator} ${classes.separatorReducedMarginTop}`}
         />
         <CurrentEmployeesList
           areThereEmploymentsWithoutBusinessType={areThereEmploymentsWithoutBusinessType}

@@ -105,7 +105,7 @@ export default function CompanyDetails({ company }) {
           >
             {company?.phoneNumber
               ? formatPhoneNumber(company.phoneNumber)
-              : "aucun numéro de téléphone renseigné"}
+              : "Non renseigné"}
           </span>
         </div>
         <div className={classes.fieldRow}>
@@ -117,7 +117,7 @@ export default function CompanyDetails({ company }) {
           <span
             className={`${!printActivity ? typographyClasses.disabled : ""} ${classes.fieldText}`}
           >
-            {printActivity || "non renseignée"}
+            {printActivity || "Non renseignée"}
           </span>
         </div>
       </div>
