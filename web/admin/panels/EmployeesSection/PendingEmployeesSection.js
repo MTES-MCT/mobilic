@@ -40,8 +40,7 @@ const PendingEmployeesSection = ({
   pendingEmploymentsTableRef,
   containerRef,
   open,
-  onToggle,
-  onRowAdd
+  onToggle
 }) => {
     const alerts = useSnackbarAlerts();
     const classes = useStyles();
@@ -75,8 +74,9 @@ const PendingEmployeesSection = ({
                 pendingEmployments
                   .filter(
                     (e) =>
-                        !e.latestInviteEmailTime ||
-                        !isLessThanTwelveHoursAgo(e.latestInviteEmailTime)
+                        !e.isExpired &&
+                        (!e.latestInviteEmailTime ||
+                        !isLessThanTwelveHoursAgo(e.latestInviteEmailTime))
                     )
                     .map((e) => e.id)
                 )
@@ -108,7 +108,6 @@ const PendingEmployeesSection = ({
             virtualizedRowHeight={56}
             virtualizedMaxHeight={"100%"}
             virtualizedAttachScrollTo={containerRef.current}
-            onRowAdd={onRowAdd}
           />
         }
       </div>

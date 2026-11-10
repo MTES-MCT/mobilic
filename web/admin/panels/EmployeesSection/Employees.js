@@ -1,8 +1,10 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import BatchInviteModal from "../../modals/BatchInviteModal";
+import InviteSingleEmployeeModal from "../../modals/InviteSingleEmployeeModal";
 import CurrentEmployeesCountSection from "./CurrentEmployeesCountSection";
 import PendingEmployeesSection from "./PendingEmployeesSection";
+import TemporaryEmployeesSection from "./TemporaryEmployeesSection";
 import CurrentEmployeesList from "./CurrentEmployeesList";
 import { useEmployeesData } from "./useEmployeesData";
 
@@ -45,6 +47,9 @@ export function Employees({ company, containerRef }) {
     employeeProgressData,
     handleBatchInvite,
     handleSingleInvite,
+    inviteEmployee,
+    singleInviteModalOpen,
+    setSingleInviteModalOpen,
     canDisplayPendingEmployments,
     disableRemindAllPendingInvitations,
     sendInvitationsReminders,
@@ -56,19 +61,31 @@ export function Employees({ company, containerRef }) {
     pendingEmploymentsTableRef,
     openPendingTable,
     handleTogglePendingTable,
-    handlePendingRowAdd,
     areThereEmploymentsWithoutBusinessType,
     shouldShowInactiveBanner,
     handleDismissBanner,
     inactiveEmployees,
     handleOpenBatchTerminateModal,
     validEmploymentColumns,
-    validEmployments,
-    validEmploymentsTableRef
+    validEmploymentsTableRef,
+    temporaryEmployments,
+    temporaryEndingSoon,
+    longTermEmployments,
+    temporaryEmploymentColumns,
+    handleUpdateEndDate,
+    allowTemporaryEmployees,
+    adminTeams
   } = useEmployeesData(company);
 
   return (
     <>
+      <InviteSingleEmployeeModal
+        open={singleInviteModalOpen}
+        handleClose={() => setSingleInviteModalOpen(false)}
+        handleSubmit={inviteEmployee}
+        allowTemporaryEmployees={allowTemporaryEmployees}
+        teams={adminTeams}
+      />
       <BatchInviteModal
         open={
           isLoaded &&
@@ -104,9 +121,22 @@ export function Employees({ company, containerRef }) {
             containerRef={containerRef}
             open={openPendingTable}
             onToggle={handleTogglePendingTable}
-            onRowAdd={handlePendingRowAdd}
           />
         }
+        {temporaryEmployments.length > 0 && (
+          <>
+            <div
+              className={`${classes.separator} ${classes.separatorReducedMarginTop}`}
+            />
+            <TemporaryEmployeesSection
+              temporaryEmploymentColumns={temporaryEmploymentColumns}
+              temporaryEmployments={temporaryEmployments}
+              temporaryEndingSoon={temporaryEndingSoon}
+              handleUpdateEndDate={handleUpdateEndDate}
+              containerRef={containerRef}
+            />
+          </>
+        )}
         <div
           className={`${classes.separator} ${classes.separatorReducedMarginTop}`}
         />
@@ -117,9 +147,10 @@ export function Employees({ company, containerRef }) {
           inactiveEmployees={inactiveEmployees}
           handleOpenBatchTerminateModal={handleOpenBatchTerminateModal}
           validEmploymentColumns={validEmploymentColumns}
-          validEmployments={validEmployments}
+          validEmployments={longTermEmployments}
           validEmploymentsTableRef={validEmploymentsTableRef}
           containerRef={containerRef}
+          label={temporaryEmployments.length > 0 ? "Salariés longue durée" : undefined}
         />
       </div>
     </>

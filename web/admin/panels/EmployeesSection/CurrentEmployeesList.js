@@ -31,7 +31,8 @@ const CurrentEmployeesList = ({
   validEmploymentColumns,
   validEmployments,
   validEmploymentsTableRef,
-  containerRef
+  containerRef,
+  label = "Salariés"
 }) => {
   const classes = useStyles();
   const tableClasses = useAugmentedTableStyles();
@@ -41,7 +42,7 @@ const CurrentEmployeesList = ({
     <div className={classes.root}>
       <div className={classes.topSection}>
         <CollapsibleSectionHeader
-          label="Salariés"
+          label={label}
           open={open}
           onToggle={() => setOpen((value) => !value)}
         />

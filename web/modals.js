@@ -32,7 +32,8 @@ import CompanyTeamCreationRevisionModal from "./admin/modals/CompanyTeamCreation
 import SelectEmployeeModal from "./admin/modals/SelectEmployeeModal";
 import TerminateEmploymentModal from "./admin/modals/TerminateEmploymentModal";
 import ReattachEmploymentModal from "./admin/modals/ReattachEmploymentModal";
-import BatchInviteModal from "./admin/modals/BatchInviteModal";
+import InviteEmployeesListModal from "./admin/modals/InviteEmployeesListModal";
+import UpdateTemporaryEndDateModal from "./admin/modals/UpdateTemporaryEndDateModal";
 import SuccessMessageModal from "./admin/modals/SuccessMessage";
 import WebinarsModal from "./admin/modals/WebinarsModal";
 import OverrideValidationJustificationModal from "./admin/modals/OverrideValidationJustificationModal";
@@ -63,7 +64,7 @@ export const MODAL_DICT = {
   firstActivity: FirstActivitySelectionModal,
   teamSelection: TeamSelectionModal,
   confirmation: ConfirmationModal,
-  batchInvite: BatchInviteModal,
+  batchInvite: InviteEmployeesListModal,
   newMission: NewMissionModal,
   logHoliday: LogHolidayModal,
   driverSelection: DriverSelectionModal,
@@ -87,6 +88,7 @@ export const MODAL_DICT = {
   changeGender: ChangeGenderModal,
   terminateEmployment: TerminateEmploymentModal,
   reattachEmployment: ReattachEmploymentModal,
+  updateTemporaryEndDate: UpdateTemporaryEndDateModal,
   userReadQRCode: UserReadQRCodeModal,
   unavailableOfflineMode: UnavailableOfflineModeModal,
   kilometerReading: KilometerReadingModal,
