@@ -1,3 +1,5 @@
+import { isoFormatLocalDate } from "common/utils/time";
+
 export const EMPLOYMENT_STATUS = {
   active: "active",
   ended: "ended",
@@ -20,6 +22,13 @@ export function getEmploymentsStatus(employment) {
   if (employment.endDate && employment.endDate < today)
     return EMPLOYMENT_STATUS.ended;
   return EMPLOYMENT_STATUS.active;
+}
+
+export function isExpiredInvitation(employment) {
+  if (!employment.isTemporary || !employment.endDate) return false;
+  if (employment.isAcknowledged) return false;
+  const today = isoFormatLocalDate(new Date());
+  return employment.endDate < today;
 }
 
 export function orderEmployments(employments) {

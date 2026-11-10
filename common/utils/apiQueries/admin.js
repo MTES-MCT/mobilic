@@ -567,6 +567,7 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
     $requireMissionName: Boolean
     $allowOtherTask: Boolean
     $otherTaskLabel: String
+    $allowTemporaryEmployees: Boolean
   ) {
     editCompanySettings(
       companyId: $companyId
@@ -578,6 +579,7 @@ export const EDIT_COMPANY_SETTINGS_MUTATION = gql`
       requireMissionName: $requireMissionName
       allowOtherTask: $allowOtherTask
       otherTaskLabel: $otherTaskLabel
+      allowTemporaryEmployees: $allowTemporaryEmployees
     ) {
       id
       ...CompanySettings

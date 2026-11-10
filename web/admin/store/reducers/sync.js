@@ -82,8 +82,8 @@ export function updateCompanyNameAndPhoneNumberReducer(state, action) {
     return {
       id,
       ...rest,
-      name: companyName,
-      phoneNumber: companyPhoneNumber,
+      ...(companyName !== undefined && { name: companyName }),
+      ...(companyPhoneNumber !== undefined && { phoneNumber: companyPhoneNumber }),
       ...(companyNbWorkers !== undefined && { nbWorkers: companyNbWorkers })
     };
   });

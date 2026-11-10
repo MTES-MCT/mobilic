@@ -21,9 +21,16 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const EmployeeStatusBadge = ({ isDetached, isInactive, lastActiveAt, endDate }) => {
+const EmployeeStatusBadge = ({ isDetached, isInactive, lastActiveAt, endDate, isExpired }) => {
   const classes = useStyles();
 
+  if (isExpired) {
+    return (
+      <Badge noIcon small className={`${classes.badgeDetache} fr-mr-1w`}>
+        EXPIRÉE
+      </Badge>
+    );
+  }
   if (isDetached) {
     return (
       <Tooltip title={`Détaché depuis le ${frenchFormatDateStringOrTimeStamp(endDate)}`}>

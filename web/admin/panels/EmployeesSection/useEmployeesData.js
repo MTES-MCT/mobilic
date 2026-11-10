@@ -12,7 +12,7 @@ import {
   now
 } from "common/utils/time";
 import { ADMIN_ACTIONS } from "../../store/reducers/root";
-import { EMPLOYMENT_ROLE } from "common/utils/employments";
+import { isExpiredInvitation } from "common/utils/employments";
 import { NO_TEAMS_LABEL, NO_TEAM_ID } from "../../utils/teams";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { readCookie, setCookie } from "common/utils/cookie";
@@ -46,6 +46,9 @@ const STATUS_BADGE = {
   DETACHED: 2
 };
 
+const TEMPORARY_END_NOTICE_THRESHOLD_DAYS = 7;
+const TEMPORARY_DETACHED_VISIBLE_DAYS = 365;
+
 const isLessThanTwelveHoursAgo = (ts) => {
   const nbSecondsElapsed = now() - ts;
   return nbSecondsElapsed <= DAY / 2;
@@ -61,6 +64,7 @@ export function useEmployeesData(company) {
   const [hasClosedInviteModal, setHasClosedInviteModal] = React.useState(false);
 
   const companyId = React.useMemo(() => company?.id || null, [company]);
+  const allowTemporaryEmployees = !!adminStore.settings?.allowTemporaryEmployees;
 
   useEnsureEmployments();
   useEnsureTeams();
@@ -94,7 +98,6 @@ export function useEmployeesData(company) {
     value: false
   })[1];
 
-  const [wantsToAddEmployment, setWantsToAddEmployment] = React.useState(false);
   const [openPendingTable, setOpenPendingTable] = React.useState(false);
 
   const pendingEmploymentsTableRef = React.useRef();
@@ -108,38 +111,38 @@ export function useEmployeesData(company) {
     setTimeout(validEmploymentsTableRef?.current?.updateScrollPosition, 0);
   };
 
-  const handlePendingRowAdd = async ({ idOrEmail, hasAdminRights, teamId }) => {
+  const inviteEmployee = async ({
+    idOrEmail, hasAdminRights, teamId, isTemporary, endDate
+  }) => {
     const payload = {
-      hasAdminRights: hasAdminRights === EMPLOYMENT_ROLE.admin,
+      hasAdminRights: isTemporary ? false : !!hasAdminRights,
       companyId,
-      ...(teamId !== NO_TEAM_ID && { teamId })
+      ...(teamId && teamId !== NO_TEAM_ID && { teamId }),
+      ...(isTemporary && { isTemporary: true, endDate })
     };
     if (/^\d+$/.test(idOrEmail)) {
       payload.userId = parseInt(idOrEmail);
     } else {
       payload.mail = idOrEmail.toLowerCase();
     }
-    try {
-      const apiResponse = await api.graphQlMutate(
-        CREATE_EMPLOYMENT_MUTATION,
-        payload
-      );
-      trackEvent(INVITE_NEW_EMPLOYEE_SUBMIT);
-      adminStore.dispatch({
-        type: ADMIN_ACTIONS.create,
-        payload: {
-          items: [
-            {
-              ...apiResponse.data.employments.createEmployment,
-              companyId
-            }
-          ],
-          entity: "employments"
-        }
-      });
-    } catch (err) {
-      alerts.error(formatApiError(err), idOrEmail, 6000);
-    }
+    const apiResponse = await api.graphQlMutate(
+      CREATE_EMPLOYMENT_MUTATION,
+      payload
+    );
+    trackEvent(INVITE_NEW_EMPLOYEE_SUBMIT);
+    adminStore.dispatch({
+      type: ADMIN_ACTIONS.create,
+      payload: {
+        items: [
+          {
+            ...apiResponse.data.employments.createEmployment,
+            companyId
+          }
+        ],
+        entity: "employments"
+      }
+    });
+    setOpenPendingTable(true);
   };
 
   async function sendInvitationsReminders(employmentIds) {
@@ -185,13 +188,16 @@ export function useEmployeesData(company) {
   };
 
   const pendingEmploymentColumns = getPendingEmploymentColumns({
-    teams: adminStore?.teams
+    teams: adminStore?.teams,
+    allowTemporaryEmployees
   });
 
   const companyEmployments = React.useMemo(
     () => adminStore.employments.filter((e) => e.companyId === companyId),
     [adminStore.employments, companyId]
   );
+
+  const today = isoFormatLocalDate(new Date());
 
   const pendingEmployments = React.useMemo(
     () =>
@@ -213,7 +219,9 @@ export function useEmployeesData(company) {
           employmentId: e.id,
           userId: e.user?.id,
           companyId: e.company?.id,
-          remindButton: (
+          endDate: e.endDate,
+          isExpired: isExpiredInvitation(e),
+          remindButton: !isExpiredInvitation(e) && (
             <Button
               disabled={
                 e.latestInviteEmailTime &&
@@ -257,14 +265,20 @@ export function useEmployeesData(company) {
     [companyEmployments]
   );
 
+  const remindableEmployments = React.useMemo(
+    () => pendingEmployments.filter((e) => !e.isExpired),
+    [pendingEmployments]
+  );
+
   const disableRemindAllPendingInvitations = React.useMemo(
     () =>
-      pendingEmployments.filter(
+      remindableEmployments.length === 0 ||
+      remindableEmployments.every(
         (e) =>
           e.latestInviteEmailTime &&
           isLessThanTwelveHoursAgo(e.latestInviteEmailTime)
-      ).length === pendingEmployments.length,
-    [pendingEmployments]
+      ),
+    [remindableEmployments]
   );
 
   const hasMadeInvitations = React.useMemo(
@@ -278,8 +292,6 @@ export function useEmployeesData(company) {
     () => companyEmployments && companyEmployments.length > 0 && !!companyId,
     [companyEmployments, companyId]
   );
-
-  const today = isoFormatLocalDate(new Date());
 
   const validEmployments = React.useMemo(
     () =>
@@ -318,6 +330,7 @@ export function useEmployeesData(company) {
             business: e.business,
             lastActiveAt: e.lastActiveAt,
             status: e.status,
+            isTemporary: !!e.isTemporary,
             isDetached,
             isInactive,
             statusBadge
@@ -417,40 +430,71 @@ export function useEmployeesData(company) {
   );
   useAutoUpdateNbWorkers(company, activeValidEmployments, adminStore);
 
-  const isAddingEmployment =
-    pendingEmploymentsTableRef.current &&
-    pendingEmploymentsTableRef.current.isAddingRow &&
-    pendingEmploymentsTableRef.current.isAddingRow();
+  const canDisplayPendingEmployments = pendingEmployments.length > 0;
 
-  const canDisplayPendingEmployments =
-    isAddingEmployment || pendingEmployments.length > 0 || wantsToAddEmployment;
+  const temporaryEmployments = React.useMemo(() => {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - TEMPORARY_DETACHED_VISIBLE_DAYS);
+    const cutoffStr = isoFormatLocalDate(cutoffDate);
+    return validEmployments.filter(
+      (e) => e.isTemporary && !(e.isDetached && e.endDate && e.endDate < cutoffStr)
+    );
+  }, [validEmployments]);
 
-  // Effect to trigger newRow when wanting to add employment and ref becomes available
-  React.useEffect(() => {
-    if (wantsToAddEmployment && pendingEmploymentsTableRef.current) {
-      pendingEmploymentsTableRef.current.newRow({
-        hasAdminRights: EMPLOYMENT_ROLE.employee,
-        teamId: NO_TEAM_ID
-      });
-    }
-  }, [wantsToAddEmployment, canDisplayPendingEmployments]);
+  const temporaryEndingSoon = React.useMemo(() => {
+    const thresholdDate = new Date();
+    thresholdDate.setDate(
+      thresholdDate.getDate() + TEMPORARY_END_NOTICE_THRESHOLD_DAYS
+    );
+    const thresholdStr = isoFormatLocalDate(thresholdDate);
+    return temporaryEmployments
+      .filter((e) => !e.isDetached && e.endDate && e.endDate <= thresholdStr)
+      .sort((a, b) => (a.endDate < b.endDate ? -1 : 1));
+  }, [temporaryEmployments]);
 
-  // Reset wantsToAddEmployment when isAddingEmployment becomes true
-  React.useEffect(() => {
-    if (isAddingEmployment && wantsToAddEmployment) {
-      setWantsToAddEmployment(false);
-    }
-  }, [isAddingEmployment, wantsToAddEmployment]);
+  const longTermEmployments = React.useMemo(
+    () => validEmployments.filter((e) => !e.isTemporary),
+    [validEmployments]
+  );
+
+  const handleUpdateEndDate = (entry) => {
+    modals.open("updateTemporaryEndDate", {
+      employee: entry,
+      onSuccess: (updatedEmployment) => {
+        adminStore.dispatch({
+          type: ADMIN_ACTIONS.update,
+          payload: {
+            id: entry.employmentId,
+            entity: "employments",
+            update: { ...updatedEmployment, companyId }
+          }
+        });
+      }
+    });
+  };
 
   const validEmploymentColumns = getValidEmploymentColumns({
     adminStore,
     companyId,
     modals,
     handleReattachSuccess,
-    handleBatchTerminateSuccess
+    handleBatchTerminateSuccess,
+    allowTemporaryEmployees
   });
 
-  const batchInvite = async ({ emails, userIds }) => {
+  const temporaryEmploymentColumns = getValidEmploymentColumns({
+    adminStore,
+    companyId,
+    modals,
+    handleReattachSuccess,
+    handleBatchTerminateSuccess,
+    allowTemporaryEmployees,
+    temporary: true,
+    handleUpdateEndDate
+  });
+
+  const batchInvite = async ({ emails, userIds, invitations }) => {
+    let success = false;
     await alerts.withApiErrorHandling(async () => {
       const variables = { companyId };
       if (emails && emails.length > 0) {
@@ -458,6 +502,9 @@ export function useEmployeesData(company) {
       }
       if (userIds && userIds.length > 0) {
         variables.userIds = userIds;
+      }
+      if (invitations && invitations.length > 0) {
+        variables.entries = invitations;
       }
       const employmentsResponse = await api.graphQlMutate(
         BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION,
@@ -472,8 +519,9 @@ export function useEmployeesData(company) {
           entity: "employments"
         }
       });
-      const totalRequested =
-        (emails ? emails.length : 0) + (userIds ? userIds.length : 0);
+      const totalRequested = invitations
+        ? invitations.length
+        : (emails ? emails.length : 0) + (userIds ? userIds.length : 0);
       if (employments.length < totalRequested) {
         alerts.warning(
           `${employments.length} invitation(s) envoyée(s) sur ${totalRequested}. Vérifiez les adresses email et identifiants saisis.`,
@@ -488,7 +536,10 @@ export function useEmployeesData(company) {
         );
       }
       setTimeout(validEmploymentsTableRef.current.updateScrollPosition, 0);
+      setOpenPendingTable(true);
+      success = true;
     });
+    return success;
   };
 
   const handleBatchInvite = (employeeCount = 0) => {
@@ -498,14 +549,16 @@ export function useEmployeesData(company) {
       trackEvent(INVITE_EMAIL_LIST_CLICK);
     }
     modals.open("batchInvite", {
-      handleSubmit: batchInvite
+      handleSubmit: batchInvite,
+      allowTemporaryEmployees
     });
   };
 
+  const [singleInviteModalOpen, setSingleInviteModalOpen] = React.useState(false);
+
   const handleSingleInvite = () => {
     trackEvent(INVITE_NEW_EMPLOYEE_CLICK);
-    setWantsToAddEmployment(true);
-    setOpenPendingTable(true);
+    setSingleInviteModalOpen(true);
   };
 
   const dissmissedBatchInviteCompanyIds = React.useMemo(() => {
@@ -538,6 +591,9 @@ export function useEmployeesData(company) {
     employeeProgressData,
     handleBatchInvite,
     handleSingleInvite,
+    inviteEmployee,
+    singleInviteModalOpen,
+    setSingleInviteModalOpen,
     canDisplayPendingEmployments,
     disableRemindAllPendingInvitations,
     sendInvitationsReminders,
@@ -549,14 +605,19 @@ export function useEmployeesData(company) {
     pendingEmploymentsTableRef,
     openPendingTable,
     handleTogglePendingTable,
-    handlePendingRowAdd,
     areThereEmploymentsWithoutBusinessType,
     shouldShowInactiveBanner,
     handleDismissBanner,
     inactiveEmployees,
     handleOpenBatchTerminateModal,
     validEmploymentColumns,
-    validEmployments,
-    validEmploymentsTableRef
+    validEmploymentsTableRef,
+    temporaryEmployments,
+    temporaryEndingSoon,
+    longTermEmployments,
+    temporaryEmploymentColumns,
+    handleUpdateEndDate,
+    allowTemporaryEmployees,
+    adminTeams: adminStore.teams
   };
 }

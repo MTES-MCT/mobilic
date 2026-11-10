@@ -48,6 +48,7 @@ export const USER_READ_QUERY = gql`
         isAcknowledged
         hasAdminRights
         endDate
+        isTemporary
         company {
           id
           name
@@ -247,6 +248,7 @@ export const USER_QUERY = gql`
         id
         startDate
         endDate
+        isTemporary
         isAcknowledged
         hasAdminRights
         hideEmail
