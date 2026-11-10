@@ -49,17 +49,19 @@ const ControlsTable = ({ entries, onRowClick, period = "day" }) => {
               key={`table_row__${entry.id}`}
               onClick={() => onRowClick(entry.id, entry.type)}
             >
-              {columns.map((column, idxColumn) => {
-                const badge =
-                  column.name === "bulletinStatus"
-                    ? BULLETIN_BADGES[entry.bulletinStatus]
-                    : null;
+              {columns.map(column => {
+                const isBulletinColumn = column.name === "bulletinStatus";
+                const badge = isBulletinColumn
+                  ? BULLETIN_BADGES[entry.bulletinStatus]
+                  : null;
                 return (
-                  <td key={`table_row_${idxColumn}`}>
-                    {badge ? (
-                      <Badge small noIcon severity={badge.severity}>
-                        {badge.label}
-                      </Badge>
+                  <td key={`table_cell__${entry.id}__${column.name}`}>
+                    {isBulletinColumn ? (
+                      badge && (
+                        <Badge small noIcon severity={badge.severity}>
+                          {badge.label}
+                        </Badge>
+                      )
                     ) : (
                       entry[column.name]
                     )}
