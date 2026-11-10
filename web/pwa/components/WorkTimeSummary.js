@@ -190,13 +190,6 @@ export function renderMissionKpis(
     diffText: diffSecondsToText(diffInS)
   });
 
-  formattedKpis.push({
-    label: "Pause",
-    value: formatTimer(timers ? timers.break : 0),
-    subText,
-    hideSubText: true
-  });
-
   return formattedKpis;
 }
 
@@ -345,14 +338,6 @@ export function renderPeriodKpis(
   };
 
   formattedKpis.push(workTimeKpis);
-
-  formattedKpis.push({
-    name: "pause",
-    label: "Pause",
-    value: formatTimer(kpis.timers ? kpis.timers.break : 0),
-    subText,
-    hideSubText: true
-  });
 
   if (Object.keys(kpis.expendituresCount).length > 0) {
     Object.keys(kpis.expendituresCount).forEach((type) => {
