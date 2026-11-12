@@ -16,6 +16,7 @@ export const LOG_HOLIDAY_MUTATION = gql`
     $endTime: TimeStamp!
     $title: String!
     $comment: String
+    $activityType: ActivityTypeEnum
   ) {
     activities {
       logHoliday(
@@ -25,6 +26,7 @@ export const LOG_HOLIDAY_MUTATION = gql`
         endTime: $endTime
         title: $title
         comment: $comment
+        activityType: $activityType
       ) {
         ...FullMissionData
       }

@@ -5,7 +5,6 @@ import {
   getStartOfWeek
 } from "common/utils/time";
 import uniq from "lodash/uniq";
-import { HEAVY_TRUCK_DRIVING_MOTIF_LABEL } from "../../common/LogHolidayForm";
 
 function getDaysInMonth(timestamp) {
   const date = new Date(timestamp * 1000);
@@ -26,15 +25,7 @@ function computeMaxConsecutiveRest(workDayGroup, periodStart, periodDurationDays
   return maxRest;
 }
 
-const hasTachographMission = (workDay) =>
-  Object.values(workDay.missionNames ?? {}).some((name) =>
-    name
-      ?.toLowerCase()
-      .includes(HEAVY_TRUCK_DRIVING_MOTIF_LABEL.toLowerCase())
-  );
-
 const hasWorkActivity = (workDay) =>
-  hasTachographMission(workDay) ||
   Object.entries(workDay.activityDurations).some(
     ([type, duration]) => type !== ACTIVITIES.off.name && duration > 0
   );
