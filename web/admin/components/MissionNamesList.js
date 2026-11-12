@@ -1,5 +1,6 @@
 import map from "lodash/map";
 import pickBy from "lodash/pickBy";
+import { Link } from "../../common/LinkButton";
 import React from "react";
 import { JoinedText } from "./JoinedText";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
@@ -13,11 +14,9 @@ export function MissionNamesList({ missionNames, openMission }) {
     <JoinedText joinWith=", ">
       {map(filteredMissionNames, (name, id) => (
         openMission ? (
-          <button
+          <Link
             key={id}
-            type="button"
-            className="fr-link fr-link--sm"
-            style={{ textDecoration: "underline" }}
+            style={{ color: "var(--text-action-high-blue-france)" }}
             onClick={e => {
               e.stopPropagation();
               trackEvent(OPEN_MISSION_DRAWER_IN_ACTIVITY_PANEL);
@@ -25,7 +24,7 @@ export function MissionNamesList({ missionNames, openMission }) {
             }}
           >
             {name}
-          </button>
+          </Link>
         ) : (name)
       ))}
     </JoinedText>
