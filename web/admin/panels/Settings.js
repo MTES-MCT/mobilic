@@ -9,6 +9,7 @@ import { useAdminStore } from "../store/store";
 import { ADMIN_ACTIONS } from "../store/reducers/root";
 import { OtherTask } from "../components/OtherTask";
 import { EDIT_COMPANY_SETTINGS_MUTATION } from "common/utils/apiQueries/admin";
+import { isoFormatLocalDate } from "common/utils/time";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -33,6 +34,22 @@ export default function SettingAdmin({ company }) {
       payload: { settings: payload },
     });
   }
+
+  const todayStr = isoFormatLocalDate(new Date());
+
+  const hasActiveTemporaryEmployments = React.useMemo(() => {
+    return adminStore.employments.some(
+      (e) =>
+        e.companyId === company.id &&
+        e.isTemporary &&
+        e.endDate &&
+        e.endDate > todayStr,
+    );
+  }, [adminStore.employments, company.id, todayStr]);
+
+  const temporaryToggleDisabled =
+    adminStore.settings.allowTemporaryEmployees &&
+    hasActiveTemporaryEmployments;
 
   const classes = usePanelStyles();
   const localClasses = useStyles();
@@ -109,6 +126,22 @@ export default function SettingAdmin({ company }) {
             value={adminStore.settings.requireMissionName}
             description="A la création d'une mission, le travailleur mobile doit obligatoirement saisir un nom pour celle-ci. Ce nom sera ensuite repris dans l'interface du gestionnaire pour un suivi plus fin du temps de travail et une meilleure visibilité dans les outils de reporting."
             submitSettingChange={submitSettingChange}
+          />
+        </ListItem>
+        <hr />
+        <ListItem>
+          <SimpleToggleSetting
+            name="allowTemporaryEmployees"
+            label="Salariés temporaires"
+            value={adminStore.settings.allowTemporaryEmployees}
+            description="Permet d'inviter des salariés avec une date de fin de rattachement."
+            submitSettingChange={submitSettingChange}
+            disabled={temporaryToggleDisabled}
+            hint={
+              temporaryToggleDisabled
+                ? "Vous ne pouvez pas désactiver cette option tant que des salariés temporaires sont rattachés ou invités. Détachez-les ou annulez leurs invitations au préalable."
+                : undefined
+            }
           />
         </ListItem>
       </List>

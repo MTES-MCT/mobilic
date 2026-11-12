@@ -11,6 +11,7 @@ export const COMPANY_SETTINGS_FRAGMENT = gql`
       requireMissionName
       allowOtherTask
       otherTaskLabel
+      allowTemporaryEmployees
     }
     weeklyThresholds {
       maxWorkInHours
@@ -254,6 +255,7 @@ export const FULL_EMPLOYMENT_FRAGMENT = gql`
     isActive
     isTerminated
     isInactive
+    isTemporary
     status
     detachmentRequest {
       requestedAt

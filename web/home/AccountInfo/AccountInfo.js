@@ -33,7 +33,8 @@ import { Main } from "../../common/semantics/Main";
 import { GENDERS } from "common/utils/gender";
 import {
   EMPLOYMENT_STATUS,
-  getEmploymentsStatus
+  getEmploymentsStatus,
+  isExpiredInvitation
 } from "common/utils/employments";
 import { Stack } from "@mui/material";
 import {
@@ -76,7 +77,8 @@ export default function Home() {
 
   const store = useStoreSyncedWithLocalStorage();
   const api = useApi();
-  const employments = employmentSelector(store.state);
+  const allEmployments = employmentSelector(store.state);
+  const employments = allEmployments.filter((e) => !isExpiredInvitation(e));
   const modals = useModals();
 
   const userInfo = store.userInfo();

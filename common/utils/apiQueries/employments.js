@@ -74,13 +74,34 @@ export const BATCH_TERMINATE_EMPLOYMENTS_MUTATION = gql`
 
 export const REATTACH_EMPLOYMENT_MUTATION = gql`
   ${FULL_EMPLOYMENT_FRAGMENT}
-  mutation reattachEmployment($userId: Int!, $companyId: Int!) {
+  mutation reattachEmployment(
+    $userId: Int!
+    $companyId: Int!
+    $isTemporary: Boolean
+    $endDate: Date
+  ) {
     employments {
-      reattachEmployment(userId: $userId, companyId: $companyId) {
+      reattachEmployment(
+        userId: $userId
+        companyId: $companyId
+        isTemporary: $isTemporary
+        endDate: $endDate
+      ) {
         employment {
           ...FullEmploymentData
         }
         emailSent
+      }
+    }
+  }
+`;
+
+export const UPDATE_TEMPORARY_END_DATE_MUTATION = gql`
+  ${FULL_EMPLOYMENT_FRAGMENT}
+  mutation updateTemporaryEndDate($employmentId: Int!, $endDate: Date!) {
+    employments {
+      updateTemporaryEndDate(employmentId: $employmentId, endDate: $endDate) {
+        ...FullEmploymentData
       }
     }
   }
@@ -174,17 +195,20 @@ export const BATCH_CREATE_WORKER_EMPLOYMENTS_MUTATION = gql`
     $companyId: Int!
     $mails: [Email]
     $userIds: [Int]
+    $entries: [EmploymentInviteInput]
   ) {
     employments {
       batchCreateWorkerEmployments(
         companyId: $companyId
         mails: $mails
         userIds: $userIds
+        entries: $entries
       ) {
         id
         startDate
         endDate
         isAcknowledged
+        isTemporary
         email
         hideEmail
         hasAdminRights
@@ -208,6 +232,8 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
     $hasAdminRights: Boolean
     $mail: Email
     $teamId: Int
+    $isTemporary: Boolean
+    $endDate: Date
   ) {
     employments {
       createEmployment(
@@ -216,6 +242,8 @@ export const CREATE_EMPLOYMENT_MUTATION = gql`
         hasAdminRights: $hasAdminRights
         mail: $mail
         teamId: $teamId
+        isTemporary: $isTemporary
+        endDate: $endDate
       ) {
         ...FullEmploymentData
       }
