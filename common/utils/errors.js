@@ -89,6 +89,17 @@ export function graphQLErrorMatchesCode(error, code) {
   return error.extensions && error.extensions.code === code;
 }
 
+function overlappingEmploymentMessage(overlapType) {
+  const messages = {
+    pending_invite: "Une invitation est déjà en attente pour cette adresse.",
+    company: "L'utilisateur est déjà rattaché à l'entreprise."
+  };
+  return (
+    messages[overlapType] ||
+    "L'utilisateur a un rattachement existant qui n'est pas compatible."
+  );
+}
+
 export function defaultFormatGraphQLApiError(graphQLError, store) {
   if (graphQLError.extensions) {
     switch (graphQLError.extensions.code) {
@@ -178,10 +189,9 @@ export function defaultFormatGraphQLApiError(graphQLError, store) {
       case "EXPENDITURE_DATE_NOT_INCLUDED_IN_MISSION_RANGE":
         return "Impossible d'ajouter un frais à cette date là.";
       case "OVERLAPPING_EMPLOYMENTS":
-        if (graphQLError.extensions.overlapType === "company") {
-          return "L'utilisateur est déjà rattaché à l'entreprise.";
-        }
-        return "L'utilisateur a un rattachement existant qui n'est pas compatible.";
+        return overlappingEmploymentMessage(
+          graphQLError.extensions.overlapType
+        );
       case "VEHICLE_ALREADY_REGISTERED":
         return "Il existe déjà un véhicule enregistré avec cette immatriculation";
       case "COMPANY_ADDRESS_ALREADY_REGISTERED":
