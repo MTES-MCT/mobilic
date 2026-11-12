@@ -182,5 +182,5 @@ export const useActivitiesData = () => {
         company,
         companies,
         appliedDateRange
-    })
+    });
 }

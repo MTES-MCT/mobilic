@@ -227,7 +227,7 @@ const ActivitiesPanelFilters = (props) => {
                 </Menu>
             </div>
         </div>
-    )
+    );
 
 }
 
