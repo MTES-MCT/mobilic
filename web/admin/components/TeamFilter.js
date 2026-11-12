@@ -1,37 +1,10 @@
 import React, { useMemo } from "react";
-import { makeStyles } from "@mui/styles";
 import { Autocomplete } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
-import { fr } from "@codegouvfr/react-dsfr";
-
-const useStyles = makeStyles((theme) => ({
-  formControl: {
-    minWidth: 200,
-    maxWidth: 500
-  },
-  dsfrInput: {
-    "& .MuiOutlinedInput-root": {
-      backgroundColor: fr.colors.decisions.background.contrastRaised.grey.default,
-      borderBottom: `2px solid ${fr.colors.decisions.border.plain.grey.default}`,
-      borderRadius: "4px 4px 0 0"
-    },
-    "& .MuiOutlinedInput-notchedOutline": {
-      border: "none"
-    },
-    "& .MuiInputBase-input": {
-      fontSize: "0.875rem" // fr-text--sm
-    },
-    "& .MuiAutocomplete-tag": {
-      fontSize: "0.875rem" // fr-text--sm
-    }
-  },
-  dsfrOption: {
-    fontSize: "0.875rem" // fr-text--sm
-  }
-}));
+import { useDsfrFilterStyles } from "./styles/DsfrFilterStyle";
 
 TeamFilter.propTypes = {
   teams: PropTypes.array,
@@ -51,7 +24,7 @@ export function TeamFilter({
   size = "small",
   ...otherProps
 }) {
-  const classes = useStyles();
+  const classes = useDsfrFilterStyles();
 
   const handleChange = (event, value) => {
     const selectedIds = multiple
