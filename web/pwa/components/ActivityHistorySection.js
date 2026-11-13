@@ -8,6 +8,7 @@ import { getChangeIconAndText } from "../../common/logEvent";
 import { formatPersonName } from "common/utils/coworkers";
 import { formatDay, formatTimeOfDay } from "common/utils/time";
 import { useModals } from "common/utils/modals";
+import { motifLabel } from "common/utils/motifs";
 
 export const BADGE_CONFIG = {
   SUPPRESSION: {
@@ -206,7 +207,7 @@ export function ActivityHistorySection({
                 </div>
                 <div className={classes.eventDescription}>
                   {change.text}
-                  {motif && ` (motif : "${motif}")`}
+                  {motif && ` (motif : ${motifLabel(motif)})`}
                 </div>
               </div>
             ));
