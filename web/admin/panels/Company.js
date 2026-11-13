@@ -76,7 +76,7 @@ export const usePanelStyles = makeStyles((theme) => ({
     cursor: "pointer",
     "&.active": {
       color: fr.colors.decisions.text.actionHigh.blueFrance.default,
-      fontWeight: "normal",
+      fontWeight: 500,
       borderBottom: `2px solid ${fr.colors.decisions.border.active.blueFrance.default}`,
     },
   },

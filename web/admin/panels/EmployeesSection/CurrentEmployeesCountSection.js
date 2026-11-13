@@ -11,6 +11,7 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexDirection: "column",
     gap: theme.spacing(2),
+    marginBottom: theme.spacing(4)
   },
   topSection: {
     display: "flex",
@@ -21,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
   sectionTitle: {
     margin: 0,
-    fontWeight: "bold"
+    ...theme.typography.h4,
   },
   topLeft: {
     display: "flex",
@@ -44,7 +45,7 @@ const CurrentEmployeesCountSection = ({ teams, setTeams, employeesData, handleBa
     <div className={classes.root}>
       <div className={classes.topSection}>
         <div className={classes.topLeft}>
-          <h2 className={`${classes.sectionTitle} fr-text--lg`}>Salariés</h2>
+          <h2 className={classes.sectionTitle}>Salariés</h2>
           <Badge>
             {employeesData.registeredEmployees}
           </Badge>
