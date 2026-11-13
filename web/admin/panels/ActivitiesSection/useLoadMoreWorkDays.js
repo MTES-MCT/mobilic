@@ -30,10 +30,12 @@ const useLoadMoreWorkDays = ({ minDate, maxDate }) => {
       minDate,
       maxDate,
       reset: false,
-    }).finally(() => {
-      isFetchingMoreWorkDaysRef.current = false;
-      setIsLoadingMoreWorkDays(false);
-    });
+    })
+      .finally(() => {
+        isFetchingMoreWorkDaysRef.current = false;
+        setIsLoadingMoreWorkDays(false);
+      })
+      .catch((err) => console.error(err));
   };
 
   return {

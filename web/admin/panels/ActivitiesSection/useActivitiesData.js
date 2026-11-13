@@ -144,7 +144,7 @@ export const useActivitiesData = () => {
 
     if (shouldReload) {
       const timeoutId = setTimeout(() => {
-        refreshCurrentWorkDays();
+        refreshCurrentWorkDays().catch((err) => console.error(err));
       }, 500);
 
       prevDateRangeRef.current = { minDate, maxDate };
