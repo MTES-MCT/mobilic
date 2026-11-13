@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { FunnelModal } from "./FunnelModal";
@@ -8,12 +8,7 @@ import { Expenditures } from "./Expenditures";
 import { AddressField } from "../../common/AddressField";
 import KilometerReadingField from "../../common/KilometerReadingField";
 import { NativeDateTimePicker } from "../../common/NativeDateTimePicker";
-import {
-  MINUTE,
-  getDaysBetweenTwoDates,
-  isDateBeforeToday,
-  now
-} from "common/utils/time";
+import { MINUTE, getDaysBetweenTwoDates, now } from "common/utils/time";
 import { setCurrentLocation } from "common/utils/location";
 import { useSnackbarAlerts } from "../../common/Snackbar";
 import { MandatoryField } from "../../common/MandatoryField";
@@ -44,22 +39,13 @@ export default function EndMissionModal({
   );
   const [missionEndTimeError, setMissionEndTimeError] = React.useState("");
   const [currentPosition, setCurrentPosition] = React.useState(null);
-  const [
-    pastRegistrationJustification,
-    setPastRegistrationJustification
-  ] = React.useState("");
 
-  const isPastMission = useMemo(
-    () => isDateBeforeToday(currentMission.startTime),
-    [currentMission.startTime]
-  );
   function canSubmit() {
     return (
       (currentEndLocation || address) &&
       !kilometerReadingError &&
       endTime &&
-      !missionEndTimeError &&
-      (!isPastMission || pastRegistrationJustification)
+      !missionEndTimeError
     );
   }
   const alerts = useSnackbarAlerts();
@@ -124,8 +110,7 @@ export default function EndMissionModal({
                 comment,
                 address,
                 kilometerReading,
-                endTime,
-                pastRegistrationJustification
+                endTime
               );
               handleClose();
             }}
@@ -210,30 +195,6 @@ export default function EndMissionModal({
                     currentMission.startTime,
                     currentMission.endTime || endTime || now()
                   )}
-                />
-              </>
-            )}
-            {isPastMission && (
-              <>
-                <Typography
-                  variant="h5"
-                  component="p"
-                  className="form-field-title"
-                >
-                  Motif
-                </Typography>
-                <TextField
-                  required
-                  fullWidth
-                  multiline
-                  minRows={3}
-                  label="Raison de l'ajout d'une mission passée"
-                  variant="filled"
-                  value={pastRegistrationJustification}
-                  onChange={e =>
-                    setPastRegistrationJustification(e.target.value)
-                  }
-                  inputProps={{ maxLength: 48 }}
                 />
               </>
             )}
