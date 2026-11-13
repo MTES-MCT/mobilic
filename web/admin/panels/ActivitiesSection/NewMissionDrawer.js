@@ -11,7 +11,7 @@ import CloseButton from "../../../common/CloseButton";
 import {
   buildLogLocationPayloadFromAddress,
   CREATE_MISSION_MUTATION,
-  LOG_LOCATION_MUTATION
+  LOG_LOCATION_MUTATION,
 } from "common/utils/apiQueries/missions";
 
 const useStyles = makeStyles((theme) => ({
@@ -19,14 +19,14 @@ const useStyles = makeStyles((theme) => ({
     margin: 0,
     marginRight: theme.spacing(4),
     fontSize: "2em",
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   missionTitleContainer: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: theme.spacing(3)
-  }
+    padding: theme.spacing(3),
+  },
 }));
 
 const NewMissionDrawer = ({ open, onClose }) => {
@@ -41,9 +41,7 @@ const NewMissionDrawer = ({ open, onClose }) => {
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
       <div className={classes.missionTitleContainer}>
-        <h1 className={classes.missionTitle}>
-          Mission passée
-        </h1>
+        <h1 className={classes.missionTitle}>Mission passée</h1>
         <CloseButton onClick={onClose} />
       </div>
       <NewMissionForm
@@ -70,8 +68,8 @@ const NewMissionDrawer = ({ open, onClose }) => {
                   ? missionInfos.vehicle.registrationNumber
                   : null,
                 pastRegistrationJustification:
-                  missionInfos.pastRegistrationJustification
-              }
+                  missionInfos.pastRegistrationJustification,
+              },
             );
             const mission = missionResponse.data.activities.createMission;
             const startLocationResponse = api
@@ -80,8 +78,8 @@ const NewMissionDrawer = ({ open, onClose }) => {
                 buildLogLocationPayloadFromAddress(
                   missionInfos.address,
                   mission.id,
-                  true
-                )
+                  true,
+                ),
               )
               .then((response) => response.data.activities.logLocation);
 
@@ -91,8 +89,8 @@ const NewMissionDrawer = ({ open, onClose }) => {
                 buildLogLocationPayloadFromAddress(
                   missionInfos.endAddress,
                   mission.id,
-                  false
-                )
+                  false,
+                ),
               )
               .then((response) => response.data.activities.logLocation);
 

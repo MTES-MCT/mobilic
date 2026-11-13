@@ -13,17 +13,23 @@ const useStyles = makeStyles((theme) => ({
     margin: 0,
     marginRight: theme.spacing(4),
     fontSize: "2em",
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   missionTitleContainer: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: theme.spacing(3)
-  }
+    padding: theme.spacing(3),
+  },
 }));
 
-const LogHolidayDrawer = ({ open, onClose, users, company, refreshCurrentWorkDays }) => {
+const LogHolidayDrawer = ({
+  open,
+  onClose,
+  users,
+  company,
+  refreshCurrentWorkDays,
+}) => {
   const classes = useStyles();
   const alerts = useSnackbarAlerts();
   const api = useApi();
@@ -31,9 +37,7 @@ const LogHolidayDrawer = ({ open, onClose, users, company, refreshCurrentWorkDay
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
       <div className={classes.missionTitleContainer}>
-        <h1 className={classes.missionTitle}>
-          Congé ou absence passé
-        </h1>
+        <h1 className={classes.missionTitle}>Congé ou absence passé</h1>
         <CloseButton onClick={onClose} />
       </div>
       <LogHolidayForm
@@ -43,12 +47,12 @@ const LogHolidayDrawer = ({ open, onClose, users, company, refreshCurrentWorkDay
             async () => {
               await api.graphQlMutate(LOG_HOLIDAY_MUTATION, {
                 ...payload,
-                companyId: company.id
+                companyId: company.id,
               });
               alerts.success(
                 "Votre congé ou absence a bien été enregistré(e)",
                 "",
-                6000
+                6000,
               );
               onClose();
               refreshCurrentWorkDays();
@@ -60,7 +64,7 @@ const LogHolidayDrawer = ({ open, onClose, users, company, refreshCurrentWorkDay
               ) {
                 return "Des activités sont déjà enregistrées sur cette période.";
               }
-            }
+            },
           )
         }
       />
