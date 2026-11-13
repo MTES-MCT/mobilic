@@ -8,9 +8,10 @@ import MenuItem from "@mui/material/MenuItem";
 import { VehicleFieldForApp } from "../pwa/components/VehicleFieldForApp";
 import { AddressField } from "./AddressField";
 import { MobileDatePicker } from "@mui/x-date-pickers";
-import { DAY } from "common/utils/time";
+import { DAY, startOfDay } from "common/utils/time";
 import { MandatoryField } from "./MandatoryField";
 import { LoadingButton } from "common/components/LoadingButton";
+import MotifSelect from "./MotifSelect";
 
 export default function NewMissionForm({
   handleSubmit,
@@ -77,6 +78,9 @@ export default function NewMissionForm({
 
   const today = Date.now();
   const minDate = new Date(today - 30 * DAY * 1000);
+
+  const requiresMotif =
+    !!day && startOfDay(new Date(day)) >= startOfDay(new Date()) - DAY;
 
   return (
     <Container>
@@ -237,27 +241,12 @@ export default function NewMissionForm({
                 : null
             }
           />
-          {withDay && (
-            <>
-              <Typography
-                variant="h5"
-                component="p"
-                className="form-field-title"
-              >
-                Motif
-              </Typography>
-              <TextField
-                required
-                fullWidth
-                multiline
-                minRows={3}
-                label="Raison de l'ajout d'une mission passée"
-                variant="filled"
-                value={pastRegistrationJustification}
-                onChange={e => setPastRegistrationJustification(e.target.value)}
-                inputProps={{ maxLength: 48 }}
-              />
-            </>
+          {withDay && requiresMotif && (
+            <MotifSelect
+              value={pastRegistrationJustification}
+              onChange={setPastRegistrationJustification}
+              required
+            />
           )}
           <Box className="cta-container" my={4}>
             <LoadingButton
@@ -265,7 +254,8 @@ export default function NewMissionForm({
                 !address ||
                 (!mission && settings?.requireMissionName) ||
                 (withEndLocation && !endAddress) ||
-                (withDay && (!day || !pastRegistrationJustification))
+                (withDay && !day) ||
+                (withDay && requiresMotif && !pastRegistrationJustification)
               }
               type="submit"
               loading={loading}

@@ -12,6 +12,7 @@ import { getChangeIconAndText, getEventAuthorName } from "../../common/logEvent"
 import { now, formatDateTimeLiteral } from "common/utils/time";
 import { ACTIVITIES, getActivityLabelDependingOnMissionType } from "common/utils/activities";
 import { isConnectionError } from "common/utils/errors";
+import { motifLabel } from "common/utils/motifs";
 import { Accordion, AccordionDetails } from "@mui/material";
 import AccordionSummary from "@mui/material/AccordionSummary";
 
@@ -218,7 +219,7 @@ export function ContradictoryChanges({
                       }
                     }
                   }
-                  if (motif) text = `${text} (motif : "${motif}")`;
+                  if (motif) text = `${text} (motif : ${motifLabel(motif)})`;
                   return (
                   <Event
                     key={`${(userChange.after || userChange.before).id}${text}`}

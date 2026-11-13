@@ -11,6 +11,7 @@ import { formatDay, formatTimeOfDay, formatTimer, now } from "common/utils/time"
 import { ActivitiesPieChart } from "common/components/ActivitiesPieChart";
 import { MissionInfoCard } from "./MissionInfoCard";
 import { ACTIVITIES, getActivityLabelDependingOnMissionType } from "common/utils/activities";
+import { motifLabel } from "common/utils/motifs";
 import { useActivitiesCardStyles } from "./styles/ActivitiesCardStyle";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
@@ -93,7 +94,7 @@ export function ActivitiesCard({
   }
 
   function formatMotif(comment) {
-    return comment ? ` (motif : "${comment}")` : "";
+    return comment ? ` (motif : ${motifLabel(comment)})` : "";
   }
 
   function HistoryLine({ author, dateLabel, text }) {
