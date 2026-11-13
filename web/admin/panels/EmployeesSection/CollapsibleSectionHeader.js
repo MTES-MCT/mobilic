@@ -16,12 +16,15 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "left"
   },
   sectionLabel: {
-    margin: 0,
+    margin: 0
+  },
+  openSection: {
     color: fr.colors.decisions.text.title.blueFrance.default,
     fontWeight: 500
   },
-  arrowIcon: {
-    color: fr.colors.decisions.background.active.blueFrance.default
+  closedSection: {
+    color: fr.colors.decisions.text.default.grey.default,
+    fontWeight: 400
   }
 }));
 
@@ -29,7 +32,11 @@ const CollapsibleSectionHeader = ({ label, open, onToggle }) => {
   const classes = useStyles();
 
   return (
-    <h3 className={`${classes.sectionLabel} fr-text--md`}>
+    <h3
+      className={`${classes.sectionLabel} fr-text--md ${
+        open ? classes.openSection : classes.closedSection
+      }`}
+    >
       <button
         type="button"
         className={classes.expandBtn}
@@ -37,7 +44,7 @@ const CollapsibleSectionHeader = ({ label, open, onToggle }) => {
         aria-expanded={open}
       >
         <div
-          className={`fr-icon-arrow-${open ? "down" : "up"}-s-line fr-icon--sm ${classes.arrowIcon}`}
+          className={`fr-icon-arrow-${open ? "down" : "right"}-s-line fr-icon--sm ${open ? classes.openSection : classes.closedSection}`}
           aria-hidden="true"
         />
         {label}

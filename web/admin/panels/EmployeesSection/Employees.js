@@ -89,7 +89,6 @@ export function Employees({ company, containerRef }) {
           handleSingleInvite={handleSingleInvite}
           hasMadeInvitations={hasMadeInvitations}
         />
-        <div className={classes.separator}/>
         {
           canDisplayPendingEmployments &&
           <PendingEmployeesSection
@@ -107,9 +106,11 @@ export function Employees({ company, containerRef }) {
             onRowAdd={handlePendingRowAdd}
           />
         }
-        <div
-          className={`${classes.separator} ${classes.separatorReducedMarginTop}`}
-        />
+        {!openPendingTable && (
+          <div
+            className={`${classes.separator} ${classes.separatorReducedMarginTop}`}
+          />
+        )}
         <CurrentEmployeesList
           areThereEmploymentsWithoutBusinessType={areThereEmploymentsWithoutBusinessType}
           shouldShowInactiveBanner={shouldShowInactiveBanner}
