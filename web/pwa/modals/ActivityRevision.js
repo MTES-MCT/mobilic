@@ -1,6 +1,12 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import { MINUTE, now, sameMinute, truncateMinute } from "common/utils/time";
+import {
+  HOUR,
+  MINUTE,
+  now,
+  sameMinute,
+  truncateMinute
+} from "common/utils/time";
 import TextField from "common/utils/TextField";
 import {
   ACTIVITIES,
@@ -24,6 +30,7 @@ import OverlappedActivityList from "../components/ActivityRevision/OverlappedAct
 import Modal from "../../common/Modal";
 import { MandatoryField } from "../../common/MandatoryField";
 import Notice from "../../common/Notice";
+import MotifSelect from "../../common/MotifSelect";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch";
 
@@ -84,6 +91,12 @@ export default function ActivityRevisionOrCreationModal({
     nullableEndTime && newActivityType !== ACTIVITIES.break.name;
 
   const activityType = event ? event.type : newActivityType;
+
+  const motifRequired =
+    !adminMode &&
+    !!newUserTime &&
+    now() - newUserTime > 5 * MINUTE &&
+    now() - newUserTime <= 24 * HOUR;
 
   async function changeActivities(sideEffectOperations, actionType) {
     adminMode
@@ -408,6 +421,9 @@ export default function ActivityRevisionOrCreationModal({
     if (actionType === ACTIVITIES_OPERATIONS.cancel) {
       return !!event && activityType !== ACTIVITIES.break.name;
     }
+    if (motifRequired && !userComment) {
+      return false;
+    }
     if (actionType === ACTIVITIES_OPERATIONS.update) {
       return (
         event &&
@@ -567,14 +583,10 @@ export default function ActivityRevisionOrCreationModal({
             </Box>
           )}
           <Box py={4}>
-            <TextField
-              label="Raison (optionnelle)"
-              fullWidth
-              variant="filled"
-              multiline
-              maxRows={10}
+            <MotifSelect
               value={userComment}
-              onChange={e => setUserComment(e.target.value)}
+              onChange={setUserComment}
+              required={motifRequired}
             />
           </Box>
         </>

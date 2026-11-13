@@ -11,6 +11,7 @@ import { MobileDatePicker } from "@mui/x-date-pickers";
 import { DAY } from "common/utils/time";
 import { MandatoryField } from "./MandatoryField";
 import { LoadingButton } from "common/components/LoadingButton";
+import MotifSelect from "./MotifSelect";
 
 export default function NewMissionForm({
   handleSubmit,
@@ -238,26 +239,11 @@ export default function NewMissionForm({
             }
           />
           {withDay && (
-            <>
-              <Typography
-                variant="h5"
-                component="p"
-                className="form-field-title"
-              >
-                Motif
-              </Typography>
-              <TextField
-                required
-                fullWidth
-                multiline
-                minRows={3}
-                label="Raison de l'ajout d'une mission passée"
-                variant="filled"
-                value={pastRegistrationJustification}
-                onChange={e => setPastRegistrationJustification(e.target.value)}
-                inputProps={{ maxLength: 48 }}
-              />
-            </>
+            <MotifSelect
+              value={pastRegistrationJustification}
+              onChange={setPastRegistrationJustification}
+              required
+            />
           )}
           <Box className="cta-container" my={4}>
             <LoadingButton
