@@ -26,6 +26,13 @@ export function addWorkDaysReducer(
       ? state.minWorkDaysCursor.slice(10)
       : null;
 
+  // Parses the user id suffix of a cursor as a number ("10" > "9" numerically,
+  // unlike as strings); an empty suffix (no cutoff known) maps to -Infinity.
+  const userIdCursorToNumber = str =>
+    str ? parseInt(str, 10) : -Infinity;
+  const actualMaxUserNum = userIdCursorToNumber(actualMaxUser);
+  const actualMinUserNum = userIdCursorToNumber(actualMinUser);
+
   let workDaysToAdd = flatMap(
     companiesPayload.map((c) =>
       c.workDays.edges.map((wd) => ({ ...wd.node, companyId: c.id }))
@@ -34,9 +41,9 @@ export function addWorkDaysReducer(
     (wd) =>
       (!actualMaxDate ||
         wd.day < actualMaxDate ||
-        (wd.day === actualMaxDate && wd.user.id.toString() < actualMaxUser)) &&
+        (wd.day === actualMaxDate && wd.user.id < actualMaxUserNum)) &&
       (wd.day > actualMinDate ||
-        (wd.day === actualMinDate && wd.user.id.toString() >= actualMinUser))
+        (wd.day === actualMinDate && wd.user.id >= actualMinUserNum))
   );
 
   const regulationComputationsByUserAndByDay = flatMap(

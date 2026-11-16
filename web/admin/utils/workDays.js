@@ -13,17 +13,25 @@ function getDaysInMonth(timestamp) {
 
 function computeMaxConsecutiveRest(workDayGroup, periodStart, periodDurationDays) {
   if (workDayGroup.length === 0) return null;
-  workDayGroup.sort((a, b) => a.startTime - b.startTime);
   const periodEnd = periodStart + periodDurationDays * 24 * 3600;
-  let maxRest = workDayGroup[0].startTime - periodStart;
-  for (let i = 1; i < workDayGroup.length; i++) {
-    const gap = workDayGroup[i].startTime - workDayGroup[i - 1].endTime;
+  const workDays = workDayGroup
+    .filter(hasWorkActivity)
+    .sort((a, b) => a.startTime - b.startTime);
+  if (workDays.length === 0) return periodEnd - periodStart;
+  let maxRest = workDays[0].startTime - periodStart;
+  for (let i = 1; i < workDays.length; i++) {
+    const gap = workDays[i].startTime - workDays[i - 1].endTime;
     if (gap > maxRest) maxRest = gap;
   }
-  const gapAfterLast = periodEnd - workDayGroup[workDayGroup.length - 1].endTime;
+  const gapAfterLast = periodEnd - workDays[workDays.length - 1].endTime;
   if (gapAfterLast > maxRest) maxRest = gapAfterLast;
   return maxRest;
 }
+
+const hasWorkActivity = (workDay) =>
+  Object.entries(workDay.activityDurations).some(
+    ([type, duration]) => type !== ACTIVITIES.off.name && duration > 0
+  );
 
 function computeWorkDayGroupAggregates(workDayGroup, periodDurationDays) {
   const aggregateTimers = {};
@@ -72,7 +80,7 @@ function computeWorkDayGroupAggregates(workDayGroup, periodDurationDays) {
     periodStart,
     periodActualStart: minStartTime,
     periodActualEnd: maxEndTime,
-    workedDays: workDayGroup.length,
+    workedDays: workDayGroup.filter(hasWorkActivity).length,
     service: serviceDuration,
     totalWork: maxEndTime ? totalWorkDuration : null,
     transferDuration,

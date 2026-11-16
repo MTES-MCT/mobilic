@@ -3,6 +3,7 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Input } from "@codegouvfr/react-dsfr/Input";
 import { Select } from "@codegouvfr/react-dsfr/Select";
@@ -12,7 +13,7 @@ import { Main } from "../common/semantics/Main";
 import { PaperContainer, PaperContainerTitle } from "../common/PaperContainer";
 import { usePageTitle } from "../common/UsePageTitle";
 import { useHistory } from "react-router-dom";
-import { useApi } from "common/utils/api";
+import { useApi, API_HOST } from "common/utils/api";
 import { useStoreSyncedWithLocalStorage } from "common/store/store";
 import { getFallbackRoute } from "../common/routes";
 import {
@@ -24,9 +25,11 @@ import {
   CREATE_TECHNICAL_INCIDENT_MUTATION,
   UPDATE_TECHNICAL_INCIDENT_MUTATION
 } from "common/utils/apiQueries/technicalIncident";
+import { UPDATE_GLOBAL_BANNER_MUTATION } from "common/utils/apiQueries/notificationCampaign";
 import { prettyFormatDayHour } from "common/utils/time";
 
 const MAX_DESCRIPTION = 2000;
+const MAX_BANNER_MESSAGE = 500;
 
 const toTimeStamp = value =>
   value ? Math.floor(new Date(value).getTime() / 1000) : null;
@@ -55,8 +58,77 @@ export default function TechnicalIncidentsAdmin() {
   const [incidents, setIncidents] = React.useState([]);
   const [editingId, setEditingId] = React.useState(null);
 
+  const [bannerEnabled, setBannerEnabled] = React.useState(false);
+  const [bannerMessage, setBannerMessage] = React.useState("");
+  const [bannerLevel, setBannerLevel] = React.useState("warning");
+  const [bannerSaving, setBannerSaving] = React.useState(false);
+  const [bannerLoaded, setBannerLoaded] = React.useState(false);
+  const [bannerPublished, setBannerPublished] = React.useState({
+    message: "",
+    level: "warning"
+  });
+  const [bannerResult, setBannerResult] = React.useState(null);
+
   const userInfo = store.userInfo();
   const companies = store.companies();
+
+  React.useEffect(() => {
+    const controller = new AbortController();
+    fetch(`${API_HOST}/global-banner`, { signal: controller.signal })
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        if (!data) return;
+        setBannerLoaded(true);
+        const level = ["info", "warning", "error"].includes(data.level)
+          ? data.level
+          : "warning";
+        const message = data.message || "";
+        setBannerEnabled(!!data.enabled);
+        setBannerPublished({ message, level });
+        setBannerMessage(message);
+        setBannerLevel(level);
+      })
+      .catch(err => {
+        if (err?.name === "AbortError") return;
+        console.error("Impossible de charger le bandeau global", err);
+        setBannerResult("Impossible de charger l'état actuel du bandeau.");
+      });
+    return () => controller.abort();
+  }, []);
+
+  const handleSaveBanner = async enabled => {
+    const message = enabled ? bannerMessage.trim() : bannerPublished.message;
+    const level = enabled ? bannerLevel : bannerPublished.level;
+    if (enabled && !message) {
+      setBannerResult("Le message est requis pour afficher le bandeau.");
+      return;
+    }
+    setBannerSaving(true);
+    setBannerResult(null);
+    try {
+      await api.graphQlMutate(
+        UPDATE_GLOBAL_BANNER_MUTATION,
+        { enabled, message, level },
+        { context: { nonPublicApi: true } }
+      );
+      setBannerEnabled(enabled);
+      setBannerPublished({ message, level });
+      setBannerMessage(message);
+      setBannerLevel(level);
+      setBannerResult("success");
+    } catch (err) {
+      setBannerResult(err?.message || "error");
+    } finally {
+      setBannerSaving(false);
+    }
+  };
+
+  const bannerHasChanges =
+    bannerMessage.trim() !== bannerPublished.message ||
+    bannerLevel !== bannerPublished.level;
 
   React.useEffect(() => {
     if (
@@ -223,6 +295,106 @@ export default function TechnicalIncidentsAdmin() {
             <PaperContainerTitle variant="h1" sx={{ textAlign: "center" }}>
               Dysfonctionnements techniques
             </PaperContainerTitle>
+
+            <Box
+              sx={{
+                padding: 3,
+                mb: 2,
+                border: "1px solid",
+                borderColor: "var(--border-default-grey)",
+                borderRadius: 1
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  mb: 2
+                }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  Bandeau d'information global
+                </Typography>
+                {bannerLoaded && (
+                  <Badge
+                    small
+                    noIcon
+                    severity={bannerEnabled ? "success" : undefined}
+                  >
+                    {bannerEnabled ? "Bandeau actif" : "Bandeau inactif"}
+                  </Badge>
+                )}
+              </Box>
+              <Select
+                label="Type de bandeau"
+                nativeSelectProps={{
+                  value: bannerLevel,
+                  onChange: e => setBannerLevel(e.target.value)
+                }}
+              >
+                <option value="info">Information</option>
+                <option value="warning">Avertissement</option>
+                <option value="error">Erreur</option>
+              </Select>
+              <Input
+                label="Message affiché aux utilisateurs *"
+                textArea
+                nativeTextAreaProps={{
+                  value: bannerMessage,
+                  onChange: e => setBannerMessage(e.target.value),
+                  maxLength: MAX_BANNER_MESSAGE,
+                  required: true,
+                  rows: 2
+                }}
+              />
+              <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                <Button
+                  size="small"
+                  onClick={() => handleSaveBanner(true)}
+                  disabled={
+                    !bannerLoaded ||
+                    bannerSaving ||
+                    !bannerMessage.trim() ||
+                    (bannerEnabled && !bannerHasChanges)
+                  }
+                >
+                  {bannerEnabled && bannerHasChanges
+                    ? "Mettre à jour le bandeau"
+                    : "Afficher le bandeau"}
+                </Button>
+                <Button
+                  size="small"
+                  priority="secondary"
+                  onClick={() => handleSaveBanner(false)}
+                  disabled={!bannerLoaded || bannerSaving || !bannerEnabled}
+                >
+                  Retirer le bandeau
+                </Button>
+              </Box>
+              {bannerResult === "success" && (
+                <Box sx={{ mt: 2 }}>
+                  <Alert
+                    severity="success"
+                    small
+                    description="Bandeau mis à jour."
+                  />
+                </Box>
+              )}
+              {bannerResult && bannerResult !== "success" && (
+                <Box sx={{ mt: 2 }}>
+                  <Alert
+                    severity="error"
+                    small
+                    description={
+                      bannerResult === "error"
+                        ? "Une erreur est survenue."
+                        : bannerResult
+                    }
+                  />
+                </Box>
+              )}
+            </Box>
 
             <Box sx={{ padding: 3 }}>
               <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>

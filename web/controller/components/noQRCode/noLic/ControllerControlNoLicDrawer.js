@@ -7,6 +7,7 @@ import { useInfractions } from "../../../utils/contextInfractions";
 import { ControlTakePicturesDrawer } from "../../pictures/ControlTakePicturesDrawer";
 import { useControlBulletinActions } from "../../../hooks/useControlBulletinActions";
 import ControlHandDeliveryModal from "../../modals/ControlHandDeliveryModal";
+import ControlCreateBulletinModal from "../../modals/ControlCreateBulletinModal";
 
 export function ControllerControlNoLicDrawer({
   controlData,
@@ -15,6 +16,8 @@ export function ControllerControlNoLicDrawer({
   onClose
 }) {
   const [isEditingBDC, setIsEditingBDC] = React.useState(false);
+  const [isCreateBulletinModalOpen, setIsCreateBulletinModalOpen] =
+    React.useState(false);
   const [displayTakePictures, setDisplayTakePictures] = React.useState(false);
   const { setIsReportingInfractions } = useInfractions();
   const actions = useControlBulletinActions({
@@ -40,7 +43,9 @@ export function ControllerControlNoLicDrawer({
     const bulletinExists = !!controlData?.controlBulletinCreationTime;
     const deliveryNotSet = controlData?.deliveredByHand === null;
 
-    if (bulletinExists && deliveryNotSet) {
+    if (!bulletinExists) {
+      setIsCreateBulletinModalOpen(true);
+    } else if (deliveryNotSet) {
       actions.openHandDeliveryModal();
     } else {
       actuallyCloseDrawer();
@@ -73,6 +78,20 @@ export function ControllerControlNoLicDrawer({
         onCloseDrawer={() => closeControl()}
       />
       <ControllerControlNoLic editBDC={editBDC} takePictures={takePictures} />
+
+      <ControlCreateBulletinModal
+        open={isCreateBulletinModalOpen}
+        askCompanyEmail
+        handleClose={() => setIsCreateBulletinModalOpen(false)}
+        handleCreate={() => {
+          setIsCreateBulletinModalOpen(false);
+          setIsEditingBDC(true);
+        }}
+        handleCloseControl={() => {
+          setIsCreateBulletinModalOpen(false);
+          actuallyCloseDrawer();
+        }}
+      />
 
       <ControlHandDeliveryModal
         open={actions.isHandDeliveryModalOpen}

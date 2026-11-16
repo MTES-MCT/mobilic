@@ -17,14 +17,15 @@ import { useTokenInfo } from "common/utils/hooks/useTokenInfo";
 export function ControllerControlDetails({
   controlData,
   setControlData,
-  onClose
+  onClose,
+  isEditingBC,
+  setIsEditingBC
 }) {
   const [employments, setEmployments] = React.useState([]);
   const [vehicles, setVehicles] = React.useState([]);
   const [missions, setMissions] = React.useState([]);
   const [coworkers, setCoworkers] = React.useState([]);
   const [periodOnFocus, setPeriodOnFocus] = React.useState(null);
-  const [isEditingBC, setIsEditingBC] = React.useState(false);
   const {
     checkedAlertsNumber,
     totalAlertsNumber,

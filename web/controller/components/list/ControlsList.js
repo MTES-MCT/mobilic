@@ -41,6 +41,18 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const getBulletinStatus = control => {
+  if (!control.controlBulletinCreationTime) return "notCreated";
+  if (
+    control.deliveredByHand ||
+    control.sentToAdmin ||
+    control.sentToDriver
+  ) {
+    return "delivered";
+  }
+  return "inProgress";
+};
+
 const getGroupByKey = (date, period) => {
   switch (period) {
     case "day":
@@ -82,6 +94,7 @@ export function ControlsList({
               (period !== "day" ? `${formatDay(control.controlTime)} - ` : "") +
               formatTimeOfDay(control.controlTime),
             type: control.controlType,
+            bulletinStatus: getBulletinStatus(control),
             nbControlledDays:
               // Do not show for no lic or lic papier, default value set for greco stat usage
               control.controlType === CONTROL_TYPES.MOBILIC.label &&

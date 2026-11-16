@@ -20,6 +20,7 @@ const DEFAULT_START_HOUR = 7;
 const DEFAULT_END_HOUR = 16;
 
 const OTHER_MOTIF_ID = "other";
+const HEAVY_TRUCK_DRIVING_MOTIF_ID = "heavy-truck-driving";
 const MOTIFS = [
   {
     id: "sick-leave",
@@ -58,7 +59,7 @@ const MOTIFS = [
     label: "Jour férié",
   },
   {
-    id: "heavy-truck-driving",
+    id: HEAVY_TRUCK_DRIVING_MOTIF_ID,
     label: "Activités tachygraphe",
   },
   {
@@ -218,6 +219,9 @@ export function LogHolidayForm({
               endTime: endTimestamp,
               userId: user?.id,
               ...(motifId === OTHER_MOTIF_ID ? { comment: otherMotif } : {}),
+              ...(motifId === HEAVY_TRUCK_DRIVING_MOTIF_ID
+                ? { activityType: "work" }
+                : {}),
             });
             setLoading(false);
           }}

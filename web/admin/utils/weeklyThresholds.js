@@ -5,6 +5,14 @@ const THRESHOLD_MARGIN = 4 * 3600;
 // fallback values if the API hasn't responded yet
 const DEFAULTS = { maxWorkInHours: 48, minRestInHours: 34, maxWorkedDays: 6 };
 
+export function computeWeeklyThresholdsByUserId(employments) {
+  return Object.fromEntries(
+    employments
+      .filter(e => e.weeklyThresholds && (e.userId || e.user?.id) && e.isActive)
+      .map(e => [e.userId || e.user?.id, e.weeklyThresholds])
+  );
+}
+
 export function getThresholds(weeklyThresholds) {
   const t = weeklyThresholds || DEFAULTS;
   const maxWorkSeconds = t.maxWorkInHours * 3600;
