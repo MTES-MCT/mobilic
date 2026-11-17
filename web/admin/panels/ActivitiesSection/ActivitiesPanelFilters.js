@@ -27,7 +27,6 @@ import { PeriodToggle } from "../../components/PeriodToggle";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { useGetUsersSinceDate } from "../../../common/hooks/useGetUsersSinceDate";
 import { isoFormatLocalDate, startOfDayAsDate } from "common/utils/time";
-import { PickersDay } from "@mui/x-date-pickers/PickersDay";
 import { addDays } from "date-fns";
 
 const useStyles = makeStyles((theme) => ({
@@ -114,11 +113,6 @@ const ActivitiesPanelFilters = (props) => {
     },
   });
 
-  const renderPickersDay = (pickersDayProps) => {
-    const { key, ...safeProps } = pickersDayProps;
-    return <PickersDay {...safeProps} />;
-  };
-
   const today = new Date();
   // 1-year limit to avoid performance issues
   const maxAllowedEndDate = minDate ? addDays(new Date(minDate), 365) : today;
@@ -164,15 +158,10 @@ const ActivitiesPanelFilters = (props) => {
         Du
         <MobileDatePicker
           value={new Date(minDate)}
-          inputFormat="d MMMM yyyy"
-          fullWidth
-          disableCloseOnSelect={false}
-          disableMaskedInput={true}
           onAccept={(val) => {
             trackEvent(ACTIVITY_FILTER_MIN_DATE);
             setMinDate(isoFormatLocalDate(val));
           }}
-          cancelText={null}
           maxDate={today}
           slotProps={{
             textField: dsfrTextFieldSlotProps(
@@ -180,8 +169,6 @@ const ActivitiesPanelFilters = (props) => {
               "Du (date de début)",
             ),
           }}
-          // renderDay is needed to fix issue caused by key being passed with props
-          renderDay={renderPickersDay}
         />
       </div>
       <div
@@ -192,15 +179,10 @@ const ActivitiesPanelFilters = (props) => {
         au
         <MobileDatePicker
           value={new Date(maxDate)}
-          inputFormat="d MMMM yyyy"
-          fullWidth
-          disableCloseOnSelect={false}
-          disableMaskedInput={true}
           onAccept={(val) => {
             trackEvent(ACTIVITY_FILTER_MAX_DATE);
             setMaxDate(isoFormatLocalDate(val));
           }}
-          cancelText={null}
           maxDate={maxAllowedEndDate > today ? today : maxAllowedEndDate}
           slotProps={{
             textField: dsfrTextFieldSlotProps(
@@ -208,8 +190,6 @@ const ActivitiesPanelFilters = (props) => {
               "Au (date de fin)",
             ),
           }}
-          // renderDay is needed to fix issue caused by key being passed with props
-          renderDay={renderPickersDay}
         />
       </div>
       <div>
