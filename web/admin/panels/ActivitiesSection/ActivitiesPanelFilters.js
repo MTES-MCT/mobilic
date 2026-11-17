@@ -159,8 +159,7 @@ const ActivitiesPanelFilters = (props) => {
       <div
         className={`${classes.datePickerSection} fr-input-group${
           dateRangeError ? " fr-input-group--error" : ""
-        }`}
-        style={{'margin': 0}}
+        } fr-m-0`}
       >
         Du
         <MobileDatePicker
@@ -176,7 +175,10 @@ const ActivitiesPanelFilters = (props) => {
           cancelText={null}
           maxDate={today}
           slotProps={{
-            textField: dsfrTextFieldSlotProps("activities-min-date", "Début"),
+            textField: dsfrTextFieldSlotProps(
+              "activities-min-date",
+              "Du (date de début)",
+            ),
           }}
           // renderDay is needed to fix issue caused by key being passed with props
           renderDay={renderPickersDay}
@@ -185,8 +187,7 @@ const ActivitiesPanelFilters = (props) => {
       <div
         className={`${classes.datePickerSection} fr-input-group${
           dateRangeError ? " fr-input-group--error" : ""
-        }`}
-        style={{'margin': 0}}
+        } fr-m-0`}
       >
         au
         <MobileDatePicker
@@ -202,7 +203,10 @@ const ActivitiesPanelFilters = (props) => {
           cancelText={null}
           maxDate={maxAllowedEndDate > today ? today : maxAllowedEndDate}
           slotProps={{
-            textField: dsfrTextFieldSlotProps("activities-max-date", "Fin"),
+            textField: dsfrTextFieldSlotProps(
+              "activities-max-date",
+              "Au (date de fin)",
+            ),
           }}
           // renderDay is needed to fix issue caused by key being passed with props
           renderDay={renderPickersDay}
