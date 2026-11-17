@@ -21,7 +21,8 @@ import { OPEN_WORKDAY_DRAWER } from "common/utils/matomoTags";
 import { AugmentedTable } from "./AugmentedTable";
 import { Tooltip } from "@codegouvfr/react-dsfr/Tooltip";
 import {
-  missionToValidationEntries
+  missionToValidationEntries,
+  entryToBeValidatedByAdmin
 } from "../selectors/validationEntriesSelectors";
 import { RunningTag, ToValidateTag, ValidatedTag, WaitingTag, DeletedTag, AllValidatedTag } from "../drawers/Tags";
 import {
@@ -31,6 +32,7 @@ import {
 } from "../utils/missionsStatus";
 import { MissionStatusTagBtn } from "./MissionStatusTagBtn";
 import { MissionStatusFilter } from "./MissionStatusFilter";
+import { ValidateMissionButton } from "./ValidateMissionButton";
 import CircularProgress from "@mui/material/CircularProgress";
 import { fr } from "@codegouvfr/react-dsfr";
 import { getThresholds, getThresholdDisplay } from "../utils/weeklyThresholds";
@@ -560,6 +562,29 @@ export function WorkTimeTable({
     sortable: true,
     overflowTooltip: true
   };
+  const validateActionCol = {
+    label: "",
+    name: "validateAction",
+    align: "right",
+    minWidth: 120,
+    flexGrow: 0,
+    format: (_, entry) => {
+      if (entry.statusKey !== MISSION_STATUS.toValidateAdmin || !entry.user) {
+        return null;
+      }
+      const mission = missionsById[Object.keys(entry.missionNames || {})[0]];
+      if (!mission) {
+        return null;
+      }
+      const userEntry = missionToValidationEntries(mission).find(
+        (e) => e.user?.id === entry.user.id
+      );
+      if (!userEntry || !entryToBeValidatedByAdmin(userEntry, adminStore.userId)) {
+        return null;
+      }
+      return <ValidateMissionButton mission={mission} user={entry.user} />;
+    }
+  };
 
   let columns = [];
   if (period === "day") {
@@ -571,6 +596,7 @@ export function WorkTimeTable({
       restTimeCol,
       amplitudeCol,
       statusCol,
+      validateActionCol,
     ];
   } else {
     const withThreshold = period === "week";

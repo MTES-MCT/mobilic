@@ -206,7 +206,7 @@ async function createComment(api, mission, adminStore, text) {
   mission.comments.push(comment);
 }
 
-async function validateMission(
+export async function validateMission(
   api,
   mission,
   adminStore,
