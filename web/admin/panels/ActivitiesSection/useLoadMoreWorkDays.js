@@ -4,7 +4,7 @@ import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { loadActivitiesData } from "../../utils/activities";
 
-const useLoadMoreWorkDays = ({ minDate, maxDate }) => {
+const useLoadMoreWorkDays = ({ minDate, maxDate, userIds }) => {
   const adminStore = useAdminStore();
   const api = useApi();
   const alerts = useSnackbarAlerts();
@@ -12,11 +12,11 @@ const useLoadMoreWorkDays = ({ minDate, maxDate }) => {
   const [isLoadingMoreWorkDays, setIsLoadingMoreWorkDays] = useState(false);
   const isFetchingMoreWorkDaysRef = useRef(false);
 
-  const loadMoreWorkDays = () => {
+  const loadMoreWorkDays = (force = false) => {
     if (
       isFetchingMoreWorkDaysRef.current ||
       !adminStore.areMissionsActivitiesLoaded ||
-      !adminStore.workDaysPageInfo?.hasNextPage
+      (!force && !adminStore.workDaysPageInfo?.hasNextPage)
     ) {
       return;
     }
@@ -30,6 +30,7 @@ const useLoadMoreWorkDays = ({ minDate, maxDate }) => {
       minDate,
       maxDate,
       reset: false,
+      userIds,
     })
       .finally(() => {
         isFetchingMoreWorkDaysRef.current = false;

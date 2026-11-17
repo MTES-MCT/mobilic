@@ -17,7 +17,6 @@ import { useActivitiesData } from "./ActivitiesSection/useActivitiesData";
 import { useActivitiesWorkTimeEntries } from "./ActivitiesSection/useActivitiesWorkTimeEntries";
 import LogHolidayDrawer from "./ActivitiesSection/LogHolidayDrawer";
 import NewMissionDrawer from "./ActivitiesSection/NewMissionDrawer";
-import useLoadMoreWorkDays from "./ActivitiesSection/useLoadMoreWorkDays";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -44,6 +43,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const MIN_DISPLAYED_ROWS_BEFORE_AUTO_LOAD = 20;
+
 function ActivitiesPanel() {
   usePageTitle("Activités - Mobilic");
   const adminStore = useAdminStore();
@@ -55,8 +56,7 @@ function ActivitiesPanel() {
   const [openNewMission, setOpenNewMission] = useState(false);
   const [openLogHoliday, setOpenLogHoliday] = useState(false);
 
-  const { minDate, setMinDate, maxDate, setMaxDate, dateRangeError, loading, refreshCurrentWorkDays, company, companies, appliedDateRange } = useActivitiesData()
-  const { isLoadingMoreWorkDays, loadMoreWorkDays} = useLoadMoreWorkDays({minDate, maxDate})
+  const { minDate, setMinDate, maxDate, setMaxDate, dateRangeError, loading, refreshCurrentWorkDays, isLoadingMoreWorkDays, loadMoreWorkDays, company, companies, appliedDateRange } = useActivitiesData()
 
 
   useLoadAdminPanelData();
@@ -75,11 +75,30 @@ function ActivitiesPanel() {
   const {
     missionsById,
     workTimeEntries,
-    handleShowDeletedMissions
+    handleShowDeletedMissions,
+    selectedWorkDaysCount
   } = useActivitiesWorkTimeEntries({
     period,
     appliedDateRange,
   });
+
+  // Keep auto-loading more pages while the filtered view has too few rows,
+  // instead of relying only on scroll. Re-checks on new page (endCursor) or
+  // filter change (selectedWorkDaysCount), so applying a filter after
+  // pagination already stopped still triggers another load if needed.
+  useEffect(() => {
+    if (
+      adminStore.areMissionsActivitiesLoaded &&
+      adminStore.workDaysPageInfo?.hasNextPage &&
+      selectedWorkDaysCount < MIN_DISPLAYED_ROWS_BEFORE_AUTO_LOAD
+    ) {
+      loadMoreWorkDays();
+    }
+  }, [
+    adminStore.workDaysPageInfo?.endCursor,
+    adminStore.areMissionsActivitiesLoaded,
+    selectedWorkDaysCount
+  ]);
 
   const ref = useRef(null);
 

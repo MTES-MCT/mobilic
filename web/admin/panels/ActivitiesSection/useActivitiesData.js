@@ -4,7 +4,7 @@ import { useSnackbarAlerts } from "../../../common/Snackbar";
 import { useApi } from "common/utils/api";
 import { loadActivitiesData } from "../../utils/activities";
 import { ADMIN_ACTIONS } from "../../store/reducers/root";
-import debounce from "lodash/debounce";
+import useLoadMoreWorkDays from "./useLoadMoreWorkDays";
 
 const withLocalLoadingScreen = (setLoading) => async (sync) => {
   setLoading(true);
@@ -15,28 +15,12 @@ const withLocalLoadingScreen = (setLoading) => async (sync) => {
   }
 };
 
-const onMinDateChange = debounce(
-  async ({ newMinDate, maxDate, adminStore, api, alerts, setLoading }) => {
-    if (newMinDate < maxDate) {
-      await loadActivitiesData({
-        adminStore,
-        alerts,
-        api,
-        withLoadingScreen: withLocalLoadingScreen(setLoading),
-        minDate: newMinDate,
-        maxDate,
-        reset: false,
-      });
-    }
-  },
-  500,
-);
-
 export const useActivitiesData = () => {
   const api = useApi();
   const adminStore = useAdminStore();
   const alerts = useSnackbarAlerts();
   const [adminCompanies, company] = useAdminCompanies();
+  const { users } = adminStore.activitiesFilters;
 
   const [minDate, setMinDate] = useState(adminStore.activitiesFilters.minDate);
   const [maxDate, setMaxDate] = useState(adminStore.activitiesFilters.maxDate);
@@ -48,6 +32,18 @@ export const useActivitiesData = () => {
     maxDate: adminStore.activitiesFilters.maxDate,
   });
   const minDateOfFetchedData = adminStore.minWorkDaysDate;
+
+  const employeeFilterUserIds = users.some((u) => u.selected)
+    ? users.filter((u) => u.selected).map((u) => u.id)
+    : null;
+  const employeeFilterKey =
+    employeeFilterUserIds?.slice().sort().join(",") ?? "";
+
+  const { isLoadingMoreWorkDays, loadMoreWorkDays } = useLoadMoreWorkDays({
+    minDate,
+    maxDate,
+    userIds: employeeFilterUserIds,
+  });
 
   const isDateRangeValid = useCallback((start, end) => {
     if (!start || !end || start > end) {
@@ -66,7 +62,6 @@ export const useActivitiesData = () => {
 
   useEffect(() => {
     if (maxDate && !minDate) setMinDate(minDateOfFetchedData);
-    if (maxDate && minDate && minDate > maxDate) setMinDate(maxDate);
     if (!isDateRangeValid(minDate, maxDate)) {
       return;
     }
@@ -89,24 +84,21 @@ export const useActivitiesData = () => {
   }, [adminCompanies]);
 
   useEffect(() => {
-    if (minDate && (!maxDate || maxDate < minDate)) setMaxDate(minDate);
-    if (!isDateRangeValid(minDate, maxDate)) {
-      return;
+    if (minDate) {
+      adminStore.dispatch({
+        type: ADMIN_ACTIONS.updateActivitiesFilters,
+        payload: { minDate },
+      });
     }
+  }, [minDate]);
 
-    onMinDateChange({
-      newMinDate: minDate,
-      maxDate: minDateOfFetchedData,
-      adminStore,
-      api,
-      alerts,
-      setLoading,
-    });
-    adminStore.dispatch({
-      type: ADMIN_ACTIONS.updateActivitiesFilters,
-      payload: { minDate },
-    });
-  }, [minDate, maxDate, isDateRangeValid]);
+  useEffect(() => {
+    if (minDate && (!maxDate || maxDate < minDate)) {
+      setMaxDate(minDate);
+    } else if (maxDate && (!minDate || minDate > maxDate)) {
+      setMinDate(maxDate);
+    }
+  }, [minDate, maxDate]);
 
   useEffect(() => {
     if (minDate && maxDate && !isDateRangeValid(minDate, maxDate)) {
@@ -125,6 +117,7 @@ export const useActivitiesData = () => {
       minDate,
       maxDate,
       reset: true,
+      userIds: employeeFilterUserIds,
     });
 
   const prevDateRangeRef = useRef({ minDate, maxDate });
@@ -139,29 +132,42 @@ export const useActivitiesData = () => {
 
     const prevMinDate = prevDateRangeRef.current.minDate;
     const prevMaxDate = prevDateRangeRef.current.maxDate;
+    prevDateRangeRef.current = { minDate, maxDate };
 
-    const shouldReload = maxDate !== prevMaxDate || minDate > prevMinDate;
+    const maxDateChanged = maxDate !== prevMaxDate;
+    const minDateChanged = minDate !== prevMinDate;
 
-    if (shouldReload) {
+    if (!maxDateChanged && !minDateChanged) {
+      return;
+    }
+
+    if (maxDateChanged) {
       const timeoutId = setTimeout(() => {
-        refreshCurrentWorkDays().catch((err) => console.error(err));
+        void refreshCurrentWorkDays();
       }, 500);
-
-      prevDateRangeRef.current = { minDate, maxDate };
       return () => clearTimeout(timeoutId);
     }
 
-    prevDateRangeRef.current = { minDate, maxDate };
-  }, [
-    minDate,
-    maxDate,
-    company?.id,
-    isDateRangeValid,
-    alerts,
-    api,
-    adminStore,
-    company,
-  ]);
+    if (adminStore.areMissionsActivitiesLoaded) {
+      const timeoutId = setTimeout(() => {
+        loadMoreWorkDays(true);
+      }, 500);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [minDate, maxDate, company?.id, isDateRangeValid]);
+
+  const prevEmployeeFilterKeyRef = useRef(employeeFilterKey);
+  useEffect(() => {
+    if (employeeFilterKey === prevEmployeeFilterKeyRef.current) {
+      return;
+    }
+    prevEmployeeFilterKeyRef.current = employeeFilterKey;
+
+    const timeoutId = setTimeout(() => {
+      void refreshCurrentWorkDays();
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [employeeFilterKey]);
 
   const appliedDateRange = useMemo(() => {
     if (isDateRangeValid(minDate, maxDate)) {
@@ -179,6 +185,8 @@ export const useActivitiesData = () => {
     dateRangeError,
     loading,
     refreshCurrentWorkDays,
+    isLoadingMoreWorkDays,
+    loadMoreWorkDays,
     company,
     companies,
     appliedDateRange,

@@ -117,5 +117,10 @@ export const useActivitiesWorkTimeEntries = ({ period, appliedDateRange }) => {
     [periodAggregates, deletedMissionEntries],
   );
 
-  return { missionsById, workTimeEntries, handleShowDeletedMissions };
+  return {
+    missionsById,
+    workTimeEntries,
+    handleShowDeletedMissions,
+    selectedWorkDaysCount: selectedWorkDays.length,
+  };
 };
