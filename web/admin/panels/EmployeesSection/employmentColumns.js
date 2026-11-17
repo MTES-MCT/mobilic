@@ -1,12 +1,8 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { frenchFormatDateStringOrTimeStamp } from "common/utils/time";
-import { EMPLOYMENT_ROLE } from "common/utils/employments";
-import { NO_TEAM_ID } from "../../utils/teams";
 import { BusinessDropdown } from "../../components/BusinessDropdown";
 import { AdminRightsDropdown } from "../../components/AdminRightsDropdown";
 import { TeamDropdown } from "../../components/TeamDropdown";
@@ -71,7 +67,7 @@ export const confirmActionIfOnlyAdmin = (
     : action();
 };
 
-export const getPendingEmploymentColumns = ({ teams }) => {
+export const getPendingEmploymentColumns = ({ teams, allowTemporaryEmployees }) => {
   const formatTeam = (teamId) =>
     teams?.find((team) => team.id === teamId)?.name;
 
@@ -79,39 +75,44 @@ export const getPendingEmploymentColumns = ({ teams }) => {
     {
       label: "Identifiant ou email",
       name: "idOrEmail",
-      create: true,
       sortable: true,
       minWidth: 260,
       baseWidth: 300,
       overflowTooltip: true,
-      align: "left"
+      align: "left",
+      format: (idOrEmail, entry) =>
+        entry.isExpired ? (
+          <>
+            <EmployeeStatusBadge isExpired />
+            {idOrEmail}
+          </>
+        ) : (
+          idOrEmail
+        )
     },
     {
       label: "Accès gestionnaire",
       name: "hasAdminRights",
-      create: true,
       minWidth: 120,
       baseWidth: 120,
       align: "left",
-      required: true,
-      format: (hasAdminRights) => (hasAdminRights ? "Oui" : "Non"),
-      renderEditMode: (type, entry, setType) => (
-        <TextField
-          required
-          fullWidth
-          select
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-        >
-          <MenuItem key={0} value={EMPLOYMENT_ROLE.admin}>
-            Oui
-          </MenuItem>
-          <MenuItem key={1} value={EMPLOYMENT_ROLE.employee}>
-            Non
-          </MenuItem>
-        </TextField>
-      )
-    },
+      format: (hasAdminRights) => (hasAdminRights ? "Oui" : "Non")
+    }
+  ];
+
+  if (allowTemporaryEmployees) {
+    columns.push({
+      label: "Fin rattachement",
+      name: "endDate",
+      align: "center",
+      format: (endDate) =>
+        endDate ? frenchFormatDateStringOrTimeStamp(endDate) : "",
+      minWidth: 120,
+      baseWidth: 140
+    });
+  }
+
+  columns.push(
     {
       label: "Invité le",
       format: (dateString) =>
@@ -129,35 +130,16 @@ export const getPendingEmploymentColumns = ({ teams }) => {
       baseWidth: 140,
       align: "center"
     }
-  ];
+  );
 
   if (teams?.length > 0) {
     columns.push({
       label: "Groupe d'affectation",
       name: "teamId",
-      create: true,
       minWidth: 160,
       baseWidth: 160,
       align: "left",
-      required: true,
-      format: formatTeam,
-      renderEditMode: (type, entry, setType) => (
-        <TextField
-          fullWidth
-          select
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-        >
-          <MenuItem key={NO_TEAM_ID} value={NO_TEAM_ID}>
-            {"-"}
-          </MenuItem>
-          {teams.map((team) => (
-            <MenuItem key={team.id} value={team.id}>
-              {team.name}
-            </MenuItem>
-          ))}
-        </TextField>
-      )
+      format: formatTeam
     });
   }
 
@@ -185,7 +167,10 @@ export const getValidEmploymentColumns = ({
   companyId,
   modals,
   handleReattachSuccess,
-  handleBatchTerminateSuccess
+  handleBatchTerminateSuccess,
+  allowTemporaryEmployees,
+  temporary = false,
+  handleUpdateEndDate
 }) => {
   const columns = [
     {
@@ -231,8 +216,37 @@ export const getValidEmploymentColumns = ({
       sortable: true,
       minWidth: 90,
       baseWidth: 135
-    },
-    {
+    }
+  ];
+
+  if (temporary) {
+    columns.push({
+      label: "Fin rattachement",
+      name: "endDate",
+      align: "left",
+      sortable: true,
+      minWidth: 160,
+      baseWidth: 180,
+      format: (endDate, entry) => {
+        if (!endDate) return "";
+        return (
+          <>
+            {frenchFormatDateStringOrTimeStamp(endDate)}
+            {!entry.isDetached && (
+              <Button
+                priority="tertiary no outline"
+                size="small"
+                onClick={() => handleUpdateEndDate(entry)}
+              >
+                Modifier
+              </Button>
+            )}
+          </>
+        );
+      }
+    });
+  } else {
+    columns.push({
       label: (<>Accès<br />gestionnaire</>),
       name: "hasAdminRights",
       format: (hasAdminRights, entry) => (
@@ -248,8 +262,8 @@ export const getValidEmploymentColumns = ({
       sortable: true,
       minWidth: 140,
       baseWidth: 135
-    }
-  ];
+    });
+  }
 
   if (adminStore?.teams?.length > 0) {
     columns.push({
@@ -284,13 +298,15 @@ export const getValidEmploymentColumns = ({
     minWidth: 180
   });
 
-  columns.push({
-    label: "Identifiant",
-    name: "id",
-    align: "left",
-    minWidth: 120,
-    baseWidth: 120
-  });
+  if (!temporary) {
+    columns.push({
+      label: "Identifiant",
+      name: "id",
+      align: "left",
+      minWidth: 120,
+      baseWidth: 120
+    });
+  }
 
   columns.push({
     label: "",
@@ -308,6 +324,7 @@ export const getValidEmploymentColumns = ({
           onClick={() =>
             modals.open("reattachEmployment", {
               employee: entry,
+              allowTemporaryEmployees,
               onSuccess: (newEmployment) =>
                 handleReattachSuccess(newEmployment, entry.employmentId)
             })
