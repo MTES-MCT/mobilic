@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
   dateInputGroup: {
     flexShrink: 0,
-    width: theme.spacing(27.5),
+    width: "13.75rem",
     marginBottom: 0,
   },
   dateLabel: {
@@ -72,7 +72,8 @@ export default function InviteEmployeesListModal({
       return s;
     });
     setEndDates((prev) => {
-      const { [value]: _, ...rest } = prev;
+      const rest = { ...prev };
+      delete rest[value];
       return rest;
     });
     setAdminSet((prev) => {
@@ -145,7 +146,7 @@ export default function InviteEmployeesListModal({
       const isTemp = temporarySet.has(entry.value);
       return {
         ...(entry.type === "id"
-          ? { userId: parseInt(entry.value, 10) }
+          ? { userId: Number.parseInt(entry.value, 10) }
           : { mail: entry.value }),
         hasAdminRights: !isTemp && adminSet.has(entry.value),
         isTemporary: isTemp,
@@ -219,11 +220,9 @@ export default function InviteEmployeesListModal({
       </>
     );
     actions = (
-      <>
-        <Button disabled={!canProceedStep1} onClick={goNext}>
-          Suivant
-        </Button>
-      </>
+      <Button disabled={!canProceedStep1} onClick={goNext}>
+        Suivant
+      </Button>
     );
   } else if (step === 2) {
     title = "Sélectionner les salariés temporaires";

@@ -104,6 +104,7 @@ export default function BatchInviteModal({
                 emails,
                 userIds
               });
+              if (result === false) return;
               if (result?.failedEntries?.length > 0) {
                 list.replaceEntries(result.failedEntries);
                 return;

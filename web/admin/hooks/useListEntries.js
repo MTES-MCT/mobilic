@@ -5,7 +5,7 @@ const SEPARATORS_REGEX = /[,;\n ]/;
 const MAX_ENTRIES = 100;
 
 function isValidMobilicId(value) {
-  return /^\d+$/.test(value) && parseInt(value, 10) > 0;
+  return /^\d+$/.test(value) && Number.parseInt(value, 10) > 0;
 }
 
 function isValidEntry(value) {
@@ -95,13 +95,12 @@ export default function useListEntries({
     [isTextInvalid, tooManyEntries, hasValidated, tooManyEntriesInPastedText],
   );
 
-  const errorMessage = React.useMemo(
-    () =>
-      isTextInvalid && hasValidated
-        ? validationErrorMessage
-        : tooManyEntries || tooManyEntriesInPastedText
-          ? `Le nombre d'entrées ne peut dépasser ${MAX_ENTRIES}. Veuillez découper la liste et procéder en plusieurs fois.`
-          : "",
+  const errorMessage = React.useMemo(() => {
+    if (isTextInvalid && hasValidated) return validationErrorMessage;
+    if (tooManyEntries || tooManyEntriesInPastedText)
+      return `Le nombre d'entrées ne peut dépasser ${MAX_ENTRIES}. Veuillez découper la liste et procéder en plusieurs fois.`;
+    return "";
+  },
     [
       isTextInvalid,
       tooManyEntries,

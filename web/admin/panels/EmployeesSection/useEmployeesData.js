@@ -12,7 +12,7 @@ import {
   now
 } from "common/utils/time";
 import { ADMIN_ACTIONS } from "../../store/reducers/root";
-import { isExpiredInvitation } from "common/utils/employments";
+import { isExpiredTemporaryInvitation } from "common/utils/employments";
 import { NO_TEAMS_LABEL, NO_TEAM_ID } from "../../utils/teams";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { readCookie, setCookie } from "common/utils/cookie";
@@ -220,8 +220,8 @@ export function useEmployeesData(company) {
           userId: e.user?.id,
           companyId: e.company?.id,
           endDate: e.endDate,
-          isExpired: isExpiredInvitation(e),
-          remindButton: !isExpiredInvitation(e) && (
+          isExpired: isExpiredTemporaryInvitation(e),
+          remindButton: !isExpiredTemporaryInvitation(e) && (
             <Button
               disabled={
                 e.latestInviteEmailTime &&
@@ -272,7 +272,6 @@ export function useEmployeesData(company) {
 
   const disableRemindAllPendingInvitations = React.useMemo(
     () =>
-      remindableEmployments.length === 0 ||
       remindableEmployments.every(
         (e) =>
           e.latestInviteEmailTime &&
@@ -519,9 +518,8 @@ export function useEmployeesData(company) {
           entity: "employments"
         }
       });
-      const totalRequested = invitations
-        ? invitations.length
-        : (emails ? emails.length : 0) + (userIds ? userIds.length : 0);
+      const totalRequested =
+        invitations?.length ?? (emails?.length ?? 0) + (userIds?.length ?? 0);
       if (employments.length < totalRequested) {
         alerts.warning(
           `${employments.length} invitation(s) envoyée(s) sur ${totalRequested}. Vérifiez les adresses email et identifiants saisis.`,

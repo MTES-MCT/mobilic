@@ -24,7 +24,7 @@ export function getEmploymentsStatus(employment) {
   return EMPLOYMENT_STATUS.active;
 }
 
-export function isExpiredInvitation(employment) {
+export function isExpiredTemporaryInvitation(employment) {
   if (!employment.isTemporary || !employment.endDate) return false;
   if (employment.isAcknowledged) return false;
   const today = isoFormatLocalDate(new Date());

@@ -103,7 +103,7 @@ export default function InviteSingleEmployeeModal({
               label="Groupe d'affectation"
               nativeSelectProps={{
                 value: teamId,
-                onChange: (e) => setTeamId(parseInt(e.target.value, 10)),
+                onChange: (e) => setTeamId(Number.parseInt(e.target.value, 10)),
               }}
             >
               <option value={NO_TEAM_ID}>-</option>
