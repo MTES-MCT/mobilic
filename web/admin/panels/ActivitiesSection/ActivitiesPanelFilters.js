@@ -68,6 +68,13 @@ const ActivitiesPanelFilters = (props) => {
   const { getUsersSinceDate } = useGetUsersSinceDate();
   const [, company] = useAdminCompanies();
 
+  const datePickerAriaText = (label) => ({
+    openDatePickerDialogue: (value, utils) =>
+      value && utils.isValid(value)
+        ? `${label}, ${utils.format(value, "fullDate")}`
+        : label,
+  });
+
   const dsfrTextFieldSlotProps = (id, label) => ({
     id,
     label,
@@ -163,6 +170,7 @@ const ActivitiesPanelFilters = (props) => {
             setMinDate(isoFormatLocalDate(val));
           }}
           maxDate={today}
+          localeText={datePickerAriaText("Du (date de début)")}
           slotProps={{
             textField: dsfrTextFieldSlotProps(
               "activities-min-date",
@@ -184,6 +192,7 @@ const ActivitiesPanelFilters = (props) => {
             setMaxDate(isoFormatLocalDate(val));
           }}
           maxDate={maxAllowedEndDate > today ? today : maxAllowedEndDate}
+          localeText={datePickerAriaText("Au (date de fin)")}
           slotProps={{
             textField: dsfrTextFieldSlotProps(
               "activities-max-date",
