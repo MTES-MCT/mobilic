@@ -1,5 +1,6 @@
 import { useApi } from "common/utils/api";
 import { useSnackbarAlerts } from "./Snackbar";
+import { loadCoworkerData } from "common/utils/loadUserData";
 import {
   broadCastChannel,
   useStoreSyncedWithLocalStorage
@@ -188,6 +189,7 @@ export function EmploymentInfoCard({
         } else await store.deleteEntityObject(employment.id, "employments");
 
         store.batchUpdate();
+        if (accept) await loadCoworkerData(api, store, alerts);
         await broadCastChannel.postMessage("update");
       },
       "validate-employment",
