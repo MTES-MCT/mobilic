@@ -221,6 +221,14 @@ class Api {
           refreshResponse = await this._fetch(HTTP_QUERIES.refresh, {
             timeout: 12000
           });
+          if (
+            ![200, 401].includes(refreshResponse.status) &&
+            readCookie("atEat")
+          ) {
+            throw new Error(
+              `Token refresh failed with status ${refreshResponse.status}`
+            );
+          }
         } catch (err) {
           const newError = new Error(err.message);
           newError.name = "NetworkError";

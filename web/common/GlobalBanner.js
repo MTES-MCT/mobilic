@@ -5,25 +5,33 @@ import Notice from "./Notice";
 
 const ALLOWED_LEVELS = new Set(["info", "warning", "error"]);
 
-// Network failures (offline, aborted request) are expected and not worth reporting.
-const isNetworkError = err =>
-  err?.name === "AbortError" || err instanceof TypeError;
+const isNetworkError = err => err instanceof TypeError;
 
-// Globally fetched from a public endpoint so it also shows to logged-out users.
+const BANNER_CACHE_TTL_MS = 5 * 60 * 1000;
+
+let bannerPromise = null;
+let bannerFetchedAt = 0;
+
+const fetchBanner = () => {
+  if (!bannerPromise || Date.now() - bannerFetchedAt > BANNER_CACHE_TTL_MS) {
+    bannerFetchedAt = Date.now();
+    bannerPromise = fetch(`${API_HOST}/global-banner`)
+      .then(res => (res.ok ? res.json() : null))
+      .catch(err => {
+        if (!isNetworkError(err)) captureSentryException(err);
+        return null;
+      });
+  }
+  return bannerPromise;
+};
+
 export function GlobalBanner() {
   const [banner, setBanner] = React.useState(null);
 
   React.useEffect(() => {
-    const controller = new AbortController();
-    fetch(`${API_HOST}/global-banner`, { signal: controller.signal })
-      .then(res => (res.ok ? res.json() : null))
-      .then(data => {
-        if (data?.enabled && data?.message) setBanner(data);
-      })
-      .catch(err => {
-        if (!isNetworkError(err)) captureSentryException(err);
-      });
-    return () => controller.abort();
+    fetchBanner().then(data => {
+      if (data?.enabled && data?.message) setBanner(data);
+    });
   }, []);
 
   if (!banner) return null;
