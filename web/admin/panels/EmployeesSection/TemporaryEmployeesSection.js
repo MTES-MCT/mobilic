@@ -58,7 +58,7 @@ const TemporaryEmployeesSection = ({
     if (rest.length === 0) {
       return (
         <>
-          {formatPersonName(first)} sera détaché le{" "}
+          {formatPersonName(first)} sera détaché(e) le{" "}
           {frenchFormatDateStringOrTimeStamp(first.endDate)}.
           <button
             type="button"
