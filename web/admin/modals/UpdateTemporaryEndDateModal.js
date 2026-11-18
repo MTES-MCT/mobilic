@@ -84,7 +84,7 @@ export default function UpdateTemporaryEndDateModal({
             stateRelatedMessage={
               error ||
               (isPastDate
-                ? "La date de fin ne peut pas être antérieure à aujourd'hui. Pour mettre fin au rattachement maintenant, utilisez « Détacher »."
+                ? "La date de fin ne peut pas être antérieure à aujourd'hui. Pour mettre fin au rattachement maintenant, cliquez sur « Détacher »."
                 : "")
             }
             nativeInputProps={{

@@ -132,9 +132,9 @@ export default function SettingAdmin({ company }) {
         <ListItem>
           <SimpleToggleSetting
             name="allowTemporaryEmployees"
-            label="Salariés temporaires"
+            label="Rattachement temporaire"
             value={adminStore.settings.allowTemporaryEmployees}
-            description="Permet d'inviter des salariés avec une date de fin de rattachement."
+            description="Permet d'ajouter des salariés temporaires en définissant une date de fin de rattachement. À cette date, le salarié est automatiquement détaché de l'entreprise."
             submitSettingChange={submitSettingChange}
             disabled={temporaryToggleDisabled}
             hint={

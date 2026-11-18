@@ -220,9 +220,11 @@ export default function InviteEmployeesListModal({
       </>
     );
     actions = (
-      <Button disabled={!canProceedStep1} onClick={goNext}>
-        Suivant
-      </Button>
+      <>
+        <Button disabled={!canProceedStep1} onClick={goNext}>
+          Suivant
+        </Button>
+      </>
     );
   } else if (step === 2) {
     title = "Sélectionner les salariés temporaires";
