@@ -154,10 +154,10 @@ export const USER_CONTROLS_QUERY = gql`
 `;
 
 export const CURRENT_EMPLOYMENTS_QUERY = gql`
-  query currentEmployments($id: Int!) {
+  query currentEmployments($id: Int!, $today: Date!) {
     user(id: $id) {
       id
-      currentEmployments {
+      currentEmployments: employments(fromDate: $today, untilDate: $today) {
         id
         startDate
         isAcknowledged

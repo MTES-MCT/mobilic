@@ -10,7 +10,7 @@ import values from "lodash/values";
 import flatten from "lodash/flatten";
 import { EMPLOYMENT_STATUS, getEmploymentsStatus } from "./employments";
 import { onLogIn } from "./updatePassword";
-import { jsToUnixTimestamp } from "common/utils/time";
+import { isoFormatLocalDate, jsToUnixTimestamp } from "common/utils/time";
 import {
   CURRENT_EMPLOYMENTS_QUERY,
   CURRENT_MISSION_INFO,
@@ -39,14 +39,15 @@ export async function loadUserData(api, store, alerts) {
   }, "load-user");
 }
 
-async function loadCoworkerData(api, store, alerts) {
+export async function loadCoworkerData(api, store, alerts) {
   const userId = store.userId();
   if (!userId) return;
   await alerts.withApiErrorHandling(async () => {
     const userResponse = await api.graphQlQuery(
       CURRENT_EMPLOYMENTS_QUERY,
       {
-        id: userId
+        id: userId,
+        today: isoFormatLocalDate(new Date())
       },
       { context: { timeout: 12000 } }
     );

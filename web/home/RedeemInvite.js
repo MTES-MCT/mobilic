@@ -12,6 +12,8 @@ import Typography from "@mui/material/Typography";
 import { currentUserId } from "common/utils/cookie";
 import { captureSentryException } from "common/utils/sentry";
 import { usePageTitle } from "../common/UsePageTitle";
+import { useSnackbarAlerts } from "../common/Snackbar";
+import { loadCoworkerData } from "common/utils/loadUserData";
 import {
   GET_EMPLOYMENT_QUERY,
   REDEEM_INVITE_QUERY
@@ -23,6 +25,7 @@ export function RedeemInvite() {
   const withLoadingScreen = useLoadingScreen();
   const api = useApi();
   const store = useStoreSyncedWithLocalStorage();
+  const alerts = useSnackbarAlerts();
   const history = useHistory();
 
   const [error, setError] = React.useState("");
@@ -68,6 +71,7 @@ export function RedeemInvite() {
             createOrReplace: true
           });
           store.batchUpdate();
+          await loadCoworkerData(api, store, alerts);
         } else await store.updateUserIdAndInfo();
         await broadCastChannel.postMessage("update");
         history.push("/home");
