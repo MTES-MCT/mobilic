@@ -268,7 +268,7 @@ export function MissionDetails({
   return (
     <Box ref={containerRef} pb={printValidationBtn ? 8 : 0}>
       <AlternateColors inverseColors={inverseColors}>
-        {!hideHistory && (
+        {!hideHistory && mission.validations?.length > 0 && (
           <MissionReviewSection title="Historique des validations">
             {mission.validations && (
               <MissionValidations
