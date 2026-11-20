@@ -168,7 +168,11 @@ export function BirthDate({ label, userBirthDate, setUserBirthDate }) {
       )}
       style={{ alignItems: "flex-start" }}
     >
-      <legend className="fr-fieldset__legend" id="date-naissance-salarie">
+      <legend
+        className="fr-fieldset__legend"
+        id="date-naissance-salarie"
+        style={{ fontWeight: "normal" }}
+      >
         {label}
       </legend>
       <div className="fr-fieldset__element fr-fieldset__element--inline fr-fieldset__element--number">

@@ -241,23 +241,18 @@ export function ControllerControlBulletin({
         onCloseDrawer={() => handleButtonClick("back")}
         backLinkLabel={
           !STEPS[step - 1]
-            ? `Retour au contrôle ${controlData.id}`
+            ? "Retour au contrôle"
             : `Revenir à l'étape ${step - 1}/${Object.keys(STEPS).length}`
         }
       />
-      <Typography variant="h1" mb={2}>
+      <Typography component="h1" className="fr-h3" mb={2}>
         Éditer un bulletin de contrôle
       </Typography>
-      <Typography>
+      <Typography mb={3}>
         Pour éditer un bulletin de contrôle au format PDF, veuillez renseigner
         les champs ci-dessous.
       </Typography>
-      <Stepper
-        currentStep={step}
-        nextTitle={STEPS[step + 1]?.title || null}
-        stepCount={3}
-        title={STEPS[step].title}
-      />
+      <Stepper currentStep={step} stepCount={3} title={STEPS[step].title} />
       {step === 1 && (
         <ControlBulletinFormStep1
           handleEditControlBulletin={handleEditControlBulletin}
@@ -270,6 +265,7 @@ export function ControllerControlBulletin({
           handleEditControlBulletin={handleEditControlBulletin}
           controlBulletin={controlBulletinTmp}
           showErrors={showErrors}
+          employments={controlData?.employments}
         />
       )}
       {step === 3 && (
@@ -296,6 +292,7 @@ export function ControllerControlBulletin({
         ]}
         inlineLayoutWhen="sm and up"
         alignment="right"
+        className="fr-mt-3w"
       />
     </>
   );

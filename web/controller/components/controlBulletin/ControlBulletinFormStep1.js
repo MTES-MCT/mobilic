@@ -30,7 +30,7 @@ export function ControlBulletinFormStep1({
   }
 
   return (
-    <Stack direction="column" p={2} sx={{ width: "100%" }}>
+    <Stack direction="column" px={2} sx={{ width: "100%" }}>
       <MandatoryField />
       <DsfrAutocomplete
         field={controlBulletin.locationDepartment}
