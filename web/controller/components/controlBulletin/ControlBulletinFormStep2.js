@@ -17,7 +17,8 @@ import { LicenseInput } from "./LicenseInput";
 export function ControlBulletinFormStep2({
   handleEditControlBulletin,
   controlBulletin,
-  showErrors
+  showErrors,
+  employments
 }) {
   const [prevLicenseNumber, setPrevLicenseNumber] = React.useState("");
 
@@ -43,7 +44,7 @@ export function ControlBulletinFormStep2({
   };
 
   return (
-    <Stack direction="column" p={2} sx={{ width: "100%" }}>
+    <Stack direction="column" px={2} sx={{ width: "100%" }}>
       <CompanyControlData
         siren={controlBulletin.siren}
         setSiren={setSiren}
@@ -52,6 +53,7 @@ export function ControlBulletinFormStep2({
         companyAddress={controlBulletin.companyAddress}
         setCompanyAddress={setCompanyAddress}
         showErrors={showErrors}
+        employments={employments}
       />
       <Input
         nativeInputProps={{
@@ -138,7 +140,6 @@ export function ControlBulletinFormStep2({
         state={
           !controlBulletin.transportType && showErrors ? "error" : "default"
         }
-        stateRelatedMessage="Veuillez compléter ce champ."
         required
       />
       <Input
