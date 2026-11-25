@@ -465,6 +465,8 @@ export function WorkTimeTable({
   }
   const employeeCol = {
     label: "Salarié",
+    baseWidth: 176,
+    minWidth: 90,
     name: "workerName",
     sortable: true,
     align: "left",
@@ -472,8 +474,9 @@ export function WorkTimeTable({
   };
   const infractionsCol = {
     label: "Infractions",
+    baseWidth: 116,
     name: "infractions",
-    minWidth: 120,
+    minWidth: 100,
     format: formatInfractions,
     align: "center",
     flexGrow: 0
@@ -494,35 +497,67 @@ export function WorkTimeTable({
   };
   const workTimeCol = {
     label: "Travail",
+    baseWidth: 125,
     name: "totalWork",
     sortable: true,
     format: formatTimer,
     align: "center",
-    minWidth: 120,
+    minWidth: 100,
     flexGrow: 0
   };
   const restTimeCol = {
     label: "Pause",
+    baseWidth: 125,
     name: "rest",
     format: (time) => (time ? formatTimer(time, false) : '0min'),
     align: "center",
-    minWidth: 100,
+    minWidth: 90,
     flexGrow: 0
   };
   const amplitudeCol = {
     label: "Amplitude",
+    baseWidth: 125,
     name: "service",
     format: (time) => (time ? formatTimer(time, false) : null),
     align: "center",
-    minWidth: 100,
+    minWidth: 90,
     flexGrow: 0
+  };
+  const renderValidateButton = (entry) => {
+    if (entry.statusKey !== MISSION_STATUS.toValidateAdmin || !entry.user) {
+      return null;
+    }
+    const mission = missionsById[Object.keys(entry.missionNames || {})[0]];
+    if (!mission) {
+      return null;
+    }
+    const userEntry = missionToValidationEntries(mission).find(
+      (e) => e.user?.id === entry.user.id
+    );
+    if (!userEntry || !entryToBeValidatedByAdmin(userEntry, adminStore.userId)) {
+      return null;
+    }
+    return <ValidateMissionButton mission={mission} user={entry.user} />;
   };
   const statusCol = {
     label: "Statut",
+    baseWidth: 224,
     name: "statusKey",
-    format: (statusKey, entry) => formatStatus(statusKey, entry, openMission, openWorkday),
+    format: (statusKey, entry) => (
+      <span
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%"
+        }}
+      >
+        {formatStatus(statusKey, entry, openMission, openWorkday)}
+        {renderValidateButton(entry)}
+      </span>
+    ),
     align: "left",
-    minWidth: 250,
+    minWidth: 210,
     flexGrow: 0,
     renderLabel: () => (
       <span
@@ -556,34 +591,13 @@ export function WorkTimeTable({
   };
   const missionNamesCol = {
     label: "Mission(s)",
+    baseWidth: 176,
+    minWidth: 90,
     name: "missionNames",
     format: (_, entry) => formatMissionNamesList(_, entry, openMission),
     align: "left",
     sortable: true,
     overflowTooltip: true
-  };
-  const validateActionCol = {
-    label: "",
-    name: "validateAction",
-    align: "right",
-    minWidth: 120,
-    flexGrow: 0,
-    format: (_, entry) => {
-      if (entry.statusKey !== MISSION_STATUS.toValidateAdmin || !entry.user) {
-        return null;
-      }
-      const mission = missionsById[Object.keys(entry.missionNames || {})[0]];
-      if (!mission) {
-        return null;
-      }
-      const userEntry = missionToValidationEntries(mission).find(
-        (e) => e.user?.id === entry.user.id
-      );
-      if (!userEntry || !entryToBeValidatedByAdmin(userEntry, adminStore.userId)) {
-        return null;
-      }
-      return <ValidateMissionButton mission={mission} user={entry.user} />;
-    }
   };
 
   let columns = [];
@@ -595,8 +609,7 @@ export function WorkTimeTable({
       workTimeCol,
       restTimeCol,
       amplitudeCol,
-      statusCol,
-      validateActionCol,
+      statusCol
     ];
   } else {
     const withThreshold = period === "week";
