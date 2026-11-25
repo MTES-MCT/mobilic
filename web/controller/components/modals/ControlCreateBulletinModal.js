@@ -16,14 +16,21 @@ export default function ControlCreateBulletinModal({
       title="Éditer le bulletin de contrôle"
       size="sm"
       content={
-        <p>
-          <strong>
+        <>
+          <p>
+            <strong>
+              Il est recommandé de créer le bulletin avant de fermer le
+              contrôle.
+            </strong>
+          </p>
+          <p>
             Vous pourrez l’envoyer à l’entreprise de manière dématérialisée.
-          </strong>
-          La création comme l’envoi peuvent aussi être réalisés a posteriori.
-          {askCompanyEmail &&
-            " Pensez à demander l’adresse e-mail de l’entreprise."}
-        </p>
+            La création comme l’envoi peuvent aussi être réalisés a posteriori.
+          </p>
+          {askCompanyEmail && (
+            <p>Pensez à demander l’adresse e-mail de l’entreprise.</p>
+          )}
+        </>
       }
       actions={
         <>
