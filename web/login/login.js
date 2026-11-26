@@ -280,6 +280,7 @@ export default function Login() {
                 onSubmit={handleSubmit}
               >
                 <EmailField
+                  label="Email"
                   autoComplete="username"
                   value={email}
                   setValue={setEmail}

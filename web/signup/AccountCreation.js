@@ -231,6 +231,7 @@ export function AccountCreation({ employeeInvite, isAdmin }) {
                     >
                       <EmailField
                         required
+                        label={isAdmin ? "Email professionnel" : "Email"}
                         value={email}
                         setValue={setEmail}
                         validate
