@@ -16,9 +16,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     gap: theme.spacing(2),
     padding: theme.spacing(1, 0),
-    "&:not(:last-child)": {
-      borderBottom: `1px solid ${fr.colors.decisions.border.default.grey.default}`,
-    },
   },
   checkboxGroup: {
     flex: 1,
