@@ -89,6 +89,7 @@ export default function NewsletterSubscriptionModal({ open, handleClose }) {
           >
             <EmailField
               required
+              label="Adresse email"
               value={email}
               setValue={setEmail}
               validate
