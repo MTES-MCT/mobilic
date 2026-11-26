@@ -75,7 +75,11 @@ const ActivitiesPanelFilters = (props) => {
         : label,
   });
 
-  const dsfrTextFieldSlotProps = (id, label) => ({
+  const dsfrTextFieldSlotProps = (
+    id,
+    label,
+    { hideHelperTextVisually = false } = {},
+  ) => ({
     id,
     label,
     variant: "standard",
@@ -106,18 +110,22 @@ const ActivitiesPanelFilters = (props) => {
       shrink: true,
       className: "fr-sr-only",
     },
-    FormHelperTextProps: {
-      className: "fr-error-text",
-      sx: {
-        position: "absolute",
-        bottom: "-22px",
-        left: 0,
-        color: "error.main",
-        fontSize: "0.75rem",
-        margin: 0,
-        whiteSpace: "nowrap",
-      },
-    },
+    FormHelperTextProps: hideHelperTextVisually
+      ? {
+          className: "fr-sr-only",
+        }
+      : {
+          className: "fr-error-text",
+          sx: {
+            position: "absolute",
+            bottom: "-22px",
+            left: 0,
+            color: "error.main",
+            fontSize: "0.75rem",
+            margin: 0,
+            whiteSpace: "nowrap",
+          },
+        },
   });
 
   const today = new Date();
@@ -175,6 +183,7 @@ const ActivitiesPanelFilters = (props) => {
             textField: dsfrTextFieldSlotProps(
               "activities-min-date",
               "Du (date de début)",
+              { hideHelperTextVisually: true },
             ),
           }}
         />
