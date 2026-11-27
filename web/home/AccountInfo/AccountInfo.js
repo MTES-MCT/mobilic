@@ -35,6 +35,7 @@ import {
   isExpiredTemporaryInvitation
 } from "common/utils/employments";
 import { Stack } from "@mui/material";
+import { fr } from "@codegouvfr/react-dsfr";
 import {
   CHANGE_EMAIL_MUTATION,
   CHANGE_NAME_MUTATION,
@@ -123,7 +124,13 @@ export default function Home() {
   return (
     <>
       <MobilicHeader />
-      <Main>
+      <Main
+        maxWidth={false}
+        sx={{
+          flexGrow: 1,
+          backgroundColor: fr.colors.decisions.background.alt.grey.default
+        }}
+      >
         <Container maxWidth="md" disableGutters>
           <Typography component="h1" variant="h2" className={classes.pageTitle}>
             Mes informations
