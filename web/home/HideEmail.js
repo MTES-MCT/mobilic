@@ -10,12 +10,13 @@ export function HideEmail({ employment, disabled }) {
 
   return (
     <Checkbox
+      small
       disabled={disabled}
       legend="Autorisation d'accès"
       options={[
         {
           label:
-            "J'utilise mon mail personnel et je n'autorise pas le(s) gestionnaire(s) de cette entreprise à y avoir accès",
+            "J'utilise mon adresse e-mail personnelle et je n'autorise pas le(s) gestionnaire(s) de cette entreprise à y avoir accès",
           nativeInputProps: {
             checked: hideEmail,
             onChange: e => updateHideEmail(e.target.checked)
