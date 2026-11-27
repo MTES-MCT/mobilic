@@ -1,5 +1,6 @@
 import React from "react";
 import Notice from "../../../common/Notice";
+import { motifLabel } from "common/utils/motifs";
 
 export const PastMissionNotice = ({
   missionName,
@@ -22,7 +23,7 @@ export const PastMissionNotice = ({
           )}
           .
           <br />
-          Motif : "{justification}."
+          Motif : {motifLabel(justification)}.
         </>
       }
       {...otherProps}
