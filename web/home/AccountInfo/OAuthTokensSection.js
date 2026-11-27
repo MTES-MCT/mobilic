@@ -119,7 +119,7 @@ export function OAuthTokenSection() {
                 setNewTokenSectionVisible(true);
               }}
             >
-              Générer une clé API
+              Générer une clé
             </Button>
           </Grid>
         )}

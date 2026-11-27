@@ -328,8 +328,8 @@ export default function Home() {
                     <BecomeAdmin mt={2} hasEmployments={hasEmployment} />
                   </Section>
                   <TotpSetup />
-                  <OAuthTokenSection />
                   <UserControlSection />
+                  <OAuthTokenSection />
                 </>
               )}
             </Stack>
