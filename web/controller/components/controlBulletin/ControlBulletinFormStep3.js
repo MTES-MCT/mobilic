@@ -11,7 +11,6 @@ import { useInfractions } from "../../utils/contextInfractions";
 import { sanctionComparator } from "../../../control/utils/sanctionComparator";
 import { CONTROL_TYPES } from "../../utils/useReadControlData";
 import { useControl } from "../../utils/contextControl";
-import { Button } from "@codegouvfr/react-dsfr/Button";
 
 export function ControlBulletinFormStep3({
   handleEditControlBulletin,
@@ -44,11 +43,16 @@ export function ControlBulletinFormStep3({
   }, [controlData, groupedAlerts, isReportingInfractions]);
 
   React.useEffect(() => {
-    setIsReportingInfractions(false);
+    if (controlData.controlType !== CONTROL_TYPES.NO_LIC.label) {
+      onModifyInfractions();
+      setIsReportingInfractions(true);
+    } else {
+      setIsReportingInfractions(false);
+    }
   }, []);
 
   return (
-    <Stack direction="column" p={2} sx={{ width: "100%" }}>
+    <Stack direction="column" px={2} sx={{ width: "100%" }}>
       <Input
         nativeInputProps={{
           value: grecoId,
@@ -75,26 +79,7 @@ export function ControlBulletinFormStep3({
             : undefined
         }
       />
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        sx={{ width: "100%" }}
-      >
-        <Typography>Infractions retenues</Typography>
-        {!isReportingInfractions &&
-          controlData.controlType !== CONTROL_TYPES.NO_LIC.label && (
-            <Button
-              priority="tertiary"
-              size="small"
-              onClick={() => {
-                onModifyInfractions();
-                setIsReportingInfractions(true);
-              }}
-            >
-              Modifier
-            </Button>
-          )}
-      </Stack>
+      <Typography>Infractions retenues</Typography>
       {groupedAlertsToDisplay?.length > 0 ? (
         <List>
           {groupedAlertsToDisplay.sort(sanctionComparator).map(group => (
