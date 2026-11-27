@@ -12,10 +12,8 @@ import Grid from "@mui/material/Grid";
 import { InfoItem } from "../InfoField";
 import { useApi } from "common/utils/api";
 import { useModals } from "common/utils/modals";
-import {
-  PaperContainer,
-  PaperContainerTitle
-} from "../../common/PaperContainer";
+import { PaperContainer } from "../../common/PaperContainer";
+import Typography from "@mui/material/Typography";
 import { frenchFormatDateStringOrTimeStamp } from "common/utils/time";
 import { EmploymentInfoCard } from "../../common/EmploymentInfoCard";
 import { employmentSelector } from "common/store/selectors";
@@ -37,6 +35,7 @@ import {
   isExpiredTemporaryInvitation
 } from "common/utils/employments";
 import { Stack } from "@mui/material";
+import { fr } from "@codegouvfr/react-dsfr";
 import {
   CHANGE_EMAIL_MUTATION,
   CHANGE_NAME_MUTATION,
@@ -46,7 +45,18 @@ import {
 
 const useStyles = makeStyles((theme) => ({
   innerContainer: {
+    paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(6)
+  },
+  pageTitle: {
+    textAlign: "center",
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    [theme.breakpoints.up("md")]: {
+      paddingBottom: 0
+    }
   }
 }));
 
@@ -78,7 +88,9 @@ export default function Home() {
   const store = useStoreSyncedWithLocalStorage();
   const api = useApi();
   const allEmployments = employmentSelector(store.state);
-  const employments = allEmployments.filter((e) => !isExpiredTemporaryInvitation(e));
+  const employments = allEmployments.filter(
+    (e) => !isExpiredTemporaryInvitation(e)
+  );
   const modals = useModals();
 
   const userInfo = store.userInfo();
@@ -112,17 +124,25 @@ export default function Home() {
   return (
     <>
       <MobilicHeader />
-      <Main>
+      <Main
+        maxWidth={false}
+        sx={{
+          flexGrow: 1,
+          backgroundColor: fr.colors.decisions.background.alt.grey.default
+        }}
+      >
+        <Container maxWidth="md" disableGutters>
+          <Typography component="h1" variant="h2" className={classes.pageTitle}>
+            Mes informations
+          </Typography>
+        </Container>
         <PaperContainer>
           <Container
             className={`centered ${classes.innerContainer}`}
             maxWidth="sm"
           >
-            <PaperContainerTitle component="h1" variant="h2">
-              Mes informations
-            </PaperContainerTitle>
             <Stack direction="column" rowGap={4}>
-              <Section title="Moi" component="h2">
+              <Section title="Mon compte" component="h2">
                 <Grid container wrap="wrap" spacing={4}>
                   <Grid item xs={12}>
                     <InfoItem
@@ -317,8 +337,8 @@ export default function Home() {
                     <BecomeAdmin mt={2} hasEmployments={hasEmployment} />
                   </Section>
                   <TotpSetup />
-                  <OAuthTokenSection />
                   <UserControlSection />
+                  <OAuthTokenSection />
                 </>
               )}
             </Stack>

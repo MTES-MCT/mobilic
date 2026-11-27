@@ -1,20 +1,10 @@
 import React from "react";
-import { makeStyles } from "@mui/styles";
-import { LinkButton } from "../../common/LinkButton";
+import { Link } from "react-router-dom";
 import { Box } from "@mui/material";
+import { fr } from "@codegouvfr/react-dsfr";
 import { useIsAdmin } from "../../common/hooks/useIsAdmin";
 
-const useStyles = makeStyles(() => ({
-  textButton: {
-    textTransform: "none",
-    textDecoration: "underline",
-    fontSize: "1rem",
-    fontWeight: "400"
-  }
-}));
-
 export default function BecomeAdmin({ hasEmployments = true, ...otherProps }) {
-  const classes = useStyles();
   const { isAdmin } = useIsAdmin();
 
   if (isAdmin) {
@@ -22,11 +12,18 @@ export default function BecomeAdmin({ hasEmployments = true, ...otherProps }) {
   }
   return (
     <Box {...otherProps}>
-      <LinkButton to="/signup/company" className={classes.textButton}>
+      <Link
+        to="/signup/company"
+        className={fr.cx(
+          "fr-link",
+          "fr-link--icon-right",
+          "fr-icon-arrow-right-line"
+        )}
+      >
         {hasEmployments
-          ? "Je souhaite devenir gestionnaire d'une autre entreprise"
-          : "Je souhaite devenir gestionnaire d'une entreprise"}
-      </LinkButton>
+          ? "Devenir gestionnaire d'une autre entreprise"
+          : "Devenir gestionnaire d'une entreprise"}
+      </Link>
     </Box>
   );
 }

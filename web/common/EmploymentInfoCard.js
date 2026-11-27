@@ -51,11 +51,11 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     textTransform: "uppercase"
   },
+  companyNameEnded: {
+    color: fr.colors.decisions.text.disabled.grey.default
+  },
   buttonContainer: {
     padding: theme.spacing(2)
-  },
-  ended: {
-    opacity: 0.5
   },
   employmentDetails: {
     display: "block"
@@ -70,7 +70,10 @@ function EMPLOYMENT_STATUS_TO_TEXT_AND_COLOR(theme) {
     [EMPLOYMENT_STATUS.active]: ["Actif", theme.palette.success.main],
     [EMPLOYMENT_STATUS.pending]: ["À valider", theme.palette.warning.main],
     [EMPLOYMENT_STATUS.future]: ["À venir", theme.palette.warning.main],
-    [EMPLOYMENT_STATUS.ended]: ["Terminé", theme.palette.error.main],
+    [EMPLOYMENT_STATUS.ended]: [
+      "Terminé",
+      fr.colors.decisions.text.default.warning.default
+    ],
     [EMPLOYMENT_STATUS.ceased]: ["Cessée", theme.palette.error.main]
   };
 }
@@ -87,7 +90,7 @@ export function EmploymentInfoCard({
   hideStatus = false,
   hideActions = false,
   showAdminEmails = false,
-  lightenIfEnded = true,
+  simplifyIfEnded = true,
   defaultOpen = false,
   hideBusiness = false,
   headingComponent
@@ -156,10 +159,9 @@ export function EmploymentInfoCard({
 
   async function handleDetachmentRequest() {
     await alerts.withApiErrorHandling(async () => {
-      const apiResponse = await api.graphQlMutate(
-        REQUEST_DETACHMENT_MUTATION,
-        { employmentId: employment.id }
-      );
+      const apiResponse = await api.graphQlMutate(REQUEST_DETACHMENT_MUTATION, {
+        employmentId: employment.id
+      });
       await store.updateEntityObject({
         objectId: employment.id,
         entity: "employments",
@@ -200,6 +202,9 @@ export function EmploymentInfoCard({
   }
 
   const status = getEmploymentsStatus(employment);
+  const isEnded =
+    status === EMPLOYMENT_STATUS.ended || status === EMPLOYMENT_STATUS.ceased;
+  const showFullDetails = !(isEnded && simplifyIfEnded);
 
   const [statusText, statusColor] =
     EMPLOYMENT_STATUS_TO_TEXT_AND_COLOR(useTheme())[status];
@@ -210,48 +215,53 @@ export function EmploymentInfoCard({
       variant="outlined"
       expanded={open}
       onChange={(event, open_) => setOpen(open_)}
-      className={`${classes.employmentCard} ${
-        (status === EMPLOYMENT_STATUS.ended ||
-          status === EMPLOYMENT_STATUS.ceased) &&
-        lightenIfEnded
-          ? classes.ended
-          : ""
-      }`
-      }
+      className={classes.employmentCard}
     >
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Grid
-          container
-          spacing={1}
+      <AccordionSummary
+        expandIcon={
+          <ExpandMoreIcon
+            sx={{
+              fontSize: "1.25rem",
+              color: fr.colors.decisions.text.actionHigh.blueFrance.default
+            }}
+          />
+        }
+      >
+        <Stack
+          direction="row"
           alignItems="center"
           justifyContent="space-between"
-          wrap="nowrap"
+          columnGap={1}
+          sx={{ width: "100%" }}
         >
-          <Grid item xs={8} sm={9}>
-            {isMobile ? (
-              <Stack direction="column" rowGap={1}>
-                {isCertified && <TextBadge />}
-                <Typography
-                  className={classes.companyName}
-                  component={headingComponent}
-                >
-                  {employment.company.legalName || employment.company.name}
-                </Typography>
-              </Stack>
-            ) : (
-              <Stack direction="row">
-                <Typography
-                  className={classes.companyName}
-                  component={headingComponent}
-                >
-                  {employment.company.legalName || employment.company.name}
-                </Typography>
-                {isCertified && <TextBadge />}
-              </Stack>
+          <Stack
+            direction="column"
+            rowGap={1}
+            sx={{ flexGrow: 1, minWidth: 0 }}
+          >
+            {isMobile && isCertified && showFullDetails && (
+              <Box>
+                <TextBadge />
+              </Box>
             )}
-          </Grid>
-          {!hideStatus && (
-            <Grid item xs={4} sm={3} pr={1}>
+            <Typography
+              className={`${classes.companyName} ${
+                isEnded ? classes.companyNameEnded : ""
+              }`}
+              component={headingComponent}
+            >
+              {employment.company.legalName || employment.company.name}
+            </Typography>
+          </Stack>
+          <Stack
+            direction="row"
+            alignItems="center"
+            columnGap={1}
+            flexShrink={0}
+            pr={1}
+          >
+            {!isMobile && isCertified && showFullDetails && <TextBadge />}
+            {!hideStatus && (
               <Typography
                 style={{
                   color: statusColor,
@@ -262,47 +272,63 @@ export function EmploymentInfoCard({
               >
                 {statusText}
               </Typography>
-            </Grid>
-          )}
-        </Grid>
-      </AccordionSummary>
-      <AccordionDetails className={classes.employmentDetails}>
-        {!hideActions && hasDetachmentRequest && status === EMPLOYMENT_STATUS.active && !employment.endDate && (
-          <Stack spacing="12px" mb="16px" sx={FULL_WIDTH_BTN_SX}>
-            <Notice
-              type="info"
-              size="small"
-              description={
-                detachmentRequest.lastSentAt !== detachmentRequest.requestedAt
-                  ? `Relance de demande de détachement envoyée le ${new Date(detachmentRequest.lastSentAt * 1000).toLocaleDateString("fr-FR")}.`
-                  : `Demande de détachement envoyée le ${new Date(detachmentRequest.requestedAt * 1000).toLocaleDateString("fr-FR")}.`
-              }
-            />
-            <Button
-              priority="secondary"
-              size="small"
-              disabled={isCooldownActive}
-              sx={{ width: "100%", justifyContent: "center" }}
-              onClick={() => handleDetachmentRequest()}
-            >
-              Relancer le gestionnaire
-            </Button>
-            {isCooldownActive && (
-              <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                <InfoIcon
-                  aria-hidden="true"
-                  sx={{ color: fr.colors.decisions.text.default.info.default, fontSize: 16 }}
-                />
-                <Typography sx={{
-                  fontSize: 14,
-                  color: fr.colors.decisions.text.default.info.default
-                }}>
-                  Relance possible au bout de 48h.
-                </Typography>
-              </Box>
             )}
           </Stack>
+        </Stack>
+      </AccordionSummary>
+      <AccordionDetails className={classes.employmentDetails}>
+        {!hideStatus && !hideActions && isEnded && (
+          <Notice
+            type="warning"
+            size="small"
+            description="L'entreprise a mis un terme à votre rattachement. Vous ne pouvez plus saisir de temps de travail pour cette entreprise."
+            sx={{ marginBottom: 2 }}
+          />
         )}
+        {!hideActions &&
+          hasDetachmentRequest &&
+          status === EMPLOYMENT_STATUS.active &&
+          !employment.endDate && (
+            <Stack spacing="12px" mb="16px" sx={FULL_WIDTH_BTN_SX}>
+              <Notice
+                type="info"
+                size="small"
+                description={
+                  detachmentRequest.lastSentAt !== detachmentRequest.requestedAt
+                    ? `Relance de demande de détachement envoyée le ${new Date(detachmentRequest.lastSentAt * 1000).toLocaleDateString("fr-FR")}.`
+                    : `Demande de détachement envoyée le ${new Date(detachmentRequest.requestedAt * 1000).toLocaleDateString("fr-FR")}.`
+                }
+              />
+              <Button
+                priority="secondary"
+                size="small"
+                disabled={isCooldownActive}
+                sx={{ width: "100%", justifyContent: "center" }}
+                onClick={() => handleDetachmentRequest()}
+              >
+                Relancer le gestionnaire
+              </Button>
+              {isCooldownActive && (
+                <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <InfoIcon
+                    aria-hidden="true"
+                    sx={{
+                      color: fr.colors.decisions.text.default.info.default,
+                      fontSize: 16
+                    }}
+                  />
+                  <Typography
+                    sx={{
+                      fontSize: 14,
+                      color: fr.colors.decisions.text.default.info.default
+                    }}
+                  >
+                    Relance possible au bout de 48h.
+                  </Typography>
+                </Box>
+              )}
+            </Stack>
+          )}
         <Grid container wrap="wrap" spacing={spacing}>
           <Grid item xs={6}>
             <InfoItem
@@ -346,8 +372,8 @@ export function EmploymentInfoCard({
               uppercaseTitle={false}
             />
           </Grid>
-          {!hideBusiness && !!employment.business && (
-            <Grid item xs={12}>
+          {showFullDetails && !hideBusiness && !!employment.business && (
+            <Grid item xs={12} sm={6}>
               <InfoItem
                 name="Type d'activité"
                 value={formatActivity(employment.business)}
@@ -358,36 +384,38 @@ export function EmploymentInfoCard({
               />
             </Grid>
           )}
-          {!!showAdminEmails && !!emailsCurrentAdminsDisplay && (
-            <Grid item>
-              <InfoItem
-                name="Email(s) gestionnaire(s)"
-                value={emailsCurrentAdminsDisplay}
-                titleProps={{
-                  component: getNextHeadingComponent(headingComponent)
-                }}
-                uppercaseTitle={false}
-              />
-              <Button
-                priority="tertiary"
-                onClick={() => {
-                  navigator.clipboard
-                    .writeText(emailsCurrentAdmins)
-                    .then(() => {
-                      alerts.success(
-                        `Email(s) copiée(s) dans le presse-papiers !`,
-                        "",
-                        2000
-                      );
-                    });
-                }}
-              >
-                copier les emails
-              </Button>
-            </Grid>
-          )}
-          {!hideRole && (
-            <Grid item xs={12}>
+          {showFullDetails &&
+            !!showAdminEmails &&
+            !!emailsCurrentAdminsDisplay && (
+              <Grid item>
+                <InfoItem
+                  name="Email(s) gestionnaire(s)"
+                  value={emailsCurrentAdminsDisplay}
+                  titleProps={{
+                    component: getNextHeadingComponent(headingComponent)
+                  }}
+                  uppercaseTitle={false}
+                />
+                <Button
+                  priority="tertiary"
+                  onClick={() => {
+                    navigator.clipboard
+                      .writeText(emailsCurrentAdmins)
+                      .then(() => {
+                        alerts.success(
+                          `Email(s) copiée(s) dans le presse-papiers !`,
+                          "",
+                          2000
+                        );
+                      });
+                  }}
+                >
+                  copier les emails
+                </Button>
+              </Grid>
+            )}
+          {showFullDetails && !hideRole && (
+            <Grid item xs={12} sm={6}>
               <InfoItem
                 name="Rôle"
                 value={
@@ -402,7 +430,7 @@ export function EmploymentInfoCard({
               />
             </Grid>
           )}
-          {isCertified && (
+          {showFullDetails && isCertified && (
             <Grid item xs={12}>
               <Stack direction="column" sx={{ flexGrow: 1 }} rowGap={2}>
                 <Box>
@@ -424,37 +452,27 @@ export function EmploymentInfoCard({
               </Stack>
             </Grid>
           )}
-          {!hideActions && !!employment.authorizedClients?.length && (
-            <Grid item xs={12}>
-              <ThirdPartyEmploymentAccess
-                employmentId={employment.id}
-                clients={employment.authorizedClients}
-              />
-            </Grid>
-          )}
-          {!hideActions && (
-            <Grid item xs={12} sx={{ "& .fr-fieldset": { marginBottom: "12px" } }}>
-              <HideEmail
-                employment={employment}
-                disabled={
-                  status === EMPLOYMENT_STATUS.ended ||
-                  status === EMPLOYMENT_STATUS.ceased
-                }
-              />
+          {showFullDetails &&
+            !hideActions &&
+            !!employment.authorizedClients?.length && (
+              <Grid item xs={12}>
+                <ThirdPartyEmploymentAccess
+                  employmentId={employment.id}
+                  clients={employment.authorizedClients}
+                />
+              </Grid>
+            )}
+          {showFullDetails && !hideActions && (
+            <Grid
+              item
+              xs={12}
+              sx={{ "& .fr-fieldset": { marginBottom: "12px" } }}
+            >
+              <HideEmail employment={employment} disabled={isEnded} />
             </Grid>
           )}
         </Grid>
 
-        {!hideStatus &&
-          !hideActions &&
-          (status === EMPLOYMENT_STATUS.ended ||
-            status === EMPLOYMENT_STATUS.ceased) && (
-            <Notice
-              type="warning"
-              description="L'entreprise a mis un terme à votre rattachement. Vous ne pouvez
-            plus saisir de temps de travail pour cette entreprise."
-            />
-          )}
         {!hideActions &&
           !employment.hasAdminRights &&
           status === EMPLOYMENT_STATUS.active &&

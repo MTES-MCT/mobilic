@@ -31,7 +31,7 @@ export function ControllerControlEmployments({ employments, businesses }) {
               hideRole
               hideActions
               showAdminEmails
-              lightenIfEnded={false}
+              simplifyIfEnded={false}
               headingComponent="h3"
               spacing={2}
             />
