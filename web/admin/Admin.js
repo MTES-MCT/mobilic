@@ -162,9 +162,9 @@ function InternalAdmin() {
     }
   }
 
-  async function refreshData() {
+  async function refreshData(userIds = null) {
     if (adminStore.companyId) {
-      loadActivitiesData({ adminStore, alerts, api, withLoadingScreen });
+      loadActivitiesData({ adminStore, alerts, api, withLoadingScreen, userIds });
     } else {
       loadDataCompaniesList();
     }
