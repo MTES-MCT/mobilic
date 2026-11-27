@@ -253,7 +253,6 @@ export const FULL_EMPLOYMENT_FRAGMENT = gql`
     lastActiveAt
     teamId
     isActive
-    isTerminated
     isInactive
     isTemporary
     status
