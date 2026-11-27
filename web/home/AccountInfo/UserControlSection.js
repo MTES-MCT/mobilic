@@ -1,5 +1,4 @@
 import React from "react";
-import Typography from "@mui/material/Typography";
 import { currentUserId } from "common/utils/cookie";
 import Grid from "@mui/material/Grid";
 import Notice from "../../common/Notice";
@@ -21,11 +20,6 @@ export function UserControlSection() {
     <Section title="Mes contrôles en bord de route">
       <Grid container>
         <Box display="flex" flexDirection="column" width="100%" mb={2} gap={2}>
-          <Typography variant="body2" color="textSecondary">
-            Retrouvez vos précédents bulletins de contrôle qui vous ont été
-            remis en version numérique. Un bulletin de contrôle peut servir de
-            justificatif en cas de contrôle dans la période d'échéance.
-          </Typography>
           <Notice
             description="Votre employeur est responsable en cas de contrôle en bord de route"
             size="small"
