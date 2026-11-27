@@ -87,7 +87,9 @@ export default function Home() {
   const store = useStoreSyncedWithLocalStorage();
   const api = useApi();
   const allEmployments = employmentSelector(store.state);
-  const employments = allEmployments.filter((e) => !isExpiredTemporaryInvitation(e));
+  const employments = allEmployments.filter(
+    (e) => !isExpiredTemporaryInvitation(e)
+  );
   const modals = useModals();
 
   const userInfo = store.userInfo();
