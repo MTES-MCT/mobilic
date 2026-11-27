@@ -2,8 +2,78 @@ import flatMap from "lodash/flatMap";
 
 export function addWorkDaysReducer(
   state,
-  { companiesPayload, minDate, maxDate, reset = false }
+  { companiesPayload, minDate, maxDate, reset = false, userIds = null }
 ) {
+  const rawWorkDays = flatMap(
+    companiesPayload.map((c) =>
+      c.workDays.edges.map((wd) => ({ ...wd.node, companyId: c.id }))
+    )
+  );
+
+  const regulationComputationsByUserAndByDay = flatMap(
+    companiesPayload.map((c) => c.adminRegulationComputationsByUserAndByDay)
+  );
+
+  const attachRegulationComputations = (wd) => {
+    const computation = regulationComputationsByUserAndByDay.find(
+      (rc) => rc.day === wd.day && rc.userId === wd.user.id
+    );
+    return {
+      ...wd,
+      regulationComputations: computation
+        ? {
+            nbAlertsDailyAdmin: computation.nbAlertsDailyAdmin,
+            nbAlertsWeeklyAdmin: computation.nbAlertsWeeklyAdmin
+          }
+        : undefined
+    };
+  };
+
+  // Update missions if present in the payload. Note: the `missions` field
+  // has no userIds filter, so its payload always covers the full date
+  // range regardless of `userIds` - no per-user scoping needed here.
+  let missions = state.missions;
+  if (companiesPayload.some(c => c.missions)) {
+    const newMissions = flatMap(
+      companiesPayload.map(c =>
+        c.missions?.edges
+          ? c.missions.edges.map(m => ({
+              ...m.node,
+              companyId: c.id,
+              isDeleted: false
+            }))
+          : []
+      )
+    );
+
+    const newMissionIds = new Set(newMissions.map(m => m.id));
+    if (reset) {
+      const keptDeletedMissions = state.missions.filter(
+        m => m.isDeleted && !newMissionIds.has(m.id)
+      );
+      missions = [...keptDeletedMissions, ...newMissions];
+    } else {
+      const filteredOldMissions = state.missions.filter(m => !newMissionIds.has(m.id));
+      missions = [...filteredOldMissions, ...newMissions];
+    }
+  }
+
+  // A userIds-scoped refresh (e.g. after validating one employee's
+  // mission) only replaces that employee's work days, leaving everyone
+  // else's rows - and the "load more" pagination cursor - untouched.
+  if (userIds) {
+    const workDaysToAdd = rawWorkDays.map(attachRegulationComputations);
+    const keptWorkDays = state.workDays.filter(
+      wd => !userIds.includes(wd.user.id)
+    );
+    return {
+      ...state,
+      workDays: [...keptWorkDays, ...workDaysToAdd],
+      missions,
+      areMissionsActivitiesLoaded: true
+    };
+  }
+
   let actualMinCursor = minDate;
   companiesPayload.forEach((c) => {
     const wds = c.workDays;
@@ -33,67 +103,16 @@ export function addWorkDaysReducer(
   const actualMaxUserNum = userIdCursorToNumber(actualMaxUser);
   const actualMinUserNum = userIdCursorToNumber(actualMinUser);
 
-  let workDaysToAdd = flatMap(
-    companiesPayload.map((c) =>
-      c.workDays.edges.map((wd) => ({ ...wd.node, companyId: c.id }))
+  const workDaysToAdd = rawWorkDays
+    .filter(
+      (wd) =>
+        (!actualMaxDate ||
+          wd.day < actualMaxDate ||
+          (wd.day === actualMaxDate && wd.user.id < actualMaxUserNum)) &&
+        (wd.day > actualMinDate ||
+          (wd.day === actualMinDate && wd.user.id >= actualMinUserNum))
     )
-  ).filter(
-    (wd) =>
-      (!actualMaxDate ||
-        wd.day < actualMaxDate ||
-        (wd.day === actualMaxDate && wd.user.id < actualMaxUserNum)) &&
-      (wd.day > actualMinDate ||
-        (wd.day === actualMinDate && wd.user.id >= actualMinUserNum))
-  );
-
-  const regulationComputationsByUserAndByDay = flatMap(
-    companiesPayload.map((c) => c.adminRegulationComputationsByUserAndByDay)
-  );
-
-  workDaysToAdd = workDaysToAdd.map((wd) => {
-    const userId = wd.user.id;
-    const day = wd.day;
-    const computation = regulationComputationsByUserAndByDay.find(
-      (rc) => rc.day === day && rc.userId === userId
-    );
-
-    return {
-      ...wd,
-      regulationComputations: computation
-        ? {
-            nbAlertsDailyAdmin: computation.nbAlertsDailyAdmin,
-            nbAlertsWeeklyAdmin: computation.nbAlertsWeeklyAdmin
-          }
-        : undefined
-    };
-  });
-
-  // Update missions if present in the payload
-  let missions = state.missions;
-  if (companiesPayload.some(c => c.missions)) {
-    const newMissions = flatMap(
-      companiesPayload.map(c =>
-        c.missions?.edges
-          ? c.missions.edges.map(m => ({
-              ...m.node,
-              companyId: c.id,
-              isDeleted: false
-            }))
-          : []
-      )
-    );
-    
-    const newMissionIds = new Set(newMissions.map(m => m.id));
-    if (reset) {
-      const keptDeletedMissions = state.missions.filter(
-        m => m.isDeleted && !newMissionIds.has(m.id)
-      );
-      missions = [...keptDeletedMissions, ...newMissions];
-    } else {
-      const filteredOldMissions = state.missions.filter(m => !newMissionIds.has(m.id));
-      missions = [...filteredOldMissions, ...newMissions];
-    }
-  }
+    .map(attachRegulationComputations);
 
   return {
     ...state,
