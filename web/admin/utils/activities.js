@@ -56,6 +56,7 @@ export async function loadActivitiesData({
                 minDate,
                 maxDate,
                 reset,
+                userIds,
               },
             });
             adminStore.dispatch({
