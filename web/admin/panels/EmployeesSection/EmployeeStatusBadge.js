@@ -40,18 +40,15 @@ const EmployeeStatusBadge = ({ isDetached, isInactive, lastActiveAt, endDate, is
       </Tooltip>
     );
   }
-  if (lastActiveAt === null) {
-    return (
-      <Tooltip title={NEVER_USED_MOBILIC_LABEL}>
-        <WarningBadge className={classes.badgeCursor}>
-          {"inactif".toUpperCase()}
-        </WarningBadge>
-      </Tooltip>
-    );
-  }
   if (isInactive) {
     return (
-      <Tooltip title={`Aucun temps de travail saisi depuis le ${formatLastActiveDate(lastActiveAt)}. Pensez à détacher ce salarié.`}>
+      <Tooltip
+        title={
+          lastActiveAt
+            ? `Aucun temps de travail saisi depuis le ${formatLastActiveDate(lastActiveAt)}. Pensez à détacher ce salarié.`
+            : NEVER_USED_MOBILIC_LABEL
+        }
+      >
         <WarningBadge className={classes.badgeCursor}>
           {"inactif".toUpperCase()}
         </WarningBadge>
